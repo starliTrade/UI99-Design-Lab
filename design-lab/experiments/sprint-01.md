@@ -16,6 +16,12 @@ Candidate surfaces:
 
 These are **test candidates**, not locked UI99 tokens.
 
+## Current experiment page
+
+Single-page HTML: `design-lab/01-surface-lab.html`
+
+This is the primary evidence surface for Sprint 01: numerical color calculations, rendered swatches, separation examples, nested geometry, and decision gates live on the same page.
+
 ## Experiment matrix
 
 ### Surface separation
@@ -49,3 +55,12 @@ A rule may move toward production only after:
 ## Decision log
 
 No formulas locked yet.
+
+## Current evidence status
+
+- Mother canvas candidate: `#060709`
+- Mother surface candidate: `#030406`
+- The two values are tested as a pair, not as isolated hex values.
+- Mathematical evidence currently includes relative luminance and contrast ratio.
+- Visual evidence currently includes direct swatch comparison and surface/border/shadow separation cases.
+- The pair is **not locked** until the surface-ladder experiment tests whether the relationship generalizes beyond these two points.
