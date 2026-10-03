@@ -12,15 +12,15 @@ header{display:flex;justify-content:space-between;gap:24px;align-items:flex-star
 .eyebrow,.tag{font:11px ui-monospace,monospace;letter-spacing:.11em;text-transform:uppercase;color:#858c97}
 h1{font-size:clamp(30px,5vw,54px);line-height:1;letter-spacing:-.045em;margin:8px 0 12px}h2{font-size:19px;margin:0 0 7px}h3{font-size:14px;margin:0 0 8px}p{color:var(--muted);line-height:1.55}.lede{max-width:850px;margin:0}.status{font:11px ui-monospace,monospace;color:#858c97;white-space:nowrap}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#777f89;margin-right:7px}
 section{padding:32px 0;border-bottom:1px solid #11151a}.heading{display:flex;gap:14px;margin-bottom:18px}.num{font:12px ui-monospace,monospace;color:#666e78;padding-top:3px}
-.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.control{padding:13px;border:1px solid var(--line);border-radius:12px;background:#07090c}.control label{display:block;font:11px ui-monospace,monospace;color:#8c939d;margin-bottom:8px}.control input,.control select{width:100%;height:36px;border:1px solid #242a32;border-radius:8px;background:#050608;color:#fff;padding:0 9px;font:12px ui-monospace,monospace}.control input[type=range]{padding:0;accent-color:#c7ccd4}
-.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.card{padding:16px;border:1px solid var(--line);border-radius:14px;background:#07090c}
-.decision{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{padding:14px;border:1px solid var(--line);border-radius:11px;background:#080a0d}.metric span{display:block;font-size:11px;color:var(--muted)}.metric b{display:block;margin-top:5px;font:18px ui-monospace,monospace}
-.verdict{margin-top:12px;padding:16px;border-radius:12px;border:1px solid #252a31;background:#080a0d}.verdict strong{font:14px ui-monospace,monospace}.verdict small{display:block;color:var(--muted);margin-top:7px;line-height:1.5}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.control{padding:13px;border:0;border-radius:12px;background:#07090c}.control label{display:block;font:11px ui-monospace,monospace;color:#8c939d;margin-bottom:8px}.control input,.control select{width:100%;height:36px;border:1px solid #242a32;border-radius:8px;background:#050608;color:#fff;padding:0 9px;font:12px ui-monospace,monospace}.control input[type=range]{padding:0;accent-color:#c7ccd4}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.card{padding:16px;border:0;border-radius:14px;background:#07090c}
+.decision{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{padding:14px;border:0;border-radius:11px;background:#080a0d}.metric span{display:block;font-size:11px;color:var(--muted)}.metric b{display:block;margin-top:5px;font:18px ui-monospace,monospace}
+.verdict{margin-top:12px;padding:16px;border-radius:12px;border:0;background:#080a0d}.verdict strong{font:14px ui-monospace,monospace}.verdict small{display:block;color:var(--muted);margin-top:7px;line-height:1.5}
 .scene-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.scene{padding:14px;border-radius:15px;background:var(--context);min-height:250px}.scene-title{font:10px ui-monospace,monospace;color:#7f8791;margin-bottom:10px}.panel{height:180px;padding:18px;border-radius:18px;background:var(--surface);display:flex;flex-direction:column;justify-content:flex-end;transition:.2s ease}.panel b{font-size:14px}.panel span{font-size:11px;color:#7f8791;margin-top:5px}
 .panel.auto{border:var(--border-width,0px) solid var(--border);box-shadow:var(--shadow)}
 table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:#9aa1ab;font-weight:500}td{color:#c7ccd4}code{font-family:ui-monospace,monospace}
 .formula{padding:15px;border:1px dashed #30353e;border-radius:11px;color:#c8cdd5;font:13px ui-monospace,monospace;line-height:1.7}.formula small{font:11px ui-monospace,monospace;color:#777f89}
-.gates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.gate{padding:14px;border:1px solid var(--line);border-radius:12px}.gate b{font:11px ui-monospace,monospace}.gate p{font-size:11px;margin:7px 0 0}
+.gates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.gate{padding:14px;border:0;border-radius:12px;background:#07090c}.gate b{font:11px ui-monospace,monospace}.gate p{font-size:11px;margin:7px 0 0}
 footer{padding-top:25px;font:11px ui-monospace,monospace;color:#737b86;display:flex;justify-content:space-between;gap:16px}
 @media(max-width:900px){.controls,.decision,.gates{grid-template-columns:1fr 1fr}.scene-grid,.grid{grid-template-columns:1fr}}
 @media(max-width:520px){.shell{width:min(100% - 20px,1320px)}.controls,.decision,.gates,.scene-grid{grid-template-columns:1fr}footer{flex-direction:column}.status{display:none}}
@@ -57,6 +57,7 @@ footer{padding-top:25px;font:11px ui-monospace,monospace;color:#737b86;display:f
 <div class="scene"><div class="scene-title">AUTO · ENGINE DECISION</div><div class="panel auto" id="autoPanel"><b>Component</b><span id="autoText">calculating…</span></div></div>
 <div class="scene"><div class="scene-title">CONTROL · BORDER ONLY</div><div class="panel" id="borderOnly"><b>Component</b><span>edge separation only</span></div></div>
 <div class="scene"><div class="scene-title">CONTROL · SHADOW ONLY</div><div class="panel" id="shadowOnly"><b>Component</b><span>depth separation only</span></div></div>
+<div class="scene"><div class="scene-title">CONTROL · SURFACE ONLY</div><div class="panel" id="surfaceOnly"><b>Component</b><span>fill separation only</span></div></div>
 </div>
 </section>
 
@@ -73,9 +74,9 @@ footer{padding-top:25px;font:11px ui-monospace,monospace;color:#737b86;display:f
 <div class="formula">
 ΔL = |L<sub>surface</sub> − L<sub>context</sub>|<br>
 Separation = ΔL / (L<sub>surface</sub> + L<sub>context</sub> + ε)<br><br>
-BorderNeed = edgeNeed × roleFactor × (1 − Separation)<br>
+BorderNeed = edgeNeed × roleFactor × (1 − Separation) × (1 − 0.55 × Separation)<br>
 ShadowNeed = depthNeed × elevationFactor × (1 − Separation × depthSuppression)<br><br>
-BorderStrength = clamp(BorderNeed, 0, 1)<br>
+BorderStrength = clamp(BorderNeed, 0, 1)<br>Border activates only above the experimental edge threshold<br>
 ShadowStrength = clamp(ShadowNeed, 0, 1)<br><br>
 <small>Interpretation: when fill already separates strongly, additional decoration is suppressed. As depth increases, shadow becomes more useful; border remains an edge-clarity mechanism rather than an elevation mechanism.</small>
 </div>
@@ -112,15 +113,15 @@ function derive(){
  const delta=Math.abs(ls-lc);
  const separation=delta/(ls+lc+.000001);
  const contrast=cr(C,S);
- const edge=clamp(edgeNeed(role)*roleFactor(role)*(1-separation));
+ const edge=clamp(edgeNeed(role)*roleFactor(role)*(1-separation)*(1-separation*.55));
  const depth=clamp(depthNeed(role)*(e/6+.18)*(1-separation*.72));
- const borderOn=edge>=.28;
+ const borderOn=edge>=.42;
  const shadowOn=depth>=.28 && e>0;
  const both=borderOn&&shadowOn&&!(separation>.48);
  const finalBorder=both||(!shadowOn&&borderOn);
  const finalShadow=shadowOn;
- const bw=finalBorder?Math.min(1.5,.5+1.15*edge):0;
- const borderTarget=ls>lc?mixHex(S,C,.34):mixHex(S,'#ffffff',.22);
+ const bw=finalBorder?Math.min(1.15,.45+.72*edge):0;
+ const borderTarget=ls>lc?mixHex(S,C,.58):mixHex(S,'#ffffff',.12);
  const alpha=.06+.20*depth;
  const blur=8+32*(e/6)*(0.7+.3*depth);
  const y=2+16*(e/6);
@@ -159,8 +160,9 @@ ${mode}<br><br><small>Border target follows the surface/context polarity. Shadow
  $('#autoPanel').style.border=finalBorder?bw+'px solid '+borderTarget:'none';
  $('#autoPanel').style.boxShadow=finalShadow?shadow:'none';
  $('#autoText').textContent=mode.toLowerCase()+' · derived';
- $('#borderOnly').style.border='.9px solid '+borderTarget;
+ $('#borderOnly').style.border='1px solid '+borderTarget;
  $('#shadowOnly').style.boxShadow=shadow;
+ $('#surfaceOnly').style.border='none'; $('#surfaceOnly').style.boxShadow='none';
 }
 ['context','surface','role','elevation'].forEach(id=>$('#'+id).addEventListener('input',derive));
 ['role'].forEach(id=>$('#'+id).addEventListener('change',derive));
