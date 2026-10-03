@@ -3,27 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>UI99 — 02 Border × Shadow Decision Lab</title>
+<title>UI99 — Nested Composition Decision Lab</title>
 <style>
-:root{--canvas:#030406;--surface:#060709;--context:#030406;--border:#060709;--shadow-alpha:.18;--shadow-blur:28px;--shadow-y:10px;--shadow-spread:-10px;--ink:#eef0f3;--muted:#8b929d;--line:#171b21}
-*{box-sizing:border-box}html,body{margin:0;background:var(--canvas);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
+:root{--canvas:#030406;--ink:#eef0f3;--muted:#858c97;--line:#15191f}
+*{box-sizing:border-box}html,body{margin:0;background:var(--canvas);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,sans-serif}
 body{min-width:320px}.shell{width:min(1320px,calc(100% - 32px));margin:auto;padding:34px 0 60px}
-header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;padding-bottom:28px;border-bottom:1px solid var(--line)}
-.eyebrow,.tag{font:11px ui-monospace,monospace;letter-spacing:.11em;text-transform:uppercase;color:#858c97}
-h1{font-size:clamp(30px,5vw,54px);line-height:1;letter-spacing:-.045em;margin:8px 0 12px}h2{font-size:19px;margin:0 0 7px}h3{font-size:14px;margin:0 0 8px}p{color:var(--muted);line-height:1.55}.lede{max-width:850px;margin:0}.status{font:11px ui-monospace,monospace;color:#858c97;white-space:nowrap}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#777f89;margin-right:7px}
-section{padding:32px 0;border-bottom:1px solid #11151a}.heading{display:flex;gap:14px;margin-bottom:18px}.num{font:12px ui-monospace,monospace;color:#666e78;padding-top:3px}
-.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.control{padding:13px;border:0;border-radius:12px;background:#07090c}.control label{display:block;font:11px ui-monospace,monospace;color:#8c939d;margin-bottom:8px}.control input,.control select{width:100%;height:36px;border:1px solid #242a32;border-radius:8px;background:#050608;color:#fff;padding:0 9px;font:12px ui-monospace,monospace}.control input[type=range]{padding:0;accent-color:#c7ccd4}
-.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.card{padding:16px;border:0;border-radius:14px;background:#07090c}
-.decision{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{padding:14px;border:0;border-radius:11px;background:#080a0d}.metric span{display:block;font-size:11px;color:var(--muted)}.metric b{display:block;margin-top:5px;font:18px ui-monospace,monospace}
-.verdict{margin-top:12px;padding:16px;border-radius:12px;border:0;background:#080a0d}.verdict strong{font:14px ui-monospace,monospace}.verdict small{display:block;color:var(--muted);margin-top:7px;line-height:1.5}
-.scene-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.scene{padding:14px;border-radius:15px;background:var(--context);min-height:250px}.scene-title{font:10px ui-monospace,monospace;color:#7f8791;margin-bottom:10px}.panel{height:180px;padding:18px;border-radius:18px;background:var(--surface);display:flex;flex-direction:column;justify-content:flex-end;transition:.2s ease}.panel b{font-size:14px}.panel span{font-size:11px;color:#7f8791;margin-top:5px}
-.panel.auto{border:var(--border-width,0px) solid var(--border);box-shadow:var(--shadow)}
-table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:#9aa1ab;font-weight:500}td{color:#c7ccd4}code{font-family:ui-monospace,monospace}
-.formula{padding:15px;border:1px dashed #30353e;border-radius:11px;color:#c8cdd5;font:13px ui-monospace,monospace;line-height:1.7}.formula small{font:11px ui-monospace,monospace;color:#777f89}
-.gates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.gate{padding:14px;border:0;border-radius:12px;background:#07090c}.gate b{font:11px ui-monospace,monospace}.gate p{font-size:11px;margin:7px 0 0}
-footer{padding-top:25px;font:11px ui-monospace,monospace;color:#737b86;display:flex;justify-content:space-between;gap:16px}
-@media(max-width:900px){.controls,.decision,.gates{grid-template-columns:1fr 1fr}.scene-grid,.grid{grid-template-columns:1fr}}
-@media(max-width:520px){.shell{width:min(100% - 20px,1320px)}.controls,.decision,.gates,.scene-grid{grid-template-columns:1fr}footer{flex-direction:column}.status{display:none}}
+header{padding-bottom:28px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:24px}
+.eyebrow,.scene-title,.label,.status{font:11px ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#858c97}
+h1{font-size:clamp(30px,5vw,54px);line-height:1;letter-spacing:-.045em;margin:8px 0 12px}h2{font-size:19px;margin:0 0 7px}p{color:var(--muted);line-height:1.55}.lede{max-width:900px;margin:0}
+section{padding:32px 0;border-bottom:1px solid var(--line)}.heading{display:flex;gap:14px;margin-bottom:18px}.num{font:12px ui-monospace,monospace;color:#626a74}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.control{padding:13px;border-radius:12px;background:#07090c}.control label{display:block;font:11px ui-monospace,monospace;color:#8c939d;margin-bottom:8px}.control input,.control select{width:100%;height:36px;border:1px solid #242a32;border-radius:8px;background:#050608;color:#fff;padding:0 9px;font:12px ui-monospace,monospace}.control input[type=range]{padding:0}
+.decision{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric,.verdict{padding:14px;border-radius:11px;background:#080a0d}.metric span{display:block;font-size:11px;color:var(--muted)}.metric b{display:block;margin:5px 0;font:18px ui-monospace,monospace}.verdict{margin-top:10px}.verdict strong{font:13px ui-monospace,monospace}.verdict small{display:block;color:var(--muted);margin-top:7px;line-height:1.5}
+.stage{padding:20px;border-radius:20px;background:#040507;min-height:560px}.tree-canvas{background:#030406;border-radius:24px;padding:28px;min-height:500px}.tree-card{border-radius:20px;padding:22px;background:#060709}.tree-panel{border-radius:16px;padding:18px;background:#08090b}.tree-control{border-radius:12px;padding:13px;background:#0a0b0d}.tree-sibling{border-radius:13px;padding:14px;background:#060709}.tree-floating{margin:18px 0 0 auto;width:min(360px,80%);border-radius:16px;padding:17px;background:#08090b}
+.node-meta{font:10px ui-monospace,monospace;color:#747c87;margin-bottom:9px}.node-title{font-size:14px;font-weight:600}.node-info{font:10px ui-monospace,monospace;color:#777f89;margin-top:6px}
+.tree-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.node-auto{transition:.18s ease}
+table{width:100%;border-collapse:collapse;font-size:12px}td{padding:9px;border-bottom:1px solid var(--line)}td:last-child{font-family:ui-monospace,monospace;color:#c7ccd4}.formula{padding:15px;border:1px dashed #30353e;border-radius:11px;color:#c8cdd5;font:12px ui-monospace,monospace;line-height:1.75}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.gate{padding:14px;border-radius:12px;background:#07090c}.gate b{font:11px ui-monospace,monospace}.gate p{font-size:11px;margin:7px 0 0}
+@media(max-width:900px){.controls,.decision,.gates{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.tree-row{grid-template-columns:1fr}}@media(max-width:520px){.shell{width:calc(100% - 20px)}.controls,.decision,.gates{grid-template-columns:1fr}header{display:block}.status{margin-top:14px}.stage{padding:10px}.tree-canvas{padding:15px}}
 </style>
 </head>
 <body>
@@ -31,127 +27,150 @@ footer{padding-top:25px;font:11px ui-monospace,monospace;color:#737b86;display:f
 <header>
 <div><div class="eyebrow">UI99 / DESIGN LAB / SPRINT 02</div>
 <h1>Nested Composition Decision Engine</h1>
-<p class="lede">A composition experiment: every component is evaluated against its actual parent surface, nesting depth, role, size and elevation. The engine decides whether fill separation alone is enough, whether edge reinforcement is needed, and whether depth should be communicated. The goal is not to decorate cards; it is to derive a coherent visual hierarchy across a real component tree.</p></div>
-<div class="status"><span class="dot"></span>EXPERIMENTAL · NOT LOCKED</div>
+<p class="lede">This experiment evaluates a real component tree. Each node receives its own decision from the surface of its actual parent, local fill separation, nesting depth, role, size, elevation and interaction state. A “Card” is not automatically given a border.</p></div>
+<div class="status">● EXPERIMENTAL · NOT LOCKED</div>
 </header>
 
 <section>
-<div class="heading"><div class="num">01</div><div><h2>Composition inputs</h2><p>The important input is no longer an isolated pair. Each node is evaluated against its real parent and its position inside the hierarchy.</p></div></div>
-<div class="controls"><div><h2>Decision engine</h2><p>Border and shadow are separate channels. Border answers “is the edge clear?” Shadow answers “is there depth?”. The engine avoids using both unless the current separation needs both signals.</p></div></div>
+<div class="heading"><div class="num">01</div><div><h2>Composition inputs</h2><p>Change the hierarchy and watch local decisions change. The engine does not use one global border rule.</p></div></div>
+<div class="controls">
+<div class="control"><label>Canvas / parent root</label><input id="context" value="#030406" maxlength="7"></div>
+<div class="control"><label>Card surface</label><input id="surface" value="#060709" maxlength="7"></div>
+<div class="control"><label>Nested panel</label><input id="nestedSurface" value="#08090B" maxlength="7"></div>
+<div class="control"><label>Control surface</label><input id="controlSurface" value="#0A0B0D" maxlength="7"></div>
+</div>
+<div class="controls" style="margin-top:10px">
+<div class="control"><label>Card elevation · <span id="cardElevOut">1.5</span></label><input id="cardElevation" type="range" min="0" max="6" step=".5" value="1.5"></div>
+<div class="control"><label>Panel elevation · <span id="panelElevOut">0</span></label><input id="panelElevation" type="range" min="0" max="6" step=".5" value="0"></div>
+<div class="control"><label>Control elevation · <span id="controlElevOut">0</span></label><input id="controlElevation" type="range" min="0" max="6" step=".5" value="0"></div>
+<div class="control"><label>Control state</label><select id="interactive"><option value="no">Static</option><option value="yes">Interactive</option></select></div>
+</div>
+</section>
+
+<section>
+<div class="heading"><div class="num">02</div><div><h2>Engine output</h2><p>Four independent measurements are shown, but the important output is the local decision for every node.</p></div></div>
 <div class="decision" id="metrics"></div>
 <div class="verdict" id="verdict"></div>
 </section>
 
 <section>
-<div class="heading"><div class="num">03</div><div><h2>Live rendering</h2><p>Identical geometry. Only the engine output changes. Compare the automatic result against the three control cases.</p></div></div>
-<div class="scene-grid" id="sceneGrid"></div>
+<div class="heading"><div class="num">03</div><div><h2>Real nested component</h2><p>One component tree: Canvas → Card → Panel → Control, plus a sibling panel and a floating surface. No decorative borders are pre-applied to the component shells.</p></div></div>
+<div class="stage"><div id="treePreview"></div></div>
 </section>
 
 <section>
-<div class="heading"><div class="num">04</div><div><h2>Derived parameters</h2><p>These are outputs of the current experimental model, not production tokens.</p></div></div>
-<div class="grid">
-<div class="card"><table><tbody id="params"></tbody></table></div>
-<div class="card"><div class="formula" id="formula"></div></div>
+<div class="heading"><div class="num">04</div><div><h2>Per-node derivation</h2><p>The same mathematical engine runs independently at each parent/child boundary.</p></div></div>
+<div class="grid"><div class="metric"><table id="params"></table></div><div class="formula" id="formula"></div></div>
+</section>
+
+<section>
+<div class="heading"><div class="num">05</div><div><h2>Model under test</h2><p>The hypothesis is that separation mechanisms should communicate missing information, not decorate semantic component names.</p></div></div>
+<div class="formula">
+<b>Local separation</b><br>
+Separation(node) = distance(surface(node), surface(parent(node)))<br><br>
+<b>Edge need</b><br>
+EdgeNeed = RoleEdge × Size × EdgeExposure × (1 − FillClarity) × InteractionBoost × DepthDamping<br><br>
+<b>Depth need</b><br>
+DepthNeed = RoleDepth × ElevationDemand × (1 − FillClarity) × DepthExposure<br><br>
+<b>Decision</b><br>
+Surface Only → Border Only → Shadow Only → Border + Shadow<br>
+chosen only when the corresponding mechanism adds new structural information.<br><br>
+<small>No threshold here is a locked UI99 token. This sprint is testing the architecture of local decisions and nested coherence.</small>
 </div>
 </section>
 
 <section>
-<div class="heading"><div class="num">05</div><div><h2>Nested component tree</h2><p>This is the missing part of the experiment: the same engine must make different decisions at different depths without manually styling each box.</p></div></div>
-<div class="formula" id="treeOutput"></div>
+<div class="heading"><div class="num">06</div><div><h2>Evidence gate</h2><p>Nothing moves into the production token engine until the tree survives color, role, nesting and perceptual tests.</p></div></div>
+<div class="gates"><div class="gate"><b>MATHEMATICAL</b><p>Deterministic, bounded and locally evaluated.</p></div><div class="gate"><b>PERCEPTUAL</b><p>Hierarchy reads without border noise.</p></div><div class="gate"><b>NESTING</b><p>Parent/child depth does not accumulate decoration blindly.</p></div><div class="gate"><b>IMPLEMENTATION</b><p>Pure functions and regression cases can be extracted.</p></div></div>
 </section>
-
-<section>
-<div class="heading"><div class="num">06</div><div><h2>Evidence gate</h2><p>No threshold becomes a locked UI99 token until it survives multiple contexts and visual review.</p></div></div>
-<div class="gates">
-<div class="gate"><b>MATHEMATICAL</b><p>Deterministic, bounded, valid for the tested color space.</p></div>
-<div class="gate"><b>PERCEPTUAL</b><p>Hierarchy remains legible without unnecessary visual noise.</p></div>
-<div class="gate"><b>CONTEXT</b><p>Card, panel, control, floating and modal cases remain coherent.</p></div>
-<div class="gate"><b>IMPLEMENTATION</b><p>Can become reusable functions plus automated regression tests.</p></div>
-</div>
-</section>
-
-<footer><span>SEPARATION FIRST · DECORATION NEVER</span><span>02-BORDER-SHADOW · NO PRODUCTION TOKENS</span></footer>
+<footer class="label">SEPARATION FIRST · DECORATION NEVER · 02-NESTED-COMPOSITION</footer>
 </main>
 
 <script>
 const $=s=>document.querySelector(s);
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
-function rgb(hex){const h=hex.trim().replace('#','');if(!/^[0-9a-fA-F]{6}$/.test(h))return null;return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255)}
+function rgb(h){const x=h.trim().replace('#','');if(!/^[0-9a-fA-F]{6}$/.test(x))return null;return [0,2,4].map(i=>parseInt(x.slice(i,i+2),16)/255)}
 function lin(c){return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)}
-function lum(hex){const c=rgb(hex);if(!c)return null;return .2126*lin(c[0])+.7152*lin(c[1])+.0722*lin(c[2])}
-function cr(a,b){const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
-function mixHex(a,b,t){const A=rgb(a),B=rgb(b);return '#'+A.map((v,i)=>Math.round((v+(B[i]-v)*t)*255).toString(16).padStart(2,'0')).join('')}
-const roles={
- canvas:{edge:0,depth:0,size:1},
- card:{edge:.42,depth:.55,size:1.15},
- panel:{edge:.34,depth:.25,size:.85},
+function lum(h){const c=rgb(h);return c?.length===3?.2126*lin(c[0])+.7152*lin(c[1])+.0722*lin(c[2]):null}
+function mix(a,b,t){const A=rgb(a),B=rgb(b);return '#'+A.map((v,i)=>Math.round((v+(B[i]-v)*t)*255).toString(16).padStart(2,'0'))}
+const role={
+ card:{edge:.40,depth:.55,size:1.15},
+ panel:{edge:.34,depth:.24,size:.85},
  control:{edge:.62,depth:.08,size:.55},
- floating:{edge:.25,depth:1,size:1.1},
- modal:{edge:.18,depth:1.15,size:1.25}
+ floating:{edge:.20,depth:1,size:1.1}
 };
-function evaluate(node,parent,globalDepth){
- const lc=lum(parent.surface),ls=lum(node.surface),delta=Math.abs(ls-lc);
- const sep=delta/(ls+lc+.000001);
- const fillClarity=clamp(sep/0.62);
- const edgeExposure=clamp((node.edgeExposure??1)*(1-(globalDepth*.10)));
- const interactionBoost=node.interactive?1.22:1;
- const depthExposure=node.elevation>0?1:0;
- const depthDamping=1/(1+globalDepth*.18);
- const edgeNeed=clamp(roles[node.role].edge*roles[node.role].size*edgeExposure*(1-fillClarity)*interactionBoost*depthDamping);
- const depthNeed=clamp(roles[node.role].depth*(node.elevation/6)*(1-fillClarity)*depthExposure);
- const borderOn=edgeNeed>.34;
- const shadowOn=depthNeed>.18;
- const both=borderOn&&shadowOn&&edgeNeed>.48;
- const mode=both?'BORDER + SHADOW':borderOn?'BORDER ONLY':shadowOn?'SHADOW ONLY':'SURFACE ONLY';
- const bw=borderOn?Math.min(1.1,.45+.75*edgeNeed):0;
- const border=mixHex(node.surface,ls>lc?parent.surface:'#ffffff',ls>lc?.55:.10);
+function evaluate(n,parent,depth){
+ const pc=lum(parent.surface),nc=lum(n.surface);
+ if(pc==null||nc==null)return {...n,mode:'INVALID'};
+ const d=Math.abs(nc-pc),sep=d/(nc+pc+.000001);
+ const fillClarity=clamp(sep/.62);
+ const r=role[n.role];
+ const exposure=clamp((n.edgeExposure??1)*(1-depth*.10));
+ const interaction=n.interactive?1.20:1;
+ const edgeNeed=clamp(r.edge*r.size*exposure*(1-fillClarity)*interaction/(1+depth*.18));
+ const depthNeed=clamp(r.depth*(n.elevation/6)*(1-fillClarity));
+ const border=edgeNeed>.34;
+ const shadow=depthNeed>.18;
+ const both=border&&shadow&&edgeNeed>.48;
+ const mode=both?'BORDER + SHADOW':border?'BORDER ONLY':shadow?'SHADOW ONLY':'SURFACE ONLY';
+ const width=border?Math.min(1.05,.45+.72*edgeNeed):0;
+ const borderColor=nc>pc?mix(n.surface,parent.surface,.58):mix(n.surface,'#ffffff',.10);
  const alpha=.045+.18*depthNeed;
- const blur=7+30*(node.elevation/6)*(0.75+.25*depthNeed);
- const y=1.5+14*(node.elevation/6);
- return {...node,parentSurface:parent.surface,delta,sep,fillClarity,edgeNeed,depthNeed,borderOn,shadowOn,both,mode,bw,border,shadow:`0 ${y.toFixed(1)}px ${blur.toFixed(1)}px -${Math.max(1,blur*.38).toFixed(1)}px rgba(0,0,0,${alpha.toFixed(3)})`,globalDepth};
+ const blur=7+30*(n.elevation/6)*(.75+.25*depthNeed);
+ const y=1.5+14*(n.elevation/6);
+ return {...n,parentSurface:parent.surface,depth,delta:d,sep,fillClarity,edgeNeed,depthNeed,border,shadow,mode,width,borderColor,shadowCss:`0 ${y.toFixed(1)}px ${blur.toFixed(1)}px -${Math.max(1,blur*.38).toFixed(1)}px rgba(0,0,0,${alpha.toFixed(3)})`};
 }
-function readTree(){
- return {
-  surface:$('#context').value.toUpperCase(),role:'canvas',elevation:0,
-  children:[{
-   id:'card',label:'Card',surface:$('#surface').value.toUpperCase(),role:'card',elevation:+$('#cardElevation').value,edgeExposure:1,
-   children:[{
-    id:'panel',label:'Nested Panel',surface:$('#nestedSurface').value.toUpperCase(),role:'panel',elevation:+$('#panelElevation').value,edgeExposure:.9,
-    children:[{
-     id:'control',label:'Control',surface:$('#controlSurface').value.toUpperCase(),role:'control',elevation:+$('#controlElevation').value,interactive:$('#interactive').value==='yes',edgeExposure:1.15,children:[]
-    }]
-   },{
-    id:'sibling',label:'Second Panel',surface:$('#surface').value.toUpperCase(),role:'panel',elevation:0,edgeExposure:.55,children:[]
-   }]
-  },{
-   id:'floating',label:'Floating Surface',surface:$('#nestedSurface').value.toUpperCase(),role:'floating',elevation:3,edgeExposure:.6,children:[]
-  }]
- };
+function tree(){
+ const context=$('#context').value.toUpperCase();
+ return {id:'canvas',label:'Canvas',role:'canvas',surface:context,elevation:0,children:[{
+  id:'card',label:'Card',role:'card',surface:$('#surface').value.toUpperCase(),elevation:+$('#cardElevation').value,edgeExposure:1,children:[
+   {id:'panel',label:'Nested Panel',role:'panel',surface:$('#nestedSurface').value.toUpperCase(),elevation:+$('#panelElevation').value,edgeExposure:.9,children:[
+    {id:'control',label:'Control',role:'control',surface:$('#controlSurface').value.toUpperCase(),elevation:+$('#controlElevation').value,edgeExposure:1.15,interactive:$('#interactive').value==='yes',children:[]}
+   ]},
+   {id:'sibling',label:'Sibling Panel',role:'panel',surface:$('#surface').value.toUpperCase(),elevation:0,edgeExposure:.55,children:[]}
+  ]},{
+   id:'floating',label:'Floating Surface',role:'floating',surface:$('#nestedSurface').value.toUpperCase(),elevation:3,edgeExposure:.6,children:[]
+ }]};
 }
-function flatten(tree,parent=tree,depth=0,out=[]){
- for(const n of tree.children||[]){const r=evaluate(n,parent,depth+1);out.push(r);flatten(n,n,depth+1,out)}
- return out;
+function flatten(parent,depth=0,out=[]){for(const n of parent.children||[]){const r=evaluate(n,parent,depth+1);out.push(r);flatten(n,depth+1,out)}return out}
+function styleNode(r,cls){
+ return `background:${r.surface};border:${r.border?r.width+'px solid '+r.borderColor:'none'};box-shadow:${r.shadow?r.shadowCss:'none'}`;
 }
 function render(){
- const tree=readTree(), nodes=flatten(tree);
- const card=nodes.find(n=>n.id==='card')||nodes[0];
- const lc=lum(tree.surface),ls=lum(card.surface),sep=Math.abs(ls-lc)/(ls+lc+.000001);
- $('#cardElevOut').textContent=tree.children[0].elevation;
- $('#panelElevOut').textContent=tree.children[0].children[0].elevation;
- $('#controlElevOut').textContent=tree.children[0].children[0].children[0].elevation;
+ const t=tree(),nodes=flatten(t),card=nodes.find(x=>x.id==='card'),panel=nodes.find(x=>x.id==='panel'),control=nodes.find(x=>x.id==='control'),sib=nodes.find(x=>x.id==='sibling'),floating=nodes.find(x=>x.id==='floating');
+ $('#cardElevOut').textContent=t.children[0].elevation;$('#panelElevOut').textContent=t.children[0].children[0].elevation;$('#controlElevOut').textContent=t.children[0].children[0].children[0].elevation;
  $('#metrics').innerHTML=[
- ['Nodes evaluated',nodes.length,'each node uses its actual parent'],
- ['Card fill separation',sep.toFixed(3),'local canvas ↔ card'],
- ['Border decisions',nodes.filter(n=>n.borderOn).length+'/'+nodes.length,'not globally enabled'],
- ['Shadow decisions',nodes.filter(n=>n.shadowOn).length+'/'+nodes.length,'driven by local depth']
- ].map(m=>`<div class="metric"><span>${m[0]}</span><b>${m[1]}</b><span>${m[2]}</span></div>`).join('');
- $('#verdict').innerHTML=`<strong>LOCAL DECISIONS · ${nodes.map(n=>n.label+': '+n.mode).join(' · ')}</strong><small>Changing a parent surface changes its direct child; changing a child does not rewrite the entire system. This is the intended hierarchical behavior.</small>`;
- $('#sceneGrid').innerHTML=nodes.map(n=>`<div class="scene"><div class="scene-title">${n.label.toUpperCase()} · DEPTH ${n.globalDepth}</div><div class="panel auto" style="background:${n.surface};border:${n.borderOn?n.bw+'px solid '+n.border:'none'};box-shadow:${n.shadowOn?n.shadow:'none'}"><b>${n.label}</b><span>${n.mode.toLowerCase()} · parent ${n.parentSurface}</span></div></div>`).join('');
- $('#params').innerHTML=nodes.map(n=>`<tr><td>${n.label}</td><td><code>${n.mode} · edge ${n.edgeNeed.toFixed(3)} · depth ${n.depthNeed.toFixed(3)}</code></td></tr>`).join('');
- $('#formula').innerHTML='<b>LIVE HIERARCHICAL DERIVATION</b><br><br>'+nodes.map(n=>`${n.label}: Separation ${n.sep.toFixed(3)} → Edge ${n.edgeNeed.toFixed(3)} → Depth ${n.depthNeed.toFixed(3)} → <b>${n.mode}</b>`).join('<br>');
- $('#treeOutput').innerHTML='<b>CANVAS</b><br>└─ <b>Card</b> → '+card.mode+'<br>　 ├─ <b>Nested Panel</b> → '+nodes.find(n=>n.id==='panel').mode+'<br>　 │　└─ <b>Control</b> → '+nodes.find(n=>n.id==='control').mode+'<br>　 └─ <b>Second Panel</b> → '+nodes.find(n=>n.id==='sibling').mode+'<br>└─ <b>Floating Surface</b> → '+nodes.find(n=>n.id==='floating').mode);
+ ['Nodes evaluated',nodes.length,'local parent/child decisions'],
+ ['Card',card.mode,'Canvas → Card'],
+ ['Nested Panel',panel.mode,'Card → Panel'],
+ ['Control',control.mode,'Panel → Control']
+ ].map(x=>`<div class="metric"><span>${x[0]}</span><b>${x[1]}</b><span>${x[2]}</span></div>`).join('');
+ $('#verdict').innerHTML=`<strong>${nodes.map(x=>x.label+': '+x.mode).join(' · ')}</strong><small>The same role can produce a different result when its parent surface, depth, separation or interaction state changes.</small>`;
+ $('#treePreview').innerHTML=`
+ <div class="tree-canvas">
+  <div class="node-meta">DEPTH 0 · CANVAS</div>
+  <div class="tree-card node-auto" style="${styleNode(card)}">
+   <div class="node-meta">DEPTH 1 · CARD · ${card.mode}</div><div class="node-title">Main Card</div><div class="node-info">parent: ${card.parentSurface} · separation: ${card.sep.toFixed(3)}</div>
+   <div class="tree-row">
+    <div class="tree-panel node-auto" style="${styleNode(panel)}">
+     <div class="node-meta">DEPTH 2 · NESTED PANEL · ${panel.mode}</div><div class="node-title">Nested Panel</div><div class="node-info">parent: ${panel.parentSurface} · separation: ${panel.sep.toFixed(3)}</div>
+     <div class="tree-control node-auto" style="${styleNode(control)}">
+      <div class="node-meta">DEPTH 3 · CONTROL · ${control.mode}</div><div class="node-title">Interactive Control</div><div class="node-info">parent: ${control.parentSurface} · separation: ${control.sep.toFixed(3)}</div>
+     </div>
+    </div>
+    <div class="tree-sibling node-auto" style="${styleNode(sib)}">
+     <div class="node-meta">DEPTH 2 · SIBLING PANEL · ${sib.mode}</div><div class="node-title">Second Panel</div><div class="node-info">same surface as Card · lower edge exposure</div>
+    </div>
+   </div>
+  </div>
+  <div class="tree-floating node-auto" style="${styleNode(floating)}">
+   <div class="node-meta">DEPTH 1 · FLOATING · ${floating.mode}</div><div class="node-title">Floating Surface</div><div class="node-info">Canvas → Floating · elevation 3</div>
+  </div>
+ </div>`;
+ $('#params').innerHTML=nodes.map(n=>`<tr><td>${n.label}</td><td>${n.mode}<br><small>ΔL ${n.delta.toFixed(6)} · sep ${n.sep.toFixed(3)} · edge ${n.edgeNeed.toFixed(3)} · depth ${n.depthNeed.toFixed(3)}</small></td></tr>`).join('');
+ $('#formula').innerHTML='<b>LOCAL DERIVATION</b><br><br>'+nodes.map(n=>`${n.label}<br>parent = ${n.parentSurface}<br>surface = ${n.surface}<br>separation = ${n.sep.toFixed(3)}<br>edgeNeed = ${n.edgeNeed.toFixed(3)} → ${n.border?'ON':'OFF'}<br>depthNeed = ${n.depthNeed.toFixed(3)} → ${n.shadow?'ON':'OFF'}<br><b>decision = ${n.mode}</b>`).join('<br>────────────<br>');
 }
-['context','surface','nestedSurface','controlSurface','cardElevation','panelElevation','controlElevation','interactive'].forEach(id=>$( '#'+id).addEventListener('input',render));
+['context','surface','nestedSurface','controlSurface','cardElevation','panelElevation','controlElevation','interactive'].forEach(id=>$('#'+id).addEventListener('input',render));
 render();
 </script>
 </body>
