@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UI99 — 02 Border × Shadow Decision Lab</title>
+<style>
+:root{--canvas:#030406;--surface:#060709;--context:#030406;--border:#060709;--shadow-alpha:.18;--shadow-blur:28px;--shadow-y:10px;--shadow-spread:-10px;--ink:#eef0f3;--muted:#8b929d;--line:#171b21}
+*{box-sizing:border-box}html,body{margin:0;background:var(--canvas);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
+body{min-width:320px}.shell{width:min(1320px,calc(100% - 32px));margin:auto;padding:34px 0 60px}
+header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.eyebrow,.tag{font:11px ui-monospace,monospace;letter-spacing:.11em;text-transform:uppercase;color:#858c97}
+h1{font-size:clamp(30px,5vw,54px);line-height:1;letter-spacing:-.045em;margin:8px 0 12px}h2{font-size:19px;margin:0 0 7px}h3{font-size:14px;margin:0 0 8px}p{color:var(--muted);line-height:1.55}.lede{max-width:850px;margin:0}.status{font:11px ui-monospace,monospace;color:#858c97;white-space:nowrap}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#777f89;margin-right:7px}
+section{padding:32px 0;border-bottom:1px solid #11151a}.heading{display:flex;gap:14px;margin-bottom:18px}.num{font:12px ui-monospace,monospace;color:#666e78;padding-top:3px}
+.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.control{padding:13px;border:1px solid var(--line);border-radius:12px;background:#07090c}.control label{display:block;font:11px ui-monospace,monospace;color:#8c939d;margin-bottom:8px}.control input,.control select{width:100%;height:36px;border:1px solid #242a32;border-radius:8px;background:#050608;color:#fff;padding:0 9px;font:12px ui-monospace,monospace}.control input[type=range]{padding:0;accent-color:#c7ccd4}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.card{padding:16px;border:1px solid var(--line);border-radius:14px;background:#07090c}
+.decision{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{padding:14px;border:1px solid var(--line);border-radius:11px;background:#080a0d}.metric span{display:block;font-size:11px;color:var(--muted)}.metric b{display:block;margin-top:5px;font:18px ui-monospace,monospace}
+.verdict{margin-top:12px;padding:16px;border-radius:12px;border:1px solid #252a31;background:#080a0d}.verdict strong{font:14px ui-monospace,monospace}.verdict small{display:block;color:var(--muted);margin-top:7px;line-height:1.5}
+.scene-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.scene{padding:14px;border-radius:15px;background:var(--context);min-height:250px}.scene-title{font:10px ui-monospace,monospace;color:#7f8791;margin-bottom:10px}.panel{height:180px;padding:18px;border-radius:18px;background:var(--surface);display:flex;flex-direction:column;justify-content:flex-end;transition:.2s ease}.panel b{font-size:14px}.panel span{font-size:11px;color:#7f8791;margin-top:5px}
+.panel.auto{border:var(--border-width,0px) solid var(--border);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:#9aa1ab;font-weight:500}td{color:#c7ccd4}code{font-family:ui-monospace,monospace}
+.formula{padding:15px;border:1px dashed #30353e;border-radius:11px;color:#c8cdd5;font:13px ui-monospace,monospace;line-height:1.7}.formula small{font:11px ui-monospace,monospace;color:#777f89}
+.gates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.gate{padding:14px;border:1px solid var(--line);border-radius:12px}.gate b{font:11px ui-monospace,monospace}.gate p{font-size:11px;margin:7px 0 0}
+footer{padding-top:25px;font:11px ui-monospace,monospace;color:#737b86;display:flex;justify-content:space-between;gap:16px}
+@media(max-width:900px){.controls,.decision,.gates{grid-template-columns:1fr 1fr}.scene-grid,.grid{grid-template-columns:1fr}}
+@media(max-width:520px){.shell{width:min(100% - 20px,1320px)}.controls,.decision,.gates,.scene-grid{grid-template-columns:1fr}footer{flex-direction:column}.status{display:none}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header>
+<div><div class="eyebrow">UI99 / DESIGN LAB / SPRINT 02</div>
+<h1>Border × Shadow Decision Engine</h1>
+<p class="lede">A controlled experiment for deciding whether a component needs no separation, a border, a shadow, or both. The engine derives separation from the actual context/surface luminance relationship, then adjusts for component role and requested depth. Thresholds are experimental and intentionally visible.</p></div>
+<div class="status"><span class="dot"></span>EXPERIMENTAL · NOT LOCKED</div>
+</header>
+
+<section>
+<div class="heading"><div class="num">01</div><div><h2>Controlled variables</h2><p>The foundation is B: Canvas → Surface. Change values to test whether the decision survives beyond one color pair.</p></div></div>
+<div class="controls">
+<div class="control"><label>Context / parent</label><input id="context" value="#030406" maxlength="7"></div>
+<div class="control"><label>Component surface</label><input id="surface" value="#060709" maxlength="7"></div>
+<div class="control"><label>Role</label><select id="role"><option value="canvas">Canvas / base</option><option value="card" selected>Card / surface</option><option value="panel">Nested panel</option><option value="control">Control</option><option value="floating">Floating surface</option><option value="modal">Modal</option></select></div>
+<div class="control"><label>Elevation / depth <span id="elevOut">2</span></label><input id="elevation" type="range" min="0" max="6" step=".5" value="2"></div>
+</div>
+</section>
+
+<section>
+<div class="heading"><div class="num">02</div><div><h2>Decision engine</h2><p>Border and shadow are separate channels. Border answers “is the edge clear?” Shadow answers “is there depth?”. The engine avoids using both unless the current separation needs both signals.</p></div></div>
+<div class="decision" id="metrics"></div>
+<div class="verdict" id="verdict"></div>
+</section>
+
+<section>
+<div class="heading"><div class="num">03</div><div><h2>Live rendering</h2><p>Identical geometry. Only the engine output changes. Compare the automatic result against the three control cases.</p></div></div>
+<div class="scene-grid">
+<div class="scene"><div class="scene-title">AUTO · ENGINE DECISION</div><div class="panel auto" id="autoPanel"><b>Component</b><span id="autoText">calculating…</span></div></div>
+<div class="scene"><div class="scene-title">CONTROL · BORDER ONLY</div><div class="panel" id="borderOnly"><b>Component</b><span>edge separation only</span></div></div>
+<div class="scene"><div class="scene-title">CONTROL · SHADOW ONLY</div><div class="panel" id="shadowOnly"><b>Component</b><span>depth separation only</span></div></div>
+</div>
+</section>
+
+<section>
+<div class="heading"><div class="num">04</div><div><h2>Derived parameters</h2><p>These are outputs of the current experimental model, not production tokens.</p></div></div>
+<div class="grid">
+<div class="card"><table><tbody id="params"></tbody></table></div>
+<div class="card"><div class="formula" id="formula"></div></div>
+</div>
+</section>
+
+<section>
+<div class="heading"><div class="num">05</div><div><h2>Current model</h2><p>Keep the equations explicit so a failed visual test can tell us exactly which assumption needs revision.</p></div></div>
+<div class="formula">
+ΔL = |L<sub>surface</sub> − L<sub>context</sub>|<br>
+Separation = ΔL / (L<sub>surface</sub> + L<sub>context</sub> + ε)<br><br>
+BorderNeed = edgeNeed × roleFactor × (1 − Separation)<br>
+ShadowNeed = depthNeed × elevationFactor × (1 − Separation × depthSuppression)<br><br>
+BorderStrength = clamp(BorderNeed, 0, 1)<br>
+ShadowStrength = clamp(ShadowNeed, 0, 1)<br><br>
+<small>Interpretation: when fill already separates strongly, additional decoration is suppressed. As depth increases, shadow becomes more useful; border remains an edge-clarity mechanism rather than an elevation mechanism.</small>
+</div>
+</section>
+
+<section>
+<div class="heading"><div class="num">06</div><div><h2>Evidence gate</h2><p>No threshold becomes a locked UI99 token until it survives multiple contexts and visual review.</p></div></div>
+<div class="gates">
+<div class="gate"><b>MATHEMATICAL</b><p>Deterministic, bounded, valid for the tested color space.</p></div>
+<div class="gate"><b>PERCEPTUAL</b><p>Hierarchy remains legible without unnecessary visual noise.</p></div>
+<div class="gate"><b>CONTEXT</b><p>Card, panel, control, floating and modal cases remain coherent.</p></div>
+<div class="gate"><b>IMPLEMENTATION</b><p>Can become reusable functions plus automated regression tests.</p></div>
+</div>
+</section>
+
+<footer><span>SEPARATION FIRST · DECORATION NEVER</span><span>02-BORDER-SHADOW · NO PRODUCTION TOKENS</span></footer>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
+function rgb(hex){const h=hex.trim().replace('#','');if(!/^[0-9a-fA-F]{6}$/.test(h))return null;return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255)}
+function lin(c){return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)}
+function lum(hex){const c=rgb(hex);if(!c)return null;return .2126*lin(c[0])+.7152*lin(c[1])+.0722*lin(c[2])}
+function cr(a,b){const x=lum(a),y=lum(b);if(x==null||y==null)return null;return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+function mixHex(a,b,t){const A=rgb(a),B=rgb(b);if(!A||!B)return '#777777';return '#'+A.map((v,i)=>Math.round((v+(B[i]-v)*t)*255).toString(16).padStart(2,'0')).join('')}
+function roleFactor(role){return {canvas:.15,card:.9,panel:1.05,control:1.2,floating:.8,modal:.7}[role]}
+function edgeNeed(role){return {canvas:.1,card:.72,panel:.82,control:1.0,floating:.52,modal:.45}[role]}
+function depthNeed(role){return {canvas:0,card:.5,panel:.35,control:.18,floating:1.0,modal:1.12}[role]}
+function derive(){
+ const C=$('#context').value.toUpperCase(), S=$('#surface').value.toUpperCase(), role=$('#role').value, e=+$('#elevation').value;
+ const lc=lum(C),ls=lum(S);
+ if(lc==null||ls==null){$('#verdict').innerHTML='<strong>INVALID INPUT</strong><small>Use 6-digit hexadecimal colors.</small>';return}
+ const delta=Math.abs(ls-lc);
+ const separation=delta/(ls+lc+.000001);
+ const contrast=cr(C,S);
+ const edge=clamp(edgeNeed(role)*roleFactor(role)*(1-separation));
+ const depth=clamp(depthNeed(role)*(e/6+.18)*(1-separation*.72));
+ const borderOn=edge>=.28;
+ const shadowOn=depth>=.28 && e>0;
+ const both=borderOn&&shadowOn&&!(separation>.48);
+ const finalBorder=both||(!shadowOn&&borderOn);
+ const finalShadow=shadowOn;
+ const bw=finalBorder?Math.min(1.5,.5+1.15*edge):0;
+ const borderTarget=ls>lc?mixHex(S,C,.34):mixHex(S,'#ffffff',.22);
+ const alpha=.06+.20*depth;
+ const blur=8+32*(e/6)*(0.7+.3*depth);
+ const y=2+16*(e/6);
+ const spread=-Math.max(1,blur*.42);
+ const shadow=`0 ${y.toFixed(1)}px ${blur.toFixed(1)}px ${spread.toFixed(1)}px rgba(0,0,0,${alpha.toFixed(3)})`;
+ let mode=finalBorder&&finalShadow?'BORDER + SHADOW':finalBorder?'BORDER ONLY':finalShadow?'SHADOW ONLY':'NONE';
+ if(role==='canvas')mode='NONE';
+ $('#elevOut').textContent=e;
+ $('#metrics').innerHTML=[
+ ['ΔL',delta.toFixed(6),'absolute luminance distance'],
+ ['Relative separation',separation.toFixed(3),'normalized distance'],
+ ['Contrast',contrast.toFixed(3)+':1','context ↔ surface'],
+ ['Decision',mode,'minimum effective separation']
+ ].map(m=>`<div class="metric"><span>${m[0]}</span><b>${m[1]}</b><span>${m[2]}</span></div>`).join('');
+ $('#verdict').innerHTML=`<strong>${mode}</strong><small>Role: ${role} · Border score ${edge.toFixed(3)} · Shadow score ${depth.toFixed(3)}. The engine chooses the smallest combination that communicates the current edge/depth requirement under this experimental model.</small>`;
+ $('#params').innerHTML=[
+ ['Border',''+(finalBorder?'ON':'OFF')],
+ ['Border width',bw.toFixed(2)+'px'],
+ ['Border target',borderTarget],
+ ['Shadow',''+(finalShadow?'ON':'OFF')],
+ ['Shadow alpha',alpha.toFixed(3)],
+ ['Shadow blur',blur.toFixed(1)+'px'],
+ ['Shadow Y',y.toFixed(1)+'px'],
+ ['Shadow spread',spread.toFixed(1)+'px']
+ ].map(r=>`<tr><td>${r[0]}</td><td><code>${r[1]}</code></td></tr>`).join('');
+ $('#formula').innerHTML=`<b>LIVE DERIVATION</b><br><br>
+ΔL = ${delta.toFixed(6)}<br>
+Separation = ${separation.toFixed(3)}<br><br>
+BorderNeed = ${edge.toFixed(3)} → ${finalBorder?'ON':'OFF'}<br>
+ShadowNeed = ${depth.toFixed(3)} → ${finalShadow?'ON':'OFF'}<br><br>
+${mode}<br><br><small>Border target follows the surface/context polarity. Shadow is black, because its job is to remove reflected ambient light around an elevated object; this assumption must be validated visually before locking.</small>`;
+ document.documentElement.style.setProperty('--canvas',C);
+ document.documentElement.style.setProperty('--context',C);
+ document.documentElement.style.setProperty('--surface',S);
+ document.documentElement.style.setProperty('--border',borderTarget);
+ $('#autoPanel').style.border=finalBorder?bw+'px solid '+borderTarget:'none';
+ $('#autoPanel').style.boxShadow=finalShadow?shadow:'none';
+ $('#autoText').textContent=mode.toLowerCase()+' · derived';
+ $('#borderOnly').style.border='.9px solid '+borderTarget;
+ $('#shadowOnly').style.boxShadow=shadow;
+}
+['context','surface','role','elevation'].forEach(id=>$('#'+id).addEventListener('input',derive));
+['role'].forEach(id=>$('#'+id).addEventListener('change',derive));
+derive();
+</script>
+</body>
+</html>
