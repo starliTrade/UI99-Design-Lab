@@ -30,35 +30,21 @@ footer{padding-top:25px;font:11px ui-monospace,monospace;color:#737b86;display:f
 <main class="shell">
 <header>
 <div><div class="eyebrow">UI99 / DESIGN LAB / SPRINT 02</div>
-<h1>Border × Shadow Decision Engine</h1>
-<p class="lede">A controlled experiment for deciding whether a component needs no separation, a border, a shadow, or both. The engine derives separation from the actual context/surface luminance relationship, then adjusts for component role and requested depth. Thresholds are experimental and intentionally visible.</p></div>
+<h1>Nested Composition Decision Engine</h1>
+<p class="lede">A composition experiment: every component is evaluated against its actual parent surface, nesting depth, role, size and elevation. The engine decides whether fill separation alone is enough, whether edge reinforcement is needed, and whether depth should be communicated. The goal is not to decorate cards; it is to derive a coherent visual hierarchy across a real component tree.</p></div>
 <div class="status"><span class="dot"></span>EXPERIMENTAL · NOT LOCKED</div>
 </header>
 
 <section>
-<div class="heading"><div class="num">01</div><div><h2>Controlled variables</h2><p>The foundation is B: Canvas → Surface. Change values to test whether the decision survives beyond one color pair.</p></div></div>
-<div class="controls">
-<div class="control"><label>Context / parent</label><input id="context" value="#030406" maxlength="7"></div>
-<div class="control"><label>Component surface</label><input id="surface" value="#060709" maxlength="7"></div>
-<div class="control"><label>Role</label><select id="role"><option value="canvas">Canvas / base</option><option value="card" selected>Card / surface</option><option value="panel">Nested panel</option><option value="control">Control</option><option value="floating">Floating surface</option><option value="modal">Modal</option></select></div>
-<div class="control"><label>Elevation / depth <span id="elevOut">2</span></label><input id="elevation" type="range" min="0" max="6" step=".5" value="2"></div>
-</div>
-</section>
-
-<section>
-<div class="heading"><div class="num">02</div><div><h2>Decision engine</h2><p>Border and shadow are separate channels. Border answers “is the edge clear?” Shadow answers “is there depth?”. The engine avoids using both unless the current separation needs both signals.</p></div></div>
+<div class="heading"><div class="num">01</div><div><h2>Composition inputs</h2><p>The important input is no longer an isolated pair. Each node is evaluated against its real parent and its position inside the hierarchy.</p></div></div>
+<div class="controls"><div><h2>Decision engine</h2><p>Border and shadow are separate channels. Border answers “is the edge clear?” Shadow answers “is there depth?”. The engine avoids using both unless the current separation needs both signals.</p></div></div>
 <div class="decision" id="metrics"></div>
 <div class="verdict" id="verdict"></div>
 </section>
 
 <section>
 <div class="heading"><div class="num">03</div><div><h2>Live rendering</h2><p>Identical geometry. Only the engine output changes. Compare the automatic result against the three control cases.</p></div></div>
-<div class="scene-grid">
-<div class="scene"><div class="scene-title">AUTO · ENGINE DECISION</div><div class="panel auto" id="autoPanel"><b>Component</b><span id="autoText">calculating…</span></div></div>
-<div class="scene"><div class="scene-title">CONTROL · BORDER ONLY</div><div class="panel" id="borderOnly"><b>Component</b><span>edge separation only</span></div></div>
-<div class="scene"><div class="scene-title">CONTROL · SHADOW ONLY</div><div class="panel" id="shadowOnly"><b>Component</b><span>depth separation only</span></div></div>
-<div class="scene"><div class="scene-title">CONTROL · SURFACE ONLY</div><div class="panel" id="surfaceOnly"><b>Component</b><span>fill separation only</span></div></div>
-</div>
+<div class="scene-grid" id="sceneGrid"></div>
 </section>
 
 <section>
@@ -70,16 +56,8 @@ footer{padding-top:25px;font:11px ui-monospace,monospace;color:#737b86;display:f
 </section>
 
 <section>
-<div class="heading"><div class="num">05</div><div><h2>Current model</h2><p>Keep the equations explicit so a failed visual test can tell us exactly which assumption needs revision.</p></div></div>
-<div class="formula">
-ΔL = |L<sub>surface</sub> − L<sub>context</sub>|<br>
-Separation = ΔL / (L<sub>surface</sub> + L<sub>context</sub> + ε)<br><br>
-BorderNeed = edgeNeed × roleFactor × (1 − Separation) × (1 − 0.55 × Separation)<br>
-ShadowNeed = depthNeed × elevationFactor × (1 − Separation × depthSuppression)<br><br>
-BorderStrength = clamp(BorderNeed, 0, 1)<br>Border activates only above the experimental edge threshold<br>
-ShadowStrength = clamp(ShadowNeed, 0, 1)<br><br>
-<small>Interpretation: when fill already separates strongly, additional decoration is suppressed. As depth increases, shadow becomes more useful; border remains an edge-clarity mechanism rather than an elevation mechanism.</small>
-</div>
+<div class="heading"><div class="num">05</div><div><h2>Nested component tree</h2><p>This is the missing part of the experiment: the same engine must make different decisions at different depths without manually styling each box.</p></div></div>
+<div class="formula" id="treeOutput"></div>
 </section>
 
 <section>
@@ -101,72 +79,80 @@ const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
 function rgb(hex){const h=hex.trim().replace('#','');if(!/^[0-9a-fA-F]{6}$/.test(h))return null;return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255)}
 function lin(c){return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)}
 function lum(hex){const c=rgb(hex);if(!c)return null;return .2126*lin(c[0])+.7152*lin(c[1])+.0722*lin(c[2])}
-function cr(a,b){const x=lum(a),y=lum(b);if(x==null||y==null)return null;return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
-function mixHex(a,b,t){const A=rgb(a),B=rgb(b);if(!A||!B)return '#777777';return '#'+A.map((v,i)=>Math.round((v+(B[i]-v)*t)*255).toString(16).padStart(2,'0')).join('')}
-function roleFactor(role){return {canvas:.15,card:.9,panel:1.05,control:1.2,floating:.8,modal:.7}[role]}
-function edgeNeed(role){return {canvas:.1,card:.72,panel:.82,control:1.0,floating:.52,modal:.45}[role]}
-function depthNeed(role){return {canvas:0,card:.5,panel:.35,control:.18,floating:1.0,modal:1.12}[role]}
-function derive(){
- const C=$('#context').value.toUpperCase(), S=$('#surface').value.toUpperCase(), role=$('#role').value, e=+$('#elevation').value;
- const lc=lum(C),ls=lum(S);
- if(lc==null||ls==null){$('#verdict').innerHTML='<strong>INVALID INPUT</strong><small>Use 6-digit hexadecimal colors.</small>';return}
- const delta=Math.abs(ls-lc);
- const separation=delta/(ls+lc+.000001);
- const contrast=cr(C,S);
- const edge=clamp(edgeNeed(role)*roleFactor(role)*(1-separation)*(1-separation*.55));
- const depth=clamp(depthNeed(role)*(e/6+.18)*(1-separation*.72));
- const borderOn=edge>=.42;
- const shadowOn=depth>=.28 && e>0;
- const both=borderOn&&shadowOn&&!(separation>.48);
- const finalBorder=both||(!shadowOn&&borderOn);
- const finalShadow=shadowOn;
- const bw=finalBorder?Math.min(1.15,.45+.72*edge):0;
- const borderTarget=ls>lc?mixHex(S,C,.58):mixHex(S,'#ffffff',.12);
- const alpha=.06+.20*depth;
- const blur=8+32*(e/6)*(0.7+.3*depth);
- const y=2+16*(e/6);
- const spread=-Math.max(1,blur*.42);
- const shadow=`0 ${y.toFixed(1)}px ${blur.toFixed(1)}px ${spread.toFixed(1)}px rgba(0,0,0,${alpha.toFixed(3)})`;
- let mode=finalBorder&&finalShadow?'BORDER + SHADOW':finalBorder?'BORDER ONLY':finalShadow?'SHADOW ONLY':'NONE';
- if(role==='canvas')mode='NONE';
- $('#elevOut').textContent=e;
- $('#metrics').innerHTML=[
- ['ΔL',delta.toFixed(6),'absolute luminance distance'],
- ['Relative separation',separation.toFixed(3),'normalized distance'],
- ['Contrast',contrast.toFixed(3)+':1','context ↔ surface'],
- ['Decision',mode,'minimum effective separation']
- ].map(m=>`<div class="metric"><span>${m[0]}</span><b>${m[1]}</b><span>${m[2]}</span></div>`).join('');
- $('#verdict').innerHTML=`<strong>${mode}</strong><small>Role: ${role} · Border score ${edge.toFixed(3)} · Shadow score ${depth.toFixed(3)}. The engine chooses the smallest combination that communicates the current edge/depth requirement under this experimental model.</small>`;
- $('#params').innerHTML=[
- ['Border',''+(finalBorder?'ON':'OFF')],
- ['Border width',bw.toFixed(2)+'px'],
- ['Border target',borderTarget],
- ['Shadow',''+(finalShadow?'ON':'OFF')],
- ['Shadow alpha',alpha.toFixed(3)],
- ['Shadow blur',blur.toFixed(1)+'px'],
- ['Shadow Y',y.toFixed(1)+'px'],
- ['Shadow spread',spread.toFixed(1)+'px']
- ].map(r=>`<tr><td>${r[0]}</td><td><code>${r[1]}</code></td></tr>`).join('');
- $('#formula').innerHTML=`<b>LIVE DERIVATION</b><br><br>
-ΔL = ${delta.toFixed(6)}<br>
-Separation = ${separation.toFixed(3)}<br><br>
-BorderNeed = ${edge.toFixed(3)} → ${finalBorder?'ON':'OFF'}<br>
-ShadowNeed = ${depth.toFixed(3)} → ${finalShadow?'ON':'OFF'}<br><br>
-${mode}<br><br><small>Border target follows the surface/context polarity. Shadow is black, because its job is to remove reflected ambient light around an elevated object; this assumption must be validated visually before locking.</small>`;
- document.documentElement.style.setProperty('--canvas',C);
- document.documentElement.style.setProperty('--context',C);
- document.documentElement.style.setProperty('--surface',S);
- document.documentElement.style.setProperty('--border',borderTarget);
- $('#autoPanel').style.border=finalBorder?bw+'px solid '+borderTarget:'none';
- $('#autoPanel').style.boxShadow=finalShadow?shadow:'none';
- $('#autoText').textContent=mode.toLowerCase()+' · derived';
- $('#borderOnly').style.border='1px solid '+borderTarget;
- $('#shadowOnly').style.boxShadow=shadow;
- $('#surfaceOnly').style.border='none'; $('#surfaceOnly').style.boxShadow='none';
+function cr(a,b){const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+function mixHex(a,b,t){const A=rgb(a),B=rgb(b);return '#'+A.map((v,i)=>Math.round((v+(B[i]-v)*t)*255).toString(16).padStart(2,'0')).join('')}
+const roles={
+ canvas:{edge:0,depth:0,size:1},
+ card:{edge:.42,depth:.55,size:1.15},
+ panel:{edge:.34,depth:.25,size:.85},
+ control:{edge:.62,depth:.08,size:.55},
+ floating:{edge:.25,depth:1,size:1.1},
+ modal:{edge:.18,depth:1.15,size:1.25}
+};
+function evaluate(node,parent,globalDepth){
+ const lc=lum(parent.surface),ls=lum(node.surface),delta=Math.abs(ls-lc);
+ const sep=delta/(ls+lc+.000001);
+ const fillClarity=clamp(sep/0.62);
+ const edgeExposure=clamp((node.edgeExposure??1)*(1-(globalDepth*.10)));
+ const interactionBoost=node.interactive?1.22:1;
+ const depthExposure=node.elevation>0?1:0;
+ const depthDamping=1/(1+globalDepth*.18);
+ const edgeNeed=clamp(roles[node.role].edge*roles[node.role].size*edgeExposure*(1-fillClarity)*interactionBoost*depthDamping);
+ const depthNeed=clamp(roles[node.role].depth*(node.elevation/6)*(1-fillClarity)*depthExposure);
+ const borderOn=edgeNeed>.34;
+ const shadowOn=depthNeed>.18;
+ const both=borderOn&&shadowOn&&edgeNeed>.48;
+ const mode=both?'BORDER + SHADOW':borderOn?'BORDER ONLY':shadowOn?'SHADOW ONLY':'SURFACE ONLY';
+ const bw=borderOn?Math.min(1.1,.45+.75*edgeNeed):0;
+ const border=mixHex(node.surface,ls>lc?parent.surface:'#ffffff',ls>lc?.55:.10);
+ const alpha=.045+.18*depthNeed;
+ const blur=7+30*(node.elevation/6)*(0.75+.25*depthNeed);
+ const y=1.5+14*(node.elevation/6);
+ return {...node,parentSurface:parent.surface,delta,sep,fillClarity,edgeNeed,depthNeed,borderOn,shadowOn,both,mode,bw,border,shadow:`0 ${y.toFixed(1)}px ${blur.toFixed(1)}px -${Math.max(1,blur*.38).toFixed(1)}px rgba(0,0,0,${alpha.toFixed(3)})`,globalDepth};
 }
-['context','surface','role','elevation'].forEach(id=>$('#'+id).addEventListener('input',derive));
-['role'].forEach(id=>$('#'+id).addEventListener('change',derive));
-derive();
+function readTree(){
+ return {
+  surface:$('#context').value.toUpperCase(),role:'canvas',elevation:0,
+  children:[{
+   id:'card',label:'Card',surface:$('#surface').value.toUpperCase(),role:'card',elevation:+$('#cardElevation').value,edgeExposure:1,
+   children:[{
+    id:'panel',label:'Nested Panel',surface:$('#nestedSurface').value.toUpperCase(),role:'panel',elevation:+$('#panelElevation').value,edgeExposure:.9,
+    children:[{
+     id:'control',label:'Control',surface:$('#controlSurface').value.toUpperCase(),role:'control',elevation:+$('#controlElevation').value,interactive:$('#interactive').value==='yes',edgeExposure:1.15,children:[]
+    }]
+   },{
+    id:'sibling',label:'Second Panel',surface:$('#surface').value.toUpperCase(),role:'panel',elevation:0,edgeExposure:.55,children:[]
+   }]
+  },{
+   id:'floating',label:'Floating Surface',surface:$('#nestedSurface').value.toUpperCase(),role:'floating',elevation:3,edgeExposure:.6,children:[]
+  }]
+ };
+}
+function flatten(tree,parent=tree,depth=0,out=[]){
+ for(const n of tree.children||[]){const r=evaluate(n,parent,depth+1);out.push(r);flatten(n,n,depth+1,out)}
+ return out;
+}
+function render(){
+ const tree=readTree(), nodes=flatten(tree);
+ const card=nodes.find(n=>n.id==='card')||nodes[0];
+ const lc=lum(tree.surface),ls=lum(card.surface),sep=Math.abs(ls-lc)/(ls+lc+.000001);
+ $('#cardElevOut').textContent=tree.children[0].elevation;
+ $('#panelElevOut').textContent=tree.children[0].children[0].elevation;
+ $('#controlElevOut').textContent=tree.children[0].children[0].children[0].elevation;
+ $('#metrics').innerHTML=[
+ ['Nodes evaluated',nodes.length,'each node uses its actual parent'],
+ ['Card fill separation',sep.toFixed(3),'local canvas ↔ card'],
+ ['Border decisions',nodes.filter(n=>n.borderOn).length+'/'+nodes.length,'not globally enabled'],
+ ['Shadow decisions',nodes.filter(n=>n.shadowOn).length+'/'+nodes.length,'driven by local depth']
+ ].map(m=>`<div class="metric"><span>${m[0]}</span><b>${m[1]}</b><span>${m[2]}</span></div>`).join('');
+ $('#verdict').innerHTML=`<strong>LOCAL DECISIONS · ${nodes.map(n=>n.label+': '+n.mode).join(' · ')}</strong><small>Changing a parent surface changes its direct child; changing a child does not rewrite the entire system. This is the intended hierarchical behavior.</small>`;
+ $('#sceneGrid').innerHTML=nodes.map(n=>`<div class="scene"><div class="scene-title">${n.label.toUpperCase()} · DEPTH ${n.globalDepth}</div><div class="panel auto" style="background:${n.surface};border:${n.borderOn?n.bw+'px solid '+n.border:'none'};box-shadow:${n.shadowOn?n.shadow:'none'}"><b>${n.label}</b><span>${n.mode.toLowerCase()} · parent ${n.parentSurface}</span></div></div>`).join('');
+ $('#params').innerHTML=nodes.map(n=>`<tr><td>${n.label}</td><td><code>${n.mode} · edge ${n.edgeNeed.toFixed(3)} · depth ${n.depthNeed.toFixed(3)}</code></td></tr>`).join('');
+ $('#formula').innerHTML='<b>LIVE HIERARCHICAL DERIVATION</b><br><br>'+nodes.map(n=>`${n.label}: Separation ${n.sep.toFixed(3)} → Edge ${n.edgeNeed.toFixed(3)} → Depth ${n.depthNeed.toFixed(3)} → <b>${n.mode}</b>`).join('<br>');
+ $('#treeOutput').innerHTML='<b>CANVAS</b><br>└─ <b>Card</b> → '+card.mode+'<br>　 ├─ <b>Nested Panel</b> → '+nodes.find(n=>n.id==='panel').mode+'<br>　 │　└─ <b>Control</b> → '+nodes.find(n=>n.id==='control').mode+'<br>　 └─ <b>Second Panel</b> → '+nodes.find(n=>n.id==='sibling').mode+'<br>└─ <b>Floating Surface</b> → '+nodes.find(n=>n.id==='floating').mode);
+}
+['context','surface','nestedSurface','controlSurface','cardElevation','panelElevation','controlElevation','interactive'].forEach(id=>$( '#'+id).addEventListener('input',render));
+render();
 </script>
 </body>
 </html>
