@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UI99 Design Lab — Sprint 01</title>
+  <link rel="stylesheet" href="./css/lab.css" />
+</head>
+<body>
+  <main class="lab-shell">
+    <header class="lab-header">
+      <div>
+        <p class="eyebrow">UI99 / DESIGN LAB</p>
+        <h1>Sprint 01 — Surface & Separation</h1>
+        <p class="lede">An isolated experiment environment for measuring dark-surface hierarchy before any formula is locked into the master engine.</p>
+      </div>
+      <div class="status"><span class="status-dot"></span>EXPERIMENTAL · NOT LOCKED</div>
+    </header>
+
+    <section class="experiment">
+      <div class="section-heading"><span class="index">01</span><div><h2>Mother canvas</h2><p>Reference canvas: <code>#060709</code>. No production token is changed here.</p></div></div>
+      <div class="surface-grid">
+        <article class="surface-card"><span class="surface-label">Canvas</span><code>#060709</code><div class="swatch canvas-swatch"></div></article>
+        <article class="surface-card surface-test surface-a"><span class="surface-label">Test A · near-black</span><code>#030406</code><div class="swatch"></div></article>
+        <article class="surface-card surface-test surface-b"><span class="surface-label">Test B · +lightness</span><code>#08090B</code><div class="swatch"></div></article>
+        <article class="surface-card surface-test surface-c"><span class="surface-label">Test C · +lightness²</span><code>#0A0B0D</code><div class="swatch"></div></article>
+      </div>
+    </section>
+
+    <section class="experiment">
+      <div class="section-heading"><span class="index">02</span><div><h2>Separation matrix</h2><p>Same content, different separation mechanisms. Compare visually before deriving rules.</p></div></div>
+      <div class="matrix">
+        <article class="demo demo-none"><span class="demo-label">A · Surface only</span><div class="demo-panel"><strong>Panel</strong><span>Hierarchy from fill alone.</span></div></article>
+        <article class="demo demo-border"><span class="demo-label">B · Border</span><div class="demo-panel"><strong>Panel</strong><span>Hierarchy from a boundary.</span></div></article>
+        <article class="demo demo-shadow"><span class="demo-label">C · Shadow</span><div class="demo-panel"><strong>Panel</strong><span>Hierarchy from depth cue.</span></div></article>
+        <article class="demo demo-both"><span class="demo-label">D · Surface + border + shadow</span><div class="demo-panel"><strong>Panel</strong><span>Combined separation cues.</span></div></article>
+      </div>
+    </section>
+
+    <section class="experiment">
+      <div class="section-heading"><span class="index">03</span><div><h2>Nested geometry</h2><p>Candidate relation under test: <code>R_child = max(0, R_parent − P)</code>.</p></div></div>
+      <div class="nested-stage">
+        <div class="nested outer"><span>Parent · R = 24px</span><div class="nested middle"><span>Child · R = 16px</span><div class="nested inner"><span>Control · R = 10px</span></div></div></div>
+      </div>
+    </section>
+
+    <footer class="lab-footer"><span>UI99 Research Loop</span><strong>Experiment → Measure → Derive → Validate → Integrate</strong></footer>
+  </main>
+</body>
+</html>
