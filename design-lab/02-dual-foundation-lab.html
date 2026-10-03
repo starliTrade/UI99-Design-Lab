@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UI99 — 01.1 Dual Foundation Audit</title>
+<style>
+:root{--ink:#eef0f3;--muted:#8b929d;--line:#1b2027;--panel:#101318}
+*{box-sizing:border-box}body{margin:0;background:#090b0e;color:var(--ink);font-family:Inter,system-ui,sans-serif}
+.shell{width:min(1440px,calc(100% - 32px));margin:auto;padding:32px 0 60px}
+h1{font-size:clamp(28px,4vw,48px);margin:8px 0 12px;letter-spacing:-.04em}h2{font-size:18px;margin:0 0 7px}
+p{color:var(--muted);line-height:1.55}.eyebrow,.mono{font:11px ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
+header{border-bottom:1px solid var(--line);padding-bottom:26px}.lede{max-width:900px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}.mode{padding:18px;border:1px solid var(--line);border-radius:18px;background:#0d1014}
+.mode h3{margin:0 0 8px;font-size:15px}.sub{font:12px ui-monospace,monospace;color:#858d98}
+.swatch{height:115px;border-radius:14px;margin:18px 0;border:1px solid #20252d;padding:14px;display:flex;justify-content:space-between;align-items:flex-end}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{padding:12px;border:1px solid var(--line);border-radius:10px}.stat b{display:block;font:18px ui-monospace,monospace;margin-top:5px}.stat span{font-size:10px;color:var(--muted)}
+.demo{margin-top:12px;padding:20px;border-radius:18px;background:var(--canvas);border:1px solid #1b2027}.card{height:190px;border-radius:20px;background:var(--surface);padding:18px;border:1px solid var(--border);box-shadow:var(--shadow)}.inner{margin-top:18px;padding:15px;border-radius:14px;background:var(--inner);border:1px solid var(--inner-border);box-shadow:var(--inner-shadow)}.chip{display:inline-block;margin-top:12px;padding:8px 11px;border-radius:9px;background:var(--control);border:1px solid var(--control-border)}
+.audit{margin-top:24px;border:1px solid var(--line);border-radius:18px;overflow:hidden}.audit h2{padding:18px 18px 8px}.row{display:grid;grid-template-columns:180px 1fr 1fr;border-top:1px solid var(--line)}.row>div{padding:14px 16px;font-size:13px}.row .label{font:11px ui-monospace,monospace;color:#8b929d;text-transform:uppercase}.note{margin-top:18px;padding:14px;border:1px dashed #303640;border-radius:12px;color:#aeb5bf;font-size:13px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header>
+<div class="eyebrow">UI99 / DESIGN LAB / 01.1 DUAL FOUNDATION AUDIT</div>
+<h1>Mother Canvas ↔ Mother Surface</h1>
+<p class="lede">Controlled A/B comparison. The exact same component geometry is rendered twice with the two mother colors reversed. Contrast magnitude is symmetric; hierarchy direction, border polarity, shadow visibility and nesting behavior are not.</p>
+</header>
+
+<div class="grid">
+<section class="mode" id="A">
+<h3>A — Canvas <code>#060709</code> → Surface <code>#030406</code></h3>
+<div class="sub">SURFACE MOVES DARKER THAN CANVAS · NATURAL ROLE: SUNKEN / INSET</div>
+<div class="swatch" style="background:#060709"><span>Canvas</span><code>#060709</code></div>
+<div class="swatch" style="background:#030406"><span>Surface</span><code>#030406</code></div>
+<div class="stats" id="statsA"></div>
+<div class="demo" style="--canvas:#060709;--surface:#030406;--inner:#050608;--control:#060709;--border:#15181d;--inner-border:#101318;--control-border:#1c2027;--shadow:0 18px 44px -28px #000;--inner-shadow:0 10px 25px -22px #000">
+<div class="mono">CARD / BORDER + SHADOW + NESTED CONTROL</div><div class="card"><b>Panel</b><div class="inner"><span>Nested surface</span><br><span class="sub">dark-on-dark hierarchy</span><br><span class="chip">Control</span></div></div>
+</div>
+</section>
+
+<section class="mode" id="B">
+<h3>B — Canvas <code>#030406</code> → Surface <code>#060709</code></h3>
+<div class="sub">SURFACE MOVES LIGHTER THAN CANVAS · NATURAL ROLE: CARD / ELEVATED</div>
+<div class="swatch" style="background:#030406"><span>Canvas</span><code>#030406</code></div>
+<div class="swatch" style="background:#060709"><span>Surface</span><code>#060709</code></div>
+<div class="stats" id="statsB"></div>
+<div class="demo" style="--canvas:#030406;--surface:#060709;--inner:#090b0e;--control:#060709;--border:#171b21;--inner-border:#20252d;--control-border:#252a32;--shadow:0 18px 44px -28px #000;--inner-shadow:0 10px 25px -22px #000">
+<div class="mono">CARD / BORDER + SHADOW + NESTED CONTROL</div><div class="card"><b>Panel</b><div class="inner"><span>Nested surface</span><br><span class="sub">light-on-dark hierarchy</span><br><span class="chip">Control</span></div></div>
+</div>
+</section>
+</div>
+
+<section class="audit">
+<h2>Audit matrix — preliminary, not locked</h2>
+<div class="row"><div class="label">Math</div><div>Same pairwise contrast ratio in reverse direction. No mathematical advantage from contrast magnitude alone.</div><div>Same pairwise contrast ratio in reverse direction. No mathematical advantage from contrast magnitude alone.</div></div>
+<div class="row"><div class="label">Hierarchy</div><div>Darker surface naturally reads as inset/sunken relative to the canvas.</div><div>Lighter surface naturally supports card/elevated hierarchy over the darker canvas.</div></div>
+<div class="row"><div class="label">Soft shadow</div><div>Black shadow can become weak quickly because the surface is already near-black; shadow mainly helps at boundaries where the surrounding context permits it.</div><div>Black shadow has a clearer luminance direction against the lighter surface, giving a larger usable parameter range for very soft elevation.</div></div>
+<div class="row"><div class="label">Soft border</div><div>Usually requires a lighter border to be seen against the darker surface; too much strength risks a visible ring.</div><div>Can use a darker border against the lighter surface; this can preserve a quieter edge while retaining separation.</div></div>
+<div class="row"><div class="label">Nesting</div><div>Best suited to recessed/nested regions, but upward card hierarchy has less room before approaching the canvas.</div><div>Gives a more direct path for canvas → surface → elevated → nested variations, subject to a tested surface ladder.</div></div>
+</section>
+
+<div class="note"><b>Current hypothesis:</b> B is structurally promising for a general-purpose dark UI elevation system, while A may be valuable as the dedicated sunken/inset branch. This is a hypothesis, not a locked decision. Next evidence gate: surface ladder + border polarity + shadow softness + 3-level nesting under identical geometry.</div>
+</main>
+<script>
+function lin(c){return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)}
+function lum(h){let c=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255);return .2126*lin(c[0])+.7152*lin(c[1])+.0722*lin(c[2])}
+function cr(a,b){let x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+function stats(id,a,b){let L1=lum(a),L2=lum(b);document.querySelector(id).innerHTML=[['Canvas L',L1.toFixed(6)],['Surface L',L2.toFixed(6)],['Contrast',cr(a,b).toFixed(3)+':1']].map(x=>'<div class="stat"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('')}
+stats('#statsA','060709','030406');stats('#statsB','030406','060709');
+</script>
+</body>
+</html>
