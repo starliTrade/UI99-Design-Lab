@@ -25,7 +25,44 @@ Border و Shadow دو ابزار مستقل‌اند:
 
 ---
 
-## 2. ورودی‌های سیستم
+## 2. معماری تصمیم‌گیری محلی
+
+نسخهٔ جدید آزمایش از یک **component tree** استفاده می‌کند، نه یک component مستقل.
+
+نمونهٔ اصلی:
+
+`Canvas → Card → Nested Panel → Control`
+
+و در کنار آن:
+
+`Canvas → Floating Surface`
+
+هر node فقط نسبت به parent واقعی خود ارزیابی می‌شود. بنابراین `Card` بودن به تنهایی نباید Border را فعال کند.
+
+ورودی‌های محلی هر node:
+
+- parent surface
+- node surface
+- nesting depth
+- semantic role
+- edge exposure
+- component size factor
+- elevation
+- interaction state
+
+اصل مهم:
+
+`Decision(node) = f(node, parent(node), local context)`
+
+نه:
+
+`Decision(componentType) = fixed style`
+
+این معماری اجازه می‌دهد یک role یکسان در دو context مختلف دو خروجی متفاوت داشته باشد.
+
+---
+
+## 3. ورودی‌های سیستم
 
 ### 2.1 Color Context
 
@@ -69,15 +106,15 @@ Elevation یک ورودی مستقل برای Shadow است.
 
 ---
 
-## 3. Border Engine
+## 4. Border Engine
 
-### 3.1 فلسفه
+### 5.1 فلسفه
 
 Border برای ساختن **edge clarity** است، نه برای ساختن elevation.
 
 اگر fill خودش مرز component را به اندازهٔ کافی مشخص کند، Border باید حذف شود.
 
-### 3.2 مدل فعلی
+### 5.2 مدل فعلی
 
 `BorderNeed = clamp(EdgeNeed(role) × RoleFactor(role) × (1 − Separation), 0, 1)`
 
@@ -87,7 +124,7 @@ Border برای ساختن **edge clarity** است، نه برای ساختن el
 
 **0.28 در این نسخه threshold آزمایشی است، نه مقدار قفل‌شده.**
 
-### 3.3 Border Strength
+### 4.3 Border Strength
 
 `BorderWidth = clamp(0.50 + 1.15 × BorderNeed, 0.50, 1.50)`
 
@@ -95,7 +132,7 @@ Border برای ساختن **edge clarity** است، نه برای ساختن el
 
 `BorderWidth = 0`
 
-### 3.4 Border Polarity
+### 4.4 Border Polarity
 
 Border باید با polarity سطح سازگار باشد.
 
@@ -117,7 +154,7 @@ Border باید با polarity سطح سازگار باشد.
 
 ---
 
-## 4. Shadow Engine
+## 5. Shadow Engine
 
 ### 4.1 فلسفه
 
@@ -134,7 +171,7 @@ Shadow زمانی فعال می‌شود که:
 - `ShadowNeed >= 0.28`
 - و `Elevation > 0`
 
-### 4.3 Shadow Parameters
+### 5.3 Shadow Parameters
 
 فعلاً:
 
@@ -150,7 +187,7 @@ Shadow زمانی فعال می‌شود که:
 
 ---
 
-## 5. Combined Decision
+## 6. Combined Decision
 
 Decision Engine چهار خروجی ممکن دارد:
 
@@ -178,7 +215,7 @@ Decision Engine چهار خروجی ممکن دارد:
 
 ---
 
-## 6. Minimum Effective Separation
+## 7. Minimum Effective Separation
 
 اصل اصلی UI99:
 
@@ -198,7 +235,7 @@ Decision Engine چهار خروجی ممکن دارد:
 
 ---
 
-## 7. Role Model
+## 8. Role Model
 
 | Role | Border tendency | Shadow tendency |
 |---|---:|---:|
@@ -215,7 +252,7 @@ Decision Engine چهار خروجی ممکن دارد:
 
 ---
 
-## 8. چه چیزهایی فعلاً ادعا نمی‌شوند؟
+## 9. چه چیزهایی فعلاً ادعا نمی‌شوند؟
 
 این prototype فعلاً ادعا نمی‌کند که:
 
@@ -229,7 +266,7 @@ Decision Engine چهار خروجی ممکن دارد:
 
 ---
 
-## 9. Evidence Protocol
+## 10. Evidence Protocol
 
 هر تغییر در فرمول باید حداقل در این contextها آزمایش شود:
 
@@ -266,7 +303,7 @@ Decision Engine چهار خروجی ممکن دارد:
 
 ---
 
-## 10. Lock Criteria
+## 11. Lock Criteria
 
 هیچ threshold یا formulaای وارد `masterEngine.ts` نمی‌شود مگر اینکه:
 
@@ -294,7 +331,7 @@ Decision Engine چهار خروجی ممکن دارد:
 
 ---
 
-## 11. Current Status
+## 12. Current Status
 
 **Border system:** experimental  
 **Shadow system:** experimental  
@@ -321,7 +358,7 @@ Next evidence target:
 
 ---
 
-## 12. Core Rule
+## 13. Core Rule
 
 > اگر Surface خودش hierarchy را منتقل می‌کند، decoration اضافه نکن.
 
