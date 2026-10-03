@@ -92,7 +92,7 @@ const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
 function rgb(h){const x=h.trim().replace('#','');if(!/^[0-9a-fA-F]{6}$/.test(x))return null;return [0,2,4].map(i=>parseInt(x.slice(i,i+2),16)/255)}
 function lin(c){return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)}
 function lum(h){const c=rgb(h);return c?.length===3?.2126*lin(c[0])+.7152*lin(c[1])+.0722*lin(c[2]):null}
-function mix(a,b,t){const A=rgb(a),B=rgb(b);return '#'+A.map((v,i)=>Math.round((v+(B[i]-v)*t)*255).toString(16).padStart(2,'0'))}
+function mix(a,b,t){const A=rgb(a),B=rgb(b);return '#'+A.map((v,i)=>Math.round((v+(B[i]-v)*t)*255).toString(16).padStart(2,'0')).join('')}
 const role={
  card:{edge:.40,depth:.55,size:1.15},
  panel:{edge:.34,depth:.24,size:.85},
