@@ -43,6 +43,14 @@ Each stage is a **single-page HTML experiment** containing:
 ## Phase 02 — Border System
 
 ### 02.1 Border Necessity
+
+Use a real hierarchical component tree, not isolated cards:
+- Canvas → Card → Nested Panel → Control
+- Canvas → Floating Surface
+- sibling components at the same depth
+
+Every node must be evaluated against its actual parent. A semantic role must not imply a fixed border.
+
 Compare:
 - no border
 - border only
