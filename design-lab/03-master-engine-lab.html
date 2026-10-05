@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UI99 — Master Engine Interactive Showcase & Stress Test</title>
+  <link rel="stylesheet" href="./css/lab.css" />
+  <style>
+    :root {
+      --canvas: #030406;
+      --surface: #060709;
+      --ink: #eef0f3;
+      --ink-muted: #838a95;
+      --accent: #d2d7e0;
+      --line: #14171d;
+    }
+
+    body {
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .master-shell {
+      width: min(1360px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 80px;
+    }
+
+    /* Top Nav */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #14171d;
+      margin-bottom: 28px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: #090b0e;
+      border: 1px solid #1a1e26;
+      border-radius: 8px;
+      color: #9aa1ad;
+      text-decoration: none;
+      font: 12px/1 ui-monospace, monospace;
+      transition: all 0.15s ease;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      color: #fff;
+      border-color: #2e3542;
+      background: #101319;
+    }
+
+    /* Header */
+    .master-header {
+      margin-bottom: 36px;
+    }
+
+    .badge-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .tag-engine {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      background: #080a0e;
+      border: 1px solid #1e232d;
+      border-radius: 6px;
+      font: 11px ui-monospace, monospace;
+      color: #8c93a0;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+    }
+
+    h1 {
+      font-size: clamp(30px, 4.5vw, 50px);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin: 8px 0 14px;
+    }
+
+    .hero-lead {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink-muted);
+      max-width: 860px;
+      margin: 0;
+    }
+
+    /* Controls Grid */
+    .controls-panel {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 18px;
+      background: #06070a;
+      border: 1px solid #161920;
+      border-radius: 16px;
+      margin-bottom: 32px;
+    }
+
+    .ctrl-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ctrl-box label {
+      font: 11px ui-monospace, monospace;
+      color: #858d99;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .ctrl-box input, .ctrl-box select {
+      background: #090b0e;
+      border: 1px solid #20242e;
+      border-radius: 8px;
+      color: #fff;
+      font: 12px ui-monospace, monospace;
+      height: 38px;
+      padding: 0 10px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .ctrl-box input:focus, .ctrl-box select:focus {
+      border-color: #3b4455;
+    }
+
+    /* Surface Ladder Row */
+    .ladder-strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    .ladder-card {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #161920;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 110px;
+    }
+
+    .ladder-role {
+      font: 10px ui-monospace, monospace;
+      color: #7b8390;
+      text-transform: uppercase;
+    }
+
+    .ladder-hex {
+      font: 13px ui-monospace, monospace;
+      font-weight: 600;
+      margin: 4px 0 2px;
+    }
+
+    .ladder-metric {
+      font: 10px ui-monospace, monospace;
+      color: #5c6471;
+    }
+
+    /* Section layout */
+    .lab-section {
+      padding: 36px 0;
+      border-top: 1px solid #14171d;
+    }
+
+    .section-title-wrap {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .sec-num {
+      font: 13px ui-monospace, monospace;
+      color: #5f6775;
+      padding-top: 3px;
+    }
+
+    .sec-desc h2 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .sec-desc p {
+      margin: 0;
+      color: #7c8390;
+      font-size: 13px;
+    }
+
+    /* Playground Showcase Grid */
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+    }
+
+    /* Component Canvas */
+    .comp-canvas {
+      padding: 28px;
+      border-radius: 20px;
+      background: var(--canvas);
+      border: 1px solid #14171e;
+      position: relative;
+    }
+
+    /* Dynamic Component Card */
+    .ui99-card {
+      padding: 24px;
+      border-radius: 20px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin: 6px 0 4px;
+    }
+
+    .metric-sub {
+      font-size: 12px;
+      color: #777e8a;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .trend-up {
+      color: #4ade80;
+      font-family: ui-monospace, monospace;
+    }
+
+    /* Nested Panel Inside Card */
+    .ui99-panel {
+      padding: 18px;
+      border-radius: 14px;
+      margin-top: 18px;
+      transition: all 0.2s ease;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* Segmented Bar / Control */
+    .ui99-segment-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+
+    .ui99-segment-item {
+      padding: 7px 10px;
+      border-radius: 7px;
+      font: 11px ui-monospace, monospace;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+
+    /* Form Controls Box */
+    .controls-showcase {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-row label {
+      font: 11px ui-monospace, monospace;
+      color: #7a828e;
+      text-transform: uppercase;
+    }
+
+    .ui99-input {
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 9px;
+      font: 13px Inter, sans-serif;
+      outline: none;
+      color: #fff;
+      transition: all 0.2s ease;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .ui99-btn {
+      padding: 9px 18px;
+      border-radius: 8px;
+      font: 12px ui-monospace, monospace;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.18s ease;
+    }
+
+    /* Floating Toolbar / HUD */
+    .floating-hud {
+      padding: 12px 18px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 22px;
+      transition: all 0.2s ease;
+    }
+
+    .hud-meta {
+      font: 11px ui-monospace, monospace;
+      color: #8c93a0;
+    }
+
+    /* Telemetry Inspector Box */
+    .telemetry-card {
+      padding: 20px;
+      border-radius: 16px;
+      background: #06070a;
+      border: 1px solid #181c24;
+      font-family: ui-monospace, monospace;
+      font-size: 11px;
+    }
+
+    .telemetry-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #eef0f3;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #14171f;
+      padding-bottom: 10px;
+    }
+
+    .inspect-pill {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #141820;
+      color: #9299a6;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #0f1218;
+    }
+
+    .stat-key {
+      color: #6e7683;
+    }
+
+    .stat-val {
+      color: #c7ccd6;
+      font-weight: 500;
+    }
+
+    .mode-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .mode-none { background: #12151b; color: #727a86; }
+    .mode-border { background: #182232; color: #60a5fa; border: 1px solid #2563eb33; }
+    .mode-shadow { background: #261f38; color: #c084fc; border: 1px solid #9333ea33; }
+    .mode-both { background: #1b2e2b; color: #34d399; border: 1px solid #05966933; }
+
+    /* Concentric Arc Stage */
+    .concentric-stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .arc-box {
+      padding: 24px;
+      border-radius: 20px;
+      background: #06070a;
+      border: 1px solid #161920;
+    }
+
+    .nested-concentric {
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .code-preview {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #030406;
+      border: 1px solid #161a22;
+      color: #aeb5c2;
+      font: 11px ui-monospace, monospace;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+
+    @media (max-width: 900px) {
+      .controls-panel { grid-template-columns: 1fr 1fr; }
+      .ladder-strip { grid-template-columns: repeat(3, 1fr); }
+      .showcase-grid, .concentric-stage { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .controls-panel, .ladder-strip { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="master-shell">
+    <!-- Top Nav -->
+    <header class="nav-bar">
+      <div class="nav-links">
+        <a href="./index.html" class="nav-btn">← Lab Hub</a>
+        <a href="./01-surface-lab.html" class="nav-btn">01 Surface Lab</a>
+        <a href="./02-dual-foundation-lab.html" class="nav-btn">01.1 Dual Foundation</a>
+        <a href="./02-border-shadow-lab.html" class="nav-btn">02 Nested Composition</a>
+        <a href="./03-master-engine-lab.html" class="nav-btn active">★ 03 Master Engine Suite</a>
+      </div>
+      <div class="tag-engine">
+        <span class="pulse-dot"></span> MATHEMATICAL ENGINE ACTIVE
+      </div>
+    </header>
+
+    <!-- Main Title -->
+    <div class="master-header">
+      <div class="badge-bar">
+        <span class="tag-engine">UI99 ENGINE CORE v1.0</span>
+        <span class="tag-engine">SEPARATION FIRST · DECORATION NEVER</span>
+      </div>
+      <h1>Intelligent Mathematical Design Suite</h1>
+      <p class="hero-lead">
+        A deterministic UI token engine that replaces subjective styling with perceptual mathematics.
+        Borders, optical strokes, negative-spread shadows, and concentric radii are dynamically derived from parent-child luminance delta, exposure, role, and nesting depth.
+      </p>
+    </div>
+
+    <!-- Live Controls Panel -->
+    <div class="controls-panel">
+      <div class="ctrl-box">
+        <label><span>Mother Canvas</span><span id="canvasHexLabel">#030406</span></label>
+        <input type="text" id="inCanvas" value="#030406" maxlength="7" />
+      </div>
+      <div class="ctrl-box">
+        <label><span>Mother Surface (Level 1)</span><span id="surfaceHexLabel">#060709</span></label>
+        <input type="text" id="inSurface" value="#060709" maxlength="7" />
+      </div>
+      <div class="ctrl-box">
+        <label><span>Card Elevation (0–6)</span><span id="cardElevLabel">2.0</span></label>
+        <input type="range" id="inCardElevation" min="0" max="6" step="0.5" value="2.0" />
+      </div>
+      <div class="ctrl-box">
+        <label><span>Control State</span><span>Interaction</span></label>
+        <select id="inInteractive">
+          <option value="normal">Normal / Rest State</option>
+          <option value="active" selected>Active / Focused State</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Surface Ladder Strip (Weber-Fechner progression) -->
+    <div class="ladder-strip" id="ladderStrip"></div>
+
+    <!-- Section 01: Real-world SaaS FinTech & Interactive Suite -->
+    <section class="lab-section">
+      <div class="section-title-wrap">
+        <span class="sec-num">01</span>
+        <div class="sec-desc">
+          <h2>Autonomous Component Matrix</h2>
+          <p>Each component below derives its border, subpixel width, polarity color, and depth shadow purely from mathematical relations.</p>
+        </div>
+      </div>
+
+      <div class="showcase-grid">
+        <!-- Live Visual Stage -->
+        <div class="comp-canvas" id="mainCanvasStage">
+          <!-- Main SaaS Card (Depth 1) -->
+          <div id="liveCard" class="ui99-card">
+            <div class="card-top">
+              <div>
+                <span class="ladder-role" id="cardRoleBadge">DEPTH 1 · CARD</span>
+                <div class="metric-value">$48,290.50</div>
+                <div class="metric-sub">
+                  <span class="trend-up">↑ +14.2%</span>
+                  <span>vs last period · Net Settlement</span>
+                </div>
+              </div>
+              <div id="cardStatusBadge" class="tag-engine">
+                <span id="cardDecisionBadge">EVALUATING</span>
+              </div>
+            </div>
+
+            <!-- Segmented Control (Depth 2, Control) -->
+            <div id="liveSegmentGroup" class="ui99-segment-group">
+              <div class="ui99-segment-item" id="seg1">1D · Realtime</div>
+              <div class="ui99-segment-item" id="seg2">1W · Weekly</div>
+              <div class="ui99-segment-item" id="seg3">1M · Monthly</div>
+            </div>
+
+            <!-- Nested Panel (Depth 2, Role: Panel) -->
+            <div id="liveNestedPanel" class="ui99-panel">
+              <div class="panel-header">
+                <div>
+                  <span class="ladder-role">DEPTH 2 · NESTED PANEL</span>
+                  <div class="panel-title">Asset Allocation & Security Clearance</div>
+                </div>
+                <span id="panelDecisionBadge" class="mode-badge mode-none">SURFACE ONLY</span>
+              </div>
+
+              <!-- Interactive Form Inside Nested Panel (Depth 3, Role: Control) -->
+              <div class="controls-showcase">
+                <div class="input-row">
+                  <label>Encrypted Route Destination</label>
+                  <input type="text" id="liveInput1" class="ui99-input" value="vault-09.ch.node.internal" />
+                </div>
+                <div class="btn-row">
+                  <button id="liveBtnPrimary" class="ui99-btn">Authenticate Clearance</button>
+                  <button id="liveBtnSecondary" class="ui99-btn">Discard Session</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating Command HUD (Depth 1, Floating / Elevation = 4.0) -->
+          <div id="liveFloatingHud" class="floating-hud">
+            <div class="hud-meta">
+              <strong style="color:#eef0f3">HUD Command Matrix</strong> · Elevation 4.0 · Floating
+            </div>
+            <span id="hudDecisionBadge" class="mode-badge mode-shadow">SHADOW ONLY</span>
+          </div>
+        </div>
+
+        <!-- Realtime Telemetry Inspector -->
+        <div class="telemetry-card">
+          <div class="telemetry-title">
+            <span>LIVE DERIVATION TELEMETRY</span>
+            <span class="inspect-pill">SELECT ANY NODE</span>
+          </div>
+
+          <div style="margin-bottom: 14px;">
+            <select id="telemetryNodeSelect" style="width:100%; background:#090b0e; border:1px solid #1f232c; color:#fff; padding:6px; font:11px ui-monospace,monospace; border-radius:6px;">
+              <option value="card">Main Executive Card (Depth 1)</option>
+              <option value="panel">Nested Data Panel (Depth 2)</option>
+              <option value="input">Interactive Input Field (Depth 3)</option>
+              <option value="button">Primary Action Button (Depth 3)</option>
+              <option value="hud">Floating HUD Surface (Floating)</option>
+            </select>
+          </div>
+
+          <div id="telemetryData">
+            <!-- Injected by JS -->
+          </div>
+
+          <div class="code-preview" id="computedCssCode">
+            /* Generated Pure CSS Tokens */
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 02: Concentric Geometry Studio -->
+    <section class="lab-section">
+      <div class="section-title-wrap">
+        <span class="sec-num">02</span>
+        <div class="sec-desc">
+          <h2>Concentric Geometry & Radius Harmonization</h2>
+          <p>Mathematical proof that inner curves must obey <code>R_child = max(0, R_parent − P)</code> to maintain concentric arc continuity.</p>
+        </div>
+      </div>
+
+      <div class="controls-panel" style="grid-template-columns: 1fr 1fr;">
+        <div class="ctrl-box">
+          <label><span>Parent Radius (R_parent)</span><span id="lblRadiusParent">28px</span></label>
+          <input type="range" id="inRadiusParent" min="12" max="48" step="1" value="28" />
+        </div>
+        <div class="ctrl-box">
+          <label><span>Nested Padding (P)</span><span id="lblPadding">12px</span></label>
+          <input type="range" id="inPadding" min="4" max="24" step="1" value="12" />
+        </div>
+      </div>
+
+      <div class="concentric-stage">
+        <!-- Harmonized Concentric (Mathematical) -->
+        <div class="arc-box">
+          <div style="font: 11px ui-monospace, monospace; color: #4ade80; margin-bottom: 12px;">
+            ✓ UI99 CONCENTRIC HARMONIZATION (Concentric Arcs)
+          </div>
+          <div id="concentricOuter" class="nested-concentric" style="padding: 18px; background: #06070a; border: 1px solid #1a1e27;">
+            <span style="font:11px ui-monospace,monospace; color:#858d9a;">Parent Box</span>
+            <div id="concentricMiddle" class="nested-concentric" style="width: 100%; margin-top: 10px; padding: 14px; background: #090b0f; border: 1px solid #1f2530;">
+              <span style="font:11px ui-monospace,monospace; color:#858d9a;">Child Box</span>
+              <div id="concentricInner" class="nested-concentric" style="width: 100%; margin-top: 10px; padding: 12px; background: #0e1117; border: 1px solid #272d3b;">
+                <span id="lblInnerCalculated" style="font:11px ui-monospace,monospace; color:#4ade80;">Inner Control</span>
+              </div>
+            </div>
+          </div>
+          <div class="code-preview" id="concentricFormulaOutput"></div>
+        </div>
+
+        <!-- Broken Uniform Radii (Visual Distortion) -->
+        <div class="arc-box">
+          <div style="font: 11px ui-monospace, monospace; color: #f87171; margin-bottom: 12px;">
+            ✗ NAIVE UNIFORM RADII (Common Framework Flaw)
+          </div>
+          <div id="brokenOuter" class="nested-concentric" style="padding: 18px; background: #06070a; border: 1px solid #1a1e27; border-radius: 28px;">
+            <span style="font:11px ui-monospace,monospace; color:#858d9a;">Parent Box · R = 28px</span>
+            <div id="brokenMiddle" class="nested-concentric" style="width: 100%; margin-top: 10px; padding: 14px; background: #090b0f; border: 1px solid #1f2530; border-radius: 28px;">
+              <span style="font:11px ui-monospace,monospace; color:#f87171;">Child Box · R = 28px (Clashing corners!)</span>
+              <div id="brokenInner" class="nested-concentric" style="width: 100%; margin-top: 10px; padding: 12px; background: #0e1117; border: 1px solid #272d3b; border-radius: 28px;">
+                <span style="font:11px ui-monospace,monospace; color:#f87171;">Inner Box · R = 28px (Bulging arc distortion)</span>
+              </div>
+            </div>
+          </div>
+          <div class="code-preview">
+            /* Flaw: Equal radii in nested containers create bulging inner corners because the radius exceeds the available corner offset. */
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="lab-footer">
+      <span>UI99 Intelligent Autonomous Design Lab</span>
+      <strong>Experiment → Measure → Derive → Validate → Integrate</strong>
+    </footer>
+  </main>
+
+  <script type="module">
+    import { UI99 } from './js/ui99-engine.js';
+
+    const $ = (s) => document.querySelector(s);
+
+    let evaluatedNodes = {};
+
+    function update() {
+      const canvasHex = $('#inCanvas').value.toUpperCase();
+      const surfaceHex = $('#inSurface').value.toUpperCase();
+      const cardElevation = parseFloat($('#inCardElevation').value);
+      const isInteractive = $('#inInteractive').value === 'active';
+
+      $('#canvasHexLabel').textContent = canvasHex;
+      $('#surfaceHexLabel').textContent = surfaceHex;
+      $('#cardElevLabel').textContent = cardElevation.toFixed(1);
+
+      // 1. Generate Surface Ladder
+      const ladder = UI99.generateSurfaceLadder(canvasHex, 5, 'elevate');
+      $('#ladderStrip').innerHTML = ladder.map(item => `
+        <div class="ladder-card" style="background: ${item.hex}">
+          <div class="ladder-role">LVL ${item.level} · ${item.role}</div>
+          <div class="ladder-hex">${item.hex}</div>
+          <div class="ladder-metric">Lum: ${item.luminance.toFixed(5)}<br>CR: ${item.contrastVsBase}:1</div>
+        </div>
+      `).join('');
+
+      // Colors from ladder
+      const lvl1 = ladder[1]?.hex || surfaceHex;
+      const lvl2 = ladder[2]?.hex || '#090B0E';
+      const lvl3 = ladder[3]?.hex || '#0C0F14';
+
+      // 2. Evaluate Nodes
+      const cardNode = UI99.evaluateNode({
+        id: 'card',
+        label: 'Main Executive Card',
+        role: 'card',
+        surface: lvl1,
+        parentSurface: canvasHex,
+        depth: 1,
+        elevation: cardElevation,
+        interactive: false,
+        parentRadius: 28,
+        padding: 16
+      });
+
+      const panelNode = UI99.evaluateNode({
+        id: 'panel',
+        label: 'Nested Data Panel',
+        role: 'panel',
+        surface: lvl2,
+        parentSurface: lvl1,
+        depth: 2,
+        elevation: 0,
+        interactive: false,
+        parentRadius: cardNode.rawRadius,
+        padding: 12
+      });
+
+      const inputNode = UI99.evaluateNode({
+        id: 'input',
+        label: 'Route Destination Input',
+        role: 'control',
+        surface: lvl3,
+        parentSurface: lvl2,
+        depth: 3,
+        elevation: 0,
+        interactive: isInteractive,
+        parentRadius: panelNode.rawRadius,
+        padding: 8
+      });
+
+      const buttonNode = UI99.evaluateNode({
+        id: 'button',
+        label: 'Authenticate Button',
+        role: 'control',
+        surface: lvl2,
+        parentSurface: lvl2,
+        depth: 3,
+        elevation: isInteractive ? 1.0 : 0,
+        interactive: isInteractive,
+        parentRadius: panelNode.rawRadius,
+        padding: 8
+      });
+
+      const hudNode = UI99.evaluateNode({
+        id: 'hud',
+        label: 'Floating HUD Command',
+        role: 'floating',
+        surface: lvl2,
+        parentSurface: canvasHex,
+        depth: 1,
+        elevation: 4.0,
+        interactive: false,
+        parentRadius: 20,
+        padding: 8
+      });
+
+      evaluatedNodes = {
+        card: cardNode,
+        panel: panelNode,
+        input: inputNode,
+        button: buttonNode,
+        hud: hudNode
+      };
+
+      // 3. Apply to DOM Elements
+      document.body.style.backgroundColor = canvasHex;
+      $('#mainCanvasStage').style.backgroundColor = canvasHex;
+
+      // Card
+      applyNodeStyle($('#liveCard'), cardNode);
+      setModeBadge($('#cardDecisionBadge'), cardNode.mode);
+
+      // Panel
+      applyNodeStyle($('#liveNestedPanel'), panelNode);
+      setModeBadge($('#panelDecisionBadge'), panelNode.mode);
+
+      // Segment Control
+      $('#liveSegmentGroup').style.backgroundColor = canvasHex;
+      $('#seg1').style.backgroundColor = lvl2;
+      $('#seg1').style.color = '#fff';
+      $('#seg2').style.color = '#727a86';
+      $('#seg3').style.color = '#727a86';
+
+      // Input
+      applyNodeStyle($('#liveInput1'), inputNode);
+
+      // Buttons
+      applyNodeStyle($('#liveBtnPrimary'), buttonNode);
+      $('#liveBtnPrimary').style.color = '#fff';
+      applyNodeStyle($('#liveBtnSecondary'), { ...buttonNode, hasBorder: true, borderWidth: '1px', borderColor: '#1b2029' });
+      $('#liveBtnSecondary').style.color = '#838b97';
+
+      // HUD
+      applyNodeStyle($('#liveFloatingHud'), hudNode);
+      setModeBadge($('#hudDecisionBadge'), hudNode.mode);
+
+      // Update Telemetry Panel
+      renderTelemetry($('#telemetryNodeSelect').value);
+
+      // Update Concentric Geometry section
+      updateConcentric();
+    }
+
+    function applyNodeStyle(el, node) {
+      el.style.backgroundColor = node.surface;
+      el.style.border = node.hasBorder ? `${node.borderWidth} solid ${node.borderColor}` : 'none';
+      el.style.boxShadow = node.hasShadow ? node.shadowCss : 'none';
+      el.style.borderRadius = node.radius;
+    }
+
+    function setModeBadge(el, mode) {
+      el.textContent = mode;
+      el.className = 'mode-badge';
+      if (mode === 'SURFACE ONLY' || mode === 'NONE') el.classList.add('mode-none');
+      else if (mode === 'BORDER ONLY') el.classList.add('mode-border');
+      else if (mode === 'SHADOW ONLY') el.classList.add('mode-shadow');
+      else el.classList.add('mode-both');
+    }
+
+    function renderTelemetry(selectedKey) {
+      const node = evaluatedNodes[selectedKey] || evaluatedNodes.card;
+      $('#telemetryData').innerHTML = `
+        <div class="stat-row"><span class="stat-key">Component Node</span><span class="stat-val">${node.label}</span></div>
+        <div class="stat-row"><span class="stat-key">Semantic Role</span><span class="stat-val">${node.role.toUpperCase()}</span></div>
+        <div class="stat-row"><span class="stat-key">Nesting Depth</span><span class="stat-val">Depth ${node.depth}</span></div>
+        <div class="stat-row"><span class="stat-key">Parent Surface</span><span class="stat-val">${node.parentSurface} (L: ${node.lumParent.toFixed(5)})</span></div>
+        <div class="stat-row"><span class="stat-key">Node Surface</span><span class="stat-val">${node.surface} (L: ${node.lumNode.toFixed(5)})</span></div>
+        <div class="stat-row"><span class="stat-key">Photometric Delta (ΔL)</span><span class="stat-val">${node.deltaL.toFixed(6)}</span></div>
+        <div class="stat-row"><span class="stat-key">Normalized Separation</span><span class="stat-val">${node.separation.toFixed(4)}</span></div>
+        <div class="stat-row"><span class="stat-key">Fill Clarity</span><span class="stat-val">${(node.fillClarity * 100).toFixed(1)}%</span></div>
+        <div class="stat-row"><span class="stat-key">Edge Need Score</span><span class="stat-val">${node.edgeNeed.toFixed(3)} ${node.hasBorder ? '✓ (ON)' : '✗ (OFF)'}</span></div>
+        <div class="stat-row"><span class="stat-key">Depth Need Score</span><span class="stat-val">${node.depthNeed.toFixed(3)} ${node.hasShadow ? '✓ (ON)' : '✗ (OFF)'}</span></div>
+        <div class="stat-row"><span class="stat-key">Engine Verdict</span><span class="stat-val" style="color:#4ade80">${node.mode}</span></div>
+      `;
+
+      $('#computedCssCode').textContent = `/* ${node.label} Derivation */
+background-color: ${node.surface};
+border: ${node.hasBorder ? `${node.borderWidth} solid ${node.borderColor}` : 'none'};
+box-shadow: ${node.hasShadow ? node.shadowCss : 'none'};
+border-radius: ${node.radius};`;
+    }
+
+    function updateConcentric() {
+      const rp = parseInt($('#inRadiusParent').value, 10);
+      const p = parseInt($('#inPadding').value, 10);
+      const rc = UI99.computeConcentricRadius(rp, p);
+      const rgc = UI99.computeConcentricRadius(rc, p);
+
+      $('#lblRadiusParent').textContent = `${rp}px`;
+      $('#lblPadding').textContent = `${p}px`;
+
+      $('#concentricOuter').style.borderRadius = `${rp}px`;
+      $('#concentricOuter').style.padding = `${p}px`;
+
+      $('#concentricMiddle').style.borderRadius = `${rc}px`;
+      $('#concentricMiddle').style.padding = `${p}px`;
+
+      $('#concentricInner').style.borderRadius = `${rgc}px`;
+
+      $('#lblInnerCalculated').textContent = `Grandchild: R = ${rgc}px`;
+
+      $('#concentricFormulaOutput').innerHTML = `R_child = max(0, R_parent − P) = max(0, ${rp} − ${p}) = <b>${rc}px</b><br>R_grandchild = max(0, R_child − P) = max(0, ${rc} − ${p}) = <b>${rgc}px</b><br>Result: Perfectly aligned concentric focal center. Zero arc distortion.`;
+    }
+
+    // Event Listeners
+    ['inCanvas', 'inSurface', 'inCardElevation', 'inInteractive'].forEach(id => {
+      $('#' + id).addEventListener('input', update);
+    });
+
+    $('#telemetryNodeSelect').addEventListener('change', (e) => {
+      renderTelemetry(e.target.value);
+    });
+
+    ['inRadiusParent', 'inPadding'].forEach(id => {
+      $('#' + id).addEventListener('input', updateConcentric);
+    });
+
+    // Initial render
+    update();
+  </script>
+</body>
+</html>
