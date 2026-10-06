@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 /**
  * LIMINAL SPACING · RADIUS · TYPOGRAPHY — LOCKED SPEC v1.0
  * Layout, Geometry, and Typography Engine.
@@ -62,7 +64,7 @@ export class LiminalLayoutEngine {
     8: { fs: 40, lh: 1.10, ls: '-0.025em',weight: 700, role: 'display' },
   };
 
-  static getTypeStyle(level: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8, isCaps: boolean = false): React.CSSProperties {
+  static getTypeStyle(level: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8, isCaps: boolean = false): CSSProperties {
     const t = this.TYPOGRAPHY[level];
     return {
       fontSize: `${t.fs}px`,

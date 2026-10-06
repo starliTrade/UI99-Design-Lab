@@ -19,7 +19,13 @@ export interface SemanticRole {
 }
 
 export class LiminalColorEngine {
-  // 1. NEUTRAL LADDER (canvas & text)
+  /**
+   * @deprecated
+   * Canonical surface source = LADDER in spec-engine.ts (#060709..#131418).
+   * Text = TEXT_HIERARCHY (white with alpha).
+   * Border = directional rim (not flat grey).
+   * Retained for backward-compatibility only.
+   */
   static readonly NEUTRALS: Record<string, NeutralStep> = {
     L0: { level: 'L0', name: 'base', hex: '#060709', oklch: 'oklch(0.16 0.01 260)' },
     L1: { level: 'L1', name: 'surface', hex: '#0B0C0F', oklch: 'oklch(0.19 0.01 260)' },
@@ -117,6 +123,7 @@ export class LiminalColorEngine {
   // 6. STATE FORMULA
   static getStateStyle(params: {
     baseL: number;
+    baseColor?: string;
     state: 'idle' | 'hover' | 'focus' | 'active' | 'disabled';
     isSolid?: boolean;
     solidColor?: string;
@@ -128,10 +135,19 @@ export class LiminalColorEngine {
     if (params.state === 'hover') {
       L += 0.05;
     } else if (params.state === 'focus') {
-      outline = `2px solid rgba(233, 236, 242, 0.45)`;
+      // Focus ring: 2px solid ${baseColorAtAlpha0.45}
+      // Note: For neutral elements, ring comes from spec-engine (ladder(n+1)).
+      const ringColor = params.baseColor
+        ? (params.baseColor.startsWith('#')
+            ? `${params.baseColor}73`
+            : params.baseColor.replace(/[\d.]+\)$/g, '0.45)'))
+        : 'rgba(233, 236, 242, 0.45)';
+      outline = `2px solid ${ringColor}`;
     } else if (params.state === 'active') {
       L -= 0.05;
     } else if (params.state === 'disabled') {
+      // Opacity 0.35 applies strictly to colored text/icon/semantic buttons.
+      // Note: For neutral surfaces/controls, disabled opacity is 0.25 (per spec-engine).
       opacity = 0.35;
     }
 

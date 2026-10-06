@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 /**
  * LIMINAL · DESIGN SYSTEM — MASTER CONTRACT v1.0 (COMPLETE)
  * "هر لایه روی آستانه‌ی ادراک — نه کمتر، نه بیشتر."
@@ -23,7 +25,8 @@ export interface DirectionalRimResult {
   top: string;
   side: string;
   bot: string;
-  cssBackground: any;
+  cssBackground: string;
+  withBackground: (customBg: string) => string;
 }
 
 export function getDirectionalRim(
@@ -47,18 +50,13 @@ export function getDirectionalRim(
   const bg = getLadderColor(n);
   const gradStr = `linear-gradient(${bg}, ${bg}) padding-box, linear-gradient(180deg, ${top} 0%, ${side} 55%, ${bot} 100%) border-box`;
 
-  const cssBgFn: any = (customBg?: string) => {
-    const finalBg = customBg || bg;
-    return `linear-gradient(${finalBg}, ${finalBg}) padding-box, linear-gradient(180deg, ${top} 0%, ${side} 55%, ${bot} 100%) border-box`;
-  };
-  cssBgFn.toString = () => gradStr;
-  cssBgFn.valueOf = () => gradStr;
-
   return {
     top,
     side,
     bot,
-    cssBackground: cssBgFn,
+    cssBackground: gradStr,
+    withBackground: (customBg: string) =>
+      `linear-gradient(${customBg}, ${customBg}) padding-box, linear-gradient(180deg, ${top} 0%, ${side} 55%, ${bot} 100%) border-box`,
   };
 }
 
@@ -145,7 +143,7 @@ export function getLiminalStyle(el: LiminalStyleElement) {
       transform,
       opacity,
       cursor,
-    } as React.CSSProperties,
+    } as CSSProperties,
   };
 }
 
@@ -179,7 +177,7 @@ export function getTextAlpha(level: TextLevel, surfaceN: number = 0): number {
   return TEXT_HIERARCHY.quaternary[clampedN];
 }
 
-export function getTextStyle(level: TextLevel, surfaceN: number = 0): React.CSSProperties {
+export function getTextStyle(level: TextLevel, surfaceN: number = 0): CSSProperties {
   const alpha = getTextAlpha(level, surfaceN);
   return {
     color: `rgba(255, 255, 255, ${alpha.toFixed(2)})`,
@@ -199,7 +197,15 @@ export class SpecEngine {
   static getColor = getLadderColor;
   static getRim = (n: number, rim: 0 | 1 | 2 | 3, concave = false) => {
     const res = getDirectionalRim(n, rim, concave);
-    return res ?? { top: 'transparent', side: 'transparent', bottom: 'transparent', cssBackground: (b: string) => b };
+    return (
+      res ?? {
+        top: 'transparent',
+        side: 'transparent',
+        bottom: 'transparent',
+        cssBackground: 'transparent',
+        withBackground: (b: string) => b,
+      }
+    );
   };
   static style = getLiminalStyle;
   static getTextStyle = getTextStyle;

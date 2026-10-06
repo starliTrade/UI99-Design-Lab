@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SpecEngine, LiminalState } from './engine/spec-engine';
 import { LiminalColorEngine } from './engine/liminal-color-engine';
 import { LiminalLayoutEngine } from './engine/liminal-layout-engine';
+import { AtomsDemo } from './components/atoms';
 import {
   Shield,
   Sparkles,
@@ -40,7 +41,7 @@ import {
 export function App() {
   const [copied, setCopied] = useState<boolean>(false);
   const [deviceMode, setDeviceMode] = useState<'mobile' | 'fluid'>('mobile');
-  const [activeTab, setActiveTab] = useState<'app' | 'bench' | 'tokens' | 'contract'>('app');
+  const [activeTab, setActiveTab] = useState<'app' | 'atoms' | 'bench' | 'tokens' | 'contract'>('app');
   const [selectedHue, setSelectedHue] = useState<number>(230);
   const [interactiveState, setInteractiveState] = useState<LiminalState>('idle');
   const [bottomDrawerOpen, setBottomDrawerOpen] = useState<boolean>(false);
@@ -316,6 +317,7 @@ export function App() {
         >
           {[
             { id: 'app', label: 'Gateway' },
+            { id: 'atoms', label: 'Atoms Kit' },
             { id: 'bench', label: 'States' },
             { id: 'tokens', label: 'Colors' },
             { id: 'contract', label: 'Contract' },
@@ -723,6 +725,13 @@ export function App() {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ─── TAB: ATOMS KIT DEMO ─── */}
+        {activeTab === 'atoms' && (
+          <div className="space-y-4 animate-in fade-in-50 duration-200">
+            <AtomsDemo />
           </div>
         )}
 
