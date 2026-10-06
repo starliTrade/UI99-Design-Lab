@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, ReactNode, KeyboardEvent, MouseEvent } from 'react';
 import { getLiminalStyle, getLadderColor, getTextStyle, LiminalState } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
@@ -9,7 +9,7 @@ export interface ButtonProps {
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   children: ReactNode;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   type?: 'button' | 'submit' | 'reset';
   className?: string;
   style?: CSSProperties;
@@ -26,6 +26,7 @@ export function Button({
   style: customStyle = {},
 }: ButtonProps) {
   const [internalState, setInternalState] = useState<LiminalState>('idle');
+  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
 
   const currentState: LiminalState = disabled ? 'disabled' : internalState;
 
@@ -65,18 +66,16 @@ export function Button({
       state: currentState,
     });
 
-    let bg = brand.hex;
-    if (currentState === 'hover') {
-      bg = '#F5F7FA'; // L +0.05
-    } else if (currentState === 'active') {
-      bg = '#DDE1E8'; // L -0.05
-    }
+    // L +0.05 (#F5F7FA) and L -0.05 (#DDE1E8) from BRAND_PRIMARY (#E9ECF2) per state formula
+    const bg = currentState === 'hover' ? '#F5F7FA' : currentState === 'active' ? '#DDE1E8' : brand.hex;
+
+    const outline = currentState === 'focus' && isKeyboardFocused ? stateStyle.outline : 'none';
 
     computedStyle = {
       background: bg,
       color: brand.onColor,
       border: 'none',
-      outline: stateStyle.outline,
+      outline,
       outlineOffset: '2px',
       opacity: stateStyle.opacity,
       transform: currentState === 'active' ? 'translateY(0.5px)' : 'none',
@@ -89,8 +88,11 @@ export function Button({
       state: currentState,
     });
 
+    const outline = currentState === 'focus' && isKeyboardFocused ? limStyle.style.outline : 'none';
+
     computedStyle = {
       ...limStyle.style,
+      outline,
       color: getTextStyle('primary', 2).color,
     };
   } else if (variant === 'ghost') {
@@ -107,10 +109,13 @@ export function Button({
       ghostBg = getLadderColor(1.5); // -0.5Δ
     }
 
+    const outline = currentState === 'focus' && isKeyboardFocused ? limStyle.style.outline : 'none';
+
     computedStyle = {
       ...limStyle.style,
       background: ghostBg,
       border: 'none',
+      outline,
       color: getTextStyle('primary', 2).color,
     };
   } else if (variant === 'danger') {
@@ -121,9 +126,11 @@ export function Button({
     });
 
     const dangerText = LiminalColorEngine.SEMANTICS.DANGER.text;
+    const outline = currentState === 'focus' && isKeyboardFocused ? limStyle.style.outline : 'none';
 
     computedStyle = {
       ...limStyle.style,
+      outline,
       color: dangerText,
     };
   }
@@ -145,17 +152,30 @@ export function Button({
     ...customStyle,
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === 'Tab') {
+      setIsKeyboardFocused(true);
+    }
+  };
+
   return (
     <button
       type={type}
       disabled={disabled}
       onClick={disabled ? undefined : onClick}
+      onKeyDown={handleKeyDown}
+      onMouseDown={() => {
+        setIsKeyboardFocused(false);
+        if (!disabled) setInternalState('active');
+      }}
+      onMouseUp={() => !disabled && setInternalState('hover')}
       onMouseEnter={() => !disabled && setInternalState('hover')}
       onMouseLeave={() => !disabled && setInternalState('idle')}
-      onMouseDown={() => !disabled && setInternalState('active')}
-      onMouseUp={() => !disabled && setInternalState('hover')}
       onFocus={() => !disabled && setInternalState('focus')}
-      onBlur={() => !disabled && setInternalState('idle')}
+      onBlur={() => {
+        setInternalState('idle');
+        setIsKeyboardFocused(false);
+      }}
       className={className}
       style={finalStyle}
     >

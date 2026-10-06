@@ -73,7 +73,7 @@ export function Toggle({
     // checked=false: knob right 3px, background rgba(255,255,255,.4)
     right: checked ? '23px' : '3px',
     background: checked ? brand.onColor : 'rgba(255, 255, 255, 0.4)',
-    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
+    boxShadow: '0 1px 2px rgba(1, 2, 3, 0.22)',
   };
 
   return (
