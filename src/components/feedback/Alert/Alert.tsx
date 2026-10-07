@@ -42,8 +42,8 @@ export function Alert({
   const semanticObj = SEMANTICS[semKey] ?? SEMANTICS.INFO;
   const solidColor = semanticObj.solid;
 
-  // LIMINAL GLASS: 5-layer inline glass structure (halo · edge · refraction · neutral surface · signal)
-  const glassStyle = LiminalColorEngine.getGlassStyle(solidColor, 'inline');
+  // LIMINAL MIST: quiet tier mist light (soft halos + caustic + whisper + separate ringLayer)
+  const mist = LiminalColorEngine.getMistStyle(solidColor, 'quiet');
 
   // Default icons
   const defaultIcons: Record<'success' | 'warning' | 'danger' | 'info', ReactNode> = {
@@ -65,15 +65,17 @@ export function Alert({
   };
 
   const containerStyle: CSSProperties = {
-    ...glassStyle,
+    position: 'relative',
+    overflow: 'visible',
     borderRadius: `${RADIUS.card}px`, // 16px
+    background: mist.background,
+    boxShadow: mist.boxShadow,
     padding: `${SPACING[4]}px ${SPACING[5]}px`, // 16px 24px
     display: 'flex',
     alignItems: 'flex-start',
     gap: `${SPACING[3]}px`, // 12px
     boxSizing: 'border-box',
     width: '100%',
-    position: 'relative',
     transition: 'all 0.2s ease',
     ...customStyle,
   };
@@ -118,6 +120,9 @@ export function Alert({
       className={className}
       style={containerStyle}
     >
+      {/* ─── RING LAYER (separate blurred 1px border element) ─── */}
+      <span aria-hidden="true" style={mist.ringLayer} />
+
       {/* Icon: sharp signal */}
       <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, marginTop: '2px' }}>
         {alertIcon}

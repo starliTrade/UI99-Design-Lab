@@ -73,9 +73,9 @@ export function Toast({
 
   if (!open || typeof document === 'undefined') return null;
 
-  // LIMINAL GLASS: tier 'cta' + SHADOWS[4] (deep gravity anchor)
-  const glassStyle = LiminalColorEngine.getGlassStyle(solidColor, 'cta');
-  const compositeBoxShadow = `${glassStyle.boxShadow}, ${SHADOWS[4]}`;
+  // LIMINAL MIST: tier 'quiet' + ringLayer + composite with deep gravity anchor SHADOWS[4]
+  const mist = LiminalColorEngine.getMistStyle(solidColor, 'quiet');
+  const compositeBoxShadow = `${mist.boxShadow}, ${SHADOWS[4]}`;
 
   const defaultIcons: Record<'success' | 'warning' | 'danger' | 'info', ReactNode> = {
     success: <CheckCircle2 size={16} style={{ color: solidColor, flexShrink: 0 }} />,
@@ -101,9 +101,11 @@ export function Toast({
   };
 
   const toastStyle: CSSProperties = {
-    ...glassStyle,
+    position: 'relative',
+    overflow: 'visible',
+    background: mist.background,
     boxShadow: compositeBoxShadow,
-    borderRadius: `${RADIUS[12]}px`, // 12px = r5
+    borderRadius: `${RADIUS[12]}px`, // 12px
     padding: `${SPACING[3]}px ${SPACING[4]}px`, // 12px 16px
     display: 'flex',
     alignItems: 'center',
@@ -127,6 +129,9 @@ export function Toast({
         onMouseEnter={pauseTimer}
         onMouseLeave={startTimer}
       >
+        {/* ─── RING LAYER (separate blurred 1px border element) ─── */}
+        <span aria-hidden="true" style={mist.ringLayer} />
+
         {/* Signal indicator */}
         <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
           {defaultIcons[semantic]}

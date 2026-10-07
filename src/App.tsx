@@ -8,6 +8,9 @@ import { ContainersDemo } from './components/containers';
 import { NavDemo } from './components/nav';
 import { DataDemo } from './components/data';
 import { FeedbackDemo } from './components/feedback';
+import { LayoutDemo } from './components/layout';
+import { CompositesDemo } from './components/composites';
+import { AppDemo } from './app';
 import {
   Shield,
   Sparkles,
@@ -46,7 +49,7 @@ import {
 export function App() {
   const [copied, setCopied] = useState<boolean>(false);
   const [deviceMode, setDeviceMode] = useState<'mobile' | 'fluid'>('mobile');
-  const [activeTab, setActiveTab] = useState<'app' | 'atoms' | 'inputs' | 'containers' | 'nav' | 'data' | 'feedback' | 'bench' | 'tokens' | 'contract'>('app');
+  const [activeTab, setActiveTab] = useState<'app' | 'gateway' | 'atoms' | 'inputs' | 'containers' | 'nav' | 'data' | 'feedback' | 'layout' | 'composites' | 'bench' | 'tokens' | 'contract'>('app');
   const [selectedHue, setSelectedHue] = useState<number>(230);
   const [interactiveState, setInteractiveState] = useState<LiminalState>('idle');
   const [bottomDrawerOpen, setBottomDrawerOpen] = useState<boolean>(false);
@@ -200,9 +203,10 @@ export function App() {
   --lim-brand-primary:  #E9ECF2;
   --lim-brand-on-color: #060709;
 
-  /* == 11. LIMINAL GLASS (5-LAYER ARCHITECTURE) == */
+  /* == 11. LIMINAL GLASS (5-LAYER ARCHITECTURE & VIEW BUDGET) == */
   /* Layers: Halo -> Edge 1px (Top > Bottom > Side) -> Refraction Inset -> Neutral Surface -> Signal */
   /* cta: edge .65/.40/.50, refr .30/.22 | inline: edge .45/.26/.34, refr .20/.14 */
+  /* 11.4 Budget per view: Max 1 Glass CTA, Alerts only for critical events, Toasts for key moments, Max 1 Featured card */
 }`;
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -328,7 +332,7 @@ export function App() {
       {/* Main Page Area */}
       <main
         className={`mx-auto p-3 sm:p-5 lg:p-6 space-y-4 transition-all duration-300 ${
-          deviceMode === 'mobile' ? 'max-w-[410px]' : 'max-w-2xl'
+          deviceMode === 'mobile' ? 'max-w-[410px]' : (activeTab === 'app' || activeTab === 'layout' ? 'max-w-7xl' : 'max-w-3xl')
         }`}
       >
         {/* ─── 2. MAIN SEGMENTED NAVIGATION TABS (Liminal Track on S1 · Active Tab on S3 with Rim 2 · Mobile-First Horizontal Rail) ─── */}
@@ -346,13 +350,16 @@ export function App() {
             }}
           >
             {[
-              { id: 'app', label: 'Gateway' },
+              { id: 'app', label: 'App (8 Kits)' },
+              { id: 'gateway', label: 'Gateway' },
               { id: 'atoms', label: 'Atoms' },
               { id: 'inputs', label: 'Inputs' },
               { id: 'containers', label: 'Containers' },
               { id: 'nav', label: 'Navigation' },
               { id: 'data', label: 'Data' },
               { id: 'feedback', label: 'Feedback' },
+              { id: 'layout', label: 'Layout' },
+              { id: 'composites', label: 'Composites' },
               { id: 'bench', label: 'States' },
               { id: 'tokens', label: 'Colors' },
               { id: 'contract', label: 'Contract' },
@@ -389,8 +396,15 @@ export function App() {
           </nav>
         </div>
 
-        {/* ─── TAB 1: REAL-WORLD MOBILE GATEWAY CONSOLE ─── */}
+        {/* ─── TAB: FULL DEMO APP (ALL 8 KITS INTEGRATED) ─── */}
         {activeTab === 'app' && (
+          <div className="space-y-4 animate-in fade-in-50 duration-200">
+            <AppDemo />
+          </div>
+        )}
+
+        {/* ─── TAB: REAL-WORLD MOBILE GATEWAY CONSOLE ─── */}
+        {activeTab === 'gateway' && (
           <div className="space-y-4 animate-in fade-in-50 duration-200">
             {/* Header Card (Container Surface 1 #08090C · Rim 1 · Radius 24px) */}
             <div
@@ -807,6 +821,20 @@ export function App() {
         {activeTab === 'feedback' && (
           <div className="space-y-4 animate-in fade-in-50 duration-200">
             <FeedbackDemo />
+          </div>
+        )}
+
+        {/* ─── TAB: LAYOUT KIT DEMO ─── */}
+        {activeTab === 'layout' && (
+          <div className="space-y-4 animate-in fade-in-50 duration-200">
+            <LayoutDemo />
+          </div>
+        )}
+
+        {/* ─── TAB: COMPOSITES KIT DEMO ─── */}
+        {activeTab === 'composites' && (
+          <div className="space-y-4 animate-in fade-in-50 duration-200">
+            <CompositesDemo />
           </div>
         )}
 
@@ -1301,6 +1329,17 @@ export function App() {
                 <p>ترتیب نور Glass: top &gt; bottom &gt; side (شکست نور) — استثنا از ترتیب convex. ترتیب نور Rim جامد: top &gt; side &gt; bottom (بدون تغییر).</p>
                 <p>بودجه‌ی شیشه: cta/Featured: edge .65/.40/.50 · refr .30/.22 · halo .14/.16 | inline(Alert): edge .45/.26/.34 · refr .20/.14 · halo .08/.10.</p>
                 <p>مجاز فقط برای: CTA اصلی (حداکثر ۱ در نما) · Alert · کارت Featured · Toast (شناور). Tooltip خنثی است (بدون hue) — فقط rim و سایه.</p>
+                <p className="text-[#6EE0B4] font-bold mt-2">== ۱۱.۴ بودجه‌ی استفاده (Glass Budget per View) ==</p>
+                <p>شیشه یک استثناست، نه قاعده. در هر نمای کامل:</p>
+                <p>• حداکثر ۱ عنصر Glass CTA (معمولاً اصلی‌ترین اقدام صفحه)</p>
+                <p>• Glass Alert فقط برای رویدادهای بحرانی/مهم (نه هر پیام سیستمی)</p>
+                <p>• Glass Toast فقط برای لحظات کلیدی (publish/deploy/delete موفق)</p>
+                <p>• کارت Featured حداکثر ۱ در صفحه</p>
+                <p className="mt-1 text-white/90">استاندارد پیش‌فرض برای همه‌ی عناصر دیگر:</p>
+                <p>• Rim جهت‌دار خنثی از نردبان (قانون اصلی rim)</p>
+                <p>• سایه زیر-بوم فقط برای شناورها (E1-E4)</p>
+                <p>• متن از سلسله‌مراتب ۴ سطحی</p>
+                <p className="text-[#FF7B72] font-semibold mt-1">«شیشه‌ی بیشتر از این بودجه = نقض سیاست لیمینال (چشم را از هدف اصلی منحرف می‌کند).»</p>
               </div>
             </div>
           </div>

@@ -167,55 +167,52 @@ export class LiminalColorEngine {
     };
   }
 
-  // بودجه‌ی شیشه: سقف‌های آلفا بر اساس نقش عنصر
-  static readonly GLASS_BUDGET = {
-    cta: {
-      edgeTop: 0.65,
-      edgeSide: 0.40,
-      edgeBottom: 0.50,
-      refrTop: 0.30,
-      refrBottom: 0.22,
-      halo1: '0 0 26px -6px',
-      halo1a: 0.14,
-      halo2: '0 10px 34px -10px',
-      halo2a: 0.16,
+  static readonly MIST_SPEC = {
+    hero: {
+      ring: 0.18, ringBlur: 9,
+      halo1: '0 0 44px', halo1a: 0.07,
+      halo2: '0 0 90px', halo2a: 0.04,
+      caustic: 0.06, whisper: 0.048, shade: 0.30,
+      fill: 'linear-gradient(180deg, rgba(13,14,18,0.66) 0%, rgba(10,11,15,0.48) 100%)',
     },
-    inline: {
-      edgeTop: 0.45,
-      edgeSide: 0.26,
-      edgeBottom: 0.34,
-      refrTop: 0.20,
-      refrBottom: 0.14,
-      halo1: '0 0 22px -6px',
-      halo1a: 0.08,
-      halo2: '0 6px 24px -10px',
-      halo2a: 0.10,
+    quiet: {
+      ring: 0.16, ringBlur: 10,
+      halo1: '0 0 40px', halo1a: 0.06,
+      halo2: '0 0 84px', halo2a: 0.035,
+      caustic: 0.055, whisper: 0.044, shade: 0.28,
+      fill: 'linear-gradient(180deg, rgba(13,14,18,0.60) 0%, rgba(10,11,15,0.44) 100%)',
     },
   } as const;
 
   /**
-   * LIMINAL GLASS — ساختار ۵ لایه‌ی شیشه
-   * لایه‌ها: halo · edge 1px جهت‌دار · refraction (ضخامت شیشه) · surface خنثی · signal
-   * ترتیب نور در Glass: top > bottom > side (شکست نور در ضخامت شیشه)
+   * LIMINAL MIST — light as fog, no crisp geometry.
+   * ring layer must be rendered as a separate absolutely-positioned
+   * element (border 1px + filter blur), because pseudo-elements
+   * cannot be set via inline styles.
    */
-  static getGlassStyle(hex: string, tier: GlassTier = 'inline') {
+  static getMistStyle(hex: string, tier: MistTier = 'quiet') {
     const { r, g, b } = this.hexToRgb(hex);
     const H = `${r}, ${g}, ${b}`;
-    const B = this.GLASS_BUDGET[tier];
-    const surface = 'linear-gradient(180deg, #0a0b0f 0%, #08090c 55%, #090a0d 100%)';
+    const S = this.MIST_SPEC[tier];
     return {
-      border: '1px solid transparent',
-      background:
-        `${surface} padding-box, ` +
-        `linear-gradient(180deg, rgba(${H}, ${B.edgeTop}) 0%, rgba(${H}, ${B.edgeSide}) 50%, rgba(${H}, ${B.edgeBottom}) 100%) border-box`,
-      boxShadow:
-        `${B.halo1} rgba(${H}, ${B.halo1a}), ` +
-        `${B.halo2} rgba(${H}, ${B.halo2a}), ` +
-        `inset 0 2px 10px -2px rgba(${H}, ${B.refrTop}), ` +
-        `inset 0 -6px 14px -6px rgba(${H}, ${B.refrBottom})`,
+      background: S.fill,
+      boxShadow: [
+        `${S.halo1} rgba(${H}, ${S.halo1a})`,
+        `${S.halo2} rgba(${H}, ${S.halo2a})`,
+        `inset 0 -6px 22px -6px rgba(${H}, ${S.caustic})`,
+        `inset 0 1px 14px rgba(${H}, ${S.whisper})`,
+        `inset 0 4px 14px -4px rgba(1, 2, 3, ${S.shade})`,
+      ].join(', '),
+      ringLayer: {
+        position: 'absolute', inset: 0,
+        borderRadius: 'inherit',
+        border: `1px solid rgba(${H}, ${S.ring})`,
+        filter: `blur(${S.ringBlur}px)`,
+        pointerEvents: 'none',
+      } as const,
     };
   }
 }
 
-export type GlassTier = 'cta' | 'inline';
+export type MistTier = 'hero' | 'quiet';
 
