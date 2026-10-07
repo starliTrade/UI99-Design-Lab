@@ -27,3 +27,22 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #232a38;
 }
+
+/* Hide scrollbar for horizontal mobile rails */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (max-width: 768px) {
+  .liminal-sidebar {
+    width: 100% !important;
+    position: static !important;
+  }
+}

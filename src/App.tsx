@@ -4,6 +4,10 @@ import { LiminalColorEngine } from './engine/liminal-color-engine';
 import { LiminalLayoutEngine } from './engine/liminal-layout-engine';
 import { AtomsDemo } from './components/atoms';
 import { InputsDemo } from './components/inputs';
+import { ContainersDemo } from './components/containers';
+import { NavDemo } from './components/nav';
+import { DataDemo } from './components/data';
+import { FeedbackDemo } from './components/feedback';
 import {
   Shield,
   Sparkles,
@@ -42,7 +46,7 @@ import {
 export function App() {
   const [copied, setCopied] = useState<boolean>(false);
   const [deviceMode, setDeviceMode] = useState<'mobile' | 'fluid'>('mobile');
-  const [activeTab, setActiveTab] = useState<'app' | 'atoms' | 'inputs' | 'bench' | 'tokens' | 'contract'>('app');
+  const [activeTab, setActiveTab] = useState<'app' | 'atoms' | 'inputs' | 'containers' | 'nav' | 'data' | 'feedback' | 'bench' | 'tokens' | 'contract'>('app');
   const [selectedHue, setSelectedHue] = useState<number>(230);
   const [interactiveState, setInteractiveState] = useState<LiminalState>('idle');
   const [bottomDrawerOpen, setBottomDrawerOpen] = useState<boolean>(false);
@@ -51,6 +55,21 @@ export function App() {
   const [concentricPadding, setConcentricPadding] = useState<number>(12);
   const [selectedSegment, setSelectedSegment] = useState<string>('node-alpha');
   const [toastVisible, setToastVisible] = useState<boolean>(false);
+
+  // Mobile-first horizontal scroll tracking for main tabs
+  const navScrollRef = React.useRef<HTMLElement>(null);
+  const tabButtonRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
+
+  React.useEffect(() => {
+    const el = tabButtonRefs.current[activeTab];
+    if (el && navScrollRef.current) {
+      el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
+      });
+    }
+  }, [activeTab]);
 
   // Engines
   const neutrals = LiminalColorEngine.NEUTRALS;
@@ -180,6 +199,10 @@ export function App() {
   /* == 7. BRAND PRIMARY == */
   --lim-brand-primary:  #E9ECF2;
   --lim-brand-on-color: #060709;
+
+  /* == 11. LIMINAL GLASS (5-LAYER ARCHITECTURE) == */
+  /* Layers: Halo -> Edge 1px (Top > Bottom > Side) -> Refraction Inset -> Neutral Surface -> Signal */
+  /* cta: edge .65/.40/.50, refr .30/.22 | inline: edge .45/.26/.34, refr .20/.14 */
 }`;
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -308,48 +331,63 @@ export function App() {
           deviceMode === 'mobile' ? 'max-w-[410px]' : 'max-w-2xl'
         }`}
       >
-        {/* ─── 2. MAIN SEGMENTED NAVIGATION TABS (Liminal Track on S1 · Active Tab on S3 with Rim 2) ─── */}
-        <nav
-          className="p-1 flex transition-all"
-          style={{
-            ...containerStyle.style,
-            borderRadius: `${RADIUS.panel}px`,
-          }}
-        >
-          {[
-            { id: 'app', label: 'Gateway' },
-            { id: 'atoms', label: 'Atoms' },
-            { id: 'inputs', label: 'Inputs' },
-            { id: 'bench', label: 'States' },
-            { id: 'tokens', label: 'Colors' },
-            { id: 'contract', label: 'Contract' },
-          ].map((tab) => {
-            const isSelected = activeTab === tab.id;
-            const tabStyle = isSelected
-              ? SpecEngine.style({ surfaceLevel: 3, interactive: true })
-              : SpecEngine.style({ surfaceLevel: 1, interactive: true });
+        {/* ─── 2. MAIN SEGMENTED NAVIGATION TABS (Liminal Track on S1 · Active Tab on S3 with Rim 2 · Mobile-First Horizontal Rail) ─── */}
+        <div className="relative w-full">
+          <nav
+            ref={navScrollRef}
+            className="p-1 flex items-center overflow-x-auto no-scrollbar transition-all select-none"
+            style={{
+              ...containerStyle.style,
+              borderRadius: `${RADIUS.panel}px`,
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              gap: '3px',
+            }}
+          >
+            {[
+              { id: 'app', label: 'Gateway' },
+              { id: 'atoms', label: 'Atoms' },
+              { id: 'inputs', label: 'Inputs' },
+              { id: 'containers', label: 'Containers' },
+              { id: 'nav', label: 'Navigation' },
+              { id: 'data', label: 'Data' },
+              { id: 'feedback', label: 'Feedback' },
+              { id: 'bench', label: 'States' },
+              { id: 'tokens', label: 'Colors' },
+              { id: 'contract', label: 'Contract' },
+            ].map((tab) => {
+              const isSelected = activeTab === tab.id;
+              const tabStyle = isSelected
+                ? SpecEngine.style({ surfaceLevel: 3, interactive: true })
+                : SpecEngine.style({ surfaceLevel: 1, interactive: true });
 
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className="flex-1 py-2 text-center font-mono text-xs transition-all cursor-pointer"
-                style={{
-                  background: isSelected ? tabStyle.style.background : 'transparent',
-                  border: isSelected ? tabStyle.style.border : 'none',
-                  boxShadow: isSelected ? tabStyle.style.boxShadow : 'none',
-                  color: isSelected
-                    ? SpecEngine.getTextStyle('primary', 3).color
-                    : SpecEngine.getTextStyle('secondary', 1).color,
-                  fontWeight: isSelected ? 600 : 400,
-                  borderRadius: `${LiminalLayoutEngine.getConcentricRadius(RADIUS.panel, 4)}px`,
-                }}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </nav>
+              return (
+                <button
+                  key={tab.id}
+                  ref={(el) => {
+                    tabButtonRefs.current[tab.id] = el;
+                  }}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className="shrink-0 px-3.5 sm:px-4 py-2 text-center font-mono text-xs transition-all cursor-pointer whitespace-nowrap flex items-center justify-center select-none"
+                  style={{
+                    background: isSelected ? tabStyle.style.background : 'transparent',
+                    border: isSelected ? tabStyle.style.border : '1px solid transparent',
+                    boxShadow: isSelected ? tabStyle.style.boxShadow : 'none',
+                    color: isSelected
+                      ? SpecEngine.getTextStyle('primary', 3).color
+                      : SpecEngine.getTextStyle('secondary', 1).color,
+                    fontWeight: isSelected ? 600 : 400,
+                    borderRadius: `${LiminalLayoutEngine.getConcentricRadius(RADIUS.panel, 4)}px`,
+                    minHeight: '36px',
+                  }}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
 
         {/* ─── TAB 1: REAL-WORLD MOBILE GATEWAY CONSOLE ─── */}
         {activeTab === 'app' && (
@@ -741,6 +779,34 @@ export function App() {
         {activeTab === 'inputs' && (
           <div className="space-y-4 animate-in fade-in-50 duration-200">
             <InputsDemo />
+          </div>
+        )}
+
+        {/* ─── TAB: CONTAINERS KIT DEMO ─── */}
+        {activeTab === 'containers' && (
+          <div className="space-y-4 animate-in fade-in-50 duration-200">
+            <ContainersDemo />
+          </div>
+        )}
+
+        {/* ─── TAB: NAVIGATION KIT DEMO ─── */}
+        {activeTab === 'nav' && (
+          <div className="space-y-4 animate-in fade-in-50 duration-200">
+            <NavDemo />
+          </div>
+        )}
+
+        {/* ─── TAB: DATA KIT DEMO ─── */}
+        {activeTab === 'data' && (
+          <div className="space-y-4 animate-in fade-in-50 duration-200">
+            <DataDemo />
+          </div>
+        )}
+
+        {/* ─── TAB: FEEDBACK KIT DEMO ─── */}
+        {activeTab === 'feedback' && (
+          <div className="space-y-4 animate-in fade-in-50 duration-200">
+            <FeedbackDemo />
           </div>
         )}
 
@@ -1161,6 +1227,9 @@ export function App() {
                   'spacing cohesive ≤12 separating ≥16 atom 4 ; radius size-mapped + concentric',
                   'type ratio 1.2 weight ≤700 ; warm hues lower chroma (anti-neon)',
                   'all chromatic color on dark canvas only ; brand primary = Soft White #E9ECF2',
+                  'Glass هرگز tint پس‌زمینه یا border تخت رنگی ندارد',
+                  'سقف بودجه‌ی شیشه رعایت شود (نئون ممنوع)',
+                  'pill مجاز برای: badge · toggle · Glass CTA',
                 ].map((rule, idx) => (
                   <div
                     key={idx}
@@ -1227,6 +1296,11 @@ export function App() {
                 <p>5) TEXT: Primary α0.88, Secondary α0.62, Tertiary α0.40, Quaternary α0.25. Surface compensation on S2/S3/S4/S5.</p>
                 <p>6) COLOR: Ramp base=oklch(0.78, C_text, H), Semantics Success/Warning/Danger/Info, 12 Extended Hues, Brand Soft White #E9ECF2.</p>
                 <p>7) SPACING/RADIUS/TYPE: Atom 4px, Cohesive ≤12, Separating ≥16. Radius chip 6, control 10, card 16, panel 20, container 24, r_inner = max(4, r_outer − padding). Type modular 1.2 ratio (11 to 40px), weights 400..700.</p>
+                <p className="text-[#8B9CF0] font-bold">۱۱) LIMINAL GLASS (ساختار ۵ لایه)</p>
+                <p>لایه‌ها: 1 halo (box-shadow بیرونی بودجه‌بندی‌شده) · 2 edge 1px (گرادیان جهت‌دار border-box: top &gt; bottom &gt; side) · 3 refraction (ضخامت شیشه: inset shadow بالا/پایین) · 4 surface (گرادیان خنثی نردبان padding-box) · 5 signal (آیکون/متن semantic = تنها سیگنال تیز).</p>
+                <p>ترتیب نور Glass: top &gt; bottom &gt; side (شکست نور) — استثنا از ترتیب convex. ترتیب نور Rim جامد: top &gt; side &gt; bottom (بدون تغییر).</p>
+                <p>بودجه‌ی شیشه: cta/Featured: edge .65/.40/.50 · refr .30/.22 · halo .14/.16 | inline(Alert): edge .45/.26/.34 · refr .20/.14 · halo .08/.10.</p>
+                <p>مجاز فقط برای: CTA اصلی (حداکثر ۱ در نما) · Alert · کارت Featured · Toast (شناور). Tooltip خنثی است (بدون hue) — فقط rim و سایه.</p>
               </div>
             </div>
           </div>

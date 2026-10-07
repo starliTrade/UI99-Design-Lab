@@ -110,7 +110,10 @@ export function Select({
 
   if (!disabled && error) {
     border = `1px solid ${SEMANTICS.DANGER.border}`;
-    background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${LADDER[2]}`;
+    const baseRim = getDirectionalRim(2, 2, false);
+    if (baseRim) {
+      background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
+    }
   }
 
   const triggerStyle: CSSProperties = {

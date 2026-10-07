@@ -157,4 +157,65 @@ export class LiminalColorEngine {
       opacity,
     };
   }
+
+  static hexToRgb(hex: string): { r: number; g: number; b: number } {
+    const c = hex.replace('#', '');
+    return {
+      r: parseInt(c.substring(0, 2), 16),
+      g: parseInt(c.substring(2, 4), 16),
+      b: parseInt(c.substring(4, 6), 16),
+    };
+  }
+
+  // بودجه‌ی شیشه: سقف‌های آلفا بر اساس نقش عنصر
+  static readonly GLASS_BUDGET = {
+    cta: {
+      edgeTop: 0.65,
+      edgeSide: 0.40,
+      edgeBottom: 0.50,
+      refrTop: 0.30,
+      refrBottom: 0.22,
+      halo1: '0 0 26px -6px',
+      halo1a: 0.14,
+      halo2: '0 10px 34px -10px',
+      halo2a: 0.16,
+    },
+    inline: {
+      edgeTop: 0.45,
+      edgeSide: 0.26,
+      edgeBottom: 0.34,
+      refrTop: 0.20,
+      refrBottom: 0.14,
+      halo1: '0 0 22px -6px',
+      halo1a: 0.08,
+      halo2: '0 6px 24px -10px',
+      halo2a: 0.10,
+    },
+  } as const;
+
+  /**
+   * LIMINAL GLASS — ساختار ۵ لایه‌ی شیشه
+   * لایه‌ها: halo · edge 1px جهت‌دار · refraction (ضخامت شیشه) · surface خنثی · signal
+   * ترتیب نور در Glass: top > bottom > side (شکست نور در ضخامت شیشه)
+   */
+  static getGlassStyle(hex: string, tier: GlassTier = 'inline') {
+    const { r, g, b } = this.hexToRgb(hex);
+    const H = `${r}, ${g}, ${b}`;
+    const B = this.GLASS_BUDGET[tier];
+    const surface = 'linear-gradient(180deg, #0a0b0f 0%, #08090c 55%, #090a0d 100%)';
+    return {
+      border: '1px solid transparent',
+      background:
+        `${surface} padding-box, ` +
+        `linear-gradient(180deg, rgba(${H}, ${B.edgeTop}) 0%, rgba(${H}, ${B.edgeSide}) 50%, rgba(${H}, ${B.edgeBottom}) 100%) border-box`,
+      boxShadow:
+        `${B.halo1} rgba(${H}, ${B.halo1a}), ` +
+        `${B.halo2} rgba(${H}, ${B.halo2a}), ` +
+        `inset 0 2px 10px -2px rgba(${H}, ${B.refrTop}), ` +
+        `inset 0 -6px 14px -6px rgba(${H}, ${B.refrBottom})`,
+    };
+  }
 }
+
+export type GlassTier = 'cta' | 'inline';
+

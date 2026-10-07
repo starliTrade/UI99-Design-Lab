@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import {
   getLiminalStyle,
+  getDirectionalRim,
   getLadderColor,
   getTextStyle,
   LADDER,
@@ -90,10 +91,16 @@ export function Input({
   if (!disabled) {
     if (error) {
       border = `1px solid ${SEMANTICS.DANGER.border}`;
-      background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${LADDER[2]}`;
+      const baseRim = getDirectionalRim(2, 2, false);
+      if (baseRim) {
+        background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
+      }
     } else if (success) {
       border = `1px solid ${SEMANTICS.SUCCESS.border}`;
-      background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${LADDER[2]}`;
+      const baseRim = getDirectionalRim(2, 2, false);
+      if (baseRim) {
+        background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
+      }
     }
   }
 
