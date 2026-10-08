@@ -20,7 +20,7 @@ import {
   type IconWeight,
   ICON_SIZES,
 } from '../../engine/liminal-icon-engine';
-import { SpecEngine } from '../../engine/spec-engine';
+import { getLiminalStyle, getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 
 export function IconDemo() {
@@ -45,8 +45,8 @@ export function IconDemo() {
   const sizes: IconSize[] = ['xs', 'sm', 'md', 'lg', 'xl'];
   const weights: IconWeight[] = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'];
 
-  const containerStyle = SpecEngine.style({ surfaceLevel: 1, isContainer: true }).style;
-  const panelStyle = SpecEngine.style({ surfaceLevel: 2, isContainer: true }).style;
+  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
+  const panelStyle = getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style;
 
   return (
     <div className="space-y-6 font-mono text-xs">
@@ -73,7 +73,7 @@ export function IconDemo() {
               <div className="flex items-center gap-2">
                 <h2
                   className="font-bold text-sm sm:text-base tracking-tight"
-                  style={{ color: SpecEngine.getTextStyle('primary', 1).color }}
+                  style={{ color: getTextStyle('primary', 1).color }}
                 >
                   LIMINAL ICON SYSTEM
                 </h2>
@@ -81,7 +81,7 @@ export function IconDemo() {
                   @phosphor-icons/react
                 </span>
               </div>
-              <p className="text-[11px] mt-0.5" style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+              <p className="text-[11px] mt-0.5" style={{ color: getTextStyle('tertiary', 1).color }}>
                 Canonical weight: light (1.5px stroke) · Tokens: xs (12px), sm (16px), md (20px), lg (24px), xl (32px)
               </p>
             </div>
@@ -91,7 +91,7 @@ export function IconDemo() {
         {/* Live Controls */}
         <div className="flex flex-wrap items-center gap-4 pt-1">
           <div className="flex items-center gap-2">
-            <span style={{ color: SpecEngine.getTextStyle('secondary', 1).color }}>Weight Filter:</span>
+            <span style={{ color: getTextStyle('secondary', 1).color }}>Weight Filter:</span>
             <div className="flex items-center gap-1">
               {weights.map((w) => (
                 <button
@@ -111,7 +111,7 @@ export function IconDemo() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span style={{ color: SpecEngine.getTextStyle('secondary', 1).color }}>Size Filter:</span>
+            <span style={{ color: getTextStyle('secondary', 1).color }}>Size Filter:</span>
             <div className="flex items-center gap-1">
               {sizes.map((s) => (
                 <button
@@ -141,10 +141,10 @@ export function IconDemo() {
         }}
       >
         <div className="flex items-center justify-between pb-2 border-b border-white/5">
-          <div className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+          <div className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
             1. SIZE TOKENS MATRIX ({selectedWeight.toUpperCase()} WEIGHT)
           </div>
-          <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+          <span style={{ color: getTextStyle('tertiary', 1).color }}>
             xs: 12px · sm: 16px · md: 20px · lg: 24px · xl: 32px
           </span>
         </div>
@@ -186,10 +186,10 @@ export function IconDemo() {
         }}
       >
         <div className="flex items-center justify-between pb-2 border-b border-white/5">
-          <div className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+          <div className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
             2. WEIGHT COMPARISON MATRIX ({selectedSize.toUpperCase()} · {ICON_SIZES[selectedSize]}px)
           </div>
-          <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+          <span style={{ color: getTextStyle('tertiary', 1).color }}>
             Default: light (1.5px stroke)
           </span>
         </div>
