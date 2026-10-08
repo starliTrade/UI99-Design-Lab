@@ -8,7 +8,8 @@ import { Radio } from './Radio';
 import { getLiminalStyle, getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
-import { Search, Mail, Lock, User, CheckCircle2 } from 'lucide-react';
+import { MagnifyingGlass, Envelope, Lock, User, CheckCircle } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function InputsDemo() {
   // Input states
@@ -117,7 +118,7 @@ export function InputsDemo() {
             fontWeight: 500,
           }}
         >
-          <CheckCircle2 size={12} />
+          <LiminalIcon icon={CheckCircle} size="xs" weight="light" />
           <span>All Inputs Synced</span>
         </span>
       </div>
@@ -135,7 +136,7 @@ export function InputsDemo() {
             value={textVal}
             onChange={(e) => setTextVal(e.target.value)}
             helperText="Alphanumeric ASCII characters only"
-            prefix={<User size={16} />}
+            prefix={<LiminalIcon icon={User} size="sm" weight="light" />}
           />
 
           <Input
@@ -145,7 +146,7 @@ export function InputsDemo() {
             value={emailVal}
             onChange={(e) => setEmailVal(e.target.value)}
             success="Verified GPG security signature active"
-            prefix={<Mail size={16} />}
+            prefix={<LiminalIcon icon={Envelope} size="sm" weight="light" />}
           />
 
           <Input
@@ -155,7 +156,7 @@ export function InputsDemo() {
             value={passVal}
             onChange={(e) => setPassVal(e.target.value)}
             helperText="128-bit quantum resistant token"
-            prefix={<Lock size={16} />}
+            prefix={<LiminalIcon icon={Lock} size="sm" weight="light" />}
             suffix={<span style={{ fontSize: '10px', fontFamily: 'monospace' }}>AES-GCM</span>}
           />
 
@@ -165,7 +166,7 @@ export function InputsDemo() {
             placeholder="Search telemetry or routes..."
             value={searchVal}
             onChange={(e) => setSearchVal(e.target.value)}
-            prefix={<Search size={16} />}
+            prefix={<LiminalIcon icon={MagnifyingGlass} size="sm" weight="light" />}
             suffix={<kbd style={{ fontSize: '9px', padding: '2px 4px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px' }}>⌘K</kbd>}
           />
 

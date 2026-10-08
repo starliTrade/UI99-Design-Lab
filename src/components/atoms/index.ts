@@ -4,3 +4,5 @@ export * from './Tag';
 export * from './Toggle';
 export * from './Mist';
 export * from './AtomsDemo';
+export * from './MotionDemo';
+export * from './IconDemo';

@@ -1,10 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { createPortal } from 'react-dom';
-import type { CSSProperties, ReactNode, KeyboardEvent, MouseEvent } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { getDirectionalRim, getTextStyle, SHADOWS, LADDER } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import {
+  useScrollLock,
+  useEscapeKey,
+  useFocusTrap,
+  useClickOutside,
+} from '../../../engine/liminal-hooks';
 import { Divider } from '../Divider';
-import { X } from 'lucide-react';
+import { X } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
 export interface ModalProps {
   open: boolean;
@@ -32,82 +39,23 @@ export function Modal({
   style: customStyle = {},
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
-  const previousActiveElement = useRef<HTMLElement | null>(null);
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
-  // Body scroll lock & focus trap setup
-  useEffect(() => {
-    if (!open) return;
-
-    previousActiveElement.current = document.activeElement as HTMLElement;
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    // Focus first focusable element inside modal
-    const timer = setTimeout(() => {
-      if (modalRef.current) {
-        const focusable = modalRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length > 0) {
-          focusable[0].focus();
-        } else {
-          modalRef.current.focus();
-        }
-      }
-    }, 50);
-
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      clearTimeout(timer);
-      if (previousActiveElement.current) {
-        previousActiveElement.current.focus();
-      }
-    };
-  }, [open]);
-
-  // Escape key handler
-  useEffect(() => {
-    if (!open || !closeOnEscape) return;
-
-    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        onClose();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open, closeOnEscape, onClose]);
-
-  // Focus trap on Tab
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key !== 'Tab' || !modalRef.current) return;
-
-    const focusables = modalRef.current.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    if (focusables.length === 0) return;
-
-    const first = focusables[0];
-    const last = focusables[focusables.length - 1];
-
-    if (e.shiftKey) {
-      if (document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      }
-    } else {
-      if (document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
+  // Primitive Hooks: body scroll lock, escape key, focus trap, outside click
+  useScrollLock(open);
+  useEscapeKey(onClose, open && closeOnEscape);
+  const { handleKeyDown } = useFocusTrap(modalRef, open, {
+    autoFocus: true,
+    restoreFocus: true,
+  });
+  useClickOutside(modalRef, () => {
+    if (closeOnBackdrop) {
+      onClose();
     }
-  };
+  }, open && closeOnBackdrop);
 
   if (!open || typeof document === 'undefined') {
     return null;
@@ -168,7 +116,7 @@ export function Modal({
   return createPortal(
     <div
       style={backdropStyle}
-      onClick={(e: MouseEvent<HTMLDivElement>) => {
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
         if (closeOnBackdrop && e.target === e.currentTarget) {
           onClose();
         }
@@ -218,7 +166,7 @@ export function Modal({
               transition: 'color 0.15s ease',
             }}
           >
-            <X size={18} />
+            <LiminalIcon icon={X} size="sm" weight="light" />
           </button>
         </div>
 

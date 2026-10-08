@@ -26,7 +26,7 @@ export function Tooltip({
   style: customStyle = {},
 }: TooltipProps) {
   const [visible, setVisible] = useState<boolean>(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipId = useId();
 
   const RADIUS = LiminalLayoutEngine.RADIUS;

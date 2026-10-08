@@ -18,7 +18,7 @@ export interface MistProps {
 }
 
 export function Mist({
-  as = 'quiet',
+  as = 'button',
   tier = 'quiet',
   light = LiminalColorEngine.BRAND_PRIMARY.hex,
   radius,

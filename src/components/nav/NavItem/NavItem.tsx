@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import type { CSSProperties, ReactNode, KeyboardEvent, MouseEvent } from 'react';
+import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import {
   getDirectionalRim,
   getLadderColor,
@@ -9,6 +11,7 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 
 export interface NavItemProps {
   children: ReactNode;
+  icon?: PhosphorIcon | ReactNode;
   active?: boolean;
   onClick?: (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void;
   href?: string;
@@ -19,6 +22,7 @@ export interface NavItemProps {
 
 export function NavItem({
   children,
+  icon,
   active = false,
   onClick,
   href,
@@ -80,6 +84,14 @@ export function NavItem({
     }
   };
 
+  const renderIcon = () => {
+    if (!icon) return null;
+    if (typeof icon === 'function') {
+      return <LiminalIcon icon={icon as PhosphorIcon} size="sm" weight="light" />;
+    }
+    return icon;
+  };
+
   if (href && !disabled) {
     return (
       <a
@@ -94,6 +106,7 @@ export function NavItem({
         onBlur={() => setIsKeyboardFocused(false)}
         aria-current={active ? 'page' : undefined}
       >
+        {renderIcon()}
         {children}
       </a>
     );
@@ -113,6 +126,7 @@ export function NavItem({
       onBlur={() => setIsKeyboardFocused(false)}
       aria-current={active ? 'page' : undefined}
     >
+      {renderIcon()}
       {children}
     </button>
   );

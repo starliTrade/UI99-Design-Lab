@@ -1,187 +1,230 @@
-import React, { useState } from 'react';
-import type { CSSProperties, ReactNode, KeyboardEvent, MouseEvent } from 'react';
-import { getLiminalStyle, getLadderColor, getTextStyle, LiminalState } from '../../../engine/spec-engine';
+import React from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import {
+  createLiminalComponent,
+  type LiminalComponentProps,
+} from '../../../engine/liminal-component';
+import {
+  useLiminalInteraction,
+  LiminalComponentEngine,
+} from '../../../engine/liminal-component-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import {
+  getLadderColor,
+  getTextStyle,
+  LiminalState,
+} from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 
-export interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+export type ButtonSize = 'sm' | 'md' | 'lg';
+
+export interface ButtonProps extends LiminalComponentProps<'button'> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   disabled?: boolean;
-  children: ReactNode;
-  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  forcedState?: LiminalState;
+  icon?: ReactNode;
+  iconRight?: ReactNode;
+  fullWidth?: boolean;
+  children?: ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   type?: 'button' | 'submit' | 'reset';
-  className?: string;
-  style?: CSSProperties;
 }
 
-export function Button({
-  variant = 'secondary',
-  size = 'md',
-  disabled = false,
-  children,
-  onClick,
-  type = 'button',
-  className = '',
-  style: customStyle = {},
-}: ButtonProps) {
-  const [internalState, setInternalState] = useState<LiminalState>('idle');
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
-
-  const currentState: LiminalState = disabled ? 'disabled' : internalState;
-
-  // 1. Size token resolution from LiminalLayoutEngine
-  const sizeStyles: Record<'sm' | 'md' | 'lg', CSSProperties> = {
-    sm: {
-      padding: '6px 12px',
-      fontSize: '12px',
-      minHeight: '32px',
-      lineHeight: 1.4,
+/**
+ * Button · Canonical Liminal Component Wrapper Pattern
+ * Features:
+ * - Built with createLiminalComponent factory (forwardRef, asChild, data-liminal-component)
+ * - State machine via useLiminalInteraction (keyboard vs pointer focus isolation)
+ * - Optical surfaces via LiminalComponentEngine.resolveInteractiveSurface
+ * - Locked transitions via LiminalMotionEngine.TRANSITION.normal
+ */
+export const Button = createLiminalComponent<ButtonProps>(
+  {
+    displayName: 'Button',
+    defaultElement: 'button',
+    defaultProps: {
+      variant: 'secondary',
+      size: 'md',
+      disabled: false,
+      type: 'button',
     },
-    md: {
-      padding: '10px 18px',
-      fontSize: '13px',
-      minHeight: '44px', // mobile touch target compliant
-      lineHeight: 1.5,
-    },
-    lg: {
-      padding: '12px 24px',
-      fontSize: '15px',
-      minHeight: '52px',
-      lineHeight: 1.5,
-    },
-  };
+  },
+  (props) => {
+    const {
+      variant = 'secondary',
+      size = 'md',
+      disabled = false,
+      forcedState,
+      icon,
+      iconRight,
+      fullWidth = false,
+      children,
+      onClick,
+      type = 'button',
+      className = '',
+      style: customStyle = {},
+      ref,
+      onMouseEnter,
+      onMouseLeave,
+      onMouseDown,
+      onMouseUp,
+      onFocus,
+      onBlur,
+      onKeyDown,
+      onKeyUp,
+      ...restProps
+    } = props;
 
-  const baseFontWeight = LiminalLayoutEngine.TYPOGRAPHY[2].weight; // 500
-  const controlRadius = LiminalLayoutEngine.RADIUS.control; // 10px
-
-  // 2. Variant & State Resolution
-  let computedStyle: CSSProperties = {};
-
-  if (variant === 'primary') {
-    const brand = LiminalColorEngine.BRAND_PRIMARY;
-    const stateStyle = LiminalColorEngine.getStateStyle({
-      baseL: 0.90,
-      baseColor: brand.hex,
-      state: currentState,
+    // 1. Interaction DNA Hook
+    const { currentState, isKeyboardFocused, handlers, ariaProps } = useLiminalInteraction<HTMLButtonElement>({
+      disabled,
+      forcedState,
+      onMouseEnter,
+      onMouseLeave,
+      onMouseDown,
+      onMouseUp,
+      onFocus,
+      onBlur,
+      onKeyDown,
+      onKeyUp,
     });
 
-    // L +0.05 (#F5F7FA) and L -0.05 (#DDE1E8) from BRAND_PRIMARY (#E9ECF2) per state formula
-    const bg = currentState === 'hover' ? '#F5F7FA' : currentState === 'active' ? '#DDE1E8' : brand.hex;
-
-    const outline = currentState === 'focus' && isKeyboardFocused ? stateStyle.outline : 'none';
-
-    computedStyle = {
-      background: bg,
-      color: brand.onColor,
-      border: 'none',
-      outline,
-      outlineOffset: '2px',
-      opacity: stateStyle.opacity,
-      transform: currentState === 'active' ? 'translateY(0.5px)' : 'none',
-      cursor: disabled ? 'not-allowed' : 'pointer',
+    // 2. Size token resolution from LiminalLayoutEngine
+    const sizeStyles: Record<ButtonSize, CSSProperties> = {
+      sm: {
+        padding: '6px 12px',
+        fontSize: '12px',
+        minHeight: '32px',
+        lineHeight: 1.4,
+      },
+      md: {
+        padding: '10px 18px',
+        fontSize: '13px',
+        minHeight: '44px', // mobile touch target compliant
+        lineHeight: 1.5,
+      },
+      lg: {
+        padding: '12px 24px',
+        fontSize: '15px',
+        minHeight: '52px',
+        lineHeight: 1.5,
+      },
     };
-  } else if (variant === 'secondary') {
-    const limStyle = getLiminalStyle({
-      surfaceLevel: 2,
-      interactive: true,
-      state: currentState,
-    });
 
-    const outline = currentState === 'focus' && isKeyboardFocused ? limStyle.style.outline : 'none';
+    const baseFontWeight = LiminalLayoutEngine.TYPOGRAPHY[2].weight; // 500
+    const controlRadius = LiminalLayoutEngine.RADIUS.control; // 10px
 
-    computedStyle = {
-      ...limStyle.style,
-      outline,
-      color: getTextStyle('primary', 2).color,
-    };
-  } else if (variant === 'ghost') {
-    const limStyle = getLiminalStyle({
-      surfaceLevel: 2,
-      interactive: true,
-      state: currentState,
-    });
+    // 3. Variant & Optical Surface Resolution
+    let computedStyle: CSSProperties = {};
 
-    let ghostBg = 'transparent';
-    if (currentState === 'hover') {
-      ghostBg = getLadderColor(2.5); // +0.5Δ
-    } else if (currentState === 'active') {
-      ghostBg = getLadderColor(1.5); // -0.5Δ
+    if (variant === 'primary') {
+      const brand = LiminalColorEngine.BRAND_PRIMARY;
+      const stateStyle = LiminalColorEngine.getStateStyle({
+        baseL: 0.90,
+        baseColor: brand.hex,
+        state: currentState,
+      });
+
+      const bg = currentState === 'hover' ? '#F5F7FA' : currentState === 'active' ? '#DDE1E8' : brand.hex;
+      const outline = currentState === 'focus' && isKeyboardFocused ? stateStyle.outline : 'none';
+
+      computedStyle = {
+        background: bg,
+        color: brand.onColor,
+        border: 'none',
+        outline,
+        outlineOffset: '2px',
+        opacity: stateStyle.opacity,
+        transform: currentState === 'active' ? 'translateY(0.5px)' : 'none',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+      };
+    } else if (variant === 'secondary') {
+      computedStyle = LiminalComponentEngine.resolveInteractiveSurface({
+        surfaceLevel: 2,
+        state: currentState,
+        isKeyboardFocused,
+        rimTier: 2,
+      });
+      computedStyle = {
+        ...computedStyle,
+        color: getTextStyle('primary', 2).color,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+      };
+    } else if (variant === 'ghost') {
+      let ghostBg = 'transparent';
+      if (currentState === 'hover') {
+        ghostBg = getLadderColor(2.5);
+      } else if (currentState === 'active') {
+        ghostBg = getLadderColor(1.5);
+      }
+
+      computedStyle = LiminalComponentEngine.resolveInteractiveSurface({
+        surfaceLevel: 2,
+        state: currentState,
+        isKeyboardFocused,
+        rimTier: 2,
+      });
+      computedStyle = {
+        ...computedStyle,
+        background: ghostBg,
+        border: 'none',
+        color: getTextStyle('primary', 2).color,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+      };
+    } else if (variant === 'danger') {
+      computedStyle = LiminalComponentEngine.resolveInteractiveSurface({
+        surfaceLevel: 2,
+        state: currentState,
+        isKeyboardFocused,
+        rimTier: 2,
+      });
+      computedStyle = {
+        ...computedStyle,
+        color: LiminalColorEngine.SEMANTICS.DANGER.text,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+      };
     }
 
-    const outline = currentState === 'focus' && isKeyboardFocused ? limStyle.style.outline : 'none';
-
-    computedStyle = {
-      ...limStyle.style,
-      background: ghostBg,
-      border: 'none',
-      outline,
-      color: getTextStyle('primary', 2).color,
+    // 4. Composite Final Style with Liminal Motion Engine
+    const finalStyle: CSSProperties = {
+      fontFamily: 'inherit',
+      fontWeight: baseFontWeight,
+      borderRadius: `${controlRadius}px`,
+      display: fullWidth ? 'flex' : 'inline-flex',
+      width: fullWidth ? '100%' : 'auto',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: `${LiminalLayoutEngine.SPACING[2]}px`, // 8px
+      transition: LiminalMotionEngine.TRANSITION.normal,
+      userSelect: 'none',
+      boxSizing: 'border-box',
+      textDecoration: 'none',
+      ...sizeStyles[size],
+      ...computedStyle,
+      ...customStyle,
     };
-  } else if (variant === 'danger') {
-    const limStyle = getLiminalStyle({
-      surfaceLevel: 2,
-      interactive: true,
-      state: currentState,
-    });
 
-    const dangerText = LiminalColorEngine.SEMANTICS.DANGER.text;
-    const outline = currentState === 'focus' && isKeyboardFocused ? limStyle.style.outline : 'none';
-
-    computedStyle = {
-      ...limStyle.style,
-      outline,
-      color: dangerText,
-    };
+    return (
+      <button
+        ref={ref}
+        type={type}
+        disabled={disabled}
+        onClick={disabled ? undefined : onClick}
+        className={className}
+        style={finalStyle}
+        {...handlers}
+        {...ariaProps}
+        {...restProps}
+      >
+        {icon && <span className="inline-flex items-center shrink-0">{icon}</span>}
+        {children}
+        {iconRight && <span className="inline-flex items-center shrink-0">{iconRight}</span>}
+      </button>
+    );
   }
-
-  const finalStyle: CSSProperties = {
-    fontFamily: 'inherit',
-    fontWeight: baseFontWeight,
-    borderRadius: `${controlRadius}px`,
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: `${LiminalLayoutEngine.SPACING[2]}px`, // 8px
-    transition: 'all 0.2s ease',
-    userSelect: 'none',
-    boxSizing: 'border-box',
-    textDecoration: 'none',
-    ...sizeStyles[size],
-    ...computedStyle,
-    ...customStyle,
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'Tab') {
-      setIsKeyboardFocused(true);
-    }
-  };
-
-  return (
-    <button
-      type={type}
-      disabled={disabled}
-      onClick={disabled ? undefined : onClick}
-      onKeyDown={handleKeyDown}
-      onMouseDown={() => {
-        setIsKeyboardFocused(false);
-        if (!disabled) setInternalState('active');
-      }}
-      onMouseUp={() => !disabled && setInternalState('hover')}
-      onMouseEnter={() => !disabled && setInternalState('hover')}
-      onMouseLeave={() => !disabled && setInternalState('idle')}
-      onFocus={() => !disabled && setInternalState('focus')}
-      onBlur={() => {
-        setInternalState('idle');
-        setIsKeyboardFocused(false);
-      }}
-      className={className}
-      style={finalStyle}
-    >
-      {children}
-    </button>
-  );
-}
+);
 
 export default Button;

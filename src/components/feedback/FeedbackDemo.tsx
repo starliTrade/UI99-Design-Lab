@@ -80,14 +80,14 @@ export function FeedbackDemo() {
               margin: 0,
             }}
           >
-            Alert (Glass Inline) · Toast (Glass CTA + Gravity Anchor) · Tooltip (Neutral S4)
+            Alert (Mist Quiet) · Toast (Mist Quiet + Gravity Anchor) · Tooltip (Neutral S4)
           </p>
         </div>
 
-        <Badge semantic="success">5-Layer Glass Active</Badge>
+        <Badge semantic="success">LIMINAL Mist Active</Badge>
       </div>
 
-      {/* 1. ALERTS SECTION (LIMINAL GLASS INLINE TIER) */}
+      {/* 1. ALERTS SECTION (LIMINAL MIST QUIET TIER) */}
       <div>
         <div
           style={{
@@ -99,7 +99,7 @@ export function FeedbackDemo() {
             marginBottom: `${SPACING[3]}px`,
           }}
         >
-          1. Alerts (LIMINAL GLASS Inline Tier: Halo · Edge Gradient · Refraction · Surface · Signal)
+          1. Alerts (LIMINAL MIST Quiet Tier: Ring Blur · Halos · Caustic · Whisper · Signal)
         </div>
 
         <div className="space-y-3">
@@ -150,7 +150,7 @@ export function FeedbackDemo() {
 
       <Divider spacing="md" />
 
-      {/* 2. TOAST TRIGGERS (LIMINAL GLASS CTA TIER + SHADOWS[4] GRAVITY ANCHOR) */}
+      {/* 2. TOAST TRIGGERS (LIMINAL MIST QUIET TIER + SHADOWS[4] GRAVITY ANCHOR) */}
       <div>
         <div
           style={{
@@ -162,13 +162,13 @@ export function FeedbackDemo() {
             marginBottom: `${SPACING[3]}px`,
           }}
         >
-          2. Floating Toasts (Glass CTA Tier + Deep Gravity Anchor SHADOWS[4] · Auto-Dismiss)
+          2. Floating Toasts (Mist Quiet Tier + Deep Gravity Anchor SHADOWS[4] · Auto-Dismiss)
         </div>
 
         <Card padding="md">
           <div className="space-y-3">
             <p style={{ margin: 0, fontSize: '13px', color: getTextStyle('secondary', 1).color }}>
-              Click any button below to trigger an authentic floating Glass Toast anchored to the screen bottom:
+              Click any button below to trigger an authentic floating Mist Toast anchored to the screen bottom:
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">

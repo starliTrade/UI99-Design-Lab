@@ -80,6 +80,7 @@ export interface LiminalStyleElement {
   isInput?: boolean;
   elevation?: 1 | 2 | 3 | 4;
   state?: LiminalState;
+  concave?: boolean;
 }
 
 export function getLiminalStyle(el: LiminalStyleElement) {
@@ -87,7 +88,7 @@ export function getLiminalStyle(el: LiminalStyleElement) {
   let n = baseN;
   const container = el.containerLevel ?? Math.max(0, baseN - 1);
   let rim: 0 | 1 | 2 | 3 = el.isContainer ? 1 : (el.interactive || el.isFeatured) ? 2 : 0;
-  let concave = false;
+  let concave = el.concave ?? false;
   let outline = 'none';
   let outlineOffset = '0px';
   let transform = 'none';

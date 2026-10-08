@@ -35,12 +35,17 @@ export class LiminalLayoutEngine {
   // Scale: 4, 6, 8, 10, 12, 16, 20, 24, full
   static readonly RADIUS = {
     4: 4,
+    6: 6,
     chip: 6,        // chip / badge
     8: 8,
+    10: 10,
     control: 10,    // input / button / select
     12: 12,
+    16: 16,
     card: 16,       // card
+    20: 20,
     panel: 20,      // panel / modal
+    24: 24,
     container: 24,  // container / page-wrapper
     full: 9999,     // ONLY for badges / toggles (it is "loud")
   } as const;

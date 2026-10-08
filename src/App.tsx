@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { SpecEngine, LiminalState } from './engine/spec-engine';
 import { LiminalColorEngine } from './engine/liminal-color-engine';
 import { LiminalLayoutEngine } from './engine/liminal-layout-engine';
-import { AtomsDemo } from './components/atoms';
+import { AtomsDemo, MotionDemo } from './components/atoms';
 import { InputsDemo } from './components/inputs';
 import { ContainersDemo } from './components/containers';
 import { NavDemo } from './components/nav';
@@ -49,7 +49,7 @@ import {
 export function App() {
   const [copied, setCopied] = useState<boolean>(false);
   const [deviceMode, setDeviceMode] = useState<'mobile' | 'fluid'>('mobile');
-  const [activeTab, setActiveTab] = useState<'app' | 'gateway' | 'atoms' | 'inputs' | 'containers' | 'nav' | 'data' | 'feedback' | 'layout' | 'composites' | 'bench' | 'tokens' | 'contract'>('app');
+  const [activeTab, setActiveTab] = useState<'app' | 'gateway' | 'motion' | 'atoms' | 'inputs' | 'containers' | 'nav' | 'data' | 'feedback' | 'layout' | 'composites' | 'bench' | 'tokens' | 'contract'>('app');
   const [selectedHue, setSelectedHue] = useState<number>(230);
   const [interactiveState, setInteractiveState] = useState<LiminalState>('idle');
   const [bottomDrawerOpen, setBottomDrawerOpen] = useState<boolean>(false);
@@ -203,10 +203,10 @@ export function App() {
   --lim-brand-primary:  #E9ECF2;
   --lim-brand-on-color: #060709;
 
-  /* == 11. LIMINAL GLASS (5-LAYER ARCHITECTURE & VIEW BUDGET) == */
-  /* Layers: Halo -> Edge 1px (Top > Bottom > Side) -> Refraction Inset -> Neutral Surface -> Signal */
-  /* cta: edge .65/.40/.50, refr .30/.22 | inline: edge .45/.26/.34, refr .20/.14 */
-  /* 11.4 Budget per view: Max 1 Glass CTA, Alerts only for critical events, Toasts for key moments, Max 1 Featured card */
+  /* == 11. LIMINAL MIST (HERO & QUIET TIERS) == */
+  /* Light as fog, zero crisp geometry. Blurred ring (9-10px) on separate layer. */
+  /* Hero: ring .18, halo 44px .07 + 90px .04 | Quiet: ring .16, halo 40px .06 + 84px .035 */
+  /* 11.4 Budget per view: Max 1 Hero Mist CTA per entire app, Quiet Mist for Alerts & Toasts */
 }`;
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -352,6 +352,7 @@ export function App() {
             {[
               { id: 'app', label: 'App (8 Kits)' },
               { id: 'gateway', label: 'Gateway' },
+              { id: 'motion', label: 'Motion Engine' },
               { id: 'atoms', label: 'Atoms' },
               { id: 'inputs', label: 'Inputs' },
               { id: 'containers', label: 'Containers' },
@@ -779,6 +780,13 @@ export function App() {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ─── TAB: MOTION ENGINE DEMO ─── */}
+        {activeTab === 'motion' && (
+          <div className="space-y-4 animate-in fade-in-50 duration-200">
+            <MotionDemo />
           </div>
         )}
 
@@ -1255,9 +1263,9 @@ export function App() {
                   'spacing cohesive ≤12 separating ≥16 atom 4 ; radius size-mapped + concentric',
                   'type ratio 1.2 weight ≤700 ; warm hues lower chroma (anti-neon)',
                   'all chromatic color on dark canvas only ; brand primary = Soft White #E9ECF2',
-                  'Glass هرگز tint پس‌زمینه یا border تخت رنگی ندارد',
-                  'سقف بودجه‌ی شیشه رعایت شود (نئون ممنوع)',
-                  'pill مجاز برای: badge · toggle · Glass CTA',
+                  'Mist هرگز tint پس‌زمینه یا border تخت رنگی تیز ندارد (Ring تار ۹-۱۰px)',
+                  'سقف بودجه‌ی Mist رعایت شود (حداکثر ۱ Hero در کل اپ)',
+                  'pill مجاز برای: badge · toggle · Hero Mist CTA',
                 ].map((rule, idx) => (
                   <div
                     key={idx}
@@ -1324,22 +1332,19 @@ export function App() {
                 <p>5) TEXT: Primary α0.88, Secondary α0.62, Tertiary α0.40, Quaternary α0.25. Surface compensation on S2/S3/S4/S5.</p>
                 <p>6) COLOR: Ramp base=oklch(0.78, C_text, H), Semantics Success/Warning/Danger/Info, 12 Extended Hues, Brand Soft White #E9ECF2.</p>
                 <p>7) SPACING/RADIUS/TYPE: Atom 4px, Cohesive ≤12, Separating ≥16. Radius chip 6, control 10, card 16, panel 20, container 24, r_inner = max(4, r_outer − padding). Type modular 1.2 ratio (11 to 40px), weights 400..700.</p>
-                <p className="text-[#8B9CF0] font-bold">۱۱) LIMINAL GLASS (ساختار ۵ لایه)</p>
-                <p>لایه‌ها: 1 halo (box-shadow بیرونی بودجه‌بندی‌شده) · 2 edge 1px (گرادیان جهت‌دار border-box: top &gt; bottom &gt; side) · 3 refraction (ضخامت شیشه: inset shadow بالا/پایین) · 4 surface (گرادیان خنثی نردبان padding-box) · 5 signal (آیکون/متن semantic = تنها سیگنال تیز).</p>
-                <p>ترتیب نور Glass: top &gt; bottom &gt; side (شکست نور) — استثنا از ترتیب convex. ترتیب نور Rim جامد: top &gt; side &gt; bottom (بدون تغییر).</p>
-                <p>بودجه‌ی شیشه: cta/Featured: edge .65/.40/.50 · refr .30/.22 · halo .14/.16 | inline(Alert): edge .45/.26/.34 · refr .20/.14 · halo .08/.10.</p>
-                <p>مجاز فقط برای: CTA اصلی (حداکثر ۱ در نما) · Alert · کارت Featured · Toast (شناور). Tooltip خنثی است (بدون hue) — فقط rim و سایه.</p>
-                <p className="text-[#6EE0B4] font-bold mt-2">== ۱۱.۴ بودجه‌ی استفاده (Glass Budget per View) ==</p>
-                <p>شیشه یک استثناست، نه قاعده. در هر نمای کامل:</p>
-                <p>• حداکثر ۱ عنصر Glass CTA (معمولاً اصلی‌ترین اقدام صفحه)</p>
-                <p>• Glass Alert فقط برای رویدادهای بحرانی/مهم (نه هر پیام سیستمی)</p>
-                <p>• Glass Toast فقط برای لحظات کلیدی (publish/deploy/delete موفق)</p>
-                <p>• کارت Featured حداکثر ۱ در صفحه</p>
+                <p className="text-[#8B9CF0] font-bold">۱۱) LIMINAL MIST (سیستم مه نوری — جایگزین Glass)</p>
+                <p>نور مانند مه در فضا پخش می‌شود: بدون مرز هندسی تیز. Ring روی یک لایه‌ی جداگانه با blur=9-10px اعمال می‌شود تا از هرگونه گوشه‌ی خشن جلوگیری شود.</p>
+                <p>سطوح مه: Hero (Ring .18/blur 9 · Halos 44px .07 + 90px .04 · Caustic .06 · Whisper .048 · Shade .30) | Quiet (Ring .16/blur 10 · Halos 40px .06 + 84px .035 · Caustic .055 · Whisper .044 · Shade .28).</p>
+                <p>مجاز فقط برای: CTA اصلی (حداکثر ۱ در کل اپ: Hero) · Alert (Quiet) · Toast (Quiet شناور). Tooltip خنثی است (بدون hue) — فقط rim و سایه.</p>
+                <p className="text-[#6EE0B4] font-bold mt-2">== ۱۱.۴ بودجه‌ی استفاده (Mist Budget per View) ==</p>
+                <p>مه یک استثناست، نه قاعده. در کل اپلیکیشن:</p>
+                <p>• دقیقاً ۱ عنصر Hero Mist CTA (دکمه‌ی «پروژه جدید» در داشبورد)</p>
+                <p>• Quiet Mist فقط برای Alertهای معنادار و Toastهای لحظات کلیدی</p>
                 <p className="mt-1 text-white/90">استاندارد پیش‌فرض برای همه‌ی عناصر دیگر:</p>
                 <p>• Rim جهت‌دار خنثی از نردبان (قانون اصلی rim)</p>
                 <p>• سایه زیر-بوم فقط برای شناورها (E1-E4)</p>
                 <p>• متن از سلسله‌مراتب ۴ سطحی</p>
-                <p className="text-[#FF7B72] font-semibold mt-1">«شیشه‌ی بیشتر از این بودجه = نقض سیاست لیمینال (چشم را از هدف اصلی منحرف می‌کند).»</p>
+                <p className="text-[#FF7B72] font-semibold mt-1">«استفاده از مه فراتر از این بودجه = نقض سیاست لیمینال (چشم را از محتوا منحرف می‌کند).»</p>
               </div>
             </div>
           </div>

@@ -1,5 +1,13 @@
-import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
-import type { CSSProperties, ReactNode, KeyboardEvent, MouseEvent } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
+import type { CSSProperties, ReactNode, KeyboardEvent } from 'react';
 import {
   getLiminalStyle,
   getDirectionalRim,
@@ -7,14 +15,19 @@ import {
   getTextStyle,
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { useRovingTabIndex } from '../../../engine/liminal-hooks';
 
 interface TabsContextType {
   activeValue: string;
   onChange: (val: string) => void;
-  registerTab: (val: string, ref: HTMLButtonElement | null) => void;
+  registerTabRef: (val: string, ref: HTMLButtonElement | null) => void;
   tabValues: string[];
   keyboardMode: boolean;
   setKeyboardMode: (val: boolean) => void;
+  getItemProps: (index: number) => {
+    tabIndex: number;
+    onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
+  };
 }
 
 const TabsContext = createContext<TabsContextType | null>(null);
@@ -45,7 +58,7 @@ export function Tab({
   const context = useContext(TabsContext);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
@@ -54,8 +67,19 @@ export function Tab({
     throw new Error('Tab must be rendered inside a Tabs component');
   }
 
-  const { activeValue, onChange, keyboardMode, setKeyboardMode } = context;
+  const {
+    activeValue,
+    onChange,
+    keyboardMode,
+    setKeyboardMode,
+    tabValues,
+    getItemProps,
+    registerTabRef,
+  } = context;
+
   const isActive = activeValue === value;
+  const tabIndexInList = tabValues.indexOf(value);
+  const rovingProps = getItemProps(tabIndexInList >= 0 ? tabIndexInList : 0);
 
   // Active state: Surface 3 with Rim 2 and micro E1 shadow
   const activeRim = getDirectionalRim(3, 2, false);
@@ -72,25 +96,13 @@ export function Tab({
     color = getTextStyle('secondary', 1).color;
   }
 
-  // Effect 1: When this tab becomes active in keyboard mode, activate outline
+  // When tab becomes active in keyboard navigation mode
   useEffect(() => {
-    const el = buttonRef.current;
-    if (!el || !keyboardMode) return;
+    if (!keyboardMode) return;
     if (isActive) {
       setIsKeyboardFocused(true);
     }
   }, [isActive, keyboardMode]);
-
-  // Effect 2: When tab receives native focus during keyboard mode, set isKeyboardFocused
-  useEffect(() => {
-    const el = buttonRef.current;
-    if (!el) return;
-    const onFocus = () => {
-      if (keyboardMode) setIsKeyboardFocused(true);
-    };
-    el.addEventListener('focus', onFocus);
-    return () => el.removeEventListener('focus', onFocus);
-  }, [keyboardMode]);
 
   const tabStyle: CSSProperties = {
     padding: '8px 16px',
@@ -119,24 +131,31 @@ export function Tab({
     ...customStyle,
   };
 
+  const setButtonNode = useCallback(
+    (el: HTMLButtonElement | null) => {
+      buttonRef.current = el;
+      registerTabRef(value, el);
+    },
+    [registerTabRef, value]
+  );
+
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Tab') {
       setIsKeyboardFocused(true);
       setKeyboardMode(true);
     }
+    rovingProps.onKeyDown(e);
   };
 
   return (
     <button
-      ref={(el) => {
-        buttonRef.current = el;
-        context.registerTab(value, el);
-      }}
+      ref={setButtonNode}
+      data-tab-value={value}
       type="button"
       role="tab"
       aria-selected={isActive}
       disabled={disabled}
-      tabIndex={isActive ? 0 : -1}
+      tabIndex={rovingProps.tabIndex}
       className={className}
       style={tabStyle}
       onClick={() => !disabled && onChange(value)}
@@ -147,6 +166,9 @@ export function Tab({
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => {
+        if (keyboardMode) setIsKeyboardFocused(true);
+      }}
       onBlur={() => setIsKeyboardFocused(false)}
     >
       {children}
@@ -165,6 +187,19 @@ export interface TabsProps {
   style?: CSSProperties;
 }
 
+function extractTabValues(children: ReactNode): string[] {
+  const values: string[] = [];
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return;
+    if ((child.props as any)?.value !== undefined) {
+      values.push(String((child.props as any).value));
+    } else if ((child.props as any)?.children) {
+      values.push(...extractTabValues((child.props as any).children));
+    }
+  });
+  return values;
+}
+
 export function Tabs({
   value,
   onChange,
@@ -176,22 +211,52 @@ export function Tabs({
   style: customStyle = {},
 }: TabsProps) {
   const [keyboardMode, setKeyboardMode] = useState<boolean>(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const RADIUS = LiminalLayoutEngine.RADIUS;
-  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
-  const tabValuesOrder = useRef<string[]>([]);
 
-  const registerTab = (tabVal: string, ref: HTMLButtonElement | null) => {
+  const tabValues = useMemo(() => {
+    if (Array.isArray(items)) {
+      return items.map((it) => it.id);
+    }
+    return extractTabValues(children);
+  }, [items, children]);
+
+  const registerTabRef = useCallback((tabVal: string, ref: HTMLButtonElement | null) => {
     if (ref) {
       tabRefs.current.set(tabVal, ref);
-      if (!tabValuesOrder.current.includes(tabVal)) {
-        tabValuesOrder.current.push(tabVal);
-      }
     } else {
       tabRefs.current.delete(tabVal);
-      tabValuesOrder.current = tabValuesOrder.current.filter((v) => v !== tabVal);
     }
-  };
+  }, []);
+
+  const currentActiveIndex = Math.max(0, tabValues.indexOf(value));
+
+  // Primitive Hook: useRovingTabIndex
+  const { getItemProps } = useRovingTabIndex(
+    tabValues,
+    currentActiveIndex,
+    {
+      loop: true,
+      orientation: 'both',
+      onSelect: (nextIndex) => {
+        const nextVal = tabValues[nextIndex];
+        if (nextVal) {
+          setKeyboardMode(true);
+          onChange(nextVal);
+          const el = tabRefs.current.get(nextVal);
+          if (el) {
+            el.focus();
+          } else {
+            containerRef.current
+              ?.querySelector<HTMLButtonElement>(`button[data-tab-value="${nextVal}"]`)
+              ?.focus();
+          }
+        }
+      },
+    }
+  );
 
   // Container: Surface 1 with Rim 1, flat zero shadow
   const limStyle = getLiminalStyle({
@@ -219,36 +284,6 @@ export function Tabs({
     ...customStyle,
   };
 
-  // Arrow navigation
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    const values = tabValuesOrder.current;
-    if (values.length === 0) return;
-
-    const currentIndex = values.indexOf(value);
-    let nextIndex = -1;
-
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      e.preventDefault();
-      nextIndex = currentIndex < values.length - 1 ? currentIndex + 1 : 0;
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      nextIndex = currentIndex > 0 ? currentIndex - 1 : values.length - 1;
-    } else if (e.key === 'Home') {
-      e.preventDefault();
-      nextIndex = 0;
-    } else if (e.key === 'End') {
-      e.preventDefault();
-      nextIndex = values.length - 1;
-    }
-
-    if (nextIndex >= 0) {
-      const nextVal = values[nextIndex];
-      setKeyboardMode(true);
-      onChange(nextVal);
-      tabRefs.current.get(nextVal)?.focus();
-    }
-  };
-
   const safeItems = Array.isArray(items) ? items : null;
 
   return (
@@ -256,15 +291,16 @@ export function Tabs({
       value={{
         activeValue: value,
         onChange,
-        registerTab,
-        tabValues: tabValuesOrder.current,
+        registerTabRef,
+        tabValues,
         keyboardMode,
         setKeyboardMode,
+        getItemProps,
       }}
     >
       <div
+        ref={containerRef}
         role="tablist"
-        onKeyDown={handleKeyDown}
         className={className}
         style={containerStyle}
       >

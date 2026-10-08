@@ -4,7 +4,8 @@ import { getTextStyle } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { Button } from '../../atoms/Button';
-import { AlertTriangle } from 'lucide-react';
+import { Warning } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
 export interface ErrorPageProps {
   code: '404' | '500' | '403' | '401' | string;
@@ -91,7 +92,7 @@ export function ErrorPage({
 
       {/* 2. Small 16px Alert Triangle — The Single Sharp Danger Signal */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <AlertTriangle size={16} style={{ color: SEMANTICS.DANGER.solid }} />
+        <LiminalIcon icon={Warning} size="sm" weight="light" color={SEMANTICS.DANGER.solid} />
       </div>
 
       {/* 3. Primary Title & Description */}

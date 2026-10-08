@@ -16,14 +16,15 @@ import {
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
-  Maximize2,
+  ArrowsOut,
   Sliders,
-  PanelRight,
+  Sidebar,
   Shield,
-  Activity,
-  Layers,
+  Pulse,
+  Stack,
   Terminal,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function ContainersDemo() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -116,17 +117,17 @@ export function ContainersDemo() {
 
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="primary" onClick={() => setModalOpen(true)}>
-            <Maximize2 size={14} className="mr-1" />
+            <LiminalIcon icon={ArrowsOut} size="xs" weight="light" className="mr-1" />
             Open Modal (Dialog)
           </Button>
 
           <Button variant="secondary" onClick={() => setBottomSheetOpen(true)}>
-            <Sliders size={14} className="mr-1" />
+            <LiminalIcon icon={Sliders} size="xs" weight="light" className="mr-1" />
             Open Bottom Sheet
           </Button>
 
           <Button variant="secondary" onClick={() => setRightSheetOpen(true)}>
-            <PanelRight size={14} className="mr-1" />
+            <LiminalIcon icon={Sidebar} size="xs" weight="light" className="mr-1" />
             Open Right Sheet (Inspector)
           </Button>
         </div>
@@ -196,7 +197,7 @@ export function ContainersDemo() {
           <Card padding="md">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Shield size={16} style={{ color: SEMANTICS.INFO.text }} />
+                <LiminalIcon icon={Shield} size="sm" weight="light" color={SEMANTICS.INFO.text} />
                 <span
                   style={{
                     fontSize: '13px',

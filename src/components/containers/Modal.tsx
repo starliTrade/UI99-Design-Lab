@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { getLiminalStyle, SpecEngine, getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
-import { X } from 'lucide-react';
+import { X } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -89,7 +90,7 @@ export function Modal({
             style={{ color: SpecEngine.getTextStyle('secondary', 5).color }}
             aria-label="Close dialog"
           >
-            <X className="w-4 h-4" />
+            <LiminalIcon icon={X} size="sm" weight="light" />
           </button>
         </div>
 

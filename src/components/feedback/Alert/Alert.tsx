@@ -3,7 +3,8 @@ import type { CSSProperties, ReactNode } from 'react';
 import { getTextStyle } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
-import { CheckCircle2, AlertTriangle, XCircle, Info, X } from 'lucide-react';
+import { CheckCircle, Warning, XCircle, Info, X } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
 export interface AlertProps {
   semantic: 'success' | 'warning' | 'danger' | 'info';
@@ -47,10 +48,10 @@ export function Alert({
 
   // Default icons
   const defaultIcons: Record<'success' | 'warning' | 'danger' | 'info', ReactNode> = {
-    success: <CheckCircle2 size={20} style={{ color: solidColor, flexShrink: 0 }} />,
-    warning: <AlertTriangle size={20} style={{ color: solidColor, flexShrink: 0 }} />,
-    danger: <XCircle size={20} style={{ color: solidColor, flexShrink: 0 }} />,
-    info: <Info size={20} style={{ color: solidColor, flexShrink: 0 }} />,
+    success: <LiminalIcon icon={CheckCircle} size="md" weight="light" color={solidColor} />,
+    warning: <LiminalIcon icon={Warning} size="md" weight="light" color={solidColor} />,
+    danger: <LiminalIcon icon={XCircle} size="md" weight="light" color={solidColor} />,
+    info: <LiminalIcon icon={Info} size="md" weight="light" color={solidColor} />,
   };
 
   const alertIcon = icon !== undefined ? icon : defaultIcons[semantic];
@@ -157,7 +158,7 @@ export function Alert({
           onMouseLeave={() => setCloseHovered(false)}
           style={closeBtnStyle}
         >
-          <X size={16} />
+          <LiminalIcon icon={X} size="sm" weight="light" />
         </button>
       )}
     </div>

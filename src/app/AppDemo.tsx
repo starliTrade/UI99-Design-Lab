@@ -78,7 +78,7 @@ function NavigationToolbar() {
       {/* Meta Indicators */}
       <div className="flex items-center gap-2">
         <Badge semantic="success">
-          Glass CTA Budget: 1/1 ✓
+          Mist CTA Budget: 1/1 ✓ (hero)
         </Badge>
         <span
           style={{

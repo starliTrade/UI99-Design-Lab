@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { getLiminalStyle, SpecEngine, getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
-import { Check } from 'lucide-react';
+import { Check } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export interface CheckboxProps {
   checked: boolean;
@@ -71,10 +72,11 @@ export function Checkbox({
           }}
         >
           {checked && (
-            <Check
-              className="w-3.5 h-3.5"
-              strokeWidth={3}
-              style={{ color: brand.onColor }}
+            <LiminalIcon
+              icon={Check}
+              size="xs"
+              weight="bold"
+              color={brand.onColor}
             />
           )}
         </div>

@@ -6,8 +6,15 @@ import { Divider } from '../Divider';
 
 export interface CardProps {
   children: ReactNode;
-  padding?: 'sm' | 'md' | 'lg';
-  title?: string;
+  padding?: 'sm' | 'md' | 'lg' | string;
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  action?: ReactNode;
+  footer?: ReactNode;
+  elevation?: 1 | 2 | 3 | 4;
+  isFeatured?: boolean;
+  surfaceLevel?: 1 | 2 | 3 | 4;
+  radius?: number;
   className?: string;
   style?: CSSProperties;
 }
@@ -63,6 +70,13 @@ export function Card({
   children,
   padding = 'md',
   title,
+  subtitle,
+  action,
+  footer,
+  elevation,
+  isFeatured = false,
+  surfaceLevel = 1,
+  radius,
   className = '',
   style: customStyle = {},
 }: CardProps) {
@@ -70,52 +84,111 @@ export function Card({
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
-  // Card: surfaceLevel = 1, isContainer = true, interactive = false, state = 'idle', Rim 1, NO shadow
   const limStyle = getLiminalStyle({
-    surfaceLevel: 1,
+    surfaceLevel,
     isContainer: true,
     interactive: false,
+    isFeatured,
+    isFloating: Boolean(elevation),
+    elevation,
     state: 'idle',
   });
 
-  const paddingValues: Record<'sm' | 'md' | 'lg', number> = {
+  const paddingValues: Record<string, number> = {
     sm: SPACING[4], // 16px
     md: SPACING[5], // 24px
     lg: SPACING[6], // 32px
   };
 
+  const pad = typeof padding === 'string' && paddingValues[padding] !== undefined 
+    ? `${paddingValues[padding]}px` 
+    : (typeof padding === 'number' ? `${padding}px` : (padding || `${SPACING[5]}px`));
+
+  const finalRadius = radius !== undefined ? radius : RADIUS.card;
+
   const cardStyle: CSSProperties = {
     ...limStyle.style,
-    boxShadow: 'none', // Strictly no shadow for flat cards
-    borderRadius: `${RADIUS.card}px`, // 16px
-    padding: `${paddingValues[padding]}px`,
-    color: getTextStyle('secondary', 1).color,
+    boxShadow: elevation ? limStyle.style.boxShadow : 'none',
+    borderRadius: `${finalRadius}px`,
+    padding: (title || subtitle || action || footer) ? 0 : pad,
+    color: getTextStyle('secondary', surfaceLevel).color,
     boxSizing: 'border-box',
     display: 'flex',
     flexDirection: 'column',
+    overflow: 'hidden',
     ...customStyle,
   };
 
-  const titleStyle: CSSProperties = {
+  const headerTitleStyle: CSSProperties = {
     fontSize: `${TYPOGRAPHY[4].fs}px`, // 19px
     lineHeight: TYPOGRAPHY[4].lh,
     letterSpacing: TYPOGRAPHY[4].ls,
     fontWeight: 600,
-    color: getTextStyle('primary', 1).color,
+    color: getTextStyle('primary', surfaceLevel).color,
     margin: 0,
   };
 
   return (
     <div className={className} style={cardStyle}>
-      {title && (
-        <>
-          <h3 style={titleStyle}>{title}</h3>
-          <Divider spacing="sm" />
-        </>
+      {(title || subtitle || action) && (
+        <div
+          style={{
+            padding: `${SPACING[4]}px ${SPACING[5]}px`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          }}
+        >
+          <div>
+            {title && (
+              typeof title === 'string' ? (
+                <h3 style={headerTitleStyle}>{title}</h3>
+              ) : (
+                title
+              )
+            )}
+            {subtitle && (
+              <div
+                style={{
+                  ...getTextStyle('tertiary', surfaceLevel),
+                  fontSize: '11px',
+                  marginTop: '2px',
+                }}
+              >
+                {subtitle}
+              </div>
+            )}
+          </div>
+          {action && <div style={{ flexShrink: 0 }}>{action}</div>}
+        </div>
       )}
-      <div style={{ flex: 1, color: getTextStyle('secondary', 1).color }}>
+
+      <div
+        style={{
+          flex: 1,
+          padding: (title || subtitle || action || footer) ? pad : undefined,
+          color: getTextStyle('secondary', surfaceLevel).color,
+        }}
+      >
         {children}
       </div>
+
+      {footer && (
+        <div
+          style={{
+            padding: `${SPACING[3]}px ${SPACING[5]}px`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontSize: '12px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+            backgroundColor: 'rgba(255, 255, 255, 0.01)',
+          }}
+        >
+          {footer}
+        </div>
+      )}
     </div>
   );
 }

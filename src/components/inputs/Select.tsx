@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { getLiminalStyle, SpecEngine, getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
-import { ChevronDown, Check } from 'lucide-react';
+import { CaretDown, Check } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export interface SelectOption {
   value: string;
@@ -95,12 +96,14 @@ export function Select({
           {selectedOption ? selectedOption.label : placeholder}
         </span>
 
-        <ChevronDown
-          className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
+        <span
+          className={`shrink-0 transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`}
           style={{ color: SpecEngine.getTextStyle('tertiary', 2).color }}
-        />
+        >
+          <LiminalIcon icon={CaretDown} size="sm" weight="light" />
+        </span>
       </button>
 
       {isOpen && (
@@ -150,7 +153,7 @@ export function Select({
                     </span>
                   )}
                 </div>
-                {isSelected && <Check className="w-3.5 h-3.5 text-[#34C08B]" />}
+                {isSelected && <LiminalIcon icon={Check} size="sm" weight="bold" color="#34C08B" />}
               </button>
             );
           })}

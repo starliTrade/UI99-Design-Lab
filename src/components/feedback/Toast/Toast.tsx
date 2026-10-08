@@ -4,7 +4,8 @@ import type { CSSProperties, ReactNode } from 'react';
 import { getTextStyle, SHADOWS } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
-import { CheckCircle2, AlertTriangle, XCircle, Info, X } from 'lucide-react';
+import { CheckCircle, Warning, XCircle, Info, X } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
 export interface ToastProps {
   open: boolean;
@@ -34,7 +35,7 @@ export function Toast({
 }: ToastProps) {
   const [closeHovered, setCloseHovered] = useState<boolean>(false);
   const [actionHovered, setActionHovered] = useState<boolean>(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
@@ -78,10 +79,10 @@ export function Toast({
   const compositeBoxShadow = `${mist.boxShadow}, ${SHADOWS[4]}`;
 
   const defaultIcons: Record<'success' | 'warning' | 'danger' | 'info', ReactNode> = {
-    success: <CheckCircle2 size={16} style={{ color: solidColor, flexShrink: 0 }} />,
-    warning: <AlertTriangle size={16} style={{ color: solidColor, flexShrink: 0 }} />,
-    danger: <XCircle size={16} style={{ color: solidColor, flexShrink: 0 }} />,
-    info: <Info size={16} style={{ color: solidColor, flexShrink: 0 }} />,
+    success: <LiminalIcon icon={CheckCircle} size="sm" weight="light" color={solidColor} />,
+    warning: <LiminalIcon icon={Warning} size="sm" weight="light" color={solidColor} />,
+    danger: <LiminalIcon icon={XCircle} size="sm" weight="light" color={solidColor} />,
+    info: <LiminalIcon icon={Info} size="sm" weight="light" color={solidColor} />,
   };
 
   const isBottom = position === 'bottom-center';
@@ -199,7 +200,7 @@ export function Toast({
             flexShrink: 0,
           }}
         >
-          <X size={14} />
+          <LiminalIcon icon={X} size="xs" weight="light" />
         </button>
       </div>
 
