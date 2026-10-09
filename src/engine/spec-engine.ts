@@ -185,29 +185,3 @@ export function getTextStyle(level: TextLevel, surfaceN: number = 0): CSSPropert
   };
 }
 
-// SpecEngine legacy wrapper
-export class SpecEngine {
-  static readonly LADDER = LADDER;
-  static readonly HALF_STEPS = {
-    0.5: HALF[0],
-    1.5: HALF[1],
-    2.5: HALF[2],
-    3.5: HALF[3],
-    4.5: HALF[4],
-  };
-  static getColor = getLadderColor;
-  static getRim = (n: number, rim: 0 | 1 | 2 | 3, concave = false) => {
-    const res = getDirectionalRim(n, rim, concave);
-    return (
-      res ?? {
-        top: 'transparent',
-        side: 'transparent',
-        bottom: 'transparent',
-        cssBackground: 'transparent',
-        withBackground: (b: string) => b,
-      }
-    );
-  };
-  static style = getLiminalStyle;
-  static getTextStyle = getTextStyle;
-}

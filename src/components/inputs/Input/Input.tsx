@@ -10,6 +10,8 @@ import {
 } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 
 export interface InputProps {
   type?: 'text' | 'email' | 'password' | 'search' | 'number' | 'tel' | 'url';
@@ -26,6 +28,8 @@ export interface InputProps {
   helperText?: string;
   prefix?: ReactNode;
   suffix?: ReactNode;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
   name?: string;
   id?: string;
   autoComplete?: string;
@@ -48,6 +52,8 @@ export function Input({
   helperText,
   prefix,
   suffix,
+  leftIcon,
+  rightIcon,
   name,
   id,
   autoComplete,
@@ -62,6 +68,9 @@ export function Input({
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
+  const leftElement = prefix ?? leftIcon;
+  const rightElement = suffix ?? rightIcon;
+
   const currentState: LiminalState = disabled ? 'disabled' : internalState;
 
   // Resolve base interactive input style from engine
@@ -72,17 +81,16 @@ export function Input({
     state: currentState,
   });
 
-  // Handle focus outline: only on keyboard navigation
-  let outline = 'none';
-  if (currentState === 'focus' && isKeyboardFocused) {
-    if (error) {
-      outline = '2px solid rgba(229, 99, 122, 0.45)';
-    } else if (success) {
-      outline = '2px solid rgba(52, 192, 139, 0.45)';
-    } else {
-      outline = limStyle.style.outline ?? `2px solid ${LADDER[3]}`;
-    }
-  }
+  // Focus ring via engine
+  const ringColor = error
+    ? SEMANTICS.DANGER.solid
+    : success
+    ? SEMANTICS.SUCCESS.solid
+    : LiminalColorEngine.BRAND_PRIMARY.hex;
+  const focusRing = LiminalComponentEngine.getFocusRing(
+    currentState === 'focus' && isKeyboardFocused,
+    ringColor
+  );
 
   // Background and border resolution based on error/success/states
   let background = limStyle.style.background;
@@ -113,11 +121,11 @@ export function Input({
     borderRadius: `${RADIUS.control}px`, // 10px
     boxSizing: 'border-box',
     width: '100%',
-    transition: 'all 0.25s ease',
+    transition: LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
-    outline,
-    outlineOffset: '2px',
+    outline: focusRing.outline,
+    outlineOffset: focusRing.outlineOffset ?? '2px',
     opacity: limStyle.style.opacity,
     cursor: disabled ? 'not-allowed' : 'text',
     boxShadow: limStyle.style.boxShadow,
@@ -129,32 +137,34 @@ export function Input({
     border: 'none',
     outline: 'none',
     color: getTextStyle('primary', 2).color,
-    fontSize: `${TYPOGRAPHY[3].fs}px`, // 16px
-    fontFamily: 'inherit',
+    fontSize: `${TYPOGRAPHY[3].fs}px`, // 15px
     lineHeight: TYPOGRAPHY[3].lh,
-    padding: '10px 0',
-    minWidth: 0,
+    fontFamily: 'inherit',
+    width: '100%',
+    padding: 0,
     cursor: disabled ? 'not-allowed' : 'text',
   };
 
   const labelStyle: CSSProperties = {
     fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
-    letterSpacing: TYPOGRAPHY[2].ls, // +0.01em
-    fontWeight: TYPOGRAPHY[2].weight, // 500
-    color: getTextStyle('tertiary', 2).color,
+    lineHeight: TYPOGRAPHY[2].lh,
+    letterSpacing: TYPOGRAPHY[2].ls,
+    fontWeight: 500,
+    color: getTextStyle('secondary', 2).color,
+    marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
-    marginBottom: `${SPACING[2]}px`, // 8px
   };
 
   const helperStyle: CSSProperties = {
     fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
-    letterSpacing: TYPOGRAPHY[1].ls, // +0.04em
+    lineHeight: TYPOGRAPHY[1].lh,
+    letterSpacing: TYPOGRAPHY[1].ls,
     marginTop: `${SPACING[1]}px`, // 4px
     color: error
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('quaternary', 2).color,
+      : getTextStyle('tertiary', 2).color,
   };
 
   const adornmentStyle: CSSProperties = {
@@ -162,7 +172,6 @@ export function Input({
     alignItems: 'center',
     justifyContent: 'center',
     color: getTextStyle('tertiary', 2).color,
-    userSelect: 'none',
     flexShrink: 0,
   };
 
@@ -197,7 +206,7 @@ export function Input({
           setIsKeyboardFocused(false);
         }}
       >
-        {prefix && <span style={adornmentStyle}>{prefix}</span>}
+        {leftElement && <span style={adornmentStyle}>{leftElement}</span>}
 
         <input
           type={type}
@@ -224,7 +233,7 @@ export function Input({
           style={inputElementStyle}
         />
 
-        {suffix && <span style={adornmentStyle}>{suffix}</span>}
+        {rightElement && <span style={adornmentStyle}>{rightElement}</span>}
       </div>
 
       {(error || success || helperText) && (

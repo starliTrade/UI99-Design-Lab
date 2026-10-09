@@ -9,6 +9,8 @@ import {
 } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 
 export interface TextareaProps {
   label?: string;
@@ -65,17 +67,16 @@ export function Textarea({
     state: currentState,
   });
 
-  // Handle focus outline: only on keyboard navigation
-  let outline = 'none';
-  if (currentState === 'focus' && isKeyboardFocused) {
-    if (error) {
-      outline = '2px solid rgba(229, 99, 122, 0.45)';
-    } else if (success) {
-      outline = '2px solid rgba(52, 192, 139, 0.45)';
-    } else {
-      outline = limStyle.style.outline ?? `2px solid ${LADDER[3]}`;
-    }
-  }
+  // Focus ring via engine
+  const ringColor = error
+    ? SEMANTICS.DANGER.solid
+    : success
+    ? SEMANTICS.SUCCESS.solid
+    : LiminalColorEngine.BRAND_PRIMARY.hex;
+  const focusRing = LiminalComponentEngine.getFocusRing(
+    currentState === 'focus' && isKeyboardFocused,
+    ringColor
+  );
 
   // Background and border resolution based on error/success/states
   let background = limStyle.style.background;
@@ -103,11 +104,11 @@ export function Textarea({
     padding: '12px 14px',
     borderRadius: `${RADIUS.control}px`, // 10px
     boxSizing: 'border-box',
-    transition: 'all 0.25s ease',
+    transition: LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
-    outline,
-    outlineOffset: '2px',
+    outline: focusRing.outline,
+    outlineOffset: focusRing.outlineOffset ?? '2px',
     opacity: limStyle.style.opacity,
     cursor: disabled ? 'not-allowed' : 'text',
     color: getTextStyle('primary', 2).color,

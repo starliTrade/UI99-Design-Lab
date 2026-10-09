@@ -6,7 +6,8 @@ import {
   getTextStyle,
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
-import { Inbox } from 'lucide-react';
+import { Tray } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
 export interface EmptyStateProps {
   icon?: ReactNode;
@@ -78,7 +79,7 @@ export function EmptyState({
     <div className={`liminal-empty-state ${className}`} style={wrapperStyle}>
       {/* Icon Well: Inverted concave rim */}
       <div style={wellStyle}>
-        {icon || <Inbox size={22} />}
+        {icon || <LiminalIcon icon={Tray} size="md" weight="light" />}
       </div>
 
       {/* Title & Description */}

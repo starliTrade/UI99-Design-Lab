@@ -8,18 +8,24 @@ import {
   useEscapeKey,
   useFocusTrap,
   useClickOutside,
+  useReducedMotion,
 } from '../../../engine/liminal-hooks';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { Divider } from '../Divider';
 import { X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
 export interface SheetProps {
-  open: boolean;
+  open?: boolean;
+  isOpen?: boolean;
   onClose: () => void;
-  title?: string;
+  title?: ReactNode;
+  subtitle?: ReactNode;
   children: ReactNode;
+  actions?: ReactNode;
+  footer?: ReactNode;
   position?: 'bottom' | 'right';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'half' | 'full';
   showHandle?: boolean;
   closeOnBackdrop?: boolean;
   closeOnEscape?: boolean;
@@ -29,9 +35,13 @@ export interface SheetProps {
 
 export function Sheet({
   open,
+  isOpen,
   onClose,
   title,
+  subtitle,
   children,
+  actions,
+  footer,
   position = 'bottom',
   size = 'md',
   showHandle = true,
@@ -41,15 +51,18 @@ export function Sheet({
   style: customStyle = {},
 }: SheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
+  const isSheetOpen = open ?? isOpen ?? false;
+  const actionContent = actions ?? footer;
+  const reduced = useReducedMotion();
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
   // Primitive Hooks: body scroll lock, escape key, focus trap, outside click
-  useScrollLock(open);
-  useEscapeKey(onClose, open && closeOnEscape);
-  const { handleKeyDown } = useFocusTrap(sheetRef, open, {
+  useScrollLock(isSheetOpen);
+  useEscapeKey(onClose, isSheetOpen && closeOnEscape);
+  const { handleKeyDown } = useFocusTrap(sheetRef, isSheetOpen, {
     autoFocus: true,
     restoreFocus: true,
   });
@@ -57,16 +70,18 @@ export function Sheet({
     if (closeOnBackdrop) {
       onClose();
     }
-  }, open && closeOnBackdrop);
+  }, isSheetOpen && closeOnBackdrop);
 
-  if (!open || typeof document === 'undefined') {
+  if (!isSheetOpen || typeof document === 'undefined') {
     return null;
   }
 
-  const rightWidths: Record<'sm' | 'md' | 'lg', number> = {
+  const rightWidths: Record<'sm' | 'md' | 'lg' | 'half' | 'full', string | number> = {
     sm: 320,
     md: 400,
     lg: 480,
+    half: '50vw',
+    full: '100vw',
   };
 
   // Surface 2 with Rim 2 and Sub-Canvas Penumbra SHADOWS[3]
@@ -80,7 +95,7 @@ export function Sheet({
     WebkitBackdropFilter: 'blur(3px)',
     zIndex: 100,
     boxSizing: 'border-box',
-    animation: 'liminalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+    animation: reduced ? 'none' : 'liminalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
   };
 
   const isBottom = position === 'bottom';
@@ -104,18 +119,18 @@ export function Sheet({
           maxHeight: '80vh',
           borderRadius: `${RADIUS.panel}px ${RADIUS.panel}px 0 0`,
           padding: `${SPACING[5]}px`,
-          animation: 'liminalSheetSlideBottom 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+          animation: reduced ? 'none' : 'liminalSheetSlideBottom 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         }
       : {
           top: 0,
           right: 0,
           bottom: 0,
-          width: `${rightWidths[size]}px`,
+          width: typeof rightWidths[size] === 'number' ? `${rightWidths[size]}px` : rightWidths[size],
           maxWidth: 'calc(100vw - 32px)',
           maxHeight: '100vh',
           borderRadius: `${RADIUS.panel}px 0 0 ${RADIUS.panel}px`,
           padding: `${SPACING[5]}px`,
-          animation: 'liminalSheetSlideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+          animation: reduced ? 'none' : 'liminalSheetSlideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         }),
     ...customStyle,
   };
@@ -148,25 +163,19 @@ export function Sheet({
         className={className}
         style={sheetContainerStyle}
       >
-        {/* Handle for Bottom Sheet */}
+        {/* Handle for bottom drawers */}
         {isBottom && showHandle && (
           <div
             style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              paddingBottom: `${SPACING[3]}px`,
+              width: '36px',
+              height: '4px',
+              borderRadius: `${RADIUS.full}px`,
+              background: 'rgba(255, 255, 255, 0.20)',
+              margin: '0 auto',
+              marginBottom: `${SPACING[3]}px`,
+              cursor: 'grab',
             }}
-          >
-            <div
-              style={{
-                width: '40px',
-                height: '4px',
-                borderRadius: '2px',
-                background: 'rgba(255, 255, 255, 0.12)',
-              }}
-            />
-          </div>
+          />
         )}
 
         {/* Header */}
@@ -179,9 +188,22 @@ export function Sheet({
           }}
         >
           {title ? (
-            <h2 id="liminal-sheet-title" style={titleStyle}>
-              {title}
-            </h2>
+            <div>
+              <h2 id="liminal-sheet-title" style={titleStyle}>
+                {title}
+              </h2>
+              {subtitle && (
+                <div
+                  style={{
+                    fontSize: `${TYPOGRAPHY[2].fs}px`,
+                    color: getTextStyle('tertiary', 2).color,
+                    marginTop: '2px',
+                  }}
+                >
+                  {subtitle}
+                </div>
+              )}
+            </div>
           ) : (
             <div />
           )}
@@ -200,7 +222,7 @@ export function Sheet({
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: `${RADIUS.chip}px`,
-              transition: 'color 0.15s ease',
+              transition: LiminalMotionEngine.TRANSITION.fast,
             }}
           >
             <LiminalIcon icon={X} size="sm" weight="light" />
@@ -220,18 +242,24 @@ export function Sheet({
         >
           {children}
         </div>
-      </div>
 
-      <style>{`
-        @keyframes liminalSheetSlideBottom {
-          from { transform: translateY(100%); }
-          to { transform: translateY(0); }
-        }
-        @keyframes liminalSheetSlideRight {
-          from { transform: translateX(100%); }
-          to { transform: translateX(0); }
-        }
-      `}</style>
+        {/* Actions / Footer */}
+        {actionContent && (
+          <>
+            <Divider spacing="sm" />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                gap: `${SPACING[2]}px`,
+              }}
+            >
+              {actionContent}
+            </div>
+          </>
+        )}
+      </div>
     </div>,
     document.body
   );

@@ -11,11 +11,14 @@ import {
 } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 
 export interface SelectOption {
   value: string;
   label: string;
   disabled?: boolean;
+  hint?: string;
 }
 
 export interface SelectProps {
@@ -94,15 +97,12 @@ export function Select({
     };
   }, [isOpen]);
 
-  // Outline handling for keyboard focus
-  let outline = 'none';
-  if (currentState === 'focus' && isKeyboardFocused) {
-    if (error) {
-      outline = '2px solid rgba(229, 99, 122, 0.45)';
-    } else {
-      outline = limStyle.style.outline ?? `2px solid ${LADDER[3]}`;
-    }
-  }
+  // Focus ring via engine
+  const ringColor = error ? SEMANTICS.DANGER.solid : LiminalColorEngine.BRAND_PRIMARY.hex;
+  const focusRing = LiminalComponentEngine.getFocusRing(
+    currentState === 'focus' && isKeyboardFocused,
+    ringColor
+  );
 
   // Background and border resolution
   let background = limStyle.style.background;
@@ -125,11 +125,11 @@ export function Select({
     padding: '10px 36px 10px 14px', // room for arrow
     borderRadius: `${RADIUS.control}px`,
     boxSizing: 'border-box',
-    transition: 'all 0.25s ease',
+    transition: LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
-    outline,
-    outlineOffset: '2px',
+    outline: focusRing.outline,
+    outlineOffset: focusRing.outlineOffset ?? '2px',
     opacity: limStyle.style.opacity,
     cursor: disabled ? 'not-allowed' : 'pointer',
     position: 'relative',

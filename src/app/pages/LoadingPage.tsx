@@ -6,7 +6,8 @@ import { Grid, GridCol } from '../../components/layout/Grid';
 import { Skeleton } from '../../components/composites/Skeleton';
 import { Card } from '../../components/containers/Card';
 import { Topbar } from '../../components/nav/Topbar';
-import { Layers } from 'lucide-react';
+import { Stack } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { getTextStyle } from '../../engine/spec-engine';
@@ -47,7 +48,7 @@ export function LoadingPage() {
                   color: BRAND.hex,
                 }}
               >
-                <Layers size={15} />
+                <LiminalIcon icon={Stack} size="sm" weight="light" color={BRAND.hex} />
               </span>
               <span
                 style={{

@@ -11,6 +11,7 @@ import {
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { useReducedMotion } from '../../../engine/liminal-hooks';
 
 export interface SimpleTooltipProps {
   content: ReactNode;
@@ -48,6 +49,7 @@ export function SimpleTooltip({
 
   const [showTimeout, setShowTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const tooltipId = useId();
+  const reduced = useReducedMotion();
 
   const handleMouseEnter = () => {
     if (showTimeout) clearTimeout(showTimeout);
@@ -169,7 +171,9 @@ export function SimpleTooltip({
               whiteSpace: 'normal',
               textAlign: 'center',
               userSelect: 'none',
-              animation: position.placement.startsWith('top')
+              animation: reduced
+                ? 'none'
+                : position.placement.startsWith('top')
                 ? 'liminalTooltipFadeTop 0.15s cubic-bezier(0.16, 1, 0.3, 1)'
                 : 'liminalTooltipFadeBottom 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
               ...customStyle,
@@ -178,17 +182,6 @@ export function SimpleTooltip({
             {content}
             <div style={getArrowStyle()} />
           </div>
-
-          <style>{`
-            @keyframes liminalTooltipFadeTop {
-              from { opacity: 0; transform: translateY(4px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
-            @keyframes liminalTooltipFadeBottom {
-              from { opacity: 0; transform: translateY(-4px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
-          `}</style>
         </LiminalPortal>
       )}
     </>

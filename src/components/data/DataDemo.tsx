@@ -18,12 +18,13 @@ import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
   Database,
   Users,
-  TrendingUp,
-  AlertOctagon,
-  RefreshCw,
+  TrendUp,
+  WarningOctagon,
+  ArrowsClockwise,
   HardDrive,
   Cpu,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function DataDemo() {
   const [selectedRows, setSelectedRows] = useState<number[]>([1]); // Row index 1 selected by default
@@ -152,7 +153,7 @@ export function DataDemo() {
             value="$1,482,900"
             trend={{ direction: 'up', value: '+14.2%', semantic: 'success' }}
             subtitle="vs. preceding epoch window"
-            prefix={<TrendingUp size={14} />}
+            prefix={<LiminalIcon icon={TrendUp} size="xs" weight="light" />}
           />
 
           <Stat
@@ -160,7 +161,7 @@ export function DataDemo() {
             value="34,821"
             trend={{ direction: 'up', value: '+8.4%', semantic: 'info' }}
             subtitle="TLS 1.3 mutual auth verified"
-            prefix={<Users size={14} />}
+            prefix={<LiminalIcon icon={Users} size="xs" weight="light" />}
           />
 
           <Stat
@@ -168,7 +169,7 @@ export function DataDemo() {
             value="892.4 MB/s"
             trend={{ direction: 'neutral', value: 'NOMINAL', semantic: 'info' }}
             subtitle="Anycast multi-region peering"
-            prefix={<HardDrive size={14} />}
+            prefix={<LiminalIcon icon={HardDrive} size="xs" weight="light" />}
           />
 
           <Stat
@@ -176,7 +177,7 @@ export function DataDemo() {
             value="0.002%"
             trend={{ direction: 'down', value: '-65.0%', semantic: 'success' }}
             subtitle="Zero jitter edge hop #1"
-            prefix={<AlertOctagon size={14} />}
+            prefix={<LiminalIcon icon={WarningOctagon} size="xs" weight="light" />}
           />
         </div>
       </div>

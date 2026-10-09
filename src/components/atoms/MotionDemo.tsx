@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LiminalMotionEngine, MotionDurationKey, MotionEasingKey } from '../../engine/liminal-motion-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
-import { SpecEngine } from '../../engine/spec-engine';
+import { getLiminalStyle, getTextStyle } from '../../engine/spec-engine';
 import { Button } from './Button';
 import {
   Play,
@@ -46,8 +46,8 @@ export function MotionDemo() {
     setKeyframeKey((k) => k + 1);
   };
 
-  const panelStyle = SpecEngine.style({ surfaceLevel: 2, isContainer: true }).style;
-  const containerStyle = SpecEngine.style({ surfaceLevel: 1, isContainer: true }).style;
+  const panelStyle = getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style;
+  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
 
   return (
     <div className="space-y-6 font-mono text-xs">
@@ -74,7 +74,7 @@ export function MotionDemo() {
               <div className="flex items-center gap-2">
                 <h2
                   className="font-bold text-sm sm:text-base tracking-tight"
-                  style={{ color: SpecEngine.getTextStyle('primary', 1).color }}
+                  style={{ color: getTextStyle('primary', 1).color }}
                 >
                   LIMINAL MOTION ENGINE
                 </h2>
@@ -89,7 +89,7 @@ export function MotionDemo() {
                   Locked Spec
                 </span>
               </div>
-              <p className="text-[11px] mt-0.5" style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+              <p className="text-[11px] mt-0.5" style={{ color: getTextStyle('tertiary', 1).color }}>
                 Physical continuity, zero ad-hoc milliseconds, perceptual elegance
               </p>
             </div>
@@ -125,10 +125,10 @@ export function MotionDemo() {
         }}
       >
         <div className="flex items-center justify-between pb-2 border-b border-white/5">
-          <div className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+          <div className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
             1. SIX SYSTEM DURATIONS (DURATION.*)
           </div>
-          <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+          <span style={{ color: getTextStyle('tertiary', 1).color }}>
             Scale: 100ms → 500ms
           </span>
         </div>
@@ -148,7 +148,7 @@ export function MotionDemo() {
                       {d.ms}ms
                     </span>
                   </div>
-                  <span className="text-[10px]" style={{ color: SpecEngine.getTextStyle('tertiary', 2).color }}>
+                  <span className="text-[10px]" style={{ color: getTextStyle('tertiary', 2).color }}>
                     {d.desc}
                   </span>
                 </div>
@@ -178,10 +178,10 @@ export function MotionDemo() {
         }}
       >
         <div className="flex items-center justify-between pb-2 border-b border-white/5">
-          <div className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+          <div className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
             2. FIVE MATHEMATICAL EASINGS (EASING.*)
           </div>
-          <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+          <span style={{ color: getTextStyle('tertiary', 1).color }}>
             Cubic Bezier Curves
           </span>
         </div>
@@ -225,10 +225,10 @@ export function MotionDemo() {
         }}
       >
         <div className="flex items-center justify-between pb-2 border-b border-white/5">
-          <div className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+          <div className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
             3. KEYFRAME GENERATORS &amp; ENTRANCE / EXIT
           </div>
-          <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+          <span style={{ color: getTextStyle('tertiary', 1).color }}>
             enterFrom · exitTo · fadeIn · scaleIn
           </span>
         </div>
@@ -293,7 +293,7 @@ export function MotionDemo() {
             key={keyframeKey}
             className="p-5 rounded-2xl flex flex-col items-center justify-center gap-2 shadow-2xl"
             style={{
-              ...SpecEngine.style({ surfaceLevel: 3, isContainer: true }).style,
+              ...getLiminalStyle({ surfaceLevel: 3, isContainer: true }).style,
               borderRadius: `${LiminalLayoutEngine.RADIUS.card}px`,
               animation: `${activeKeyframe} ${LiminalMotionEngine.DURATION.slower}ms ${LiminalMotionEngine.EASING.out} both`,
             }}
@@ -318,10 +318,10 @@ export function MotionDemo() {
         }}
       >
         <div className="flex items-center justify-between pb-2 border-b border-white/5">
-          <div className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+          <div className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
             4. CANONICAL PRESETS IN ACTION (TRANSITION.*)
           </div>
-          <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+          <span style={{ color: getTextStyle('tertiary', 1).color }}>
             micro · hover · normal · spring
           </span>
         </div>

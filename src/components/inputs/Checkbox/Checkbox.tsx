@@ -7,6 +7,8 @@ import {
 } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 
 export interface CheckboxProps {
   checked: boolean;
@@ -38,6 +40,8 @@ export function Checkbox({
 
   const offRim = getDirectionalRim(2, 2, false);
 
+  const focusRing = LiminalComponentEngine.getFocusRing(isKeyboardFocused);
+
   const boxStyle: CSSProperties = {
     width: '20px',
     height: '20px',
@@ -47,7 +51,7 @@ export function Checkbox({
     justifyContent: 'center',
     flexShrink: 0,
     boxSizing: 'border-box',
-    transition: 'all 0.2s ease',
+    transition: LiminalMotionEngine.TRANSITION.normal,
     background: checked
       ? SEMANTICS.SUCCESS.subtle
       : offRim
@@ -58,8 +62,8 @@ export function Checkbox({
       : offRim
       ? '1px solid transparent'
       : `1px solid ${LADDER[3]}`,
-    outline: isKeyboardFocused ? `2px solid ${LADDER[3]}` : 'none',
-    outlineOffset: '2px',
+    outline: focusRing.outline,
+    outlineOffset: focusRing.outlineOffset ?? '2px',
   };
 
   const labelStyle: CSSProperties = {

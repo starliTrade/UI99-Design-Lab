@@ -4,7 +4,8 @@ import { AppShell } from '../../components/layout/AppShell';
 import { ErrorPage } from '../../components/composites/ErrorPage';
 import { Topbar } from '../../components/nav/Topbar';
 import { Button } from '../../components/atoms/Button';
-import { Layers, ArrowLeft } from 'lucide-react';
+import { Stack, ArrowLeft } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { getTextStyle } from '../../engine/spec-engine';
@@ -36,7 +37,7 @@ export function NotFoundPage() {
                   color: BRAND.hex,
                 }}
               >
-                <Layers size={15} />
+                <LiminalIcon icon={Stack} size="sm" weight="light" color={BRAND.hex} />
               </span>
               <span
                 style={{
@@ -55,7 +56,7 @@ export function NotFoundPage() {
               variant="ghost"
               onClick={() => navigate({ name: 'dashboard' })}
             >
-              <ArrowLeft size={13} className="mr-1" />
+              <LiminalIcon icon={ArrowLeft} size="xs" weight="light" className="mr-1" />
               <span>بازگشت به خانه</span>
             </Button>
           }

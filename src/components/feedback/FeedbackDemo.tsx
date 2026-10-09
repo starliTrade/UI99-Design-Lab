@@ -15,16 +15,17 @@ import {
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
-  ShieldAlert,
-  BellRing,
-  HelpCircle,
-  KeyRound,
-  ExternalLink,
+  ShieldWarning,
+  BellRinging,
+  Question,
+  Key,
+  ArrowSquareOut,
   Flame,
-  CheckCircle2,
-  AlertTriangle,
+  CheckCircle,
+  Warning,
   Info,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function FeedbackDemo() {
   // Toast triggers
@@ -176,7 +177,7 @@ export function FeedbackDemo() {
                 variant="primary"
                 onClick={() => triggerToast('success', 'Node cluster Alpha-01 deployed successfully.')}
               >
-                <CheckCircle2 size={14} className="mr-1" />
+                <LiminalIcon icon={CheckCircle} size="xs" weight="light" className="mr-1" />
                 Trigger Success Toast
               </Button>
 
@@ -184,7 +185,7 @@ export function FeedbackDemo() {
                 variant="secondary"
                 onClick={() => triggerToast('warning', 'High packet jitter recorded on gateway transit.')}
               >
-                <AlertTriangle size={14} className="mr-1" />
+                <LiminalIcon icon={Warning} size="xs" weight="light" className="mr-1" />
                 Trigger Warning Toast
               </Button>
 
@@ -192,7 +193,7 @@ export function FeedbackDemo() {
                 variant="danger"
                 onClick={() => triggerToast('danger', 'Peer authentication failed on port 8443.')}
               >
-                <Flame size={14} className="mr-1" />
+                <LiminalIcon icon={Flame} size="xs" weight="light" className="mr-1" />
                 Trigger Danger Toast
               </Button>
 
@@ -200,7 +201,7 @@ export function FeedbackDemo() {
                 variant="ghost"
                 onClick={() => triggerToast('info', 'BGP anycast routes rebalanced across regions.')}
               >
-                <Info size={14} className="mr-1" />
+                <LiminalIcon icon={Info} size="xs" weight="light" className="mr-1" />
                 Trigger Info Toast
               </Button>
             </div>
@@ -238,7 +239,7 @@ export function FeedbackDemo() {
                 position="top"
               >
                 <Button variant="secondary" size="sm">
-                  <KeyRound size={14} className="mr-1" />
+                  <LiminalIcon icon={Key} size="xs" weight="light" className="mr-1" />
                   Rotate Keys
                 </Button>
               </Tooltip>
@@ -291,7 +292,7 @@ export function FeedbackDemo() {
                     color: getTextStyle('secondary', 1).color,
                   }}
                 >
-                  <ExternalLink size={16} />
+                  <LiminalIcon icon={ArrowSquareOut} size="sm" weight="light" />
                 </div>
               </Tooltip>
             </div>

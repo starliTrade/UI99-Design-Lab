@@ -7,7 +7,10 @@ export interface PanelProps {
   children: ReactNode;
   title?: string;
   actions?: ReactNode;
-  padding?: 'md' | 'lg';
+  padding?: 'md' | 'lg' | number;
+  parentRadius?: number;
+  radius?: number;
+  surfaceLevel?: number;
   className?: string;
   style?: CSSProperties;
 }
@@ -17,6 +20,9 @@ export function Panel({
   title,
   actions,
   padding = 'md',
+  parentRadius = LiminalLayoutEngine.RADIUS.container,
+  radius,
+  surfaceLevel = 2,
   className = '',
   style: customStyle = {},
 }: PanelProps) {
@@ -26,7 +32,7 @@ export function Panel({
 
   // Panel: surfaceLevel = 2, isContainer = true, interactive = false, state = 'idle', NO shadow
   const limStyle = getLiminalStyle({
-    surfaceLevel: 2,
+    surfaceLevel,
     isContainer: true,
     interactive: false,
     state: 'idle',
@@ -37,11 +43,14 @@ export function Panel({
     lg: SPACING[6], // 32px
   };
 
+  const resolvedPadding = typeof padding === 'number' ? padding : (paddingValues[padding] ?? SPACING[5]);
+  const computedRadius = radius ?? (parentRadius ? LiminalLayoutEngine.getConcentricRadius(parentRadius, resolvedPadding) : RADIUS.panel);
+
   const panelStyle: CSSProperties = {
     ...limStyle.style,
     boxShadow: 'none', // Strictly no shadow for flat panels
-    borderRadius: `${RADIUS.panel}px`, // 20px
-    padding: `${paddingValues[padding]}px`,
+    borderRadius: `${computedRadius}px`,
+    padding: `${resolvedPadding}px`,
     color: getTextStyle('secondary', 2).color,
     boxSizing: 'border-box',
     display: 'flex',

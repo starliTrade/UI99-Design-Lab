@@ -11,16 +11,17 @@ import { Divider } from '../containers/Divider';
 import { getTextStyle, getLiminalStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import {
-  Inbox,
+  Tray,
   Plus,
-  RefreshCw,
+  ArrowsClockwise,
   FolderOpen,
-  KeyRound,
+  Key,
   ShieldCheck,
   User,
-  Mail,
+  Envelope,
   Lock,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function CompositesDemo() {
   const [formSaved, setFormSaved] = useState<boolean>(false);
@@ -91,13 +92,13 @@ export function CompositesDemo() {
 
         <Card padding="lg">
           <EmptyState
-            icon={<FolderOpen size={24} />}
+            icon={<LiminalIcon icon={FolderOpen} size="lg" weight="light" />}
             title="No Cryptographic Enclaves Provisioned"
             description="Your cluster currently has zero hardware security modules attached. Provision your primary enclave to begin signing ingress transactions."
             actions={
               <>
                 <Button variant="primary" size="sm">
-                  <Plus size={14} className="mr-1" />
+                  <LiminalIcon icon={Plus} size="xs" weight="light" className="mr-1" />
                   Provision Enclave
                 </Button>
                 <Button variant="ghost" size="sm">
@@ -314,7 +315,7 @@ export function CompositesDemo() {
             {/* Actions */}
             <FormLayout.Actions>
               <Button type="submit" variant="secondary">
-                <ShieldCheck size={14} className="mr-1" />
+                <LiminalIcon icon={ShieldCheck} size="xs" weight="light" className="mr-1" />
                 {formSaved ? 'Identity Verified ✓' : 'Save Enclave Configuration'}
               </Button>
 

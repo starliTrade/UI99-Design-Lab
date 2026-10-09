@@ -17,7 +17,8 @@ import {
 } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
-import { Lock, Shield, ArrowRight, Layers, KeyRound } from 'lucide-react';
+import { Lock, Shield, ArrowRight, Stack, Key } from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function LoginPage() {
   const { navigate } = useNavigation();
@@ -63,7 +64,7 @@ export function LoginPage() {
                   color: BRAND.hex,
                 }}
               >
-                <Layers size={15} />
+                <LiminalIcon icon={Stack} size="sm" weight="light" color={BRAND.hex} />
               </span>
               <span
                 style={{
@@ -83,7 +84,7 @@ export function LoginPage() {
               onClick={() => navigate({ name: 'dashboard' })}
             >
               <span>Explore as Guest</span>
-              <ArrowRight size={13} className="ml-1" />
+              <LiminalIcon icon={ArrowRight} size="xs" weight="light" className="ml-1" />
             </Button>
           }
         >
@@ -154,7 +155,7 @@ export function LoginPage() {
                     marginBottom: `${SPACING[3]}px`,
                   }}
                 >
-                  <Lock size={20} />
+                  <LiminalIcon icon={Lock} size="md" weight="light" />
                 </div>
 
                 <h1
@@ -213,7 +214,7 @@ export function LoginPage() {
                     variant="secondary"
                     disabled={loading}
                   >
-                    <KeyRound size={14} />
+                    <LiminalIcon icon={Key} size="xs" weight="light" />
                     <span>{loading ? 'در حال تایید کلید...' : 'ورود امن به سیستم'}</span>
                   </Button>
 
@@ -235,7 +236,7 @@ export function LoginPage() {
               <Card padding="md">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Shield size={16} style={{ color: LiminalColorEngine.SEMANTICS.SUCCESS.solid }} />
+                    <LiminalIcon icon={Shield} size="sm" weight="light" color={LiminalColorEngine.SEMANTICS.SUCCESS.solid} />
                     <span style={{ fontSize: '13px', fontWeight: 600, color: getTextStyle('primary', 1).color }}>
                       پروتکل امنیتی لیمینال v1.0
                     </span>

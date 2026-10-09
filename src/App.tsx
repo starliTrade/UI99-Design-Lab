@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SpecEngine, LiminalState } from './engine/spec-engine';
+import { getLiminalStyle, getTextStyle, getLadderColor, LADDER, LiminalState } from './engine/spec-engine';
 import { LiminalColorEngine } from './engine/liminal-color-engine';
 import { LiminalLayoutEngine } from './engine/liminal-layout-engine';
 import { AtomsDemo, MotionDemo } from './components/atoms';
@@ -89,16 +89,16 @@ export function App() {
   const rInnerDemo = LiminalLayoutEngine.getConcentricRadius(rOuterDemo, concentricPadding);
 
   // Surface Styles Strictly Derived from LIMINAL Engine
-  const canvasBg = SpecEngine.LADDER[0]; // #060709 (S0)
+  const canvasBg = LADDER[0]; // #060709 (S0)
 
   // S1: Container Cards (Surface 1 #08090C, Rim 1)
-  const containerStyle = SpecEngine.style({ surfaceLevel: 1, isContainer: true });
+  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true });
 
   // S2: Nested Panels (Surface 2 #0A0B0F, Rim 1)
-  const panelStyle = SpecEngine.style({ surfaceLevel: 2, isContainer: true });
+  const panelStyle = getLiminalStyle({ surfaceLevel: 2, isContainer: true });
 
   // Floating Header Bar: Surface 2 (#0A0B0F), Rim 1, Elevation E1 Sub-Canvas Shadow
-  const headerBarStyle = SpecEngine.style({
+  const headerBarStyle = getLiminalStyle({
     surfaceLevel: 2,
     isFloating: true,
     elevation: 1,
@@ -106,7 +106,7 @@ export function App() {
   });
 
   // Floating Dropdown: Surface 4 (#101115), Rim 2, Elevation E1 Shadow
-  const dropdownComputed = SpecEngine.style({
+  const dropdownComputed = getLiminalStyle({
     surfaceLevel: 4,
     isFloating: true,
     elevation: 1,
@@ -114,13 +114,13 @@ export function App() {
   });
 
   // Featured Floating Card: Surface 4 (#101115), Rim 2, Elevation E2 Shadow
-  const featuredComputed = SpecEngine.style({
+  const featuredComputed = getLiminalStyle({
     surfaceLevel: 4,
     isFeatured: true,
   });
 
   // Floating Modal: Surface 5 (#131418), Rim 3, Elevation E3 Shadow
-  const modalComputed = SpecEngine.style({
+  const modalComputed = getLiminalStyle({
     surfaceLevel: 5,
     isFloating: true,
     elevation: 3,
@@ -128,7 +128,7 @@ export function App() {
   });
 
   // Floating Toast: Surface 4 (#101115), Rim 2, Elevation E4 Shadow
-  const toastComputed = SpecEngine.style({
+  const toastComputed = getLiminalStyle({
     surfaceLevel: 4,
     isFloating: true,
     elevation: 4,
@@ -136,7 +136,7 @@ export function App() {
   });
 
   // Interactive Test Control with Liminal States
-  const playgroundComputed = SpecEngine.style({
+  const playgroundComputed = getLiminalStyle({
     surfaceLevel: 2,
     containerLevel: 1,
     interactive: true,
@@ -144,7 +144,7 @@ export function App() {
   });
 
   // Input Control with Focus State
-  const inputComputed = SpecEngine.style({
+  const inputComputed = getLiminalStyle({
     surfaceLevel: 2,
     containerLevel: 1,
     interactive: true,
@@ -218,7 +218,7 @@ export function App() {
       className="min-h-screen transition-all duration-300"
       style={{
         backgroundColor: canvasBg,
-        color: SpecEngine.getTextStyle('primary', 0).color,
+        color: getTextStyle('primary', 0).color,
       }}
     >
       {/* ─── 1. TOP NAVBAR (Strictly Liminal Surface 2 · Rim 1 · Elevation E1 Sub-Canvas Shadow) ─── */}
@@ -243,12 +243,12 @@ export function App() {
                 className="font-mono font-bold leading-none flex items-center gap-1.5"
                 style={{
                   ...LiminalLayoutEngine.getTypeStyle(2),
-                  color: SpecEngine.getTextStyle('primary', 2).color,
+                  color: getTextStyle('primary', 2).color,
                 }}
               >
                 <span>LIMINAL</span>
-                <span style={{ color: SpecEngine.getTextStyle('quaternary', 2).color }}>·</span>
-                <span style={{ color: SpecEngine.getTextStyle('tertiary', 2).color }}>v1.0</span>
+                <span style={{ color: getTextStyle('quaternary', 2).color }}>·</span>
+                <span style={{ color: getTextStyle('tertiary', 2).color }}>v1.0</span>
               </div>
             </div>
           </div>
@@ -259,7 +259,7 @@ export function App() {
             <div
               className="flex p-1"
               style={{
-                ...SpecEngine.style({ surfaceLevel: 1, isContainer: true }).style,
+                ...getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style,
                 borderRadius: `${RADIUS.control}px`,
               }}
             >
@@ -269,14 +269,14 @@ export function App() {
                 style={{
                   ...(deviceMode === 'mobile'
                     ? {
-                        ...SpecEngine.style({ surfaceLevel: 3, interactive: true }).style,
-                        color: SpecEngine.getTextStyle('primary', 3).color,
+                        ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                        color: getTextStyle('primary', 3).color,
                         fontWeight: 600,
                       }
                     : {
                         background: 'transparent',
                         border: 'none',
-                        color: SpecEngine.getTextStyle('secondary', 1).color,
+                        color: getTextStyle('secondary', 1).color,
                       }),
                   borderRadius: `${LiminalLayoutEngine.getConcentricRadius(RADIUS.control, 2)}px`,
                 }}
@@ -291,14 +291,14 @@ export function App() {
                 style={{
                   ...(deviceMode === 'fluid'
                     ? {
-                        ...SpecEngine.style({ surfaceLevel: 3, interactive: true }).style,
-                        color: SpecEngine.getTextStyle('primary', 3).color,
+                        ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                        color: getTextStyle('primary', 3).color,
                         fontWeight: 600,
                       }
                     : {
                         background: 'transparent',
                         border: 'none',
-                        color: SpecEngine.getTextStyle('secondary', 1).color,
+                        color: getTextStyle('secondary', 1).color,
                       }),
                   borderRadius: `${LiminalLayoutEngine.getConcentricRadius(RADIUS.control, 2)}px`,
                 }}
@@ -313,9 +313,9 @@ export function App() {
               onClick={copyFullContract}
               className="p-1.5 transition-all cursor-pointer flex items-center justify-center"
               style={{
-                ...SpecEngine.style({ surfaceLevel: 3, interactive: true }).style,
+                ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
                 borderRadius: `${RADIUS.control}px`,
-                color: SpecEngine.getTextStyle('primary', 3).color,
+                color: getTextStyle('primary', 3).color,
               }}
               title="Copy Liminal Contract"
             >
@@ -367,8 +367,8 @@ export function App() {
             ].map((tab) => {
               const isSelected = activeTab === tab.id;
               const tabStyle = isSelected
-                ? SpecEngine.style({ surfaceLevel: 3, interactive: true })
-                : SpecEngine.style({ surfaceLevel: 1, interactive: true });
+                ? getLiminalStyle({ surfaceLevel: 3, interactive: true })
+                : getLiminalStyle({ surfaceLevel: 1, interactive: true });
 
               return (
                 <button
@@ -383,8 +383,8 @@ export function App() {
                     border: isSelected ? tabStyle.style.border : '1px solid transparent',
                     boxShadow: isSelected ? tabStyle.style.boxShadow : 'none',
                     color: isSelected
-                      ? SpecEngine.getTextStyle('primary', 3).color
-                      : SpecEngine.getTextStyle('secondary', 1).color,
+                      ? getTextStyle('primary', 3).color
+                      : getTextStyle('secondary', 1).color,
                     fontWeight: isSelected ? 600 : 400,
                     borderRadius: `${LiminalLayoutEngine.getConcentricRadius(RADIUS.panel, 4)}px`,
                     minHeight: '36px',
@@ -426,7 +426,7 @@ export function App() {
                   <div
                     className="w-8 h-8 rounded-lg flex items-center justify-center"
                     style={{
-                      ...SpecEngine.style({ surfaceLevel: 2, isContainer: true }).style,
+                      ...getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style,
                       borderRadius: `${RADIUS.control}px`,
                     }}
                   >
@@ -436,7 +436,7 @@ export function App() {
                     <div
                       style={{
                         ...LiminalLayoutEngine.getTypeStyle(2),
-                        color: SpecEngine.getTextStyle('primary', 1).color,
+                        color: getTextStyle('primary', 1).color,
                         fontWeight: 600,
                       }}
                     >
@@ -445,7 +445,7 @@ export function App() {
                     <div
                       style={{
                         ...LiminalLayoutEngine.getTypeStyle(1),
-                        color: SpecEngine.getTextStyle('tertiary', 1).color,
+                        color: getTextStyle('tertiary', 1).color,
                       }}
                     >
                       TLS 1.3 Strict · Online
@@ -473,9 +473,9 @@ export function App() {
                       onClick={() => setActiveDropdown(!activeDropdown)}
                       className="p-1.5 transition-all cursor-pointer flex items-center justify-center"
                       style={{
-                        ...SpecEngine.style({ surfaceLevel: 2, interactive: true }).style,
+                        ...getLiminalStyle({ surfaceLevel: 2, interactive: true }).style,
                         borderRadius: `${RADIUS.control}px`,
-                        color: SpecEngine.getTextStyle('primary', 2).color,
+                        color: getTextStyle('primary', 2).color,
                       }}
                     >
                       <MoreVertical className="w-4 h-4" />
@@ -493,7 +493,7 @@ export function App() {
                         <div
                           className="px-2 py-1 text-[9px] uppercase tracking-wider"
                           style={{
-                            color: SpecEngine.getTextStyle('quaternary', 4).color,
+                            color: getTextStyle('quaternary', 4).color,
                             borderBottom: `1px solid ${neutrals.L4.hex}`,
                           }}
                         >
@@ -506,10 +506,10 @@ export function App() {
                           }}
                           className="w-full text-left px-2 py-1.5 rounded-lg transition-all cursor-pointer"
                           style={{
-                            color: SpecEngine.getTextStyle('secondary', 4).color,
+                            color: getTextStyle('secondary', 4).color,
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = SpecEngine.HALF_STEPS[4.5];
+                            e.currentTarget.style.backgroundColor = getLadderColor(4.5);
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.backgroundColor = 'transparent';
@@ -524,10 +524,10 @@ export function App() {
                           }}
                           className="w-full text-left px-2 py-1.5 rounded-lg transition-all cursor-pointer"
                           style={{
-                            color: SpecEngine.getTextStyle('secondary', 4).color,
+                            color: getTextStyle('secondary', 4).color,
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = SpecEngine.HALF_STEPS[4.5];
+                            e.currentTarget.style.backgroundColor = getLadderColor(4.5);
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.backgroundColor = 'transparent';
@@ -547,7 +547,7 @@ export function App() {
                   <span
                     style={{
                       ...LiminalLayoutEngine.getTypeStyle(1),
-                      color: SpecEngine.getTextStyle('tertiary', 1).color,
+                      color: getTextStyle('tertiary', 1).color,
                     }}
                   >
                     NODE QUERY
@@ -557,7 +557,7 @@ export function App() {
                       ...LiminalLayoutEngine.getTypeStyle(1),
                       color: inputFocused
                         ? semantics.SUCCESS.text
-                        : SpecEngine.getTextStyle('quaternary', 1).color,
+                        : getTextStyle('quaternary', 1).color,
                     }}
                   >
                     {inputFocused ? 'Focus: Rim 3 · 2px Outline' : 'Idle: Rim 2'}
@@ -579,14 +579,14 @@ export function App() {
                     onBlur={() => setInputFocused(false)}
                     className="w-full bg-transparent text-xs font-mono outline-none"
                     style={{
-                      color: SpecEngine.getTextStyle('primary', 2).color,
+                      color: getTextStyle('primary', 2).color,
                     }}
                   />
                   <span
                     className="text-[9px] px-1 py-0.5"
                     style={{
-                      backgroundColor: SpecEngine.LADDER[1],
-                      color: SpecEngine.getTextStyle('tertiary', 1).color,
+                      backgroundColor: LADDER[1],
+                      color: getTextStyle('tertiary', 1).color,
                       borderRadius: `${RADIUS.chip}px`,
                     }}
                   >
@@ -609,7 +609,7 @@ export function App() {
                   { id: 'node-gamma', label: 'Failover' },
                 ].map((seg) => {
                   const isSel = selectedSegment === seg.id;
-                  const segStyle = SpecEngine.style({
+                  const segStyle = getLiminalStyle({
                     surfaceLevel: isSel ? 3 : 2,
                     interactive: true,
                   });
@@ -622,8 +622,8 @@ export function App() {
                         background: isSel ? segStyle.style.background : 'transparent',
                         border: isSel ? segStyle.style.border : 'none',
                         color: isSel
-                          ? SpecEngine.getTextStyle('primary', 3).color
-                          : SpecEngine.getTextStyle('secondary', 2).color,
+                          ? getTextStyle('primary', 3).color
+                          : getTextStyle('secondary', 2).color,
                         fontWeight: isSel ? 600 : 400,
                         borderRadius: `${LiminalLayoutEngine.getConcentricRadius(RADIUS.card, 2)}px`,
                       }}
@@ -644,13 +644,13 @@ export function App() {
                   }}
                 >
                   <div className="flex items-center justify-between text-[10px]">
-                    <span style={{ color: SpecEngine.getTextStyle('tertiary', 2).color }}>LATENCY</span>
+                    <span style={{ color: getTextStyle('tertiary', 2).color }}>LATENCY</span>
                     <Radio className="w-3 h-3 text-[#34C08B]" />
                   </div>
                   <div
                     style={{
                       ...LiminalLayoutEngine.getTypeStyle(3),
-                      color: SpecEngine.getTextStyle('primary', 2).color,
+                      color: getTextStyle('primary', 2).color,
                       fontWeight: 600,
                     }}
                   >
@@ -667,13 +667,13 @@ export function App() {
                   }}
                 >
                   <div className="flex items-center justify-between text-[10px]">
-                    <span style={{ color: SpecEngine.getTextStyle('tertiary', 2).color }}>UPTIME</span>
+                    <span style={{ color: getTextStyle('tertiary', 2).color }}>UPTIME</span>
                     <Wifi className="w-3 h-3 text-[#6FA8EC]" />
                   </div>
                   <div
                     style={{
                       ...LiminalLayoutEngine.getTypeStyle(3),
-                      color: SpecEngine.getTextStyle('primary', 2).color,
+                      color: getTextStyle('primary', 2).color,
                       fontWeight: 600,
                     }}
                   >
@@ -682,7 +682,7 @@ export function App() {
                   <div
                     style={{
                       ...LiminalLayoutEngine.getTypeStyle(1),
-                      color: SpecEngine.getTextStyle('tertiary', 2).color,
+                      color: getTextStyle('tertiary', 2).color,
                     }}
                   >
                     314 days uninterrupted
@@ -706,7 +706,7 @@ export function App() {
                   <span
                     style={{
                       ...LiminalLayoutEngine.getTypeStyle(1),
-                      color: SpecEngine.getTextStyle('tertiary', 4).color,
+                      color: getTextStyle('tertiary', 4).color,
                     }}
                   >
                     H230 Sapphire
@@ -716,7 +716,7 @@ export function App() {
                 <div
                   style={{
                     ...LiminalLayoutEngine.getTypeStyle(2),
-                    color: SpecEngine.getTextStyle('primary', 4).color,
+                    color: getTextStyle('primary', 4).color,
                     fontWeight: 500,
                   }}
                 >
@@ -728,9 +728,9 @@ export function App() {
                     onClick={() => setBottomDrawerOpen(true)}
                     className="px-3 py-1.5 text-[11px] font-mono cursor-pointer flex items-center gap-1 transition-all"
                     style={{
-                      ...SpecEngine.style({ surfaceLevel: 3, interactive: true }).style,
+                      ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
                       borderRadius: `${RADIUS.control}px`,
-                      color: SpecEngine.getTextStyle('primary', 3).color,
+                      color: getTextStyle('primary', 3).color,
                     }}
                   >
                     <span>Inspect Layer</span>
@@ -759,7 +759,7 @@ export function App() {
                   className="px-3 py-2 text-xs font-mono cursor-pointer transition-all"
                   style={{
                     borderRadius: `${RADIUS.control}px`,
-                    color: SpecEngine.getTextStyle('secondary', 1).color,
+                    color: getTextStyle('secondary', 1).color,
                   }}
                 >
                   Dismiss
@@ -770,9 +770,9 @@ export function App() {
                   onClick={() => setBottomDrawerOpen(true)}
                   className="px-4 py-2 text-xs font-mono font-semibold transition-all cursor-pointer flex items-center gap-1.5"
                   style={{
-                    ...SpecEngine.style({ surfaceLevel: 3, interactive: true }).style,
+                    ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
                     borderRadius: `${RADIUS.control}px`,
-                    color: SpecEngine.getTextStyle('primary', 3).color,
+                    color: getTextStyle('primary', 3).color,
                   }}
                 >
                   <span>Open Drawer</span>
@@ -863,11 +863,11 @@ export function App() {
               >
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-[#34C08B]" />
-                  <span className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+                  <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     LIMINAL STATES v1.0 [APPROVED]
                   </span>
                 </div>
-                <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>~JND Engine</span>
+                <span style={{ color: getTextStyle('tertiary', 1).color }}>~JND Engine</span>
               </div>
 
               {/* State Selector Buttons */}
@@ -886,8 +886,8 @@ export function App() {
                 ).map((s) => {
                   const isSel = interactiveState === s.id;
                   const itemStyle = isSel
-                    ? SpecEngine.style({ surfaceLevel: 3, interactive: true })
-                    : SpecEngine.style({ surfaceLevel: 2, interactive: true });
+                    ? getLiminalStyle({ surfaceLevel: 3, interactive: true })
+                    : getLiminalStyle({ surfaceLevel: 2, interactive: true });
 
                   return (
                     <button
@@ -898,15 +898,15 @@ export function App() {
                         background: isSel ? itemStyle.style.background : 'transparent',
                         border: isSel ? itemStyle.style.border : 'none',
                         color: isSel
-                          ? SpecEngine.getTextStyle('primary', 3).color
-                          : SpecEngine.getTextStyle('secondary', 2).color,
+                          ? getTextStyle('primary', 3).color
+                          : getTextStyle('secondary', 2).color,
                         borderRadius: `${RADIUS.control}px`,
                       }}
                     >
                       <div className="text-[11px] leading-tight font-semibold">{s.label}</div>
                       <div
                         className="text-[8px] truncate mt-0.5"
-                        style={{ color: SpecEngine.getTextStyle('tertiary', 2).color }}
+                        style={{ color: getTextStyle('tertiary', 2).color }}
                       >
                         {s.desc}
                       </div>
@@ -922,13 +922,13 @@ export function App() {
               >
                 <div
                   className="text-[10px] uppercase font-bold"
-                  style={{ color: SpecEngine.getTextStyle('tertiary', 2).color }}
+                  style={{ color: getTextStyle('tertiary', 2).color }}
                 >
                   Inspected Component on Surface 2
                 </div>
                 <div
                   className="text-xs font-semibold"
-                  style={{ color: SpecEngine.getTextStyle('primary', 2).color }}
+                  style={{ color: getTextStyle('primary', 2).color }}
                 >
                   State: {interactiveState.toUpperCase()} · Color: {playgroundComputed.bg} · Rim {playgroundComputed.rimLevel} {playgroundComputed.isConcave ? '(CONCAVE INVERTED)' : ''}
                 </div>
@@ -939,7 +939,7 @@ export function App() {
                     style={{
                       ...playgroundComputed.style,
                       borderRadius: `${RADIUS.control}px`,
-                      color: SpecEngine.getTextStyle('primary', 2).color,
+                      color: getTextStyle('primary', 2).color,
                     }}
                     onMouseDown={() => setInteractiveState('active')}
                     onMouseUp={() => setInteractiveState('hover')}
@@ -969,11 +969,11 @@ export function App() {
               >
                 <div className="flex items-center gap-2">
                   <CircleDot className="w-4 h-4 text-[#60a5fa]" />
-                  <span className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+                  <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     CONCENTRIC HARMONY LAB
                   </span>
                 </div>
-                <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+                <span style={{ color: getTextStyle('tertiary', 1).color }}>
                   r_inner = max(4, r_outer − padding)
                 </span>
               </div>
@@ -986,13 +986,13 @@ export function App() {
                 <div>
                   <div
                     className="text-xs font-bold"
-                    style={{ color: SpecEngine.getTextStyle('primary', 2).color }}
+                    style={{ color: getTextStyle('primary', 2).color }}
                   >
                     Outer Radius: {rOuterDemo}px
                   </div>
                   <div
                     className="text-[10px]"
-                    style={{ color: SpecEngine.getTextStyle('tertiary', 2).color }}
+                    style={{ color: getTextStyle('tertiary', 2).color }}
                   >
                     Padding: {concentricPadding}px $\to$ Inner: {rInnerDemo}px
                   </div>
@@ -1010,7 +1010,7 @@ export function App() {
                   />
                   <span
                     className="text-xs font-bold w-6"
-                    style={{ color: SpecEngine.getTextStyle('primary', 2).color }}
+                    style={{ color: getTextStyle('primary', 2).color }}
                   >
                     {concentricPadding}px
                   </span>
@@ -1021,7 +1021,7 @@ export function App() {
               <div
                 className="w-full h-28 flex items-center justify-center transition-all"
                 style={{
-                  ...SpecEngine.style({ surfaceLevel: 1, isContainer: true }).style,
+                  ...getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style,
                   borderRadius: `${rOuterDemo}px`,
                   padding: `${concentricPadding}px`,
                 }}
@@ -1029,9 +1029,9 @@ export function App() {
                 <div
                   className="w-full h-full flex items-center justify-center transition-all font-mono text-[11px]"
                   style={{
-                    ...SpecEngine.style({ surfaceLevel: 2, isContainer: true }).style,
+                    ...getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style,
                     borderRadius: `${rInnerDemo}px`,
-                    color: SpecEngine.getTextStyle('primary', 2).color,
+                    color: getTextStyle('primary', 2).color,
                   }}
                 >
                   Parallel Curves (No Wobble) · r_inner = {rInnerDemo}px
@@ -1056,10 +1056,10 @@ export function App() {
                 className="flex items-center justify-between pb-2"
                 style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
               >
-                <span className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+                <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                   SEMANTIC CONTRACT (4 ROLES)
                 </span>
-                <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+                <span style={{ color: getTextStyle('tertiary', 1).color }}>
                   Subtle / Border / Text / Solid
                 </span>
               </div>
@@ -1135,10 +1135,10 @@ export function App() {
                 className="flex items-center justify-between pb-2"
                 style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
               >
-                <span className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+                <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                   EXTENDED SPECTRUM (12 HUES)
                 </span>
-                <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+                <span style={{ color: getTextStyle('tertiary', 1).color }}>
                   Chroma Compensated
                 </span>
               </div>
@@ -1163,7 +1163,7 @@ export function App() {
                     </div>
                     <div
                       className="text-[9px] font-mono mt-0.5"
-                      style={{ color: SpecEngine.getTextStyle('secondary', 2).color }}
+                      style={{ color: getTextStyle('secondary', 2).color }}
                     >
                       {item.hex}
                     </div>
@@ -1184,10 +1184,10 @@ export function App() {
                 className="flex items-center justify-between pb-2"
                 style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
               >
-                <span className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+                <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                   TYPOGRAPHY SCALE (RATIO 1.2)
                 </span>
-                <span style={{ color: SpecEngine.getTextStyle('tertiary', 1).color }}>
+                <span style={{ color: getTextStyle('tertiary', 1).color }}>
                   Base 16 · Weights 400..700
                 </span>
               </div>
@@ -1208,14 +1208,14 @@ export function App() {
                     >
                       <div
                         className="text-[9px] font-mono mb-0.5"
-                        style={{ color: SpecEngine.getTextStyle('tertiary', 2).color }}
+                        style={{ color: getTextStyle('tertiary', 2).color }}
                       >
                         {item.label}
                       </div>
                       <div
                         style={{
                           ...style,
-                          color: SpecEngine.getTextStyle('primary', 2).color,
+                          color: getTextStyle('primary', 2).color,
                         }}
                       >
                         {item.text}
@@ -1245,7 +1245,7 @@ export function App() {
               >
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#34C08B]" />
-                  <span className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+                  <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     HARD RULES CHECKLIST (100% COMPLIANT)
                   </span>
                 </div>
@@ -1273,7 +1273,7 @@ export function App() {
                     style={{ ...panelStyle.style, borderRadius: `${RADIUS.control}px` }}
                   >
                     <Check className="w-3.5 h-3.5 text-[#34C08B] shrink-0 mt-0.5" />
-                    <span style={{ color: SpecEngine.getTextStyle('primary', 2).color }}>{rule}</span>
+                    <span style={{ color: getTextStyle('primary', 2).color }}>{rule}</span>
                   </div>
                 ))}
               </div>
@@ -1293,7 +1293,7 @@ export function App() {
               >
                 <div className="flex items-center gap-2">
                   <Terminal className="w-4 h-4 text-[#8B9CF0]" />
-                  <span className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 1).color }}>
+                  <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     MASTER CONTRACT v1.0 (VERBATIM TEXT)
                   </span>
                 </div>
@@ -1302,9 +1302,9 @@ export function App() {
                   onClick={copyFullContract}
                   className="px-2.5 py-1 text-[10px] font-mono flex items-center gap-1 cursor-pointer transition-all"
                   style={{
-                    ...SpecEngine.style({ surfaceLevel: 3, interactive: true }).style,
+                    ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
                     borderRadius: `${RADIUS.chip}px`,
-                    color: SpecEngine.getTextStyle('primary', 3).color,
+                    color: getTextStyle('primary', 3).color,
                   }}
                 >
                   <Copy className="w-3 h-3" />
@@ -1317,7 +1317,7 @@ export function App() {
                 style={{
                   ...panelStyle.style,
                   borderRadius: `${RADIUS.card}px`,
-                  color: SpecEngine.getTextStyle('secondary', 2).color,
+                  color: getTextStyle('secondary', 2).color,
                 }}
               >
                 <p className="text-[#6EE0B4] font-bold">
@@ -1364,13 +1364,13 @@ export function App() {
               <div>
                 <div
                   className="text-xs font-bold"
-                  style={{ color: SpecEngine.getTextStyle('primary', 4).color }}
+                  style={{ color: getTextStyle('primary', 4).color }}
                 >
                   Key Rotation Successful
                 </div>
                 <div
                   className="text-[10px]"
-                  style={{ color: SpecEngine.getTextStyle('tertiary', 4).color }}
+                  style={{ color: getTextStyle('tertiary', 4).color }}
                 >
                   Elevation E4 Sub-Canvas Anchor
                 </div>
@@ -1379,7 +1379,7 @@ export function App() {
             <button
               onClick={() => setToastVisible(false)}
               className="p-1 rounded-md cursor-pointer"
-              style={{ color: SpecEngine.getTextStyle('tertiary', 4).color }}
+              style={{ color: getTextStyle('tertiary', 4).color }}
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -1413,7 +1413,7 @@ export function App() {
                   <Shield className="w-4 h-4 text-[#34C08B]" />
                   <span
                     className="font-bold"
-                    style={{ color: SpecEngine.getTextStyle('primary', 5).color }}
+                    style={{ color: getTextStyle('primary', 5).color }}
                   >
                     S5 Overlay · E3 Shadow Drawer
                   </span>
@@ -1421,7 +1421,7 @@ export function App() {
                 <button
                   onClick={() => setBottomDrawerOpen(false)}
                   className="p-1 cursor-pointer"
-                  style={{ color: SpecEngine.getTextStyle('tertiary', 5).color }}
+                  style={{ color: getTextStyle('tertiary', 5).color }}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1429,10 +1429,10 @@ export function App() {
 
               <div
                 className="space-y-2 leading-relaxed text-[11px]"
-                style={{ color: SpecEngine.getTextStyle('secondary', 5).color }}
+                style={{ color: getTextStyle('secondary', 5).color }}
               >
                 <p>
-                  This mobile-first bottom drawer executes <strong style={{ color: SpecEngine.getTextStyle('primary', 5).color }}>Surface 5 (Overlay)</strong> with Modal Radius ({RADIUS.panel}px) and Rim 3 directional gradient.
+                  This mobile-first bottom drawer executes <strong style={{ color: getTextStyle('primary', 5).color }}>Surface 5 (Overlay)</strong> with Modal Radius ({RADIUS.panel}px) and Rim 3 directional gradient.
                 </p>
                 <div
                   className="p-2.5 rounded-lg text-[10px] space-y-1"
@@ -1440,7 +1440,7 @@ export function App() {
                 >
                   <div
                     className="font-bold"
-                    style={{ color: SpecEngine.getTextStyle('primary', 2).color }}
+                    style={{ color: getTextStyle('primary', 2).color }}
                   >
                     Sub-Canvas E3 Anchor Shadow:
                   </div>
@@ -1455,9 +1455,9 @@ export function App() {
                   onClick={() => setBottomDrawerOpen(false)}
                   className="w-full sm:w-auto px-4 py-2.5 text-xs font-mono font-semibold cursor-pointer"
                   style={{
-                    ...SpecEngine.style({ surfaceLevel: 3, interactive: true }).style,
+                    ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
                     borderRadius: `${RADIUS.control}px`,
-                    color: SpecEngine.getTextStyle('primary', 3).color,
+                    color: getTextStyle('primary', 3).color,
                   }}
                 >
                   Acknowledge &amp; Close
@@ -1470,7 +1470,7 @@ export function App() {
         {/* Footer */}
         <footer
           className="text-center text-[10px] font-mono pt-2 pb-8"
-          style={{ color: SpecEngine.getTextStyle('quaternary', 0).color }}
+          style={{ color: getTextStyle('quaternary', 0).color }}
         >
           LIMINAL v1.0 MOBILE-FIRST TESTBENCH · 100% RESPONSIVE · STRICTLY LOCKED SPEC
         </footer>

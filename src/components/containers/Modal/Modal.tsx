@@ -8,18 +8,24 @@ import {
   useEscapeKey,
   useFocusTrap,
   useClickOutside,
+  useReducedMotion,
 } from '../../../engine/liminal-hooks';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { Divider } from '../Divider';
 import { X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
 export interface ModalProps {
-  open: boolean;
+  open?: boolean;
+  isOpen?: boolean;
   onClose: () => void;
-  title?: string;
+  title?: ReactNode;
+  description?: ReactNode;
   children: ReactNode;
   actions?: ReactNode;
+  footer?: ReactNode;
   size?: 'sm' | 'md' | 'lg';
+  maxWidth?: string;
   closeOnBackdrop?: boolean;
   closeOnEscape?: boolean;
   className?: string;
@@ -28,26 +34,33 @@ export interface ModalProps {
 
 export function Modal({
   open,
+  isOpen,
   onClose,
   title,
+  description,
   children,
   actions,
+  footer,
   size = 'md',
+  maxWidth,
   closeOnBackdrop = true,
   closeOnEscape = true,
   className = '',
   style: customStyle = {},
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const isModalOpen = open ?? isOpen ?? false;
+  const actionContent = actions ?? footer;
+  const reduced = useReducedMotion();
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
   // Primitive Hooks: body scroll lock, escape key, focus trap, outside click
-  useScrollLock(open);
-  useEscapeKey(onClose, open && closeOnEscape);
-  const { handleKeyDown } = useFocusTrap(modalRef, open, {
+  useScrollLock(isModalOpen);
+  useEscapeKey(onClose, isModalOpen && closeOnEscape);
+  const { handleKeyDown } = useFocusTrap(modalRef, isModalOpen, {
     autoFocus: true,
     restoreFocus: true,
   });
@@ -55,9 +68,9 @@ export function Modal({
     if (closeOnBackdrop) {
       onClose();
     }
-  }, open && closeOnBackdrop);
+  }, isModalOpen && closeOnBackdrop);
 
-  if (!open || typeof document === 'undefined') {
+  if (!isModalOpen || typeof document === 'undefined') {
     return null;
   }
 
@@ -82,13 +95,13 @@ export function Modal({
     justifyContent: 'center',
     padding: `${SPACING[4]}px`,
     boxSizing: 'border-box',
-    animation: 'liminalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+    animation: reduced ? 'none' : 'liminalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
   };
 
   const modalContainerStyle: CSSProperties = {
     position: 'relative',
     width: `${sizeWidths[size]}px`,
-    maxWidth: 'calc(100vw - 32px)',
+    maxWidth: maxWidth ?? 'calc(100vw - 32px)',
     maxHeight: 'calc(100vh - 64px)',
     background: rim ? rim.cssBackground : LADDER[3],
     border: rim ? '1px solid transparent' : 'none',
@@ -100,7 +113,7 @@ export function Modal({
     boxSizing: 'border-box',
     outline: 'none',
     overflowY: 'auto',
-    animation: 'liminalModalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+    animation: reduced ? 'none' : 'liminalModalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
     ...customStyle,
   };
 
@@ -142,9 +155,22 @@ export function Modal({
           }}
         >
           {title ? (
-            <h2 id="liminal-modal-title" style={titleStyle}>
-              {title}
-            </h2>
+            <div>
+              <h2 id="liminal-modal-title" style={titleStyle}>
+                {title}
+              </h2>
+              {description && (
+                <div
+                  style={{
+                    fontSize: `${TYPOGRAPHY[2].fs}px`,
+                    color: getTextStyle('tertiary', 3).color,
+                    marginTop: '4px',
+                  }}
+                >
+                  {description}
+                </div>
+              )}
+            </div>
           ) : (
             <div />
           )}
@@ -163,7 +189,7 @@ export function Modal({
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: `${RADIUS.chip}px`,
-              transition: 'color 0.15s ease',
+              transition: LiminalMotionEngine.TRANSITION.fast,
             }}
           >
             <LiminalIcon icon={X} size="sm" weight="light" />
@@ -185,7 +211,7 @@ export function Modal({
         </div>
 
         {/* Footer Actions */}
-        {actions && (
+        {actionContent && (
           <>
             <Divider spacing="sm" />
             <div
@@ -196,22 +222,11 @@ export function Modal({
                 gap: `${SPACING[2]}px`,
               }}
             >
-              {actions}
+              {actionContent}
             </div>
           </>
         )}
       </div>
-
-      <style>{`
-        @keyframes liminalFadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes liminalModalSlide {
-          from { opacity: 0; transform: translateY(10px) scale(0.98); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-      `}</style>
     </div>,
     document.body
   );

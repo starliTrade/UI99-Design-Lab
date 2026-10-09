@@ -5,7 +5,8 @@ import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 
 export interface ToggleProps {
-  checked: boolean;
+  checked?: boolean;
+  on?: boolean;
   onChange: (value: boolean) => void;
   disabled?: boolean;
   className?: string;
@@ -15,18 +16,20 @@ export interface ToggleProps {
 
 export function Toggle({
   checked,
+  on,
   onChange,
   disabled = false,
   className = '',
   style: customStyle = {},
   'aria-label': ariaLabel = 'Toggle switch',
 }: ToggleProps) {
+  const isChecked = checked ?? on ?? false;
   const brand = LiminalColorEngine.BRAND_PRIMARY;
   const offRim = getDirectionalRim(2, 2, false);
 
   const handleClick = () => {
     if (!disabled) {
-      onChange(!checked);
+      onChange(!isChecked);
     }
   };
 
@@ -34,7 +37,7 @@ export function Toggle({
     if (disabled) return;
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
-      onChange(!checked);
+      onChange(!isChecked);
     }
   };
 
@@ -51,7 +54,7 @@ export function Toggle({
     userSelect: 'none',
     boxSizing: 'border-box',
     border: '1px solid transparent',
-    background: checked
+    background: isChecked
       ? brand.hex
       : offRim
       ? offRim.cssBackground
@@ -71,8 +74,8 @@ export function Toggle({
     // In compliance with LIMINAL Master Spec:
     // checked=true: knob right 23px, background #060709
     // checked=false: knob right 3px, background rgba(255,255,255,.4)
-    right: checked ? '23px' : '3px',
-    background: checked ? brand.onColor : 'rgba(255, 255, 255, 0.4)',
+    right: isChecked ? '23px' : '3px',
+    background: isChecked ? brand.onColor : 'rgba(255, 255, 255, 0.4)',
     boxShadow: '0 1px 2px rgba(1, 2, 3, 0.22)',
   };
 
@@ -80,7 +83,7 @@ export function Toggle({
     <button
       type="button"
       role="switch"
-      aria-checked={checked}
+      aria-checked={isChecked}
       aria-label={ariaLabel}
       disabled={disabled}
       onClick={handleClick}

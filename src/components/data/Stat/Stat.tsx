@@ -15,6 +15,10 @@ export interface StatProps {
     value: string;
     semantic?: 'success' | 'warning' | 'danger' | 'info';
   };
+  change?: string;
+  changeType?: string;
+  meta?: string;
+  icon?: ReactNode;
   subtitle?: string;
   prefix?: ReactNode;
   className?: string;
@@ -25,6 +29,10 @@ export function Stat({
   label,
   value,
   trend,
+  change,
+  changeType,
+  meta,
+  icon,
   subtitle,
   prefix,
   className = '',
@@ -34,6 +42,13 @@ export function Stat({
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+
+  const resolvedTrend = trend ?? (change ? {
+    value: change,
+    semantic: (changeType === 'negative' ? 'danger' : 'success') as 'success' | 'danger',
+  } : undefined);
+  const resolvedPrefix = prefix ?? icon;
+  const resolvedSubtitle = subtitle ?? meta;
 
   // Surface 1 with Rim 1, flat zero shadow
   const limStyle = getLiminalStyle({
@@ -92,8 +107,8 @@ export function Stat({
   let trendColor = SEMANTICS.SUCCESS.text;
   let trendBorder = SEMANTICS.SUCCESS.border;
 
-  if (trend?.semantic) {
-    const key = trend.semantic.toUpperCase() as 'SUCCESS' | 'WARNING' | 'DANGER' | 'INFO';
+  if (resolvedTrend?.semantic) {
+    const key = resolvedTrend.semantic.toUpperCase() as 'SUCCESS' | 'WARNING' | 'DANGER' | 'INFO';
     const s = SEMANTICS[key] ?? SEMANTICS.SUCCESS;
     trendBg = s.subtle;
     trendColor = s.text;
@@ -112,11 +127,11 @@ export function Stat({
         }}
       >
         <div style={labelStyle}>
-          {prefix && <span style={{ flexShrink: 0 }}>{prefix}</span>}
+          {resolvedPrefix && <span style={{ flexShrink: 0 }}>{resolvedPrefix}</span>}
           <span>{label}</span>
         </div>
 
-        {trend && (
+        {resolvedTrend && (
           <span
             style={{
               fontSize: '10px',
@@ -134,7 +149,7 @@ export function Stat({
               lineHeight: 1.4,
             }}
           >
-            {trend.value}
+            {resolvedTrend.value}
           </span>
         )}
       </div>
@@ -143,7 +158,7 @@ export function Stat({
       <div style={valueStyle}>{value}</div>
 
       {/* Subtitle */}
-      {subtitle && <div style={subtitleStyle}>{subtitle}</div>}
+      {resolvedSubtitle && <div style={subtitleStyle}>{resolvedSubtitle}</div>}
     </div>
   );
 }

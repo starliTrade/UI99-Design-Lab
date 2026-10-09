@@ -23,18 +23,19 @@ import { getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
-  LayoutDashboard,
-  FolderGit2,
-  BarChart3,
-  Settings,
+  SquaresFour,
+  GitBranch,
+  ChartBar,
+  Gear,
   Bell,
-  Search,
+  MagnifyingGlass,
   Plus,
   ArrowUpRight,
   Shield,
-  Layers,
-  Sparkles,
-} from 'lucide-react';
+  Stack,
+  Sparkle,
+} from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function DashboardPage() {
   const { navigate } = useNavigation();
@@ -109,7 +110,7 @@ export function DashboardPage() {
                   color: BRAND.hex,
                 }}
               >
-                <Layers size={15} />
+                <LiminalIcon icon={Stack} size="sm" weight="light" color={BRAND.hex} />
               </span>
               <span
                 style={{
@@ -128,7 +129,7 @@ export function DashboardPage() {
                 <Input
                   type="search"
                   placeholder="جستجو در شاردها..."
-                  prefix={<Search size={14} />}
+                  prefix={<LiminalIcon icon={MagnifyingGlass} size="xs" weight="light" />}
                 />
               </div>
 
@@ -165,26 +166,26 @@ export function DashboardPage() {
         <Sidebar width={220} sticky>
           <Sidebar.Section label="منوی اصلی">
             <NavItem active onClick={() => navigate({ name: 'dashboard' })}>
-              <LayoutDashboard size={15} />
+              <LiminalIcon icon={SquaresFour} size="sm" weight="light" />
               <span>داشبورد مرکزی</span>
             </NavItem>
             <NavItem onClick={() => navigate({ name: 'project', id: 'alpha' })}>
-              <FolderGit2 size={15} />
+              <LiminalIcon icon={GitBranch} size="sm" weight="light" />
               <span>پروژه‌ها</span>
             </NavItem>
             <NavItem onClick={() => navigate({ name: 'loading' })}>
-              <BarChart3 size={15} />
+              <LiminalIcon icon={ChartBar} size="sm" weight="light" />
               <span>تحلیل داده</span>
             </NavItem>
           </Sidebar.Section>
 
           <Sidebar.Section label="مدیریت">
             <NavItem onClick={() => navigate({ name: '404' })}>
-              <Bell size={15} />
+              <LiminalIcon icon={Bell} size="sm" weight="light" />
               <span>اعلانات سیستم</span>
             </NavItem>
             <NavItem onClick={() => navigate({ name: 'login' })}>
-              <Settings size={15} />
+              <LiminalIcon icon={Gear} size="sm" weight="light" />
               <span>تنظیمات هویت</span>
             </NavItem>
           </Sidebar.Section>
@@ -250,7 +251,7 @@ export function DashboardPage() {
             light={BRAND.hex}
             onClick={() => navigate({ name: 'project', id: 'alpha' })}
           >
-            <Plus size={14} />
+            <LiminalIcon icon={Plus} size="xs" weight="light" />
             <span>پروژه جدید</span>
           </Mist>
         }
@@ -312,7 +313,7 @@ export function DashboardPage() {
             onClick={() => navigate({ name: 'project', id: 'alpha' })}
           >
             <span>مشاهده جزئیات Alpha</span>
-            <ArrowUpRight size={13} className="mr-1" />
+            <LiminalIcon icon={ArrowUpRight} size="xs" weight="light" className="mr-1" />
           </Button>
         }
       >
@@ -408,7 +409,7 @@ export function DashboardPage() {
                     }}
                   >
                     <span>صفحه پروژه Alpha</span>
-                    <ArrowUpRight size={13} />
+                    <LiminalIcon icon={ArrowUpRight} size="xs" weight="light" />
                   </button>
 
                   <button
@@ -420,7 +421,7 @@ export function DashboardPage() {
                     }}
                   >
                     <span>تست صفحه در حال بارگذاری</span>
-                    <ArrowUpRight size={13} />
+                    <LiminalIcon icon={ArrowUpRight} size="xs" weight="light" />
                   </button>
 
                   <button
@@ -432,7 +433,7 @@ export function DashboardPage() {
                     }}
                   >
                     <span>تست صفحه ۴۰۴</span>
-                    <ArrowUpRight size={13} />
+                    <LiminalIcon icon={ArrowUpRight} size="xs" weight="light" />
                   </button>
                 </div>
               </div>

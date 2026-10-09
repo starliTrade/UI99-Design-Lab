@@ -7,14 +7,13 @@ import { Badge } from '../components/atoms/Badge';
 import { getTextStyle, getLiminalStyle } from '../engine/spec-engine';
 import { LiminalLayoutEngine } from '../engine/liminal-layout-engine';
 import {
-  Compass,
-  LayoutDashboard,
-  FolderGit2,
+  SquaresFour,
+  GitBranch,
   Lock,
   Hourglass,
-  AlertOctagon,
-  Sparkles,
-} from 'lucide-react';
+  WarningOctagon,
+} from '@phosphor-icons/react';
+import { LiminalIcon } from '../engine/liminal-icon-engine';
 
 function NavigationToolbar() {
   const { current, navigate } = useNavigation();
@@ -22,11 +21,11 @@ function NavigationToolbar() {
   const SPACING = LiminalLayoutEngine.SPACING;
 
   const routes: Array<{ route: Route; label: string; icon: React.ReactNode }> = [
-    { route: { name: 'dashboard' }, label: 'داشبورد مرکزی', icon: <LayoutDashboard size={13} /> },
-    { route: { name: 'project', id: 'alpha' }, label: 'پروژه Alpha', icon: <FolderGit2 size={13} /> },
-    { route: { name: 'login' }, label: 'ورود (Auth Gate)', icon: <Lock size={13} /> },
-    { route: { name: 'loading' }, label: 'تست Loading (۳ ثانیه)', icon: <Hourglass size={13} /> },
-    { route: { name: '404' }, label: 'تست ۴۰۴ Not Found', icon: <AlertOctagon size={13} /> },
+    { route: { name: 'dashboard' }, label: 'داشبورد مرکزی', icon: <LiminalIcon icon={SquaresFour} size="xs" weight="light" /> },
+    { route: { name: 'project', id: 'alpha' }, label: 'پروژه Alpha', icon: <LiminalIcon icon={GitBranch} size="xs" weight="light" /> },
+    { route: { name: 'login' }, label: 'ورود (Auth Gate)', icon: <LiminalIcon icon={Lock} size="xs" weight="light" /> },
+    { route: { name: 'loading' }, label: 'تست Loading (۳ ثانیه)', icon: <LiminalIcon icon={Hourglass} size="xs" weight="light" /> },
+    { route: { name: '404' }, label: 'تست ۴۰۴ Not Found', icon: <LiminalIcon icon={WarningOctagon} size="xs" weight="light" /> },
   ];
 
   return (

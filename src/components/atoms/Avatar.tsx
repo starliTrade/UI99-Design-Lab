@@ -1,5 +1,5 @@
 import React from 'react';
-import { SpecEngine } from '../../engine/spec-engine';
+import { getDirectionalRim } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 
@@ -31,7 +31,7 @@ export function Avatar({
   const { dimension, fontSize } = AVATAR_SIZES[size];
   const ext = LiminalColorEngine.EXTENDED_SPECTRUM.find((x) => x.hue === hue);
   const textColor = ext?.hex ?? '#8CC3F2';
-  const rim = SpecEngine.getRim(2, 1);
+  const rim = getDirectionalRim(2, 1);
 
   return (
     <div
@@ -40,7 +40,7 @@ export function Avatar({
         width: `${dimension}px`,
         height: `${dimension}px`,
         borderRadius: `${LiminalLayoutEngine.RADIUS.card}px`,
-        background: rim.cssBackground,
+        background: rim ? rim.cssBackground : '#0A0B0F',
         border: '1px solid transparent',
         color: textColor,
         fontSize: `${fontSize}px`,

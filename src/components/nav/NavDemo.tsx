@@ -17,17 +17,18 @@ import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
   Compass,
-  LayoutGrid,
+  SquaresFour,
   Shield,
-  Activity,
-  Server,
-  Settings,
-  Search,
-  ExternalLink,
+  Pulse,
+  HardDrives,
+  Gear,
+  MagnifyingGlass,
+  ArrowSquareOut,
   Cpu,
   Radio,
-  Wifi,
-} from 'lucide-react';
+  WifiHigh,
+} from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function NavDemo() {
   const [activeNav, setActiveNav] = useState<string>('gateways');
@@ -76,7 +77,7 @@ export function NavDemo() {
                 color: LiminalColorEngine.BRAND_PRIMARY.hex,
               }}
             >
-              <Compass size={16} />
+              <LiminalIcon icon={Compass} size="sm" weight="light" />
             </span>
             <span
               style={{
@@ -99,7 +100,7 @@ export function NavDemo() {
                 placeholder="Quick jump..."
                 value={searchVal}
                 onChange={(e) => setSearchVal(e.target.value)}
-                prefix={<Search size={14} />}
+                prefix={<LiminalIcon icon={MagnifyingGlass} size="xs" weight="light" />}
               />
             </div>
             <div
@@ -158,7 +159,7 @@ export function NavDemo() {
               active={activeNav === 'gateways'}
               onClick={() => setActiveNav('gateways')}
             >
-              <LayoutGrid size={15} />
+              <LiminalIcon icon={SquaresFour} size="sm" weight="light" />
               <span>Gateway Clusters</span>
             </NavItem>
 
@@ -166,7 +167,7 @@ export function NavDemo() {
               active={activeNav === 'security'}
               onClick={() => setActiveNav('security')}
             >
-              <Shield size={15} />
+              <LiminalIcon icon={Shield} size="sm" weight="light" />
               <span>Security Shards</span>
             </NavItem>
 
@@ -174,7 +175,7 @@ export function NavDemo() {
               active={activeNav === 'telemetry'}
               onClick={() => setActiveNav('telemetry')}
             >
-              <Activity size={15} />
+              <LiminalIcon icon={Pulse} size="sm" weight="light" />
               <span>Telemetry Streams</span>
             </NavItem>
           </Sidebar.Section>
@@ -184,7 +185,7 @@ export function NavDemo() {
               active={activeNav === 'servers'}
               onClick={() => setActiveNav('servers')}
             >
-              <Server size={15} />
+              <LiminalIcon icon={HardDrives} size="sm" weight="light" />
               <span>Hardware Root</span>
             </NavItem>
 
@@ -192,12 +193,12 @@ export function NavDemo() {
               active={activeNav === 'system'}
               onClick={() => setActiveNav('system')}
             >
-              <Settings size={15} />
+              <LiminalIcon icon={Gear} size="sm" weight="light" />
               <span>System Preferences</span>
             </NavItem>
 
             <NavItem disabled>
-              <ExternalLink size={15} />
+              <LiminalIcon icon={ArrowSquareOut} size="sm" weight="light" />
               <span>Audit Vault (Offline)</span>
             </NavItem>
           </Sidebar.Section>
@@ -271,7 +272,7 @@ export function NavDemo() {
                   <span style={{ fontSize: '11px', color: getTextStyle('tertiary', 1).color }}>
                     PEAK THROUGHPUT
                   </span>
-                  <Wifi size={14} style={{ color: SEMANTICS.INFO.text }} />
+                  <LiminalIcon icon={WifiHigh} size="xs" weight="light" color={SEMANTICS.INFO.text} />
                 </div>
                 <div
                   style={{
@@ -294,7 +295,7 @@ export function NavDemo() {
                   <span style={{ fontSize: '11px', color: getTextStyle('tertiary', 1).color }}>
                     ACTIVE KERNEL
                   </span>
-                  <Cpu size={14} style={{ color: LiminalColorEngine.BRAND_PRIMARY.hex }} />
+                  <LiminalIcon icon={Cpu} size="xs" weight="light" color={LiminalColorEngine.BRAND_PRIMARY.hex} />
                 </div>
                 <div
                   style={{
@@ -317,7 +318,7 @@ export function NavDemo() {
                   <span style={{ fontSize: '11px', color: getTextStyle('tertiary', 1).color }}>
                     SYNCHRONIZATION
                   </span>
-                  <Radio size={14} style={{ color: SEMANTICS.SUCCESS.solid }} />
+                  <LiminalIcon icon={Radio} size="xs" weight="light" color={SEMANTICS.SUCCESS.solid} />
                 </div>
                 <div
                   style={{

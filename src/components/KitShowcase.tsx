@@ -22,7 +22,7 @@ import {
   Tabs,
   Breadcrumb,
 } from './index';
-import { SpecEngine, LiminalState, getTextStyle } from '../engine/spec-engine';
+import { getLiminalStyle, LiminalState, getTextStyle } from '../engine/spec-engine';
 import { LiminalColorEngine } from '../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../engine/liminal-layout-engine';
 import {
@@ -78,7 +78,7 @@ export function KitShowcase() {
       <div
         className="p-5 sm:p-6 space-y-3"
         style={{
-          ...SpecEngine.style({ surfaceLevel: 1, isContainer: true }).style,
+          ...getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style,
           borderRadius: `${LiminalLayoutEngine.RADIUS.container}px`,
         }}
       >
@@ -87,7 +87,7 @@ export function KitShowcase() {
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
               style={{
-                ...SpecEngine.style({ surfaceLevel: 2, isContainer: true }).style,
+                ...getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style,
                 borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
               }}
             >
@@ -97,7 +97,7 @@ export function KitShowcase() {
               <div className="flex items-center gap-2">
                 <h2
                   className="font-bold text-sm sm:text-base tracking-tight"
-                  style={{ color: SpecEngine.getTextStyle('primary', 1).color }}
+                  style={{ color: getTextStyle('primary', 1).color }}
                 >
                   LIMINAL COMPONENT KIT v1.0
                 </h2>
@@ -119,13 +119,13 @@ export function KitShowcase() {
                 style={{
                   ...(activeSubTab === tab
                     ? {
-                        ...SpecEngine.style({ surfaceLevel: 3, interactive: true }).style,
-                        color: SpecEngine.getTextStyle('primary', 3).color,
+                        ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                        color: getTextStyle('primary', 3).color,
                         fontWeight: 600,
                       }
                     : {
                         background: 'transparent',
-                        color: SpecEngine.getTextStyle('secondary', 1).color,
+                        color: getTextStyle('secondary', 1).color,
                       }),
                 }}
               >
@@ -147,13 +147,13 @@ export function KitShowcase() {
                 style={{
                   ...(buttonState === st
                     ? {
-                        ...SpecEngine.style({ surfaceLevel: 3, interactive: true }).style,
-                        color: SpecEngine.getTextStyle('primary', 3).color,
+                        ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                        color: getTextStyle('primary', 3).color,
                         fontWeight: 600,
                       }
                     : {
                         background: 'rgba(255, 255, 255, 0.03)',
-                        color: SpecEngine.getTextStyle('tertiary', 1).color,
+                        color: getTextStyle('tertiary', 1).color,
                         border: '1px solid rgba(255, 255, 255, 0.04)',
                       }),
                 }}
@@ -349,7 +349,7 @@ export function KitShowcase() {
             <Panel parentRadius={24} padding={16} surfaceLevel={2}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <div className="text-xs font-bold" style={{ color: SpecEngine.getTextStyle('primary', 2).color }}>
+                  <div className="text-xs font-bold" style={{ color: getTextStyle('primary', 2).color }}>
                     Nested Panel on Surface 2 (#0A0B0F)
                   </div>
                   <div className="text-[11px] mt-0.5" style={getTextStyle('tertiary', 2)}>
@@ -372,7 +372,7 @@ export function KitShowcase() {
               <div
                 className="p-4 space-y-2"
                 style={{
-                  ...SpecEngine.style({ surfaceLevel: 4, isFeatured: true }).style,
+                  ...getLiminalStyle({ surfaceLevel: 4, isFeatured: true }).style,
                   borderRadius: `${LiminalLayoutEngine.RADIUS.card}px`,
                 }}
               >
@@ -380,7 +380,7 @@ export function KitShowcase() {
                   <span className="text-[10px] font-bold text-[#E9B44C]">ELEVATION E2</span>
                   <Badge semantic="warning">Sub-Canvas</Badge>
                 </div>
-                <div className="font-semibold" style={{ color: SpecEngine.getTextStyle('primary', 4).color }}>
+                <div className="font-semibold" style={{ color: getTextStyle('primary', 4).color }}>
                   Surface 4 Featured Card
                 </div>
                 <p className="text-[11px] leading-relaxed" style={getTextStyle('tertiary', 4)}>
@@ -391,7 +391,7 @@ export function KitShowcase() {
               <div
                 className="p-4 space-y-2"
                 style={{
-                  ...SpecEngine.style({ surfaceLevel: 2, isContainer: true }).style,
+                  ...getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style,
                   borderRadius: `${LiminalLayoutEngine.RADIUS.card}px`,
                 }}
               >
@@ -399,7 +399,7 @@ export function KitShowcase() {
                   <span className="text-[10px] font-bold text-[#6EE0B4]">SURFACE 2</span>
                   <Badge semantic="success">Rim 1 Specular</Badge>
                 </div>
-                <div className="font-semibold" style={{ color: SpecEngine.getTextStyle('primary', 2).color }}>
+                <div className="font-semibold" style={{ color: getTextStyle('primary', 2).color }}>
                   Surface 2 Base Panel
                 </div>
                 <p className="text-[11px] leading-relaxed" style={getTextStyle('tertiary', 2)}>
@@ -494,9 +494,9 @@ export function KitShowcase() {
             </div>
 
             {/* Progress Bar with Live Slider */}
-            <div className="p-3.5 space-y-2 rounded-xl" style={SpecEngine.style({ surfaceLevel: 2, isContainer: true }).style}>
+            <div className="p-3.5 space-y-2 rounded-xl" style={getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style}>
               <div className="flex items-center justify-between text-xs">
-                <span className="font-bold" style={{ color: SpecEngine.getTextStyle('primary', 2).color }}>
+                <span className="font-bold" style={{ color: getTextStyle('primary', 2).color }}>
                   System Capacity Slider
                 </span>
                 <span style={getTextStyle('tertiary', 2)}>{progressVal}% Utilization</span>
@@ -616,7 +616,7 @@ export function KitShowcase() {
           <p>
             Designed for 100% responsive fluid mobile interaction. The drag handle at top provides tactile guidance without breaking the clean aesthetic.
           </p>
-          <div className="p-3 rounded-lg text-[11px]" style={SpecEngine.style({ surfaceLevel: 2, isContainer: true }).style}>
+          <div className="p-3 rounded-lg text-[11px]" style={getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style}>
             Sub-Canvas E3 Anchor: 0 8px 28px rgba(3,4,6,0.44), 0 3px 8px rgba(1,2,3,0.30)
           </div>
         </div>

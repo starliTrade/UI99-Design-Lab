@@ -23,18 +23,19 @@ import { getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
-  FolderGit2,
-  LayoutDashboard,
-  BarChart3,
-  Settings,
+  GitBranch,
+  SquaresFour,
+  ChartBar,
+  Gear,
   Bell,
-  Search,
-  CheckCircle2,
+  MagnifyingGlass,
+  CheckCircle,
   FileText,
   SlidersHorizontal,
-  Layers,
+  Stack,
   ArrowLeft,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function ProjectPage({ id }: { id: string }) {
   const { navigate } = useNavigation();
@@ -108,7 +109,7 @@ export function ProjectPage({ id }: { id: string }) {
                   color: BRAND.hex,
                 }}
               >
-                <Layers size={15} />
+                <LiminalIcon icon={Stack} size="sm" weight="light" color={BRAND.hex} />
               </span>
               <span
                 style={{
@@ -128,7 +129,7 @@ export function ProjectPage({ id }: { id: string }) {
                 variant="ghost"
                 onClick={() => navigate({ name: 'dashboard' })}
               >
-                <ArrowLeft size={13} className="mr-1" />
+                <LiminalIcon icon={ArrowLeft} size="xs" weight="light" className="mr-1" />
                 <span>بازگشت به داشبورد</span>
               </Button>
             </div>
@@ -143,26 +144,26 @@ export function ProjectPage({ id }: { id: string }) {
         <Sidebar width={220} sticky>
           <Sidebar.Section label="منوی اصلی">
             <NavItem onClick={() => navigate({ name: 'dashboard' })}>
-              <LayoutDashboard size={15} />
+              <LiminalIcon icon={SquaresFour} size="sm" weight="light" />
               <span>داشبورد مرکزی</span>
             </NavItem>
             <NavItem active>
-              <FolderGit2 size={15} />
+              <LiminalIcon icon={GitBranch} size="sm" weight="light" />
               <span>پروژه‌ها</span>
             </NavItem>
             <NavItem onClick={() => navigate({ name: 'loading' })}>
-              <BarChart3 size={15} />
+              <LiminalIcon icon={ChartBar} size="sm" weight="light" />
               <span>تحلیل داده</span>
             </NavItem>
           </Sidebar.Section>
 
           <Sidebar.Section label="مدیریت">
             <NavItem onClick={() => navigate({ name: '404' })}>
-              <Bell size={15} />
+              <LiminalIcon icon={Bell} size="sm" weight="light" />
               <span>اعلانات سیستم</span>
             </NavItem>
             <NavItem onClick={() => navigate({ name: 'login' })}>
-              <Settings size={15} />
+              <LiminalIcon icon={Gear} size="sm" weight="light" />
               <span>تنظیمات هویت</span>
             </NavItem>
           </Sidebar.Section>
@@ -211,7 +212,7 @@ export function ProjectPage({ id }: { id: string }) {
         actions={
           <>
             <Button size="sm" variant="secondary">
-              <FileText size={13} className="mr-1" />
+              <LiminalIcon icon={FileText} size="xs" weight="light" className="mr-1" />
               <span>گزارش وضعیت</span>
             </Button>
             <Button size="sm" variant="ghost">

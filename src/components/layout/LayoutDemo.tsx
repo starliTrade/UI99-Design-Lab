@@ -15,17 +15,18 @@ import { getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
-  Layers,
-  LayoutGrid,
+  Stack,
+  SquaresFour,
   Columns,
-  Maximize2,
-  Share2,
-  Server,
-  Activity,
+  ArrowsOut,
+  ShareNetwork,
+  HardDrives,
+  Pulse,
   Shield,
   Compass,
-  DownloadCloud,
-} from 'lucide-react';
+  CloudArrowDown,
+} from '@phosphor-icons/react';
+import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function LayoutDemo() {
   const SPACING = LiminalLayoutEngine.SPACING;
@@ -98,7 +99,7 @@ export function LayoutDemo() {
                     color: LiminalColorEngine.BRAND_PRIMARY.hex,
                   }}
                 >
-                  <Layers size={14} />
+                  <LiminalIcon icon={Stack} size="xs" weight="light" />
                 </span>
                 <span
                   style={{
@@ -115,11 +116,11 @@ export function LayoutDemo() {
             actions={
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="secondary">
-                  <Share2 size={13} className="mr-1" />
+                  <LiminalIcon icon={ShareNetwork} size="xs" weight="light" className="mr-1" />
                   Share Plan
                 </Button>
                 <Button size="sm" variant="primary">
-                  <DownloadCloud size={13} className="mr-1" />
+                  <LiminalIcon icon={CloudArrowDown} size="xs" weight="light" className="mr-1" />
                   Export Blueprint
                 </Button>
               </div>
@@ -134,26 +135,26 @@ export function LayoutDemo() {
           <Sidebar width={220} sticky={false}>
             <Sidebar.Section label="Spatial Geometry">
               <NavItem active>
-                <LayoutGrid size={14} />
+                <LiminalIcon icon={SquaresFour} size="xs" weight="light" />
                 <span>12-Col Grid</span>
               </NavItem>
               <NavItem>
-                <Columns size={14} />
+                <LiminalIcon icon={Columns} size="xs" weight="light" />
                 <span>Responsive Rails</span>
               </NavItem>
               <NavItem>
-                <Server size={14} />
+                <LiminalIcon icon={HardDrives} size="xs" weight="light" />
                 <span>Node Enclaves</span>
               </NavItem>
             </Sidebar.Section>
 
             <Sidebar.Section label="Landmarks">
               <NavItem>
-                <Shield size={14} />
+                <LiminalIcon icon={Shield} size="xs" weight="light" />
                 <span>AppShell Body</span>
               </NavItem>
               <NavItem>
-                <Activity size={14} />
+                <LiminalIcon icon={Pulse} size="xs" weight="light" />
                 <span>Sticky Rails</span>
               </NavItem>
             </Sidebar.Section>
@@ -187,7 +188,7 @@ export function LayoutDemo() {
           actions={
             <>
               <Button variant="secondary" size="sm">
-                <Maximize2 size={13} className="mr-1" />
+                <LiminalIcon icon={ArrowsOut} size="xs" weight="light" className="mr-1" />
                 Fullscreen View
               </Button>
               <Button variant="primary" size="sm">
