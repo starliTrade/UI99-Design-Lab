@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationProvider, useNavigation } from './navigation/useNavigation';
+import { NavigationProvider, NavigationContext, useNavigation } from './navigation/useNavigation';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ProjectPage } from './pages/ProjectPage';
@@ -26,6 +26,11 @@ function RouterView() {
 }
 
 export function App() {
+  const existingNav = React.useContext(NavigationContext);
+  if (existingNav) {
+    return <RouterView />;
+  }
+
   return (
     <NavigationProvider>
       <RouterView />

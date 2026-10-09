@@ -13,38 +13,29 @@ import { CompositesDemo } from './components/composites';
 import { AppDemo } from './app';
 import {
   Shield,
-  Sparkles,
-  Search,
+  Sparkle,
+  MagnifyingGlass,
   Check,
   Copy,
   Terminal,
-  MoreVertical,
-  Activity,
-  Maximize2,
+  DotsThreeVertical,
+  Pulse,
+  ArrowsOut,
   X,
-  Lock,
-  MousePointer,
-  AlertTriangle,
+  Cursor,
+  Warning,
   Info,
-  CheckCircle2,
+  CheckCircle,
   XCircle,
-  Palette,
-  Layers,
   ArrowUpRight,
-  Type,
-  Ruler,
-  CircleDot,
-  Smartphone,
+  Record,
+  DeviceMobile,
   Monitor,
-  Menu,
-  ChevronRight,
-  Sliders,
-  Bell,
   Cpu,
-  Wifi,
+  WifiHigh,
   Radio,
-  Share2,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
+import { LiminalIcon } from './engine/liminal-icon-engine';
 
 export function App() {
   const [copied, setCopied] = useState<boolean>(false);
@@ -281,7 +272,7 @@ export function App() {
                   borderRadius: `${LiminalLayoutEngine.getConcentricRadius(RADIUS.control, 2)}px`,
                 }}
               >
-                <Smartphone className="w-3 h-3" />
+                <LiminalIcon icon={DeviceMobile} size="xs" weight="light" />
                 <span>390px</span>
               </button>
 
@@ -303,7 +294,7 @@ export function App() {
                   borderRadius: `${LiminalLayoutEngine.getConcentricRadius(RADIUS.control, 2)}px`,
                 }}
               >
-                <Monitor className="w-3 h-3" />
+                <LiminalIcon icon={Monitor} size="xs" weight="light" />
                 <span>Fluid</span>
               </button>
             </div>
@@ -320,9 +311,9 @@ export function App() {
               title="Copy Liminal Contract"
             >
               {copied ? (
-                <Check className="w-3.5 h-3.5 text-[#34C08B]" />
+                <LiminalIcon icon={Check} size="xs" weight="light" color="#34C08B" />
               ) : (
-                <Copy className="w-3.5 h-3.5" />
+                <LiminalIcon icon={Copy} size="xs" weight="light" />
               )}
             </button>
           </div>
@@ -430,7 +421,7 @@ export function App() {
                       borderRadius: `${RADIUS.control}px`,
                     }}
                   >
-                    <Cpu className="w-4 h-4 text-[#6EE0B4]" />
+                    <LiminalIcon icon={Cpu} size="sm" weight="light" color="#6EE0B4" />
                   </div>
                   <div>
                     <div
@@ -478,7 +469,7 @@ export function App() {
                         color: getTextStyle('primary', 2).color,
                       }}
                     >
-                      <MoreVertical className="w-4 h-4" />
+                      <LiminalIcon icon={DotsThreeVertical} size="sm" weight="light" />
                     </button>
 
                     {/* Floating Dropdown with Sub-Canvas E1 Shadow */}
@@ -571,7 +562,7 @@ export function App() {
                     borderRadius: `${RADIUS.control}px`,
                   }}
                 >
-                  <Search className="w-4 h-4 text-[#555D6E] shrink-0" />
+                  <LiminalIcon icon={MagnifyingGlass} size="sm" weight="light" color="#555D6E" className="shrink-0" />
                   <input
                     type="text"
                     defaultValue="cluster.eu-west.liminal"
@@ -645,7 +636,7 @@ export function App() {
                 >
                   <div className="flex items-center justify-between text-[10px]">
                     <span style={{ color: getTextStyle('tertiary', 2).color }}>LATENCY</span>
-                    <Radio className="w-3 h-3 text-[#34C08B]" />
+                    <LiminalIcon icon={Radio} size="xs" weight="light" color="#34C08B" />
                   </div>
                   <div
                     style={{
@@ -668,7 +659,7 @@ export function App() {
                 >
                   <div className="flex items-center justify-between text-[10px]">
                     <span style={{ color: getTextStyle('tertiary', 2).color }}>UPTIME</span>
-                    <Wifi className="w-3 h-3 text-[#6FA8EC]" />
+                    <LiminalIcon icon={WifiHigh} size="xs" weight="light" color="#6FA8EC" />
                   </div>
                   <div
                     style={{
@@ -700,7 +691,7 @@ export function App() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#E9B44C]">
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <LiminalIcon icon={Sparkle} size="xs" weight="light" />
                     <span>E2 SUB-CANVAS POPULAR ACTION</span>
                   </div>
                   <span
@@ -734,7 +725,7 @@ export function App() {
                     }}
                   >
                     <span>Inspect Layer</span>
-                    <Maximize2 className="w-3 h-3 ml-0.5" />
+                    <LiminalIcon icon={ArrowsOut} size="xs" weight="light" className="ml-0.5" />
                   </button>
 
                   <button
@@ -776,7 +767,7 @@ export function App() {
                   }}
                 >
                   <span>Open Drawer</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <LiminalIcon icon={ArrowUpRight} size="xs" weight="light" />
                 </button>
               </div>
             </div>
@@ -862,7 +853,7 @@ export function App() {
                 style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
               >
                 <div className="flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-[#34C08B]" />
+                  <LiminalIcon icon={Pulse} size="sm" weight="light" color="#34C08B" />
                   <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     LIMINAL STATES v1.0 [APPROVED]
                   </span>
@@ -948,7 +939,7 @@ export function App() {
                     onMouseEnter={() => setInteractiveState('hover')}
                     onMouseLeave={() => setInteractiveState('idle')}
                   >
-                    <MousePointer className="w-3.5 h-3.5 text-[#38BDF8]" />
+                    <LiminalIcon icon={Cursor} size="xs" weight="light" color="#38BDF8" />
                     <span>TOUCH &amp; HOLD FOR ACTIVE CONCAVE</span>
                   </button>
                 </div>
@@ -968,7 +959,7 @@ export function App() {
                 style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
               >
                 <div className="flex items-center gap-2">
-                  <CircleDot className="w-4 h-4 text-[#60a5fa]" />
+                  <LiminalIcon icon={Record} size="sm" weight="light" color="#60a5fa" />
                   <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     CONCENTRIC HARMONY LAB
                   </span>
@@ -1078,10 +1069,10 @@ export function App() {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5 font-bold text-xs" style={{ color: role.text }}>
-                          {key === 'SUCCESS' && <CheckCircle2 className="w-3.5 h-3.5" />}
-                          {key === 'WARNING' && <AlertTriangle className="w-3.5 h-3.5" />}
-                          {key === 'DANGER' && <XCircle className="w-3.5 h-3.5" />}
-                          {key === 'INFO' && <Info className="w-3.5 h-3.5" />}
+                          {key === 'SUCCESS' && <LiminalIcon icon={CheckCircle} size="xs" weight="light" />}
+                          {key === 'WARNING' && <LiminalIcon icon={Warning} size="xs" weight="light" />}
+                          {key === 'DANGER' && <LiminalIcon icon={XCircle} size="xs" weight="light" />}
+                          {key === 'INFO' && <LiminalIcon icon={Info} size="xs" weight="light" />}
                           <span>{key}</span>
                         </div>
 
@@ -1244,7 +1235,7 @@ export function App() {
                 style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
               >
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#34C08B]" />
+                  <LiminalIcon icon={CheckCircle} size="sm" weight="light" color="#34C08B" />
                   <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     HARD RULES CHECKLIST (100% COMPLIANT)
                   </span>
@@ -1272,7 +1263,7 @@ export function App() {
                     className="p-2.5 flex items-start gap-2 rounded-lg"
                     style={{ ...panelStyle.style, borderRadius: `${RADIUS.control}px` }}
                   >
-                    <Check className="w-3.5 h-3.5 text-[#34C08B] shrink-0 mt-0.5" />
+                    <LiminalIcon icon={Check} size="xs" weight="light" color="#34C08B" className="shrink-0 mt-0.5" />
                     <span style={{ color: getTextStyle('primary', 2).color }}>{rule}</span>
                   </div>
                 ))}
@@ -1292,7 +1283,7 @@ export function App() {
                 style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
               >
                 <div className="flex items-center gap-2">
-                  <Terminal className="w-4 h-4 text-[#8B9CF0]" />
+                  <LiminalIcon icon={Terminal} size="sm" weight="light" color="#8B9CF0" />
                   <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     MASTER CONTRACT v1.0 (VERBATIM TEXT)
                   </span>
@@ -1307,7 +1298,7 @@ export function App() {
                     color: getTextStyle('primary', 3).color,
                   }}
                 >
-                  <Copy className="w-3 h-3" />
+                  <LiminalIcon icon={Copy} size="xs" weight="light" />
                   <span>Copy Contract</span>
                 </button>
               </div>
@@ -1360,7 +1351,7 @@ export function App() {
             }}
           >
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#34C08B]" />
+              <LiminalIcon icon={CheckCircle} size="sm" weight="light" color="#34C08B" />
               <div>
                 <div
                   className="text-xs font-bold"
@@ -1381,7 +1372,7 @@ export function App() {
               className="p-1 rounded-md cursor-pointer"
               style={{ color: getTextStyle('tertiary', 4).color }}
             >
-              <X className="w-3.5 h-3.5" />
+              <LiminalIcon icon={X} size="xs" weight="light" />
             </button>
           </div>
         )}
@@ -1410,7 +1401,7 @@ export function App() {
                 style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
               >
                 <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-[#34C08B]" />
+                  <LiminalIcon icon={Shield} size="sm" weight="light" color="#34C08B" />
                   <span
                     className="font-bold"
                     style={{ color: getTextStyle('primary', 5).color }}
@@ -1423,7 +1414,7 @@ export function App() {
                   className="p-1 cursor-pointer"
                   style={{ color: getTextStyle('tertiary', 5).color }}
                 >
-                  <X className="w-4 h-4" />
+                  <LiminalIcon icon={X} size="sm" weight="light" />
                 </button>
               </div>
 

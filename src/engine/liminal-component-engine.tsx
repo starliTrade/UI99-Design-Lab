@@ -209,19 +209,23 @@ export interface ResolvedLiminalStyle {
   ladderColor: string;
 }
 
+export function getFocusRing(isKeyboardFocused: boolean, colorHex?: string): CSSProperties {
+  return LiminalComponentEngine.getFocusRing(isKeyboardFocused, colorHex);
+}
+
 export class LiminalComponentEngine {
   /**
    * Resolves standard focus ring:
-   * Brand primary outline on genuine keyboard focus, none on pointer focus.
+   * Brand primary outline (or custom colorHex) on genuine keyboard focus, none on pointer focus.
    */
-  static getFocusRing(isKeyboardFocused: boolean): CSSProperties {
+  static getFocusRing(isKeyboardFocused: boolean, colorHex?: string): CSSProperties {
     if (!isKeyboardFocused) {
       return {
         outline: 'none',
       };
     }
     return {
-      outline: `2px solid ${LiminalColorEngine.BRAND_PRIMARY.hex}`,
+      outline: `2px solid ${colorHex || LiminalColorEngine.BRAND_PRIMARY.hex}`,
       outlineOffset: '2px',
     };
   }

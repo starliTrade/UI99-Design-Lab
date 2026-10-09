@@ -207,7 +207,7 @@ export function MotionDemo() {
                   className="w-4 h-4 rounded-full bg-[#E9ECF2] shadow-sm"
                   style={{
                     transform: playRace ? 'translateX(calc(100cqw - 24px))' : 'translateX(0)',
-                    transition: `transform 400ms ${e.formula}`,
+                    transition: LiminalMotionEngine.getTransition('transform', 'slower', 'spring'),
                   }}
                 />
               </div>

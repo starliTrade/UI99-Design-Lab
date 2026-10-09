@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import type { CSSProperties, ReactNode, MouseEvent, FocusEvent } from 'react';
 import { LiminalColorEngine, MistTier } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { getFocusRing } from '../../../engine/spec-engine';
 
 export interface MistProps {
   as?: 'button' | 'div';
@@ -65,15 +67,13 @@ export function Mist({
     boxShadow: activeBoxShadow,
     filter: activeFilter,
     color: 'rgba(255, 255, 255, 0.90)',
-    fontFamily: TYPOGRAPHY[3].family,
-    fontSize: `${TYPOGRAPHY[3].size}px`,
-    lineHeight: `${TYPOGRAPHY[3].lineHeight}px`,
+    fontSize: `${TYPOGRAPHY[3].fs}px`,
+    lineHeight: TYPOGRAPHY[3].lh,
     fontWeight: tier === 'hero' ? 600 : 500,
-    outline: isFocused ? `1px solid rgba(${H}, 0.35)` : 'none',
-    outlineOffset: isFocused ? '6px' : undefined,
+    ...getFocusRing(isFocused),
     cursor: disabled ? 'not-allowed' : as === 'button' || onClick ? 'pointer' : 'default',
     opacity: disabled ? 0.45 : 1,
-    transition: 'filter 180ms ease, box-shadow 180ms ease, transform 120ms ease, outline 150ms ease',
+    transition: `${LiminalMotionEngine.getTransition('filter', 'normal')}, ${LiminalMotionEngine.getTransition('box-shadow', 'normal')}, ${LiminalMotionEngine.getTransition('transform', 'fast')}, ${LiminalMotionEngine.getTransition('outline', 'fast')}`,
     border: 'none',
     boxSizing: 'border-box',
     display: as === 'button' ? 'inline-flex' : undefined,

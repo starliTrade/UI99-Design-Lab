@@ -15,6 +15,7 @@ export interface CheckboxProps {
   onChange: (checked: boolean) => void;
   disabled?: boolean;
   label?: string;
+  description?: string;
   id?: string;
   name?: string;
   className?: string;
@@ -26,6 +27,7 @@ export function Checkbox({
   onChange,
   disabled = false,
   label,
+  description,
   id,
   name,
   className = '',
@@ -62,8 +64,7 @@ export function Checkbox({
       : offRim
       ? '1px solid transparent'
       : `1px solid ${LADDER[3]}`,
-    outline: focusRing.outline,
-    outlineOffset: focusRing.outlineOffset ?? '2px',
+    ...focusRing,
   };
 
   const labelStyle: CSSProperties = {
@@ -137,7 +138,7 @@ export function Checkbox({
           fill="none"
           style={{
             transform: checked ? 'scale(1)' : 'scale(0)',
-            transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            transition: LiminalMotionEngine.getTransition('transform', 'normal', 'spring'),
             color: SEMANTICS.SUCCESS.solid,
           }}
         >
@@ -151,7 +152,16 @@ export function Checkbox({
         </svg>
       </span>
 
-      {label && <span style={labelStyle}>{label}</span>}
+      {label && (
+        <span style={{ display: 'flex', flexDirection: 'column' }}>
+          <span style={labelStyle}>{label}</span>
+          {description && (
+            <span style={{ ...LiminalLayoutEngine.getTypeStyle(1), color: getTextStyle('tertiary', 1).color, marginTop: '2px' }}>
+              {description}
+            </span>
+          )}
+        </span>
+      )}
     </label>
   );
 }

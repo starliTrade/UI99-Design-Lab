@@ -6,6 +6,7 @@ import {
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 
 export interface ProgressProps {
   value: number;
@@ -14,6 +15,8 @@ export interface ProgressProps {
   semantic?: 'success' | 'warning' | 'danger' | 'info';
   color?: string;
   showLabel?: boolean;
+  showValue?: boolean;
+  height?: number;
   label?: ReactNode;
   className?: string;
   style?: CSSProperties;
@@ -26,6 +29,8 @@ export function Progress({
   semantic,
   color: customColor,
   showLabel = false,
+  showValue,
+  height,
   label,
   className = '',
   style: customStyle = {},
@@ -40,7 +45,7 @@ export function Progress({
     lg: 8,
   };
 
-  const trackHeight = heights[size];
+  const trackHeight = height ?? heights[size];
   const percentage = Math.min(100, Math.max(0, (value / max) * 100));
 
   // Fill color resolution
@@ -76,7 +81,7 @@ export function Progress({
     height: '100%',
     borderRadius: 'inherit',
     background: fillColor,
-    transition: 'width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
+    transition: LiminalMotionEngine.getTransition('width', 'slower', 'spring'),
   };
 
   return (

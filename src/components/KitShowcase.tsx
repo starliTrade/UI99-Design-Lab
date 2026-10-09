@@ -26,24 +26,18 @@ import { getLiminalStyle, LiminalState, getTextStyle } from '../engine/spec-engi
 import { LiminalColorEngine } from '../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../engine/liminal-layout-engine';
 import {
-  Sparkles,
+  Stack,
   Command,
-  Search,
-  Check,
-  Send,
-  AlertTriangle,
-  Info,
   Shield,
-  Activity,
-  Layers,
-  Terminal,
-  MousePointer,
+  Warning,
+  Globe,
+  Info,
+  Pulse,
   Cpu,
   Key,
-  Globe,
   Sliders,
-  ExternalLink,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
+import { LiminalIcon } from '../engine/liminal-icon-engine';
 
 export function KitShowcase() {
   // State controls for interactive testing
@@ -91,7 +85,7 @@ export function KitShowcase() {
                 borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
               }}
             >
-              <Layers className="w-5 h-5 text-[#8B9CF0]" />
+              <LiminalIcon icon={Stack} size="md" weight="light" color="#8B9CF0" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -182,16 +176,16 @@ export function KitShowcase() {
               </div>
 
               <div className="flex flex-wrap gap-2.5 items-center">
-                <Button variant="primary" forcedState={buttonState} icon={<Command className="w-3.5 h-3.5" />}>
+                <Button variant="primary" forcedState={buttonState} icon={<LiminalIcon icon={Command} size="xs" weight="light" />}>
                   Primary Brand
                 </Button>
-                <Button variant="secondary" forcedState={buttonState} icon={<Shield className="w-3.5 h-3.5" />}>
+                <Button variant="secondary" forcedState={buttonState} icon={<LiminalIcon icon={Shield} size="xs" weight="light" />}>
                   Secondary Rim 2
                 </Button>
                 <Button variant="ghost" forcedState={buttonState}>
                   Ghost Surface
                 </Button>
-                <Button variant="danger" forcedState={buttonState} icon={<AlertTriangle className="w-3.5 h-3.5" />}>
+                <Button variant="danger" forcedState={buttonState} icon={<LiminalIcon icon={Warning} size="xs" weight="light" />}>
                   Danger Red
                 </Button>
               </div>
@@ -255,9 +249,9 @@ export function KitShowcase() {
                   Avatars (Surface 2 · Rim 1 · Radius 16px)
                 </div>
                 <div className="flex items-center gap-3">
-                  <Avatar size="sm" initials="S1" hue={145} />
-                  <Avatar size="md" initials="LM" hue={230} />
-                  <Avatar size="lg" initials="KC" hue={290} />
+                  <Avatar size="sm" name="S1" hue={145} />
+                  <Avatar size="md" name="LM" hue={230} />
+                  <Avatar size="lg" name="KC" hue={290} />
                 </div>
               </div>
             </div>
@@ -271,7 +265,7 @@ export function KitShowcase() {
       {(activeSubTab === 'all' || activeSubTab === 'inputs') && (
         <Card
           title="GROUP 2: INPUTS"
-          subtitle="Input · Select · Textarea · Checkbox with strict Focus Ring outline: 2px solid ladder(n+1)"
+          subtitle="Input · Select · Textarea · Checkbox with strict Focus Ring (2px solid ladder n+1)"
           action={<Badge semantic="info">Form Controls</Badge>}
         >
           <div className="space-y-5">
@@ -280,7 +274,7 @@ export function KitShowcase() {
                 label="Node Hostname"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                leftIcon={<Globe className="w-3.5 h-3.5" />}
+                leftIcon={<LiminalIcon icon={Globe} size="xs" weight="light" />}
                 helperText="Focus ring: outline 2px solid #0D0E12 (ladder n+1)"
               />
 
@@ -445,7 +439,7 @@ export function KitShowcase() {
 
               <div className="flex items-center gap-3">
                 <Tooltip content="Surface 4 · Elevation E1 Micro Floating Label">
-                  <Button size="sm" variant="ghost" icon={<Info className="w-3.5 h-3.5" />}>
+                  <Button size="sm" variant="ghost" icon={<LiminalIcon icon={Info} size="xs" weight="light" />}>
                     Hover For Tooltip
                   </Button>
                 </Tooltip>
@@ -473,7 +467,7 @@ export function KitShowcase() {
                 change="−1.4ms"
                 changeType="positive"
                 meta="vs 30d avg"
-                icon={<Activity className="w-3.5 h-3.5 text-[#34C08B]" />}
+                icon={<LiminalIcon icon={Pulse} size="xs" weight="light" color="#34C08B" />}
               />
               <Stat
                 label="Memory Limen"
@@ -481,7 +475,7 @@ export function KitShowcase() {
                 change="+3.2%"
                 changeType="negative"
                 meta="floor 60%"
-                icon={<Cpu className="w-3.5 h-3.5 text-[#E9B44C]" />}
+                icon={<LiminalIcon icon={Cpu} size="xs" weight="light" color="#E9B44C" />}
               />
               <Stat
                 label="Signatures / Sec"
@@ -489,7 +483,7 @@ export function KitShowcase() {
                 change="+12.0%"
                 changeType="positive"
                 meta="peak load"
-                icon={<Key className="w-3.5 h-3.5 text-[#6FA8EC]" />}
+                icon={<LiminalIcon icon={Key} size="xs" weight="light" color="#6FA8EC" />}
               />
             </div>
 
@@ -501,7 +495,7 @@ export function KitShowcase() {
                 </span>
                 <span style={getTextStyle('tertiary', 2)}>{progressVal}% Utilization</span>
               </div>
-              <Progress value={progressVal} showValue semantic="brand" height={8} />
+              <Progress value={progressVal} showValue semantic="info" height={8} />
               <div className="pt-1 flex items-center gap-3">
                 <input
                   type="range"
@@ -521,18 +515,18 @@ export function KitShowcase() {
               </div>
               <Table
                 columns={[
-                  { key: 'name', header: 'Node Identifier' },
+                  { key: 'name', title: 'Node Identifier' },
                   {
                     key: 'status',
-                    header: 'Health',
-                    render: (item) => (
+                    title: 'Health',
+                    render: (item: any) => (
                       <Badge semantic={item.status === 'Healthy' ? 'success' : 'warning'}>
                         {item.status}
                       </Badge>
                     ),
                   },
-                  { key: 'latency', header: 'RTT', align: 'right' },
-                  { key: 'load', header: 'CPU Load', align: 'right' },
+                  { key: 'latency', title: 'RTT', align: 'right' },
+                  { key: 'load', title: 'CPU Load', align: 'right' },
                 ]}
                 data={sampleTableData}
                 keyExtractor={(item) => item.id}
@@ -571,9 +565,9 @@ export function KitShowcase() {
               </div>
               <Tabs
                 items={[
-                  { id: 'tab1', label: 'Live Telemetry', icon: <Activity className="w-3 h-3" /> },
-                  { id: 'tab2', label: 'Security Audit', icon: <Shield className="w-3 h-3" />, badge: <Badge semantic="warning">3</Badge> },
-                  { id: 'tab3', label: 'HSM Config', icon: <Sliders className="w-3 h-3" /> },
+                  { id: 'tab1', label: 'Live Telemetry', icon: <LiminalIcon icon={Pulse} size="xs" weight="light" /> },
+                  { id: 'tab2', label: 'Security Audit', icon: <LiminalIcon icon={Shield} size="xs" weight="light" />, badge: <Badge semantic="warning">3</Badge> },
+                  { id: 'tab3', label: 'HSM Config', icon: <LiminalIcon icon={Sliders} size="xs" weight="light" /> },
                 ]}
                 value="tab1"
                 onChange={() => {}}
@@ -623,7 +617,7 @@ export function KitShowcase() {
       </Sheet>
 
       <Toast
-        isOpen={toastOpen}
+        open={toastOpen}
         onClose={() => setToastOpen(false)}
         semantic={toastSemantic}
         title={toastSemantic === 'success' ? 'Transaction Committed' : 'Handshake Flagged'}

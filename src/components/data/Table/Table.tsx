@@ -6,11 +6,14 @@ import {
   getTextStyle,
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { Checkbox } from '../../inputs/Checkbox';
 
 export interface TableColumn {
   key: string;
-  title: string;
+  title?: string;
+  header?: string;
+  render?: (item: any, index?: number) => React.ReactNode;
   width?: string | number;
   align?: 'left' | 'right' | 'center';
 }
@@ -19,6 +22,7 @@ export interface TableProps {
   columns: TableColumn[];
   data: Array<Record<string, any>>;
   selectable?: boolean;
+  keyExtractor?: (item: any) => string | number;
   onRowClick?: (row: Record<string, any>, index: number) => void;
   selectedRows?: number[];
   onSelectRow?: (index: number, selected: boolean) => void;
@@ -31,6 +35,7 @@ export function Table({
   columns,
   data,
   selectable = false,
+  keyExtractor,
   onRowClick,
   selectedRows = [],
   onSelectRow,
@@ -119,7 +124,7 @@ export function Table({
                   userSelect: 'none',
                 }}
               >
-                {col.title}
+                {col.title || col.header}
               </th>
             ))}
           </tr>
@@ -139,7 +144,7 @@ export function Table({
 
             return (
               <tr
-                key={row.id || index}
+                key={keyExtractor ? keyExtractor(row) : (row.id || index)}
                 role="row"
                 aria-selected={isSelected}
                 onClick={() => onRowClick?.(row, index)}
@@ -148,7 +153,7 @@ export function Table({
                 style={{
                   background: rowBg,
                   cursor: onRowClick ? 'pointer' : 'default',
-                  transition: 'background 0.15s ease',
+                  transition: LiminalMotionEngine.getTransition('background', 'fast'),
                   userSelect: 'none',
                 }}
               >
@@ -189,7 +194,7 @@ export function Table({
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      {cellValue}
+                      {col.render ? col.render(row, index) : cellValue}
                     </td>
                   );
                 })}

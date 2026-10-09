@@ -46,3 +46,12 @@
     position: static !important;
   }
 }
+
+@keyframes liminal-skeleton-pulse {
+  0%, 100% {
+    background-color: #0A0B0F;
+  }
+  50% {
+    background-color: #0B0C10;
+  }
+}

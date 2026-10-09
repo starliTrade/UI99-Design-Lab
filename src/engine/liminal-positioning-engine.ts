@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 export type Placement =
   | 'top' | 'top-start' | 'top-end'
@@ -163,6 +163,9 @@ export function usePositioning(
     placement: options.placement || 'bottom',
   });
 
+  const optionsRef = useRef(options);
+  optionsRef.current = options;
+
   const update = useCallback(() => {
     const trigger = triggerRef.current;
     const floating = floatingRef.current;
@@ -174,11 +177,22 @@ export function usePositioning(
     const newPos = LiminalPositioningEngine.calculatePosition(
       triggerRect,
       floatingRect,
-      options
+      optionsRef.current
     );
 
-    setPosition(newPos);
-  }, [triggerRef, floatingRef, options]);
+    setPosition((prev) => {
+      if (
+        prev.x === newPos.x &&
+        prev.y === newPos.y &&
+        prev.placement === newPos.placement &&
+        prev.arrowX === newPos.arrowX &&
+        prev.arrowY === newPos.arrowY
+      ) {
+        return prev;
+      }
+      return newPos;
+    });
+  }, [triggerRef, floatingRef]);
 
   useEffect(() => {
     update();

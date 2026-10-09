@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
 export type Route =
@@ -13,7 +13,7 @@ export interface NavigationContextType {
   navigate: (route: Route) => void;
 }
 
-const NavigationContext = createContext<NavigationContextType | null>(null);
+export const NavigationContext = createContext<NavigationContextType | null>(null);
 
 function parseHash(hash: string): Route {
   const clean = hash.replace(/^#\/?/, '').trim();
@@ -43,6 +43,14 @@ function routeToHash(route: Route): string {
   }
 }
 
+function areRoutesEqual(a: Route, b: Route): boolean {
+  if (a.name !== b.name) return false;
+  if (a.name === 'project' && b.name === 'project') {
+    return a.id === b.id;
+  }
+  return true;
+}
+
 export function NavigationProvider({
   children,
   initialRoute = { name: 'dashboard' },
@@ -58,18 +66,22 @@ export function NavigationProvider({
     return initialRoute;
   });
 
-  const navigate = (newRoute: Route) => {
-    setCurrent(newRoute);
+  const navigate = useCallback((newRoute: Route) => {
+    setCurrent((prev) => (areRoutesEqual(prev, newRoute) ? prev : newRoute));
     if (typeof window !== 'undefined') {
-      window.location.hash = `#app/${routeToHash(newRoute)}`;
+      const targetHash = `#app/${routeToHash(newRoute)}`;
+      if (window.location.hash !== targetHash) {
+        window.location.hash = targetHash;
+      }
     }
-  };
+  }, []);
 
   useEffect(() => {
     const handleHashChange = () => {
       if (typeof window !== 'undefined' && window.location.hash.startsWith('#app/')) {
         const sub = window.location.hash.replace('#app/', '');
-        setCurrent(parseHash(sub));
+        const next = parseHash(sub);
+        setCurrent((prev) => (areRoutesEqual(prev, next) ? prev : next));
       }
     };
 

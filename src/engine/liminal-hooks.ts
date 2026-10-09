@@ -233,7 +233,9 @@ export function useMediaQuery(query: string): boolean {
     }
 
     const mql = window.matchMedia(query);
-    setMatches(mql.matches);
+    if (mql.matches !== matches) {
+      setMatches(mql.matches);
+    }
 
     const handler = (event: MediaQueryListEvent) => {
       setMatches(event.matches);

@@ -3,9 +3,11 @@ import type { CSSProperties, KeyboardEvent } from 'react';
 import { getDirectionalRim } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 
 export interface ToggleProps {
   checked?: boolean;
+  value?: boolean;
   on?: boolean;
   onChange: (value: boolean) => void;
   disabled?: boolean;
@@ -16,6 +18,7 @@ export interface ToggleProps {
 
 export function Toggle({
   checked,
+  value,
   on,
   onChange,
   disabled = false,
@@ -23,7 +26,7 @@ export function Toggle({
   style: customStyle = {},
   'aria-label': ariaLabel = 'Toggle switch',
 }: ToggleProps) {
-  const isChecked = checked ?? on ?? false;
+  const isChecked = checked ?? value ?? on ?? false;
   const brand = LiminalColorEngine.BRAND_PRIMARY;
   const offRim = getDirectionalRim(2, 2, false);
 
@@ -50,7 +53,7 @@ export function Toggle({
     borderRadius: `${LiminalLayoutEngine.RADIUS.full}px`, // 9999px
     cursor: disabled ? 'not-allowed' : 'pointer',
     opacity: disabled ? 0.5 : 1,
-    transition: 'all 0.25s ease',
+    transition: LiminalMotionEngine.TRANSITION.slow,
     userSelect: 'none',
     boxSizing: 'border-box',
     border: '1px solid transparent',
@@ -70,7 +73,7 @@ export function Toggle({
     width: '16px',
     height: '16px',
     borderRadius: '50%',
-    transition: 'all 0.25s ease',
+    transition: LiminalMotionEngine.TRANSITION.slow,
     // In compliance with LIMINAL Master Spec:
     // checked=true: knob right 23px, background #060709
     // checked=false: knob right 3px, background rgba(255,255,255,.4)

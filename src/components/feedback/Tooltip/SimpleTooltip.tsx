@@ -17,6 +17,7 @@ export interface SimpleTooltipProps {
   content: ReactNode;
   children: ReactNode;
   placement?: Placement;
+  position?: string;
   delay?: number;
   className?: string;
   style?: CSSProperties;
@@ -35,41 +36,42 @@ export function SimpleTooltip({
   content,
   children,
   placement = 'top',
+  position: positionProp,
   delay = 150,
   className = '',
   style: customStyle = {},
 }: SimpleTooltipProps) {
+  const effectivePlacement = (placement || positionProp || 'top') as Placement;
   const { triggerRef, floatingRef, position, isOpen, open, close } = useFloating({
-    placement,
+    placement: effectivePlacement,
     offset: { x: 8, y: 8 },
     flip: true,
     shift: true,
     arrow: true,
   });
 
-  const [showTimeout, setShowTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipId = useId();
   const reduced = useReducedMotion();
 
   const handleMouseEnter = () => {
-    if (showTimeout) clearTimeout(showTimeout);
-    const timeout = setTimeout(open, delay);
-    setShowTimeout(timeout);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(open, delay);
   };
 
   const handleMouseLeave = () => {
-    if (showTimeout) {
-      clearTimeout(showTimeout);
-      setShowTimeout(null);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
     close();
   };
 
   useEffect(() => {
     return () => {
-      if (showTimeout) clearTimeout(showTimeout);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [showTimeout]);
+  }, []);
 
   // Surface 4 with Rim 2 and Sub-Canvas Shadow
   const rim = getDirectionalRim(4, 2, false);

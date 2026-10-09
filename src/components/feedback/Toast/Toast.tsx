@@ -4,14 +4,19 @@ import type { CSSProperties, ReactNode } from 'react';
 import { getTextStyle, SHADOWS } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { CheckCircle, Warning, XCircle, Info, X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
 export interface ToastProps {
-  open: boolean;
+  open?: boolean;
+  isOpen?: boolean;
   onClose: () => void;
   semantic?: 'success' | 'warning' | 'danger' | 'info';
-  message: ReactNode;
+  message?: ReactNode;
+  title?: string;
+  description?: string;
   action?: {
     label: string;
     onClick: () => void;
@@ -24,15 +29,20 @@ export interface ToastProps {
 
 export function Toast({
   open,
+  isOpen,
   onClose,
   semantic = 'success',
   message,
+  title,
+  description,
   action,
   duration = 4000,
   position = 'bottom-center',
   className = '',
   style: customStyle = {},
 }: ToastProps) {
+  const isToastOpen = open ?? isOpen ?? false;
+  const reduced = useReducedMotion();
   const [closeHovered, setCloseHovered] = useState<boolean>(false);
   const [actionHovered, setActionHovered] = useState<boolean>(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -48,7 +58,7 @@ export function Toast({
 
   // Auto-dismiss management with hover pause
   const startTimer = () => {
-    if (duration > 0 && open) {
+    if (duration > 0 && isToastOpen) {
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {
         onClose();
@@ -64,15 +74,15 @@ export function Toast({
   };
 
   useEffect(() => {
-    if (open) {
+    if (isToastOpen) {
       startTimer();
     }
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [open, duration]);
+  }, [isToastOpen, duration]);
 
-  if (!open || typeof document === 'undefined') return null;
+  if (!isToastOpen || typeof document === 'undefined') return null;
 
   // LIMINAL MIST: tier 'quiet' + ringLayer + composite with deep gravity anchor SHADOWS[4]
   const mist = LiminalColorEngine.getMistStyle(solidColor, 'quiet');
@@ -114,9 +124,9 @@ export function Toast({
     minWidth: '280px',
     maxWidth: 'calc(100vw - 32px)',
     boxSizing: 'border-box',
-    animation: isBottom
-      ? 'liminalToastSlideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)'
-      : 'liminalToastSlideDown 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)',
+    animation: reduced
+      ? 'none'
+      : LiminalMotionEngine.enterFrom(isBottom ? 'bottom' : 'top', 16),
     ...customStyle,
   };
 
@@ -149,7 +159,18 @@ export function Toast({
             userSelect: 'none',
           }}
         >
-          {message}
+          {title || description ? (
+            <div className="flex flex-col">
+              {title && <span className="font-semibold text-white/90">{title}</span>}
+              {description && (
+                <span style={{ color: getTextStyle('secondary', 4).color, fontSize: '11px', marginTop: '2px' }}>
+                  {description}
+                </span>
+              )}
+            </div>
+          ) : (
+            message
+          )}
         </div>
 
         {/* Optional Action Button */}
@@ -168,7 +189,7 @@ export function Toast({
               fontSize: '12px',
               fontWeight: 500,
               cursor: 'pointer',
-              transition: 'background 0.15s ease',
+              transition: LiminalMotionEngine.getTransition('background', 'fast'),
               flexShrink: 0,
               userSelect: 'none',
             }}
@@ -196,24 +217,13 @@ export function Toast({
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: `${RADIUS[4]}px`,
-            transition: 'color 0.15s ease',
+            transition: LiminalMotionEngine.getTransition('color', 'fast'),
             flexShrink: 0,
           }}
         >
           <LiminalIcon icon={X} size="xs" weight="light" />
         </button>
       </div>
-
-      <style>{`
-        @keyframes liminalToastSlideUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes liminalToastSlideDown {
-          from { opacity: 0; transform: translateY(-16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>,
     document.body
   );

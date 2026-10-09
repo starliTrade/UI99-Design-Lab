@@ -32,6 +32,7 @@ export class LiminalMotionEngine {
   // ===== COMBINED PRESETS (ready-to-use transitions) =====
   static readonly TRANSITION = {
     micro: `all ${LiminalMotionEngine.DURATION.instant}ms ${LiminalMotionEngine.EASING.out}`,
+    fast: `all ${LiminalMotionEngine.DURATION.fast}ms ${LiminalMotionEngine.EASING.out}`,
     hover: `all ${LiminalMotionEngine.DURATION.fast}ms ${LiminalMotionEngine.EASING.out}`,
     normal: `all ${LiminalMotionEngine.DURATION.normal}ms ${LiminalMotionEngine.EASING.out}`,
     slow: `all ${LiminalMotionEngine.DURATION.slow}ms ${LiminalMotionEngine.EASING.out}`,

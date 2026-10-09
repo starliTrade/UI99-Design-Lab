@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { getTextStyle } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 
 export interface BreadcrumbItem {
   id?: string;
@@ -26,7 +27,7 @@ function BreadcrumbLink({ item }: { item: BreadcrumbItem }) {
       ? getTextStyle('secondary', 1).color
       : getTextStyle('tertiary', 1).color,
     textDecoration: 'none',
-    transition: 'color 0.15s ease',
+    transition: LiminalMotionEngine.getTransition('color', 'fast'),
     cursor: 'pointer',
     background: 'none',
     border: 'none',

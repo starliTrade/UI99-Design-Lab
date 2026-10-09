@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { getTextStyle } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { CheckCircle, Warning, XCircle, Info, X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
@@ -77,7 +78,7 @@ export function Alert({
     gap: `${SPACING[3]}px`, // 12px
     boxSizing: 'border-box',
     width: '100%',
-    transition: 'all 0.2s ease',
+    transition: LiminalMotionEngine.TRANSITION.normal,
     ...customStyle,
   };
 
@@ -109,7 +110,7 @@ export function Alert({
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'color 0.15s ease',
+    transition: LiminalMotionEngine.getTransition('color', 'fast'),
     marginLeft: 'auto',
     flexShrink: 0,
   };

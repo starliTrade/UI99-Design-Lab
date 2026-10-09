@@ -65,14 +65,15 @@ export function AvatarGroup({
     <div className={className} style={groupStyle}>
       {visibleChildren.map((child, index) => {
         const isLastInVisible = index === visibleChildren.length - 1 && !showOverflow;
+        const childElement = child as React.ReactElement<any>;
 
-        return cloneElement(child, {
-          key: child.key || index,
+        return cloneElement(childElement, {
+          key: childElement.key || index,
           size,
           style: {
             border: `2px solid ${canvasBorderColor}`,
             marginRight: isLastInVisible ? 0 : `${overlap}px`,
-            ...child.props.style,
+            ...childElement.props?.style,
           },
         });
       })}

@@ -13,8 +13,10 @@ import {
   getDirectionalRim,
   getLadderColor,
   getTextStyle,
+  getFocusRing,
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useRovingTabIndex } from '../../../engine/liminal-hooks';
 
 interface TabsContextType {
@@ -117,9 +119,8 @@ export function Tab({
     boxShadow: shadow,
     opacity: disabled ? 0.35 : 1,
     cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'all 0.2s ease',
-    outline: isKeyboardFocused ? `2px solid ${getLadderColor(4)}` : 'none',
-    outlineOffset: '2px',
+    transition: LiminalMotionEngine.TRANSITION.normal,
+    ...getFocusRing(isKeyboardFocused),
     userSelect: 'none',
     display: 'inline-flex',
     alignItems: 'center',

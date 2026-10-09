@@ -185,3 +185,5 @@ export function getTextStyle(level: TextLevel, surfaceN: number = 0): CSSPropert
   };
 }
 
+export { getFocusRing } from './liminal-component-engine';
+

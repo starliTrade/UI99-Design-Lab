@@ -6,8 +6,10 @@ import {
   getDirectionalRim,
   getLadderColor,
   getTextStyle,
+  getFocusRing,
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 
 export interface NavItemProps {
   children: ReactNode;
@@ -69,9 +71,8 @@ export function NavItem({
     boxShadow: 'none', // Strictly no shadow for nav items
     opacity: disabled ? 0.35 : 1,
     cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'all 0.15s ease',
-    outline: isKeyboardFocused ? `2px solid ${getLadderColor(3)}` : 'none',
-    outlineOffset: '2px',
+    transition: LiminalMotionEngine.TRANSITION.hover,
+    ...getFocusRing(isKeyboardFocused),
     userSelect: 'none',
     width: '100%',
     textAlign: 'left',

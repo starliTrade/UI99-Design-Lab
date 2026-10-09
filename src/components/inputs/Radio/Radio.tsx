@@ -3,10 +3,13 @@ import type { CSSProperties, KeyboardEvent, ChangeEvent } from 'react';
 import {
   getDirectionalRim,
   getTextStyle,
+  getLadderColor,
+  getFocusRing,
   LADDER,
 } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 
 export interface RadioProps {
   checked: boolean;
@@ -48,7 +51,7 @@ export function Radio({
     justifyContent: 'center',
     flexShrink: 0,
     boxSizing: 'border-box',
-    transition: 'all 0.2s ease',
+    transition: LiminalMotionEngine.TRANSITION.normal,
     background: checked
       ? SEMANTICS.SUCCESS.subtle
       : offRim
@@ -59,8 +62,7 @@ export function Radio({
       : offRim
       ? '1px solid transparent'
       : `1px solid ${LADDER[3]}`,
-    outline: isKeyboardFocused ? `2px solid ${LADDER[3]}` : 'none',
-    outlineOffset: '2px',
+    ...getFocusRing(isKeyboardFocused),
   };
 
   const dotStyle: CSSProperties = {
@@ -69,7 +71,7 @@ export function Radio({
     borderRadius: '50%',
     background: SEMANTICS.SUCCESS.solid,
     transform: checked ? 'scale(1)' : 'scale(0)',
-    transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+    transition: LiminalMotionEngine.getTransition('transform', 'normal', 'spring'),
   };
 
   const labelStyle: CSSProperties = {

@@ -2,6 +2,7 @@ import React from 'react';
 import type { CSSProperties } from 'react';
 import { getLadderColor } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { useReducedMotion } from '../../../engine/liminal-hooks';
 
 export interface SkeletonProps {
   variant?: 'text' | 'title' | 'circle' | 'card' | 'custom';
@@ -22,6 +23,7 @@ export function Skeleton({
   className = '',
   style: customStyle = {},
 }: SkeletonProps) {
+  const reduced = useReducedMotion();
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
 
@@ -70,7 +72,7 @@ export function Skeleton({
     height: finalHeight,
     borderRadius: finalRadius,
     background: s2Color,
-    animation: 'liminalPulse 1.6s ease-in-out infinite',
+    animation: reduced ? 'none' : 'liminal-skeleton-pulse 1.6s ease-in-out infinite',
     boxSizing: 'border-box',
     border: 'none',
     boxShadow: 'none',
@@ -89,41 +91,22 @@ export function Skeleton({
     />
   );
 
-  return (
-    <>
-      <style>{`
-        @keyframes liminalPulse {
-          0%, 100% {
-            background-color: ${s2Color};
-          }
-          50% {
-            background-color: ${s25Color};
-          }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .liminal-skeleton {
-            animation: none !important;
-            background-color: ${s2Color} !important;
-          }
-        }
-      `}</style>
+  if (count > 1) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: `${SPACING[2]}px`, // 8px
+          width: typeof finalWidth === 'string' && finalWidth.includes('%') ? finalWidth : '100%',
+        }}
+      >
+        {Array.from({ length: count }).map((_, i) => renderSingle(i))}
+      </div>
+    );
+  }
 
-      {count > 1 ? (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: `${SPACING[2]}px`, // 8px
-            width: typeof finalWidth === 'string' && finalWidth.includes('%') ? finalWidth : '100%',
-          }}
-        >
-          {Array.from({ length: count }).map((_, i) => renderSingle(i))}
-        </div>
-      ) : (
-        renderSingle()
-      )}
-    </>
-  );
+  return renderSingle();
 }
 
 export default Skeleton;

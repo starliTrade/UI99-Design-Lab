@@ -32,6 +32,7 @@ export interface InputProps {
   rightIcon?: ReactNode;
   name?: string;
   id?: string;
+  required?: boolean;
   autoComplete?: string;
   className?: string;
   style?: CSSProperties;
@@ -56,6 +57,7 @@ export function Input({
   rightIcon,
   name,
   id,
+  required = false,
   autoComplete,
   className = '',
   style: customStyle = {},
@@ -124,8 +126,7 @@ export function Input({
     transition: LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
-    outline: focusRing.outline,
-    outlineOffset: focusRing.outlineOffset ?? '2px',
+    ...focusRing,
     opacity: limStyle.style.opacity,
     cursor: disabled ? 'not-allowed' : 'text',
     boxShadow: limStyle.style.boxShadow,
@@ -216,6 +217,7 @@ export function Input({
           defaultValue={defaultValue}
           placeholder={placeholder}
           disabled={disabled}
+          required={required}
           autoComplete={autoComplete}
           onChange={onChange}
           onKeyDown={handleKeyDown}
