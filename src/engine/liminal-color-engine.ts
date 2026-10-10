@@ -39,6 +39,8 @@ export class LiminalColorEngine {
   };
 
   // 2. SEMANTIC SET (4 roles each: subtle / border / text / solid)
+  // INVARIANT: subtle and border must share the hue of `solid` for the same role.
+  // Enforced by src/engine/__tests__/tokens.test.ts (hue-consistency test).
   static readonly SEMANTICS: Record<'SUCCESS' | 'WARNING' | 'DANGER' | 'INFO', SemanticRole & { hue: number }> = {
     SUCCESS: {
       hue: 155,
@@ -58,16 +60,16 @@ export class LiminalColorEngine {
     },
     DANGER: {
       hue: 15,
-      subtle: 'rgba(229, 99, 122, 0.10)',
-      border: 'rgba(229, 99, 122, 0.22)',
+      subtle: 'rgba(226, 85, 85, 0.10)',
+      border: 'rgba(226, 85, 85, 0.22)',
       text: '#F091A2',
       solid: 'var(--liminal-danger, #E25555)',
       onSolid: '#1A060A',
     },
     INFO: {
       hue: 230,
-      subtle: 'rgba(90, 167, 232, 0.10)',
-      border: 'rgba(90, 167, 232, 0.22)',
+      subtle: 'rgba(79, 143, 234, 0.10)',
+      border: 'rgba(79, 143, 234, 0.22)',
       text: '#8CC3F2',
       solid: 'var(--liminal-info, #4F8FEA)',
       onSolid: '#04101A',
@@ -100,17 +102,20 @@ export class LiminalColorEngine {
 
   /**
    * Helper function to retrieve ladder colors referencing CSS Variables
+   *
+   * The fallbacks mirror LADDER in spec-engine.ts (the single source of truth).
+   * If you change the ladder, change it there first, then here and in index.css.
    */
   static getLadderColor(level: number): string {
     const colors = [
       'var(--liminal-s0, #060709)',
-      'var(--liminal-s1, #08090C)',
-      'var(--liminal-s2, #0A0B0F)',
-      'var(--liminal-s3, #0D0E12)',
-      'var(--liminal-s4, #101115)',
-      'var(--liminal-s5, #131418)',
+      'var(--liminal-s1, #090a0d)',
+      'var(--liminal-s2, #0c0d11)',
+      'var(--liminal-s3, #0f1014)',
+      'var(--liminal-s4, #121317)',
+      'var(--liminal-s5, #15161b)',
     ];
-    return colors[Math.min(Math.max(Math.round(level), 0), 5)] || 'var(--liminal-s2, #0A0B0F)';
+    return colors[Math.min(Math.max(Math.round(level), 0), 5)] || 'var(--liminal-s2, #0c0d11)';
   }
 
   // 5. RAMP FORMULA

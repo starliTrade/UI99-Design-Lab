@@ -6,8 +6,23 @@ import type { CSSProperties } from 'react';
  * این سند، قرارداد کامل و قفل‌شده‌ی سیستم است. هیچ مقداری خارج از این سند مجاز نیست.
  */
 
-export const LADDER = ['#060709', '#08090C', '#0A0B0F', '#0D0E12', '#101115', '#131418'] as const;
-export const HALF = ['#07080B', '#090A0D', '#0B0C10', '#0E0F13', '#111216'] as const;
+// Surface ladder — GENERATED FROM THE CONTRACT, NOT HAND-PICKED.
+// Each step is anchored at S0 (mother canvas, L = 0.128) and advances by the
+// locked perceptual step ΔL = 0.015 in OKLCH lightness, preserving the hue
+// (≈262–275°) and chroma (≈0.006–0.009) character of the original palette.
+// Hex quantization (8-bit) keeps the realized steps inside [0.012, 0.020];
+// this is asserted in src/engine/__tests__/tokens.test.ts.
+export const LADDER = ['#060709', '#090a0d', '#0c0d11', '#0f1014', '#121317', '#15161b'] as const;
+/** Midpoints between ladder steps, used for fractional surface levels. */
+export const HALF = ['#07080b', '#0a0b0f', '#0d0e12', '#101115', '#131419'] as const;
+
+/**
+ * Focus ring color.
+ * Must stay ≥3:1 (WCAG 2.2 non-text) against every surface in LADDER.
+ * A ladder step (n+1) reads as dark-on-dark (~1.01:1) and is NOT acceptable.
+ * Verified by src/engine/__tests__/tokens.test.ts.
+ */
+export const FOCUS_RING_COLOR = 'var(--liminal-brand, #E9ECF2)';
 
 export const getLadderColor = (n: number): string => {
   n = Math.max(0, Math.min(5, n));
@@ -112,7 +127,7 @@ export function getLiminalStyle(el: LiminalStyleElement) {
   if (st === 'focus') {
     n = Math.min(5, n + 0.5);
     rim = 3;
-    outline = `2px solid ${getLadderColor(baseN + 1)}`;
+    outline = `2px solid ${FOCUS_RING_COLOR}`;
     outlineOffset = '2px';
   }
   if (st === 'active') {
@@ -157,24 +172,30 @@ export function getLiminalStyle(el: LiminalStyleElement) {
 }
 
 // 5) TEXT HIERARCHY (ΔL_text = 0.10, never pure white)
+// CONTRAST POLICY (enforced by src/engine/__tests__/tokens.test.ts):
+//   primary / secondary / tertiary → normal text → WCAG AA 4.5:1 minimum
+//   quaternary                     → large text & non-text only → 3:1 minimum
+// The tertiary floor is 0.46 because that is the smallest alpha that reaches
+// 4.5:1 on the darkest surface (S0 #060709). Quaternary is deliberately capped
+// below body-text use; it must never be applied to small text.
 export const TEXT_HIERARCHY = {
   primary: 0.88,   // L ≈ 0.90
   secondary: 0.62, // L ≈ 0.80
   tertiary: {
-    0: 0.40,
-    1: 0.40,
-    2: 0.45,
-    3: 0.48,
-    4: 0.50,
-    5: 0.52,
+    0: 0.46,
+    1: 0.46,
+    2: 0.46,
+    3: 0.47,
+    4: 0.48,
+    5: 0.49,
   },
   quaternary: {
-    0: 0.25,
-    1: 0.25,
-    2: 0.30,
-    3: 0.33,
-    4: 0.35,
-    5: 0.37,
+    0: 0.35,
+    1: 0.35,
+    2: 0.36,
+    3: 0.37,
+    4: 0.38,
+    5: 0.39,
   },
 } as const;
 
