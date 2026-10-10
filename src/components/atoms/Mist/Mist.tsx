@@ -48,7 +48,7 @@ export function Mist({
   const H = `${r}, ${g}, ${b}`;
 
   // Interactive dynamic effects for hero tier
-  let activeBoxShadow = mist.boxShadow;
+  const activeBoxShadow = mist.boxShadow;
   let activeFilter = 'none';
 
   if (tier === 'hero' && !disabled) {
