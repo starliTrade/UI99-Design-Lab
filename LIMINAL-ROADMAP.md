@@ -59,24 +59,26 @@ LIMINAL = سیستم طراحیِ ریاضی‌محورِ dark-native
 **بدون این فاز، هیچ فاز دیگری معنا ندارد.**
 **تخمین:** ۱ هفته
 
-- [ ] `LICENSE` (MIT) — بدون این، هیچ‌کس قانوناً نمی‌تواند استفاده کند
-- [ ] `CONTRIBUTING.md` + `CODE_OF_CONDUCT.md` + `SECURITY.md`
-- [ ] **یک منبع حقیقت توکن:** `spec-engine.ts` = canonical؛ حذف `NEUTRALS` deprecated؛ ادغام/حذف `liminal-color-engine`؛ بازتولید `DESIGN-CONTRACT.md` از روی کد
-- [ ] تست انطباق: contract ↔ code parity
-- [ ] راه‌اندازی `vitest` + `@testing-library/react` + `jsdom`
-- [ ] **تست‌های کنتراست WCAG** برای همه‌ی توکن‌های متن (AA ≥ ۴.۵:۱، non-text ≥ ۳:۱)
-- [ ] تست یکنواختی نردبان (ΔL ثابت و در بازه)
-- [ ] تست قانون شعاع متحدالمرکز
-- [ ] تست smoke برای هر کامپوننت (رندر + role درست)
-- [ ] تست خودکار دسترس‌پذیری با `axe-core` روی همه‌ی کامپوننت‌ها
-- [ ] ESLint + Prettier + `typescript-eslint` + حذف `as any`های پنهان‌کننده‌ی باگ
-- [ ] **CI (GitHub Actions):** typecheck + lint + test + build + bundle-size check
-- [ ] Branch protection + PR template + issue templates + Conventional Commits
+- [x] `LICENSE` (MIT) — بدون این، هیچ‌کس قانوناً نمی‌تواند استفاده کند
+- [x] `CONTRIBUTING.md` + `CODE_OF_CONDUCT.md` + `SECURITY.md`
+- [x] **یک منبع حقیقت توکن:** `spec-engine.ts` = canonical؛ حذف `NEUTRALS` deprecated؛ ادغام/حذف `liminal-color-engine`؛ بازتولید `DESIGN-CONTRACT.md` از روی کد
+- [x] تست انطباق: contract ↔ code parity
+- [x] راه‌اندازی `vitest` + `@testing-library/react` + `jsdom`
+- [x] **تست‌های کنتراست WCAG** برای همه‌ی توکن‌های متن (AA ≥ ۴.۵:۱، non-text ≥ ۳:۱)
+- [x] تست یکنواختی نردبان (ΔL ثابت و در بازه)
+- [x] تست قانون شعاع متحدالمرکز
+- [x] تست smoke برای هر کامپوننت (رندر + role درست)
+- [x] تست خودکار دسترس‌پذیری با `axe-core` روی همه‌ی کامپوننت‌ها
+- [x] ESLint + Prettier + `typescript-eslint` + حذف `as any`های پنهان‌کننده‌ی باگ
+- [x] **CI (GitHub Actions):** typecheck + lint + test + build
+- [ ] بودجه‌ی باندل + `size-limit` در CI (فاز ۱)
+- [x] PR template + issue templates + Conventional Commits
+- [ ] Branch protection روی `main` (تنظیم دستی در GitHub — کد نمی‌تواند این را انجام دهد)
 - [ ] `changesets` برای نسخه‌بندی خودکار
-- [ ] **فیکس فوکوس‌رینگ نامرئی** (`getLiminalStyle` → ۱.۰۱:۱)
-- [ ] **فیکس tertiary (۳.۷:۱) و quaternary (۲.۱:۱)** یا مستندسازی صریح انحراف
-- [ ] حذف `express`؛ اصلاح سرو استاتیک (بدون expose روت ریپو)
-- [ ] حذف `metadata.json` (بقایای AI Studio) و کد مرده
+- [x] **فیکس فوکوس‌رینگ نامرئی** (`getLiminalStyle` → ۱.۰۱:۱)
+- [x] **فیکس tertiary (۳.۷:۱) و quaternary (۲.۱:۱)** یا مستندسازی صریح انحراف
+- [x] حذف `express`؛ اصلاح سرو استاتیک (بدون expose روت ریپو)
+- [x] حذف `metadata.json` (بقایای AI Studio) و کد مرده
 
 **تعریف «انجام شد»:** `bun test` و `bun run lint` و CI همه سبز؛ ادعای «۱۰۰٪ COMPLIANT» حالا واقعاً توسط تست اثبات می‌شود.
 

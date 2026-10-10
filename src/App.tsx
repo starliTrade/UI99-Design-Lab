@@ -78,7 +78,6 @@ export function App() {
   }, [activeTab]);
 
   // Engines
-  const neutrals = LiminalColorEngine.NEUTRALS;
   const semantics = LiminalColorEngine.SEMANTICS;
   const spectrum = LiminalColorEngine.EXTENDED_SPECTRUM;
   const brand = LiminalColorEngine.BRAND_PRIMARY;
@@ -460,7 +459,7 @@ export function App() {
               <div
                 className="flex items-center justify-between pb-3"
                 style={{
-                  borderBottom: `1px solid ${neutrals.L4.hex}`,
+                  borderBottom: `1px solid ${getLadderColor(2.5)}`,
                 }}
               >
                 <div className="flex items-center gap-2">
@@ -535,7 +534,7 @@ export function App() {
                           className="px-2 py-1 text-[9px] uppercase tracking-wider"
                           style={{
                             color: getTextStyle('quaternary', 4).color,
-                            borderBottom: `1px solid ${neutrals.L4.hex}`,
+                            borderBottom: `1px solid ${getLadderColor(2.5)}`,
                           }}
                         >
                           S4 · E1 Shadow
@@ -900,7 +899,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
+                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
               >
                 <div className="flex items-center gap-2">
                   <LiminalIcon icon={Pulse} size="sm" weight="light" color="#34C08B" />
@@ -1006,7 +1005,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
+                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
               >
                 <div className="flex items-center gap-2">
                   <LiminalIcon icon={Record} size="sm" weight="light" color="#60a5fa" />
@@ -1095,7 +1094,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
+                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
               >
                 <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                   SEMANTIC CONTRACT (4 ROLES)
@@ -1174,7 +1173,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
+                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
               >
                 <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                   EXTENDED SPECTRUM (12 HUES)
@@ -1223,7 +1222,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
+                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
               >
                 <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                   TYPOGRAPHY SCALE (RATIO 1.2)
@@ -1282,7 +1281,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
+                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
               >
                 <div className="flex items-center gap-2">
                   <LiminalIcon icon={CheckCircle} size="sm" weight="light" color="#34C08B" />
@@ -1330,7 +1329,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
+                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
               >
                 <div className="flex items-center gap-2">
                   <LiminalIcon icon={Terminal} size="sm" weight="light" color="#8B9CF0" />
@@ -1443,12 +1442,12 @@ export function App() {
               {/* Drawer Handle for Touch cue */}
               <div
                 className="w-10 h-1 rounded-full mx-auto sm:hidden -mt-1 mb-2"
-                style={{ backgroundColor: neutrals.L5.hex }}
+                style={{ backgroundColor: getTextStyle('quaternary', 5).color }}
               ></div>
 
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${neutrals.L4.hex}` }}
+                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
               >
                 <div className="flex items-center gap-2">
                   <LiminalIcon icon={Shield} size="sm" weight="light" color="#34C08B" />

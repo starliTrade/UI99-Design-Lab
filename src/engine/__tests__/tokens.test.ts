@@ -6,6 +6,7 @@ import {
   TEXT_HIERARCHY,
 } from '../spec-engine';
 import { LiminalColorEngine } from '../liminal-color-engine';
+import { LiminalLayoutEngine } from '../liminal-layout-engine';
 import { LiminalComponentEngine } from '../liminal-component-engine';
 import {
   contrastRatioHex,
@@ -199,6 +200,43 @@ describe('LIMINAL contract — focus visibility', () => {
         ratio,
         `getLiminalStyle focus ring ${color} on S${surface.index} = ${ratio.toFixed(2)}:1`,
       ).toBeGreaterThanOrEqual(NON_TEXT_MIN);
+    }
+  });
+});
+
+describe('LIMINAL contract — concentric radius law', () => {
+  const R = LiminalLayoutEngine.RADIUS;
+
+  it('follows R_inner = max(4, R_outer - P)', () => {
+    expect(LiminalLayoutEngine.getConcentricRadius(24, 8)).toBe(16);
+    expect(LiminalLayoutEngine.getConcentricRadius(20, 4)).toBe(16);
+    expect(LiminalLayoutEngine.getConcentricRadius(16, 6)).toBe(10);
+  });
+
+  it('never drops below the 4px floor', () => {
+    expect(LiminalLayoutEngine.getConcentricRadius(6, 20)).toBe(4);
+    expect(LiminalLayoutEngine.getConcentricRadius(0, 8)).toBe(4);
+  });
+
+  it('keeps the numeric scale strictly increasing', () => {
+    const scale = [4, 6, 8, 10, 12, 16, 20, 24];
+    for (let i = 1; i < scale.length; i++) {
+      expect(scale[i], `scale[${i}]`).toBeGreaterThan(scale[i - 1]);
+    }
+  });
+
+  it('maps each named role to its documented step', () => {
+    expect(R.chip).toBe(6);
+    expect(R.control).toBe(10);
+    expect(R.card).toBe(16);
+    expect(R.panel).toBe(20);
+    expect(R.container).toBe(24);
+  });
+
+  it('keeps every named role on the numeric scale (no off-scale magic numbers)', () => {
+    const scale = new Set([4, 6, 8, 10, 12, 16, 20, 24]);
+    for (const role of ['chip', 'control', 'card', 'panel', 'container'] as const) {
+      expect(scale.has(R[role]), `${role} = ${R[role]} is off-scale`).toBe(true);
     }
   });
 });

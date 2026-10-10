@@ -1,0 +1,49 @@
+name: Bug report
+description: Something behaves incorrectly
+labels: [bug]
+body:
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: A code snippet, or a link to a sandbox. Please keep it minimal.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: LIMINAL version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Chrome 140 / React 19.3 / Vite 8
+    validations:
+      required: true
+  - type: dropdown
+    id: a11y
+    attributes:
+      label: Is this an accessibility issue?
+      options:
+        - "No"
+        - "Yes — keyboard"
+        - "Yes — screen reader"
+        - "Yes — contrast or visual"
+        - "Yes — other"
+    validations:
+      required: true
