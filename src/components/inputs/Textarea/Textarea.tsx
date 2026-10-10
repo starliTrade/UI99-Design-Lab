@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useId } from 'react';
 import type { CSSProperties, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import {
   getLiminalStyle,
@@ -193,8 +193,14 @@ export function Textarea({
     ? SEMANTICS.WARNING.text
     : getTextStyle('tertiary', surfaceLevel).color;
 
-  const helperId = id && (error || success || helperText) ? `${id}-helper` : undefined;
-  const countId = id && shouldRenderCount ? `${id}-count` : undefined;
+  // A visible label must be programmatically associated with its control.
+  // Without a generated id, `htmlFor` is undefined and screen readers announce
+  // the field with no name (axe rule "label", impact: critical).
+  const generatedId = useId();
+  const fieldId = id ?? generatedId;
+
+  const helperId = error || success || helperText ? `${fieldId}-helper` : undefined;
+  const countId = shouldRenderCount ? `${fieldId}-count` : undefined;
   const ariaDescribedBy = [helperId, countId].filter(Boolean).join(' ') || undefined;
 
   return (
@@ -209,7 +215,7 @@ export function Textarea({
       }}
     >
       {label && (
-        <label htmlFor={id} style={labelStyle}>
+        <label htmlFor={fieldId} style={labelStyle}>
           {label}
         </label>
       )}
@@ -224,7 +230,7 @@ export function Textarea({
       >
         <textarea
           ref={localTextareaRef}
-          id={id}
+          id={fieldId}
           name={name}
           rows={rows}
           value={value}
