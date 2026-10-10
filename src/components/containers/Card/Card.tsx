@@ -152,7 +152,7 @@ export function Card({
               <div
                 style={{
                   ...getTextStyle('tertiary', surfaceLevel),
-                  fontSize: '11px',
+                  fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[1].fs}px`,
                   marginTop: '2px',
                 }}
               >

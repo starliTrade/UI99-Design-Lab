@@ -166,7 +166,7 @@ export function LoginPage() {
                     margin: 0,
                   }}
                 >
-                  ورود به کنسول لیمینال
+                  Liminal Console Login
                 </h1>
                 <p
                   style={{
@@ -176,14 +176,14 @@ export function LoginPage() {
                     margin: 0,
                   }}
                 >
-                  احراز هویت رمزنگاری‌شده بر مبنای کلیدهای سخت‌افزاری
+                  Cryptographic authentication based on hardware keys
                 </p>
               </div>
 
               {/* Form Layout */}
               <FormLayout onSubmit={handleSubmit}>
                 <FormLayout.Section>
-                  <FormLayout.Field label="شناسه کاربری یا ایمیل سازمانی">
+                  <FormLayout.Field label="User ID or Enterprise Email">
                     <Input
                       type="email"
                       value={email}
@@ -194,8 +194,8 @@ export function LoginPage() {
                   </FormLayout.Field>
 
                   <FormLayout.Field
-                    label="رمز عبور سخت‌افزاری"
-                    hint="حداقل ۱۲ کاراکتر ترکیبی با ریشه امنیت سخت‌افزاری HSM"
+                    label="Hardware Password"
+                    hint="Minimum 12 characters with HSM hardware security root"
                   >
                     <Input
                       type="password"
@@ -215,7 +215,7 @@ export function LoginPage() {
                     disabled={loading}
                   >
                     <LiminalIcon icon={Key} size="xs" weight="light" />
-                    <span>{loading ? 'در حال تایید کلید...' : 'ورود امن به سیستم'}</span>
+                    <span>{loading ? 'Verifying Key...' : 'Secure System Login'}</span>
                   </Button>
 
                   <Button
@@ -223,7 +223,7 @@ export function LoginPage() {
                     variant="ghost"
                     onClick={() => navigate({ name: 'loading' })}
                   >
-                    بازیابی دسترسی
+                    Recover Access
                   </Button>
                 </FormLayout.Actions>
               </FormLayout>
@@ -238,13 +238,12 @@ export function LoginPage() {
                   <div className="flex items-center gap-2">
                     <LiminalIcon icon={Shield} size="sm" weight="light" color={LiminalColorEngine.SEMANTICS.SUCCESS.solid} />
                     <span style={{ fontSize: '13px', fontWeight: 600, color: getTextStyle('primary', 1).color }}>
-                      پروتکل امنیتی لیمینال v1.0
+                      Liminal Security Protocol v1.0
                     </span>
                   </div>
 
                   <p style={{ margin: 0, fontSize: '12px', lineHeight: 1.7, color: getTextStyle('secondary', 1).color }}>
-                    این دروازه دسترسی به کلاسترهای محاسباتی و مخازن توزیع‌شده را با تطابق دقیق
-                    نردبان روشنایی و آستانه تفکیک ادراکی محافظت می‌کند.
+                    This gateway protects access to compute clusters and distributed repositories with strict tonal ladder matching and perceptual JND thresholds.
                   </p>
 
                   <div className="pt-2 flex flex-wrap gap-2">
@@ -257,15 +256,15 @@ export function LoginPage() {
               <Card padding="md">
                 <div className="space-y-2 text-xs" style={{ color: getTextStyle('tertiary', 1).color }}>
                   <div className="flex justify-between">
-                    <span>زمان پاسخگویی دروازه:</span>
+                    <span>Gateway Response Time:</span>
                     <span style={{ color: getTextStyle('primary', 1).color }}>0.42 ms</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>منطقه ترانزیت:</span>
+                    <span>Transit Region:</span>
                     <span style={{ color: getTextStyle('primary', 1).color }}>asia-east1</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>نسخه شارد:</span>
+                    <span>Shard Version:</span>
                     <span style={{ color: getTextStyle('primary', 1).color }}>4.19-lim</span>
                   </div>
                 </div>

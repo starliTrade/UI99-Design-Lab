@@ -4,3 +4,6 @@ export * from './NavItem';
 export * from './Tabs';
 export * from './Breadcrumb';
 export * from './NavDemo';
+export * from './CommandPalette';
+export * from './DropdownMenu';
+export * from './ContextMenu';

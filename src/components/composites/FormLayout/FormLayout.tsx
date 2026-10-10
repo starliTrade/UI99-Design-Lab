@@ -102,7 +102,7 @@ export function FormField({
     >
       <label
         style={{
-          fontSize: '13px',
+          fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
           fontWeight: 500,
           color: getTextStyle('tertiary', 1).color,
           userSelect: 'none',
@@ -114,13 +114,13 @@ export function FormField({
       {children}
 
       {hint && !error && (
-        <span style={{ fontSize: '11px', color: getTextStyle('quaternary', 1).color }}>
+        <span style={{ fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[1].fs}px`, color: getTextStyle('quaternary', 1).color }}>
           {hint}
         </span>
       )}
 
       {error && (
-        <span style={{ fontSize: '11px', color: SEMANTICS.DANGER.text, fontWeight: 500 }}>
+        <span style={{ fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[1].fs}px`, color: SEMANTICS.DANGER.text, fontWeight: 500 }}>
           {error}
         </span>
       )}

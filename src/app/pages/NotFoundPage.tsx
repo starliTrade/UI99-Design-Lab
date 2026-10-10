@@ -57,7 +57,7 @@ export function NotFoundPage() {
               onClick={() => navigate({ name: 'dashboard' })}
             >
               <LiminalIcon icon={ArrowLeft} size="xs" weight="light" className="mr-1" />
-              <span>بازگشت به خانه</span>
+              <span>Back to Home</span>
             </Button>
           }
         />
@@ -66,14 +66,14 @@ export function NotFoundPage() {
       <div style={{ marginTop: '60px' }}>
         <ErrorPage
           code="404"
-          title="این صفحه در زیرساخت وجود ندارد"
-          description="مسیر یا شارد آدرس‌دهی شده در جدول مسیرهای معتبر ثبت نشده است. ممکن است آدرس تغییر کرده یا دسترسی آن منقضی شده باشد."
+          title="This page does not exist in the infrastructure"
+          description="The addressed path or shard is not registered in the valid routes table. The address may have changed or its access expired."
           primaryAction={{
-            label: 'بازگشت به داشبورد اصلی',
+            label: 'Return to Main Dashboard',
             onClick: () => navigate({ name: 'dashboard' }),
           }}
           secondaryAction={{
-            label: 'ثبت گزارش خطا',
+            label: 'Submit Error Report',
             onClick: () => {},
           }}
         />

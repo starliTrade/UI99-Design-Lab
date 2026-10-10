@@ -12,9 +12,11 @@ import { Input } from '../inputs/Input';
 import {
   getTextStyle,
   getLiminalStyle,
+  getLadderColor,
 } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
+import { LiminalMotionEngine } from '../../engine/liminal-motion-engine';
 import {
   Compass,
   SquaresFour,
@@ -27,13 +29,45 @@ import {
   Cpu,
   Radio,
   WifiHigh,
+  CaretDown,
+  Trash,
+  Copy,
+  PencilSimple,
+  Sliders,
+  DownloadSimple,
+  BellSimple,
+  DotsThreeVertical,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuShortcut,
+} from './DropdownMenu';
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuLabel,
+  ContextMenuShortcut,
+} from './ContextMenu';
 
 export function NavDemo() {
   const [activeNav, setActiveNav] = useState<string>('gateways');
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [searchVal, setSearchVal] = useState<string>('');
+  const [notifyOnAlert, setNotifyOnAlert] = useState<boolean>(true);
+  const [realtimeTelemetry, setRealtimeTelemetry] = useState<boolean>(false);
+  const [compressionAlgo, setCompressionAlgo] = useState<string>('lz4');
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
@@ -334,6 +368,291 @@ export function NavDemo() {
                 </div>
               </div>
             </Card>
+          </div>
+
+          {/* 5. DROPDOWN MENU SHOWCASE (Phase 6.1) */}
+          <div
+            style={{
+              marginTop: `${SPACING[5]}px`,
+              padding: `${SPACING[4]}px`,
+              borderRadius: `${RADIUS.card}px`,
+              background: getLadderColor(1.5),
+              border: `1px solid ${getLadderColor(2.5)}`,
+              boxSizing: 'border-box',
+            }}
+            className="space-y-4"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <div
+                  style={{
+                    fontSize: `${TYPOGRAPHY[3].fs}px`,
+                    fontWeight: 600,
+                    color: getTextStyle('primary', 1).color,
+                  }}
+                >
+                  Dropdown Menus & Composition
+                </div>
+                <div
+                  style={{
+                    fontSize: `${TYPOGRAPHY[1].fs}px`,
+                    color: getTextStyle('tertiary', 1).color,
+                    marginTop: '2px',
+                  }}
+                >
+                  Radix-style Slot composition · Portal rendering · Floating flip/shift · Phosphor icons
+                </div>
+              </div>
+              <Badge semantic="info">PHASE 6.1 COMPLIANT</Badge>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              {/* Menu 1: Cluster Actions with asChild Button, icons, shortcuts, danger variant */}
+              <DropdownMenu placement="bottom-start">
+                <DropdownMenuTrigger asChild>
+                  <Button variant="secondary" size="sm">
+                    <span>Cluster Actions</span>
+                    <LiminalIcon icon={CaretDown} size="xs" weight="bold" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent minWidth={210}>
+                  <DropdownMenuLabel>Cluster Commands</DropdownMenuLabel>
+                  <DropdownMenuItem
+                    icon={<LiminalIcon icon={PencilSimple} size="sm" />}
+                    shortcut="⌘E"
+                    onClick={() => console.warn('Edit cluster requested')}
+                  >
+                    Edit Shard Topology
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    icon={<LiminalIcon icon={Copy} size="sm" />}
+                    shortcut="⌘C"
+                    onClick={() => console.warn('Duplicate cluster requested')}
+                  >
+                    Clone Node Spec
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    icon={<LiminalIcon icon={DownloadSimple} size="sm" />}
+                    shortcut="⇧⌘D"
+                    onClick={() => console.warn('Export config requested')}
+                  >
+                    Export Snapshot
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Maintenance</DropdownMenuLabel>
+                  <DropdownMenuItem disabled icon={<LiminalIcon icon={Sliders} size="sm" />}>
+                    Hot Re-index (Busy)
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    variant="danger"
+                    icon={<LiminalIcon icon={Trash} size="sm" />}
+                    shortcut="⌘⌫"
+                    onClick={() => console.warn('Purge cluster requested')}
+                  >
+                    Purge Node Shard
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Menu 2: Stream Preferences with Checkboxes & Radios */}
+              <DropdownMenu placement="bottom-start">
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <LiminalIcon icon={Sliders} size="xs" />
+                    <span>Stream Settings</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent minWidth={220}>
+                  <DropdownMenuLabel>Realtime Filters</DropdownMenuLabel>
+                  <DropdownMenuCheckboxItem
+                    checked={notifyOnAlert}
+                    onCheckedChange={setNotifyOnAlert}
+                    shortcut="⇧A"
+                  >
+                    Notify on Anomaly
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    checked={realtimeTelemetry}
+                    onCheckedChange={setRealtimeTelemetry}
+                    shortcut="⇧T"
+                  >
+                    Telemetry Sync
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Compression Engine</DropdownMenuLabel>
+                  <DropdownMenuRadioGroup
+                    value={compressionAlgo}
+                    onValueChange={setCompressionAlgo}
+                  >
+                    <DropdownMenuRadioItem value="lz4" shortcut="LZ4">
+                      LZ4 (Ultra Fast)
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="zstd" shortcut="ZSTD">
+                      Zstandard (Balanced)
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="snappy" shortcut="SNP">
+                      Snappy (Low Latency)
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Menu 3: Overflow Ghost Button with asChild */}
+              <DropdownMenu placement="bottom-end">
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label="More options">
+                    <LiminalIcon icon={DotsThreeVertical} size="sm" weight="bold" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent minWidth={180}>
+                  <DropdownMenuLabel>Quick Links</DropdownMenuLabel>
+                  <DropdownMenuItem icon={<LiminalIcon icon={BellSimple} size="sm" />}>
+                    View Alerts
+                  </DropdownMenuItem>
+                  <DropdownMenuItem icon={<LiminalIcon icon={Gear} size="sm" />}>
+                    Kernel Config
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    asChild
+                    onClick={() => console.warn('Audit logs opened')}
+                  >
+                    <a
+                      href="#audit-logs"
+                      style={{ display: 'flex', alignItems: 'center', gap: `${SPACING[2]}px` }}
+                    >
+                      <LiminalIcon icon={ArrowSquareOut} size="sm" />
+                      <span>Audit Logs (Anchor)</span>
+                    </a>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Status pill showing current selected radio & checkbox */}
+              <div
+                style={{
+                  fontSize: `${TYPOGRAPHY[1].fs}px`,
+                  fontFamily: 'monospace',
+                  color: getTextStyle('secondary', 1).color,
+                  padding: `${SPACING[1]}px ${SPACING[2]}px`,
+                  borderRadius: `${RADIUS.chip}px`,
+                  background: getLadderColor(2),
+                  border: `1px solid ${getLadderColor(2.5)}`,
+                }}
+                className="hidden lg:inline-flex items-center gap-2"
+              >
+                <span>Compression: <strong>{compressionAlgo.toUpperCase()}</strong></span>
+                <span>·</span>
+                <span>Alerts: <strong>{notifyOnAlert ? 'ON' : 'OFF'}</strong></span>
+                <span>·</span>
+                <span>Sync: <strong>{realtimeTelemetry ? 'ON' : 'OFF'}</strong></span>
+              </div>
+            </div>
+          </div>
+
+          {/* 6. CONTEXT MENU SHOWCASE (Phase 6.2) */}
+          <div
+            style={{
+              padding: `${SPACING[4]}px`,
+              borderRadius: `${RADIUS.card}px`,
+              background: getLadderColor(1.5),
+              border: `1px solid ${getLadderColor(2.5)}`,
+              boxSizing: 'border-box',
+            }}
+            className="space-y-4"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <div
+                  style={{
+                    fontSize: `${TYPOGRAPHY[3].fs}px`,
+                    fontWeight: 600,
+                    color: getTextStyle('primary', 1).color,
+                  }}
+                >
+                  Context Menu (Right-Click Advanced)
+                </div>
+                <div
+                  style={{
+                    fontSize: `${TYPOGRAPHY[1].fs}px`,
+                    color: getTextStyle('tertiary', 1).color,
+                    marginTop: '2px',
+                  }}
+                >
+                  Right-click anywhere on the target card below to invoke the virtual positioning context menu
+                </div>
+              </div>
+              <Badge semantic="success">PHASE 6.2 ACTIVE</Badge>
+            </div>
+
+            <ContextMenu placement="bottom-start">
+              <ContextMenuTrigger asChild>
+                <div
+                  style={{
+                    padding: `${SPACING[5]}px`,
+                    borderRadius: `${RADIUS.container}px`,
+                    background: getLadderColor(2),
+                    border: `1px dashed ${getLadderColor(3.5)}`,
+                    textAlign: 'center',
+                    cursor: 'context-menu',
+                    userSelect: 'none',
+                    transition: LiminalMotionEngine.TRANSITION.fast,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = LiminalColorEngine.BRAND_PRIMARY.hex;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = getLadderColor(3.5);
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: `${TYPOGRAPHY[4].fs}px`,
+                      fontWeight: 600,
+                      color: getTextStyle('primary', 1).color,
+                      marginBottom: `${SPACING[1]}px`,
+                    }}
+                  >
+                    📁 cluster-node-alpha-h230.shard
+                  </div>
+                  <div
+                    style={{
+                      fontSize: `${TYPOGRAPHY[2].fs}px`,
+                      color: getTextStyle('tertiary', 1).color,
+                    }}
+                  >
+                    [ Right-Click Here to Open Context Menu ]
+                  </div>
+                </div>
+              </ContextMenuTrigger>
+              <ContextMenuContent minWidth={210}>
+                <ContextMenuLabel>Node Shard Operations</ContextMenuLabel>
+                <ContextMenuItem
+                  icon={<LiminalIcon icon={ArrowSquareOut} size="sm" />}
+                  shortcut="↵"
+                  onClick={() => console.warn('Open node shard requested')}
+                >
+                  Open Shard
+                </ContextMenuItem>
+                <ContextMenuItem
+                  icon={<LiminalIcon icon={PencilSimple} size="sm" />}
+                  shortcut="F2"
+                  onClick={() => console.warn('Rename shard requested')}
+                >
+                  Rename Shard
+                </ContextMenuItem>
+                <ContextMenuSeparator />
+                <ContextMenuItem
+                  variant="danger"
+                  icon={<LiminalIcon icon={Trash} size="sm" />}
+                  shortcut="⌫"
+                  onClick={() => console.warn('Delete shard requested')}
+                >
+                  Delete Shard
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           </div>
         </div>
       </div>

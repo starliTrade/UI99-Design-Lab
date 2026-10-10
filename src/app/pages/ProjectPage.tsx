@@ -49,42 +49,42 @@ export function ProjectPage({ id }: { id: string }) {
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const BRAND = LiminalColorEngine.BRAND_PRIMARY;
 
-  const projectTitle = id === 'alpha' ? 'کلاستر محاسباتی Alpha' : `پروژه سازمانی ${id.toUpperCase()}`;
+  const projectTitle = id === 'alpha' ? 'Compute Cluster Alpha' : `Enterprise Project ${id.toUpperCase()}`;
 
   const breadcrumbItems = [
-    { label: 'خانه', onClick: () => navigate({ name: 'dashboard' }) },
-    { label: 'پروژه‌ها', onClick: () => navigate({ name: 'dashboard' }) },
+    { label: 'Home', onClick: () => navigate({ name: 'dashboard' }) },
+    { label: 'Projects', onClick: () => navigate({ name: 'dashboard' }) },
     { label: projectTitle, active: true },
   ];
 
   const taskColumns: TableColumn[] = [
-    { key: 'task', title: 'عنوان فعالیت', align: 'right' },
-    { key: 'assignee', title: 'مسئول مستقیم', align: 'right' },
-    { key: 'priority', title: 'اولویت', align: 'center' },
-    { key: 'state', title: 'وضعیت', align: 'left' },
+    { key: 'task', title: 'Task Title', align: 'right' },
+    { key: 'assignee', title: 'Direct Assignee', align: 'right' },
+    { key: 'priority', title: 'Priority', align: 'center' },
+    { key: 'state', title: 'Status', align: 'left' },
   ];
 
   const taskData = [
     {
       id: 'task-1',
-      task: 'ارتقای میان‌افزار HSM به نسخه 2.4',
+      task: 'Upgrade HSM firmware to v2.4',
       assignee: 'Kaelen Vos',
-      priority: <Badge semantic="danger">P0 فوری</Badge>,
-      state: 'تکمیل‌شده',
+      priority: <Badge semantic="danger">P0 Urgent</Badge>,
+      state: 'Completed',
     },
     {
       id: 'task-2',
-      task: 'بازبینی کلیدهای ریشه در انکلاو توکیو',
+      task: 'Review root keys in Tokyo enclave',
       assignee: 'Mira Rayne',
-      priority: <Badge semantic="warning">P1 بالا</Badge>,
-      state: 'در دست اقدام',
+      priority: <Badge semantic="warning">P1 High</Badge>,
+      state: 'In Progress',
     },
     {
       id: 'task-3',
-      task: 'تست ترافیک ساختگی ۴۰ گیگابیت بر ثانیه',
+      task: '40 Gbps synthetic traffic test',
       assignee: 'Chen Wei',
-      priority: <Badge semantic="info">P2 نرمال</Badge>,
-      state: 'برنامه‌ریزی‌شده',
+      priority: <Badge semantic="info">P2 Normal</Badge>,
+      state: 'Scheduled',
     },
   ];
 
@@ -130,41 +130,41 @@ export function ProjectPage({ id }: { id: string }) {
                 onClick={() => navigate({ name: 'dashboard' })}
               >
                 <LiminalIcon icon={ArrowLeft} size="xs" weight="light" className="mr-1" />
-                <span>بازگشت به داشبورد</span>
+                <span>Back to Dashboard</span>
               </Button>
             </div>
           }
         >
-          <NavItem onClick={() => navigate({ name: 'dashboard' })}>داشبورد</NavItem>
-          <NavItem active>پروژه‌ها</NavItem>
-          <NavItem onClick={() => navigate({ name: 'loading' })}>تحلیل‌ها</NavItem>
+          <NavItem onClick={() => navigate({ name: 'dashboard' })}>Dashboard</NavItem>
+          <NavItem active>Projects</NavItem>
+          <NavItem onClick={() => navigate({ name: 'loading' })}>Analytics</NavItem>
         </Topbar>
       }
       sidebar={
         <Sidebar width={220} sticky>
-          <Sidebar.Section label="منوی اصلی">
+          <Sidebar.Section label="Main Menu">
             <NavItem onClick={() => navigate({ name: 'dashboard' })}>
               <LiminalIcon icon={SquaresFour} size="sm" weight="light" />
-              <span>داشبورد مرکزی</span>
+              <span>Central Dashboard</span>
             </NavItem>
             <NavItem active>
               <LiminalIcon icon={GitBranch} size="sm" weight="light" />
-              <span>پروژه‌ها</span>
+              <span>Projects</span>
             </NavItem>
             <NavItem onClick={() => navigate({ name: 'loading' })}>
               <LiminalIcon icon={ChartBar} size="sm" weight="light" />
-              <span>تحلیل داده</span>
+              <span>Data Analytics</span>
             </NavItem>
           </Sidebar.Section>
 
-          <Sidebar.Section label="مدیریت">
+          <Sidebar.Section label="Management">
             <NavItem onClick={() => navigate({ name: '404' })}>
               <LiminalIcon icon={Bell} size="sm" weight="light" />
-              <span>اعلانات سیستم</span>
+              <span>System Alerts</span>
             </NavItem>
             <NavItem onClick={() => navigate({ name: 'login' })}>
               <LiminalIcon icon={Gear} size="sm" weight="light" />
-              <span>تنظیمات هویت</span>
+              <span>Identity Settings</span>
             </NavItem>
           </Sidebar.Section>
         </Sidebar>
@@ -173,7 +173,7 @@ export function ProjectPage({ id }: { id: string }) {
         <Footer
           left={
             <span>
-              پروژه: {projectTitle} · کلاستر فعال در منطقه آسیای شرقی
+              Project: {projectTitle} · Active cluster in East Asia region
             </span>
           }
         >
@@ -187,7 +187,7 @@ export function ProjectPage({ id }: { id: string }) {
               fontSize: '12px',
             }}
           >
-            داشبورد
+            Dashboard
           </button>
           <button
             onClick={() => navigate({ name: 'login' })}
@@ -199,7 +199,7 @@ export function ProjectPage({ id }: { id: string }) {
               fontSize: '12px',
             }}
           >
-            خروج از حساب
+            Sign Out
           </button>
         </Footer>
       }
@@ -208,15 +208,15 @@ export function ProjectPage({ id }: { id: string }) {
       <PageHeader
         breadcrumb={<Breadcrumb items={breadcrumbItems} />}
         title={projectTitle}
-        subtitle="پیکربندی شاردها، کلیدهای سخت‌افزاری و وضعیت استقرار انکلاو"
+        subtitle="Shard configuration, hardware keys, and enclave deployment status"
         actions={
           <>
             <Button size="sm" variant="secondary">
               <LiminalIcon icon={FileText} size="xs" weight="light" className="mr-1" />
-              <span>گزارش وضعیت</span>
+              <span>Status Report</span>
             </Button>
             <Button size="sm" variant="ghost">
-              ویرایش مشخصات
+              Edit Specifications
             </Button>
           </>
         }
@@ -224,44 +224,44 @@ export function ProjectPage({ id }: { id: string }) {
 
       {/* 2. Project Tabs */}
       <Tabs value={activeTab} onChange={setActiveTab}>
-        <Tabs.Tab value="overview">نمای کلی</Tabs.Tab>
-        <Tabs.Tab value="tasks">وظایف و فعالیت‌ها</Tabs.Tab>
-        <Tabs.Tab value="members">اعضای تیم</Tabs.Tab>
-        <Tabs.Tab value="files">پرونده‌ها و کلیدها</Tabs.Tab>
-        <Tabs.Tab value="settings">تنظیمات شارد</Tabs.Tab>
+        <Tabs.Tab value="overview">Overview</Tabs.Tab>
+        <Tabs.Tab value="tasks">Tasks & Activities</Tabs.Tab>
+        <Tabs.Tab value="members">Team Members</Tabs.Tab>
+        <Tabs.Tab value="files">Files & Keys</Tabs.Tab>
+        <Tabs.Tab value="settings">Shard Settings</Tabs.Tab>
       </Tabs>
 
       {/* 3. Inline Mist Alert (closable) */}
       <Alert
         semantic="success"
-        title="اسپرینت فعلی با موفقیت به پایان رسید"
+        title="Current sprint completed successfully"
         closable
       >
-        تمام ۸ گره محاسباتی با امضای مشترک بدون هیچ خطای ناهمگامی به مرحله بعد ارتقا یافتند.
+        All 8 compute nodes with joint signature upgraded to the next phase without any desynchronization errors.
       </Alert>
 
       {/* 4. Telemetry Stats Grid */}
-      <PageSection title="شاخص‌های عملیاتی شارد">
+      <PageSection title="Shard Operational Metrics">
         <Grid gap="md">
           <GridCol col={3} md={6} sm={12}>
-            <Stat label="تعداد اعضای فعال" value="۱۲ مهندس" subtitle="دسترسی ریشه تایید شده" />
+            <Stat label="Active Members Count" value="12 Engineers" subtitle="Root access verified" />
           </GridCol>
           <GridCol col={3} md={6} sm={12}>
-            <Stat label="نرخ خطا" value="۰.۰۰۱٪" trend={{ direction: 'down', value: '-۹۰٪', semantic: 'success' }} subtitle="آستانه پایداری" />
+            <Stat label="Error Rate" value="0.001%" trend={{ direction: 'down', value: '-90%', semantic: 'success' }} subtitle="Stability threshold" />
           </GridCol>
           <GridCol col={3} md={6} sm={12}>
-            <Stat label="بار محاسباتی" value="۴۲.۸٪" subtitle="توزیع متوازن" />
+            <Stat label="Compute Load" value="42.8%" subtitle="Balanced distribution" />
           </GridCol>
           <GridCol col={3} md={6} sm={12}>
-            <Stat label="زمان بدون وقفه" value="۹۹.۹۹٪" trend={{ direction: 'up', value: 'SLA', semantic: 'info' }} subtitle="در ۳۰ روز اخیر" />
+            <Stat label="Uptime" value="99.99%" trend={{ direction: 'up', value: 'SLA', semantic: 'info' }} subtitle="In the last 30 days" />
           </GridCol>
         </Grid>
       </PageSection>
 
       {/* 5. Tasks Table with Filters */}
       <PageSection
-        title="فعالیت‌های بازرسی و توسعه"
-        subtitle="فهرست وظایف جاری مهندسان انکلاو"
+        title="Inspection & Development Activities"
+        subtitle="List of current enclave engineer tasks"
         divider
         actions={
           <div style={{ width: '180px' }}>
@@ -269,9 +269,9 @@ export function ProjectPage({ id }: { id: string }) {
               value={filterRegion}
               onChange={setFilterRegion}
               options={[
-                { value: 'all', label: 'همه مناطق' },
-                { value: 'tokyo', label: 'انکلاو توکیو' },
-                { value: 'frankfurt', label: 'انکلاو فرانکفورت' },
+                { value: 'all', label: 'All Regions' },
+                { value: 'tokyo', label: 'Tokyo Enclave' },
+                { value: 'frankfurt', label: 'Frankfurt Enclave' },
               ]}
             />
           </div>
@@ -293,8 +293,8 @@ export function ProjectPage({ id }: { id: string }) {
 
       {/* 6. Settings Controls from Atoms */}
       <PageSection
-        title="تنظیمات بلادرنگ انکلاو"
-        subtitle="مدیریت وضعیت همگام‌سازی خودکار و قرنطینه امنیتی"
+        title="Real-time Enclave Settings"
+        subtitle="Manage auto-sync status and security quarantine"
         divider
       >
         <Card padding="md">
@@ -302,10 +302,10 @@ export function ProjectPage({ id }: { id: string }) {
             <div className="flex items-center justify-between">
               <div>
                 <div style={{ fontSize: '13px', fontWeight: 500, color: getTextStyle('primary', 1).color }}>
-                  همگام‌سازی خودکار تله‌متری (Auto-Sync)
+                  Telemetry Auto-Sync
                 </div>
                 <div style={{ fontSize: '11px', color: getTextStyle('secondary', 1).color, marginTop: '2px' }}>
-                  ارسال داده‌های لودسل به هسته مرکزی هر ۵ ثانیه
+                  Send load cell data to core every 5s
                 </div>
               </div>
               <Toggle checked={autoSync} onChange={setAutoSync} />
@@ -316,10 +316,10 @@ export function ProjectPage({ id }: { id: string }) {
             <div className="flex items-center justify-between">
               <div>
                 <div style={{ fontSize: '13px', fontWeight: 500, color: getTextStyle('primary', 1).color }}>
-                  قرنطینه خودکار در صورت نوسان ولتاژ
+                  Auto-Quarantine on Voltage Fluctuation
                 </div>
                 <div style={{ fontSize: '11px', color: getTextStyle('secondary', 1).color, marginTop: '2px' }}>
-                  مسدودسازی ورودی در صورت تشخیص تغییرات سخت‌افزاری مشکوک
+                  Block input on suspected hardware tampering
                 </div>
               </div>
               <Toggle checked={quarantineEnabled} onChange={setQuarantineEnabled} />

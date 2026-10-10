@@ -58,7 +58,7 @@ export function Skeleton({
       break;
     case 'custom':
       defWidth = width ?? '100%';
-      defHeight = height ?? '16px';
+      defHeight = height ?? `${LiminalLayoutEngine.SPACING[4]}px`;
       defRadius = borderRadius !== undefined ? `${borderRadius}px` : `${RADIUS.control}px`;
       break;
   }

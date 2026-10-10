@@ -1,104 +1,146 @@
-import React, { useState, useRef, useEffect } from 'react';
-import type { CSSProperties, KeyboardEvent } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
+import { CaretDown } from '@phosphor-icons/react';
 import {
   getLiminalStyle,
   getDirectionalRim,
-  getLadderColor,
   getTextStyle,
-  SHADOWS,
-  LADDER,
   LiminalState,
 } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { LiminalIcon } from '../../../engine/liminal-icon-engine';
+import { useReducedMotion } from '../../../engine/liminal-hooks';
 
 export interface SelectOption {
   value: string;
   label: string;
   disabled?: boolean;
   hint?: string;
+  icon?: ReactNode;
 }
 
 export interface SelectProps {
   label?: string;
   placeholder?: string;
-  options: SelectOption[];
+  options?: SelectOption[];
   value?: string;
   defaultValue?: string;
-  onChange?: (value: string) => void;
+  onChange?: ((value: string) => void) | ((e: ChangeEvent<HTMLSelectElement>) => void);
+  onFocus?: (e: FocusEvent<HTMLSelectElement>) => void;
+  onBlur?: (e: FocusEvent<HTMLSelectElement>) => void;
   disabled?: boolean;
   error?: string;
+  success?: string;
+  helperText?: string;
+  prefix?: ReactNode;
+  suffix?: ReactNode;
   name?: string;
   id?: string;
+  required?: boolean;
   className?: string;
   style?: CSSProperties;
+  children?: ReactNode;
+  rtl?: boolean;
+  dir?: 'rtl' | 'ltr';
+  caretPosition?: 'left' | 'right';
 }
 
-export function Select({
-  label,
-  placeholder = 'Select an option...',
-  options,
-  value,
-  defaultValue,
-  onChange,
-  disabled = false,
-  error,
-  name,
-  id,
-  className = '',
-  style: customStyle = {},
-}: SelectProps) {
+/**
+ * Select · LIMINAL v1.0
+ * WS-1 Custom Select UI
+ * - Native <select> with appearance: none (removes native browser arrow chrome)
+ * - Phosphor CaretDown icon with <LiminalIcon size="sm" weight="light" />
+ * - In RTL: CaretDown placed on the left side
+ * - Wrapped in flex container matching Input.tsx architecture (rim and focus ring around whole component)
+ * - Icon color: getTextStyle('tertiary', surfaceLevel), hover: getTextStyle('secondary', surfaceLevel)
+ * - Motion: LiminalMotionEngine.getTransition('color', 'fast'), disabled on reduced-motion
+ */
+export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select(
+  {
+    label,
+    placeholder = 'Select an option...',
+    options = [],
+    value,
+    defaultValue,
+    onChange,
+    onFocus,
+    onBlur,
+    disabled = false,
+    error,
+    success,
+    helperText,
+    prefix,
+    suffix,
+    name,
+    id,
+    required = false,
+    className = '',
+    style: customStyle = {},
+    children,
+    rtl = false,
+    dir,
+    caretPosition,
+  }: SelectProps,
+  forwardedRef
+) {
+  const [internalState, setInternalState] = useState<LiminalState>('idle');
+  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
   const [internalValue, setInternalValue] = useState<string>(
     value ?? defaultValue ?? ''
   );
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [internalState, setInternalState] = useState<LiminalState>('idle');
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
-  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const localSelectRef = useRef<HTMLSelectElement>(null);
+  const reducedMotion = useReducedMotion();
+
+  // Combine ref
+  const setSelectRef = (element: HTMLSelectElement | null) => {
+    (localSelectRef as React.MutableRefObject<HTMLSelectElement | null>).current = element;
+    if (typeof forwardedRef === 'function') {
+      forwardedRef(element);
+    } else if (forwardedRef) {
+      (forwardedRef as React.MutableRefObject<HTMLSelectElement | null>).current = element;
+    }
+  };
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setInternalValue(value);
+    }
+  }, [value]);
+
+  const effectiveValue = value !== undefined ? value : internalValue;
+  const selectedOption = options.find((opt) => opt.value === effectiveValue);
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  const surfaceLevel = 2;
 
-  const currentValue = value !== undefined ? value : internalValue;
-  const selectedOption = options.find((opt) => opt.value === currentValue);
+  const isRTL = rtl || dir === 'rtl';
+  const effectiveCaretPos = caretPosition ?? (isRTL ? 'left' : 'right');
 
   const currentState: LiminalState = disabled ? 'disabled' : internalState;
 
-  // Resolve base interactive style from engine
+  // Resolve base interactive style from engine (matching Input.tsx)
   const limStyle = getLiminalStyle({
-    surfaceLevel: 2,
+    surfaceLevel,
     interactive: true,
     isInput: true,
     state: currentState,
   });
 
-  // Close on outside click
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-    if (isOpen) {
-      document.addEventListener('mousedown', handleOutsideClick);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [isOpen]);
-
   // Focus ring via engine
-  const ringColor = error ? SEMANTICS.DANGER.solid : LiminalColorEngine.BRAND_PRIMARY.hex;
+  const ringColor = error
+    ? SEMANTICS.DANGER.solid
+    : success
+    ? SEMANTICS.SUCCESS.solid
+    : LiminalColorEngine.BRAND_PRIMARY.hex;
+
   const focusRing = LiminalComponentEngine.getFocusRing(
     currentState === 'focus' && isKeyboardFocused,
     ringColor
@@ -108,278 +150,261 @@ export function Select({
   let background = limStyle.style.background;
   let border = limStyle.style.border;
 
-  if (!disabled && error) {
-    border = `1px solid ${SEMANTICS.DANGER.border}`;
-    const baseRim = getDirectionalRim(2, 2, false);
-    if (baseRim) {
-      background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
+  if (!disabled) {
+    if (error) {
+      border = `1px solid ${SEMANTICS.DANGER.border}`;
+      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      if (baseRim) {
+        background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
+      }
+    } else if (success) {
+      border = `1px solid ${SEMANTICS.SUCCESS.border}`;
+      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      if (baseRim) {
+        background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
+      }
     }
   }
 
-  const triggerStyle: CSSProperties = {
+  // Flex container style (matching Input.tsx):
+  // display: flex, alignItems: center, gap: SPACING[2] (8px), padding: SPACING[3] (12px)
+  const containerStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    gap: `${SPACING[2]}px`, // 8px
+    padding: `${SPACING[3]}px`, // 12px
     minHeight: '44px',
-    padding: '10px 36px 10px 14px', // room for arrow
-    borderRadius: `${RADIUS.control}px`,
+    borderRadius: `${RADIUS.control}px`, // 10px
     boxSizing: 'border-box',
-    transition: LiminalMotionEngine.TRANSITION.slow,
+    width: '100%',
+    transition: reducedMotion ? 'none' : LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
     ...focusRing,
-    opacity: limStyle.style.opacity,
+    opacity: disabled ? 0.5 : limStyle.style.opacity,
     cursor: disabled ? 'not-allowed' : 'pointer',
+    boxShadow: limStyle.style.boxShadow,
     position: 'relative',
-    textAlign: 'left',
-    userSelect: 'none',
+    direction: isRTL ? 'rtl' : 'ltr',
+  };
+
+  // Internal <select> element style:
+  // appearance: none, flex: 1, border: none, background: transparent, padding: 0
+  const selectElementStyle: CSSProperties = {
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
+    flex: 1,
+    background: 'transparent',
+    border: 'none',
+    outline: 'none',
+    color: effectiveValue
+      ? getTextStyle('primary', surfaceLevel).color
+      : getTextStyle('quaternary', surfaceLevel).color,
+    fontSize: `${TYPOGRAPHY[3].fs}px`, // 16px
+    lineHeight: TYPOGRAPHY[3].lh,
+    fontFamily: 'inherit',
+    width: '100%',
+    padding: 0,
+    margin: 0,
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    direction: isRTL ? 'rtl' : 'ltr',
+    textAlign: isRTL ? 'right' : 'left',
   };
 
   const labelStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[2].fs}px`,
+    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
-    fontWeight: TYPOGRAPHY[2].weight,
-    color: getTextStyle('tertiary', 2).color,
+    fontWeight: 500,
+    color: getTextStyle('secondary', surfaceLevel).color,
+    marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
-    marginBottom: `${SPACING[2]}px`, // 8px
+    direction: isRTL ? 'rtl' : 'ltr',
+    textAlign: isRTL ? 'right' : 'left',
   };
 
-  const errorStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[1].fs}px`,
+  const helperStyle: CSSProperties = {
+    fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+    lineHeight: TYPOGRAPHY[1].lh,
     letterSpacing: TYPOGRAPHY[1].ls,
-    color: SEMANTICS.DANGER.text,
+    color: error
+      ? SEMANTICS.DANGER.text
+      : success
+      ? SEMANTICS.SUCCESS.text
+      : getTextStyle('tertiary', surfaceLevel).color,
     marginTop: `${SPACING[1]}px`, // 4px
+    direction: isRTL ? 'rtl' : 'ltr',
+    textAlign: isRTL ? 'right' : 'left',
   };
 
-  // Dropdown menu style: Surface 3 with Rim 2 and Sub-Canvas Shadow E1
-  const dropdownRim = getDirectionalRim(3, 2, false);
-  const dropdownStyle: CSSProperties = {
-    position: 'absolute',
-    top: 'calc(100% + 4px)',
-    left: 0,
-    right: 0,
-    zIndex: 50,
-    background: dropdownRim ? dropdownRim.cssBackground : LADDER[3],
-    border: dropdownRim ? '1px solid transparent' : 'none',
-    boxShadow: SHADOWS[1],
-    borderRadius: `${RADIUS.control}px`,
-    padding: '4px',
-    overflow: 'hidden',
-    boxSizing: 'border-box',
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const newVal = e.target.value;
+    if (value === undefined) {
+      setInternalValue(newVal);
+    }
+    if (onChange) {
+      // Support both string signature and ChangeEvent signature
+      try {
+        (onChange as (val: string) => void)(newVal);
+      } catch {
+        (onChange as (event: ChangeEvent<HTMLSelectElement>) => void)(e);
+      }
+    }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-    if (disabled) return;
-
+  const handleKeyDown = (e: KeyboardEvent<HTMLSelectElement>) => {
     if (e.key === 'Tab') {
       setIsKeyboardFocused(true);
-      return;
-    }
-
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      if (isOpen && highlightedIndex >= 0 && options[highlightedIndex]) {
-        const opt = options[highlightedIndex];
-        if (!opt.disabled) {
-          selectOption(opt.value);
-        }
-      } else {
-        setIsOpen(!isOpen);
-      }
-      return;
-    }
-
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      setIsOpen(false);
-      return;
-    }
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (!isOpen) {
-        setIsOpen(true);
-        setHighlightedIndex(0);
-      } else {
-        setHighlightedIndex((prev) =>
-          prev < options.length - 1 ? prev + 1 : 0
-        );
-      }
-      return;
-    }
-
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (!isOpen) {
-        setIsOpen(true);
-        setHighlightedIndex(options.length - 1);
-      } else {
-        setHighlightedIndex((prev) =>
-          prev > 0 ? prev - 1 : options.length - 1
-        );
-      }
-      return;
     }
   };
 
-  const selectOption = (optValue: string) => {
-    if (value === undefined) {
-      setInternalValue(optValue);
+  const handleFocus = (e: FocusEvent<HTMLSelectElement>) => {
+    if (!disabled) {
+      setInternalState('focus');
+      onFocus?.(e);
     }
-    onChange?.(optValue);
-    setIsOpen(false);
-    triggerRef.current?.focus();
   };
+
+  const handleBlur = (e: FocusEvent<HTMLSelectElement>) => {
+    setInternalState('idle');
+    setIsKeyboardFocused(false);
+    onBlur?.(e);
+  };
+
+  // Caret icon color logic: getTextStyle('tertiary', surfaceLevel), hover: getTextStyle('secondary', surfaceLevel)
+  const isCaretActiveHover = isHovered || internalState === 'hover';
+  const caretColor = isCaretActiveHover
+    ? getTextStyle('secondary', surfaceLevel).color
+    : getTextStyle('tertiary', surfaceLevel).color;
+
+  const caretNode = (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+        pointerEvents: 'none', // click passes straight to native <select>
+        color: caretColor,
+        transition: reducedMotion
+          ? 'none'
+          : LiminalMotionEngine.getTransition('color', 'fast'),
+      }}
+      aria-hidden="true"
+    >
+      <LiminalIcon icon={CaretDown} size="sm" weight="light" />
+    </div>
+  );
 
   return (
     <div
-      ref={containerRef}
       className={className}
       style={{
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        position: 'relative',
         boxSizing: 'border-box',
         ...customStyle,
       }}
     >
-      {label && <label htmlFor={id} style={labelStyle}>{label}</label>}
-
-      {/* Hidden input for forms */}
-      <input type="hidden" name={name} value={currentValue} />
-
-      <button
-        ref={triggerRef}
-        type="button"
-        id={id}
-        disabled={disabled}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        style={triggerStyle}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
-        onKeyDown={handleKeyDown}
-        onMouseDown={() => setIsKeyboardFocused(false)}
-        onMouseEnter={() => !disabled && internalState !== 'focus' && setInternalState('hover')}
-        onMouseLeave={() => !disabled && internalState !== 'focus' && setInternalState('idle')}
-        onFocus={() => !disabled && setInternalState('focus')}
-        onBlur={() => {
-          setInternalState('idle');
-          setIsKeyboardFocused(false);
-        }}
-      >
-        <span
-          style={{
-            fontSize: `${TYPOGRAPHY[3].fs}px`,
-            color: selectedOption
-              ? getTextStyle('primary', 2).color
-              : getTextStyle('quaternary', 2).color,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {selectedOption ? selectedOption.label : placeholder}
-        </span>
-
-        {/* Chevron Icon */}
-        <span
-          style={{
-            position: 'absolute',
-            right: '14px',
-            top: '50%',
-            transform: `translateY(-50%) rotate(${isOpen ? '180deg' : '0deg'})`,
-            transition: LiminalMotionEngine.getTransition('transform', 'normal'),
-            color: getTextStyle('tertiary', 2).color,
-            display: 'inline-flex',
-            alignItems: 'center',
-            pointerEvents: 'none',
-          }}
-        >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path
-              d="M2.5 4.5L6 8L9.5 4.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </span>
-      </button>
-
-      {/* Dropdown Menu */}
-      {isOpen && (
-        <div role="listbox" style={dropdownStyle}>
-          {options.map((opt, index) => {
-            const isSelected = opt.value === currentValue;
-            const isHighlighted = index === highlightedIndex;
-
-            let optBg = 'transparent';
-            let optBorder = 'none';
-
-            if (isSelected) {
-              const selectedRim = getDirectionalRim(4, 1, false);
-              optBg = selectedRim ? selectedRim.cssBackground : getLadderColor(4);
-              optBorder = selectedRim ? '1px solid transparent' : 'none';
-            } else if (isHighlighted) {
-              optBg = getLadderColor(3.5); // half-step S3.5
-            }
-
-            return (
-              <div
-                key={opt.value}
-                role="option"
-                aria-selected={isSelected}
-                aria-disabled={opt.disabled}
-                onClick={() => {
-                  if (!opt.disabled) {
-                    selectOption(opt.value);
-                  }
-                }}
-                onMouseEnter={() => !opt.disabled && setHighlightedIndex(index)}
-                style={{
-                  padding: '8px 12px',
-                  borderRadius: `${RADIUS[8]}px`, // 8px
-                  color: isSelected
-                    ? getTextStyle('primary', 3).color
-                    : getTextStyle('secondary', 3).color,
-                  fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
-                  fontWeight: isSelected ? 500 : 400,
-                  cursor: opt.disabled ? 'not-allowed' : 'pointer',
-                  opacity: opt.disabled ? 0.35 : 1,
-                  background: optBg,
-                  border: optBorder,
-                  transition: LiminalMotionEngine.getTransition('background', 'fast'),
-                  userSelect: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <span>{opt.label}</span>
-                {isSelected && (
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path
-                      d="M2.5 6L5 8.5L9.5 3.5"
-                      stroke={SEMANTICS.SUCCESS.solid}
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-              </div>
-            );
-          })}
-        </div>
+      {label && (
+        <label htmlFor={id} style={labelStyle}>
+          {label}
+        </label>
       )}
 
-      {error && <span style={errorStyle}>{error}</span>}
+      <div
+        style={containerStyle}
+        onMouseEnter={() => {
+          if (!disabled) {
+            setIsHovered(true);
+            if (internalState !== 'focus') setInternalState('hover');
+          }
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          if (internalState !== 'focus') setInternalState('idle');
+        }}
+        onMouseDown={() => setIsKeyboardFocused(false)}
+      >
+        {/* If prefix is provided */}
+        {prefix && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexShrink: 0,
+              color: getTextStyle('tertiary', surfaceLevel).color,
+            }}
+          >
+            {prefix}
+          </div>
+        )}
+
+        {/* If Caret is positioned on the LEFT (standard in RTL) */}
+        {effectiveCaretPos === 'left' && caretNode}
+
+        {/* Native <select> with appearance: none */}
+        <select
+          ref={setSelectRef}
+          id={id}
+          name={name}
+          value={effectiveValue}
+          disabled={disabled}
+          required={required}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          style={selectElementStyle}
+        >
+          {placeholder && (
+            <option value="" disabled hidden={Boolean(effectiveValue)}>
+              {placeholder}
+            </option>
+          )}
+
+          {options.length > 0
+            ? options.map((opt) => (
+                <option
+                  key={opt.value}
+                  value={opt.value}
+                  disabled={opt.disabled}
+                  style={{
+                    background: '#0d1017',
+                    color: opt.disabled ? '#555e70' : '#eef0f3',
+                  }}
+                >
+                  {opt.label}
+                </option>
+              ))
+            : children}
+        </select>
+
+        {/* If Caret is positioned on the RIGHT (standard in LTR) */}
+        {effectiveCaretPos === 'right' && caretNode}
+
+        {/* If suffix is provided */}
+        {suffix && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexShrink: 0,
+              color: getTextStyle('tertiary', surfaceLevel).color,
+            }}
+          >
+            {suffix}
+          </div>
+        )}
+      </div>
+
+      {(error || helperText) && (
+        <span style={helperStyle}>{error || helperText}</span>
+      )}
     </div>
   );
-}
+});
 
 export default Select;

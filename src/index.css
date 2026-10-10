@@ -1,5 +1,48 @@
 @import "tailwindcss";
 
+:root {
+  /* Tonal Ladder */
+  --liminal-s0: #060709;
+  --liminal-s1: #08090C;
+  --liminal-s2: #0A0B0F;
+  --liminal-s3: #0D0E12;
+  --liminal-s4: #101115;
+  --liminal-s5: #131418;
+
+  /* Semantics */
+  --liminal-success: #34C08B;
+  --liminal-warning: #E9B44C;
+  --liminal-danger: #E25555;
+  --liminal-info: #4F8FEA;
+
+  /* Brand */
+  --liminal-brand: #E9ECF2;
+  --liminal-brand-on: #060709;
+
+  /* Typography Alphas (for dynamic compensation) */
+  --liminal-text-primary: rgba(255, 255, 255, 0.88);
+  --liminal-text-secondary: rgba(255, 255, 255, 0.62);
+  --liminal-text-tertiary: rgba(255, 255, 255, 0.45);
+
+  /* Radius */
+  --liminal-radius-chip: 6px;
+  --liminal-radius-control: 10px;
+  --liminal-radius-card: 16px;
+}
+
+/* آماده‌سازی برای Dark/Light Mode در آینده */
+.dark {
+  /* مقادیر پیش‌فرض منطبق بر سیستم، ساختار آماده برای گسترش */
+  --liminal-s0: #060709;
+  --liminal-s1: #08090C;
+  --liminal-s2: #0A0B0F;
+  --liminal-s3: #0D0E12;
+  --liminal-s4: #101115;
+  --liminal-s5: #131418;
+  --liminal-brand: #E9ECF2;
+  --liminal-brand-on: #060709;
+}
+
 @layer base {
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -53,5 +96,14 @@
   }
   50% {
     background-color: #0B0C10;
+  }
+}
+
+@keyframes liminal-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

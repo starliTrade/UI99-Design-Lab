@@ -49,7 +49,7 @@ export function Toggle({
     display: 'inline-flex',
     alignItems: 'center',
     width: '44px',
-    height: '24px',
+    height: `${LiminalLayoutEngine.SPACING[5]}px`,
     borderRadius: `${LiminalLayoutEngine.RADIUS.full}px`, // 9999px
     cursor: disabled ? 'not-allowed' : 'pointer',
     opacity: disabled ? 0.5 : 1,
@@ -70,8 +70,8 @@ export function Toggle({
   const knobStyle: CSSProperties = {
     position: 'absolute',
     top: '3px',
-    width: '16px',
-    height: '16px',
+    width: `${LiminalLayoutEngine.SPACING[4]}px`,
+    height: `${LiminalLayoutEngine.SPACING[4]}px`,
     borderRadius: '50%',
     transition: LiminalMotionEngine.TRANSITION.slow,
     // In compliance with LIMINAL Master Spec:

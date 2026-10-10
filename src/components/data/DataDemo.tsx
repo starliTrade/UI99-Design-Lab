@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Stat } from './Stat';
-import { Table, TableColumn } from './Table';
+import { Table, TableHeader, TableRow, TableHead, TableCell } from './Table';
+import { Pagination } from './Pagination';
+import { FilterBar } from './FilterBar';
+import { Calendar, DatePicker } from './Calendar';
 import { Progress } from './Progress';
 import { Avatar } from './Avatar';
 import { AvatarGroup } from './AvatarGroup';
@@ -9,6 +12,7 @@ import { Card } from '../containers/Card';
 import { Badge } from '../atoms/Badge';
 import { Button } from '../atoms/Button';
 import { Divider } from '../containers/Divider';
+import { Checkbox } from '../inputs/Checkbox';
 import {
   getLiminalStyle,
   getTextStyle,
@@ -16,77 +20,90 @@ import {
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
-  Database,
   Users,
   TrendUp,
   WarningOctagon,
-  ArrowsClockwise,
   HardDrive,
-  Cpu,
+  DotsThreeVertical,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
+interface UserRecord {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: 'online' | 'offline' | 'busy';
+  avatar?: string;
+}
+
 export function DataDemo() {
-  const [selectedRows, setSelectedRows] = useState<number[]>([1]); // Row index 1 selected by default
+  const [selectedRows, setSelectedRows] = useState<number[]>([0, 2]);
+  const [sortColumn, setSortColumn] = useState<string>('name');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [activeFilters, setActiveFilters] = useState<Array<{ id: string; label: string; value: string }>>([
+    { id: 'role', label: 'Role', value: 'System' },
+    { id: 'status', label: 'Status', value: 'Online' },
+  ]);
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
+  const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
   const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
 
-  // Table Columns & Data
-  const tableColumns: TableColumn[] = [
-    { key: 'name', title: 'Shard Cluster', align: 'right' },
-    { key: 'region', title: 'Region Zone', align: 'right' },
-    { key: 'load', title: 'Core Load', align: 'center' },
-    { key: 'status', title: 'Telemetry Status', align: 'left' },
+  const users: UserRecord[] = [
+    { id: 'u-1', name: 'Kaelen Vos', email: 'kaelen.vos@liminal.gateway', role: 'System Architect', status: 'online' },
+    { id: 'u-2', name: 'Mira Rayne', email: 'mira.rayne@liminal.gateway', role: 'Security Lead', status: 'busy' },
+    { id: 'u-3', name: 'Dmitri Vance', email: 'dmitri.vance@liminal.gateway', role: 'Edge Engineer', status: 'online' },
+    { id: 'u-4', name: 'Elena Rostova', email: 'elena.rostova@liminal.gateway', role: 'Operations', status: 'offline' },
+    { id: 'u-5', name: 'Clara O’Connor', email: 'clara.oconnor@liminal.gateway', role: 'Compliance', status: 'online' },
   ];
 
-  const tableData = [
-    {
-      id: 'cluster-01',
-      name: 'Cluster-Alpha (H230)',
-      region: 'europe-west2-a',
-      load: '42.8%',
-      status: <Badge semantic="success">Nominal</Badge>,
-    },
-    {
-      id: 'cluster-02',
-      name: 'Cluster-Beta (H155)',
-      region: 'us-east1-b',
-      load: '89.4%',
-      status: <Badge semantic="warning">Elevated</Badge>,
-    },
-    {
-      id: 'cluster-03',
-      name: 'Cluster-Gamma (H270)',
-      region: 'asia-east1-a',
-      load: '14.1%',
-      status: <Badge semantic="info">Standby</Badge>,
-    },
-    {
-      id: 'cluster-04',
-      name: 'Cluster-Delta (H015)',
-      region: 'southamerica-east1',
-      load: '98.7%',
-      status: <Badge semantic="danger">Critical</Badge>,
-    },
-  ];
+  const handleRemoveFilter = (id: string) => {
+    setActiveFilters((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const handleClearAllFilters = () => {
+    setActiveFilters([]);
+  };
+
+  // Sorting logic
+  const handleSort = (colKey: string) => {
+    if (sortColumn === colKey) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortColumn(colKey);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedUsers = [...users].sort((a, b) => {
+    let valA = (a as any)[sortColumn] || '';
+    let valB = (b as any)[sortColumn] || '';
+    if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+    if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const allSelected = sortedUsers.length > 0 && selectedRows.length === sortedUsers.length;
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedRows(sortedUsers.map((_, i) => i));
+    } else {
+      setSelectedRows([]);
+    }
+  };
 
   const handleSelectRow = (index: number, selected: boolean) => {
     if (selected) {
       setSelectedRows((prev) => [...prev, index]);
     } else {
       setSelectedRows((prev) => prev.filter((i) => i !== index));
-    }
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedRows(tableData.map((_, i) => i));
-    } else {
-      setSelectedRows([]);
     }
   };
 
@@ -114,7 +131,7 @@ export function DataDemo() {
               margin: 0,
             }}
           >
-            LIMINAL Data Kit · v1.0
+            LIMINAL Advanced Data Table &amp; Composites · v2.0
           </h2>
           <p
             style={{
@@ -125,11 +142,11 @@ export function DataDemo() {
               margin: 0,
             }}
           >
-            Stat · Table · Progress · Avatar · AvatarGroup (Strict Optical Calibration)
+            Table · FilterBar · Calendar · DatePicker · Pagination · Stat Cards
           </p>
         </div>
 
-        <Badge semantic="success">All Data Atoms Synced</Badge>
+        <Badge semantic="success">Phase 2 All Steps Active</Badge>
       </div>
 
       {/* 1. STAT CARDS GRID */}
@@ -144,7 +161,7 @@ export function DataDemo() {
             marginBottom: `${SPACING[3]}px`,
           }}
         >
-          1. Metric Telemetry Stats (Surface 1 · Rim 1 · Tabular Numeral Display)
+          1. Metric Telemetry Stats
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -184,7 +201,76 @@ export function DataDemo() {
 
       <Divider spacing="md" />
 
-      {/* 2. TABLE */}
+      {/* 2. ADVANCED FILTER BAR */}
+      <div className="mb-4">
+        <div
+          style={{
+            fontSize: '11px',
+            fontFamily: 'monospace',
+            color: getTextStyle('tertiary', 1).color,
+            textTransform: 'uppercase',
+            letterSpacing: '0.04em',
+            marginBottom: `${SPACING[3]}px`,
+          }}
+        >
+          2. Advanced Filter Bar
+        </div>
+        <FilterBar
+          activeFilters={activeFilters}
+          onRemoveFilter={handleRemoveFilter}
+          onClearAll={handleClearAllFilters}
+        >
+          <span style={{ fontSize: '12px', color: getTextStyle('secondary', 1).color, fontFamily: 'monospace' }}>
+            Query Active Scope: Enterprise Gateway
+          </span>
+        </FilterBar>
+      </div>
+
+      <Divider spacing="md" />
+
+      {/* 3. CALENDAR & DATE PICKER */}
+      <div>
+        <div
+          style={{
+            fontSize: '11px',
+            fontFamily: 'monospace',
+            color: getTextStyle('tertiary', 1).color,
+            textTransform: 'uppercase',
+            letterSpacing: '0.04em',
+            marginBottom: `${SPACING[3]}px`,
+          }}
+        >
+          3. Calendar &amp; DatePicker Integration
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <Card padding="md" title="Interactive DatePicker Popup">
+            <div className="space-y-4 pt-2">
+              <DatePicker
+                label="Epoch Audit Date"
+                selectedDate={selectedDate}
+                onSelectDate={(d) => { if (d instanceof Date || d === null) setSelectedDate(d); }}
+                placeholder="Select date..."
+              />
+              <div style={{ fontSize: '11px', color: getTextStyle('tertiary', 1).color, fontFamily: 'monospace' }}>
+                Selected ISO: {selectedDate instanceof Date ? selectedDate.toISOString() : 'None'}
+              </div>
+            </div>
+          </Card>
+
+          <Card padding="md" title="Standalone Calendar Grid">
+            <div className="pt-2 flex justify-center">
+              <Calendar
+                selectedDate={selectedDate}
+                onSelectDate={(d) => { if (d instanceof Date || d === null) setSelectedDate(d); }}
+              />
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      <Divider spacing="md" />
+
+      {/* 4. ADVANCED TABLE WITH SORT & SELECT */}
       <div>
         <div
           style={{
@@ -199,31 +285,166 @@ export function DataDemo() {
             justifyContent: 'space-between',
           }}
         >
-          <span>2. Shard Topology Table (Header RimSide · Row Hover S1.5 · Selected S2 + Rim 1)</span>
+          <span>4. User Directory Table (Sortable Columns · Row Selection · Avatar + Status)</span>
           <span style={{ color: getTextStyle('quaternary', 1).color }}>
-            {selectedRows.length} rows selected
+            {selectedRows.length} of {sortedUsers.length} selected
           </span>
         </div>
 
         <Card padding="sm">
-          <Table
-            columns={tableColumns}
-            data={tableData}
-            selectable
-            selectedRows={selectedRows}
-            onSelectRow={handleSelectRow}
-            onSelectAll={handleSelectAll}
-            onRowClick={(_, index) => {
-              const exists = selectedRows.includes(index);
-              handleSelectRow(index, !exists);
-            }}
-          />
+          <Table>
+            <TableHeader>
+              <tr role="row">
+                <th
+                  scope="col"
+                  style={{
+                    width: '44px',
+                    padding: `${SPACING[3]}px ${SPACING[3]}px`,
+                    textAlign: 'center',
+                  }}
+                >
+                  <Checkbox
+                    checked={allSelected}
+                    onChange={handleSelectAll}
+                    aria-label="Select all rows"
+                  />
+                </th>
+
+                <TableHead
+                  align="right"
+                  sortDirection={sortColumn === 'name' ? sortDirection : 'none'}
+                  onSort={() => handleSort('name')}
+                >
+                  User Profile
+                </TableHead>
+
+                <TableHead
+                  align="right"
+                  sortDirection={sortColumn === 'role' ? sortDirection : 'none'}
+                  onSort={() => handleSort('role')}
+                >
+                  Role &amp; Clearance
+                </TableHead>
+
+                <TableHead align="left">
+                  Status
+                </TableHead>
+
+                <TableHead align="center" width="60px">
+                  Actions
+                </TableHead>
+              </tr>
+            </TableHeader>
+
+            <tbody>
+              {sortedUsers.map((user, index) => {
+                const isSelected = selectedRows.includes(index);
+
+                return (
+                  <TableRow
+                    key={user.id}
+                    isSelected={isSelected}
+                    onClick={() => handleSelectRow(index, !isSelected)}
+                  >
+                    {/* Checkbox Cell */}
+                    <TableCell align="center" style={{ width: '44px' }} onClick={(e) => e?.stopPropagation?.()}>
+                      <Checkbox
+                        checked={isSelected}
+                        onChange={(checked) => handleSelectRow(index, checked)}
+                        aria-label={`Select row for ${user.name}`}
+                      />
+                    </TableCell>
+
+                    {/* User Profile Cell */}
+                    <TableCell isPrimary align="right">
+                      <div className="flex items-center gap-3 justify-end">
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontWeight: 500, color: getTextStyle('primary', 1).color }}>
+                            {user.name}
+                          </div>
+                          <div style={{ fontSize: '11px', color: getTextStyle('tertiary', 1).color, fontFamily: 'monospace' }}>
+                            {user.email}
+                          </div>
+                        </div>
+                        <Avatar name={user.name} size="md" status={user.status} />
+                      </div>
+                    </TableCell>
+
+                    {/* Role Cell */}
+                    <TableCell align="right">
+                      <Badge semantic={user.role.includes('Architect') ? 'success' : user.role.includes('Security') ? 'danger' : 'info'}>
+                        {user.role}
+                      </Badge>
+                    </TableCell>
+
+                    {/* Status Cell */}
+                    <TableCell align="left">
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          fontSize: '12px',
+                          textTransform: 'capitalize',
+                          color:
+                            user.status === 'online'
+                              ? SEMANTICS.SUCCESS.text
+                              : user.status === 'busy'
+                              ? SEMANTICS.DANGER.text
+                              : getTextStyle('tertiary', 1).color,
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '50%',
+                            background:
+                              user.status === 'online'
+                                ? SEMANTICS.SUCCESS.solid
+                                : user.status === 'busy'
+                                ? SEMANTICS.DANGER.solid
+                                : getTextStyle('tertiary', 1).color,
+                          }}
+                        />
+                        {user.status}
+                      </span>
+                    </TableCell>
+
+                    {/* Actions Cell */}
+                    <TableCell align="center" onClick={(e) => e?.stopPropagation?.()}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => alert(`Opening actions for ${user.name}`)}
+                        aria-label={`Actions for ${user.name}`}
+                      >
+                        <LiminalIcon icon={DotsThreeVertical} size="sm" weight="bold" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </tbody>
+          </Table>
         </Card>
+
+        {/* Pagination Integration */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+          <span style={{ fontSize: '12px', color: getTextStyle('secondary', 1).color }}>
+            Page {currentPage} of 5 (Total records: 34)
+          </span>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={5}
+            onPageChange={setCurrentPage}
+          />
+        </div>
       </div>
 
       <Divider spacing="md" />
 
-      {/* 3. PROGRESS BARS */}
+      {/* 5. PROGRESS BARS */}
       <div>
         <div
           style={{
@@ -235,7 +456,7 @@ export function DataDemo() {
             marginBottom: `${SPACING[3]}px`,
           }}
         >
-          3. Linear Progress Gauges (Track S3 · Fill Semantic/Brand · Smooth Width Easing)
+          5. Linear Progress Gauges
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -275,81 +496,6 @@ export function DataDemo() {
                 showLabel
                 label="Brand Primary Execution (#E9ECF2)"
               />
-            </div>
-          </Card>
-        </div>
-      </div>
-
-      <Divider spacing="md" />
-
-      {/* 4. AVATARS & AVATAR GROUP */}
-      <div>
-        <div
-          style={{
-            fontSize: '11px',
-            fontFamily: 'monospace',
-            color: getTextStyle('tertiary', 1).color,
-            textTransform: 'uppercase',
-            letterSpacing: '0.04em',
-            marginBottom: `${SPACING[3]}px`,
-          }}
-        >
-          4. Avatars &amp; AvatarGroup (Sizes sm/md/lg · Extended Spectrum Fallback · S0 Canvas Border)
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Individual Avatars */}
-          <Card padding="md">
-            <div className="space-y-3">
-              <div style={{ fontSize: '12px', color: getTextStyle('tertiary', 1).color }}>
-                INDIVIDUAL SIZES (SM 24px · MD 32px · LG 44px)
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Avatar name="Kaelen Vos" size="sm" hue={230} />
-                  <span style={{ fontSize: '11px', color: getTextStyle('secondary', 1).color }}>
-                    Small (24px)
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Avatar name="Mira Rayne" size="md" hue={145} />
-                  <span style={{ fontSize: '11px', color: getTextStyle('secondary', 1).color }}>
-                    Medium (32px)
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Avatar name="Dmitri Vance" size="lg" hue={15} />
-                  <span style={{ fontSize: '11px', color: getTextStyle('secondary', 1).color }}>
-                    Large (44px)
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          {/* AvatarGroup with Overflow */}
-          <Card padding="md">
-            <div className="space-y-3">
-              <div style={{ fontSize: '12px', color: getTextStyle('tertiary', 1).color }}>
-                AVATAR GROUP (5 USERS · MAX 4 · S0 CANVAS CUTOUT)
-              </div>
-
-              <div className="flex items-center justify-between">
-                <AvatarGroup max={4} size="md">
-                  <Avatar name="Alice Chen" hue={230} />
-                  <Avatar name="Bob Vance" hue={145} />
-                  <Avatar name="Clara O'Connor" hue={75} />
-                  <Avatar name="David Lee" hue={290} />
-                  <Avatar name="Elena Rostova" hue={350} />
-                </AvatarGroup>
-
-                <Button size="sm" variant="ghost">
-                  Manage Access
-                </Button>
-              </div>
             </div>
           </Card>
         </div>

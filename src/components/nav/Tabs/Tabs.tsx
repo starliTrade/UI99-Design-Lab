@@ -106,8 +106,10 @@ export function Tab({
     }
   }, [isActive, keyboardMode]);
 
+  const SPACING = LiminalLayoutEngine.SPACING;
+
   const tabStyle: CSSProperties = {
-    padding: '8px 16px',
+    padding: `${SPACING[2]}px ${SPACING[4]}px`,
     borderRadius: `${RADIUS[8]}px`, // 8px
     fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
     lineHeight: TYPOGRAPHY[2].lh,

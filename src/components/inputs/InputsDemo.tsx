@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Input } from './Input';
 import { Select } from './Select';
+import { Combobox } from './Combobox';
+import { MultiSelect } from './MultiSelect';
 import { Textarea } from './Textarea';
 import { Checkbox } from './Checkbox';
 import { Radio } from './Radio';
+import { Toggle } from '../atoms/Toggle';
 import { getLiminalStyle, getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
-import { MagnifyingGlass, Envelope, Lock, User, CheckCircle } from '@phosphor-icons/react';
+import { MagnifyingGlass, Envelope, Lock, User, CheckCircle, Globe, Cpu, HardDrives, ShieldCheck } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
 
 export function InputsDemo() {
@@ -17,10 +20,22 @@ export function InputsDemo() {
   const [emailVal, setEmailVal] = useState<string>('architect@liminal.dev');
   const [passVal, setPassVal] = useState<string>('••••••••••••');
   const [searchVal, setSearchVal] = useState<string>('OKLCH Sapphire');
+  const [suffixVal, setSuffixVal] = useState<string>('dev-ops');
+  const [countVal, setCountVal] = useState<string>('cluster-alpha-09');
+  const [clearVal, setClearVal] = useState<string>('active-connection-pool');
 
   // Select states
   const [selectVal, setSelectVal] = useState<string>('sapphire');
+  const [selectRtlVal, setSelectRtlVal] = useState<string>('emerald');
   const [selectErrorVal, setSelectErrorVal] = useState<string>('');
+
+  // Combobox states
+  const [comboboxVal, setComboboxVal] = useState<string>('lon-gateway');
+  const [comboboxPrefixVal, setComboboxPrefixVal] = useState<string>('');
+
+  // MultiSelect states
+  const [multiSelectVal, setMultiSelectVal] = useState<string[]>(['lon-gateway', 'nyc-cache']);
+  const [multiSelectClusterVal, setMultiSelectClusterVal] = useState<string[]>(['sapphire', 'emerald']);
 
   // Textarea states
   const [textareaVal, setTextareaVal] = useState<string>(
@@ -35,6 +50,11 @@ export function InputsDemo() {
   // Radio states
   const [radioVal, setRadioVal] = useState<string>('optimal');
 
+  // Toggle states
+  const [toggle1, setToggle1] = useState<boolean>(true);
+  const [toggle2, setToggle2] = useState<boolean>(false);
+  const [toggleDisabled, setToggleDisabled] = useState<boolean>(true);
+
   const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
   const panelStyle = getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style;
 
@@ -48,6 +68,34 @@ export function InputsDemo() {
     { value: 'amber', label: 'Amber Elevated (H85 Warning)' },
     { value: 'ruby', label: 'Ruby Critical (H15 Danger)' },
     { value: 'offline', label: 'Archived Cluster (Offline)', disabled: true },
+  ];
+
+  const comboboxOptions = [
+    {
+      value: 'lon-gateway',
+      label: 'London Edge Gateway (eu-west-2)',
+      icon: <LiminalIcon icon={Globe} size="sm" weight="light" />,
+    },
+    {
+      value: 'fra-core',
+      label: 'Frankfurt Core Compute (eu-central-1)',
+      icon: <LiminalIcon icon={Cpu} size="sm" weight="light" />,
+    },
+    {
+      value: 'nyc-cache',
+      label: 'New York High-Speed Cache (us-east-1)',
+      icon: <LiminalIcon icon={HardDrives} size="sm" weight="light" />,
+    },
+    {
+      value: 'tyo-proxy',
+      label: 'Tokyo SSL Inspection Proxy (ap-northeast-1)',
+      icon: <LiminalIcon icon={ShieldCheck} size="sm" weight="light" />,
+    },
+    {
+      value: 'sin-backup',
+      label: 'Singapore Disaster Recovery (ap-southeast-1)',
+      icon: <LiminalIcon icon={Globe} size="sm" weight="light" />,
+    },
   ];
 
   const sectionDividerStyle: CSSProperties = {
@@ -151,23 +199,54 @@ export function InputsDemo() {
 
           <Input
             type="password"
-            label="Access Passphrase"
+            label="Access Passphrase (Password Toggle Demo)"
             placeholder="Enter passphrase"
             value={passVal}
             onChange={(e) => setPassVal(e.target.value)}
-            helperText="128-bit quantum resistant token"
+            helperText="Click Eye icon to toggle visibility (LiminalIcon sm/light)"
+            togglePassword
             prefix={<LiminalIcon icon={Lock} size="sm" weight="light" />}
             suffix={<span style={{ fontSize: '10px', fontFamily: 'monospace' }}>AES-GCM</span>}
           />
 
           <Input
             type="search"
-            label="Network Query"
+            label="Network Query (Prefix & Clearable Demo)"
             placeholder="Search telemetry or routes..."
             value={searchVal}
             onChange={(e) => setSearchVal(e.target.value)}
+            clearable
             prefix={<LiminalIcon icon={MagnifyingGlass} size="sm" weight="light" />}
             suffix={<kbd style={{ fontSize: '9px', padding: '2px 4px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px' }}>⌘K</kbd>}
+          />
+
+          <Input
+            label="Operator Realm (Suffix Demo)"
+            placeholder="username"
+            value={suffixVal}
+            onChange={(e) => setSuffixVal(e.target.value)}
+            suffix="@example.com"
+            helperText="Text suffix rendered at 13px tertiary tone"
+          />
+
+          <Input
+            label="Cluster Alias (Character Count Demo)"
+            placeholder="Enter cluster alias"
+            value={countVal}
+            onChange={(e) => setCountVal(e.target.value)}
+            maxLength={32}
+            showCount
+            helperText="Counter shifts warning at 90% (>28) and danger at limit"
+          />
+
+          <Input
+            label="Filter Query (Clearable Demo)"
+            placeholder="Type to test clear button..."
+            value={clearVal}
+            onChange={(e) => setClearVal(e.target.value)}
+            clearable
+            prefix={<LiminalIcon icon={MagnifyingGlass} size="sm" weight="light" />}
+            helperText="Click 'X' icon to clear value"
           />
 
           <Input
@@ -187,19 +266,28 @@ export function InputsDemo() {
 
       <div style={sectionDividerStyle} />
 
-      {/* 2. SELECT & TEXTAREA (2-Column Grid) */}
+      {/* 2. SELECT & COMBOBOX & TEXTAREA (Grid Showcase) */}
       <div>
         <div style={sectionHeaderStyle}>
-          2. Select &amp; Multiline Textarea (Surface 3 Dropdown · E1 Sub-Canvas Shadow)
+          2. Select &amp; Combobox Autocomplete (Custom CaretDown · RTL Positioning · MIST Quiet Portal)
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-4">
             <Select
-              label="Active Profile Route"
+              label="Active Profile Route (Select LTR — CaretDown Icon)"
               options={selectOptions}
               value={selectVal}
               onChange={setSelectVal}
+            />
+
+            <Select
+              label="مسیر فعال کلاستر (Select RTL — آیکون CaretDown در سمت چپ)"
+              rtl
+              options={selectOptions}
+              value={selectRtlVal}
+              onChange={setSelectRtlVal}
+              helperText="چیدمان راست‌به‌چپ با قرارگیری آیکون CaretDown در سمت چپ"
             />
 
             <Select
@@ -220,12 +308,50 @@ export function InputsDemo() {
           </div>
 
           <div className="space-y-4">
+            <Combobox
+              label="Edge Compute Node (Combobox Autocomplete)"
+              options={comboboxOptions}
+              value={comboboxVal}
+              onChange={setComboboxVal}
+              placeholder="Type or pick edge node..."
+              helperText="Live query filter · MIST quiet floating panel · SHADOWS[3] · LiminalPortal"
+            />
+
+            <Combobox
+              label="Security Proxy Stream (Prefix Search Combobox)"
+              prefix={<LiminalIcon icon={MagnifyingGlass} size="sm" weight="light" />}
+              options={comboboxOptions}
+              value={comboboxPrefixVal}
+              onChange={setComboboxPrefixVal}
+              placeholder="Search cluster routes..."
+            />
+
+            <MultiSelect
+              label="Active Edge Nodes (Multi-Select Chip-based)"
+              options={comboboxOptions}
+              value={multiSelectVal}
+              onChange={setMultiSelectVal}
+              placeholder="Add edge nodes..."
+              helperText="Badge tags variant='info' · Removable X · Backspace to delete · LiminalPortal MIST panel"
+            />
+
+            <MultiSelect
+              label="Cluster Failover Targets (Multi-Select Validation)"
+              options={selectOptions}
+              value={multiSelectClusterVal}
+              onChange={setMultiSelectClusterVal}
+              placeholder="Select failover cluster..."
+              helperText="Multi-select chip container with focus ring & directional rim"
+            />
+
             <Textarea
-              label="System Operational Manifest"
+              label="System Operational Manifest (Character Count Demo)"
               value={textareaVal}
               onChange={(e) => setTextareaVal(e.target.value)}
+              maxLength={120}
+              showCount
               helperText="Markdown notes compiled into gateway configuration"
-              rows={4}
+              rows={3}
             />
 
             <Textarea
@@ -246,7 +372,7 @@ export function InputsDemo() {
           3. Toggles &amp; Selectors (Checkbox 20px / Chip 6px · Radio 50% · Emerald 155)
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Checkboxes Panel */}
           <div
             style={{
@@ -319,6 +445,37 @@ export function InputsDemo() {
                 onChange={() => setRadioVal('eco')}
                 label="Eco Low-Power Geo-Distributed"
               />
+            </div>
+          </div>
+
+          {/* Toggles Panel */}
+          <div
+            style={{
+              ...panelStyle,
+              borderRadius: `${RADIUS.panel}px`,
+              padding: `${SPACING[4]}px`,
+            }}
+            className="space-y-3"
+          >
+            <div style={{ fontSize: '11px', fontFamily: 'monospace', color: getTextStyle('tertiary', 2).color }}>
+              TOGGLE SWITCHES (BRAND_PRIMARY / LADDER)
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '13px', color: getTextStyle('secondary', 2).color }}>Global Mesh Firewall</span>
+                <Toggle checked={toggle1} onChange={setToggle1} aria-label="Global Mesh Firewall" />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '13px', color: getTextStyle('secondary', 2).color }}>Auto-Failover Route</span>
+                <Toggle checked={toggle2} onChange={setToggle2} aria-label="Auto-Failover Route" />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '13px', color: getTextStyle('secondary', 2).color }}>Quarantine Mode</span>
+                <Toggle checked={toggleDisabled} onChange={setToggleDisabled} disabled aria-label="Quarantine Mode" />
+              </div>
             </div>
           </div>
         </div>

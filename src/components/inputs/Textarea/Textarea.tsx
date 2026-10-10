@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { CSSProperties, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import {
   getLiminalStyle,
   getDirectionalRim,
   getTextStyle,
-  LADDER,
   LiminalState,
 } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { useReducedMotion } from '../../../engine/liminal-hooks';
 
 export interface TextareaProps {
   label?: string;
@@ -24,9 +24,12 @@ export interface TextareaProps {
   error?: string;
   success?: string;
   helperText?: string;
+  maxLength?: number;
+  showCount?: boolean;
   rows?: number;
   name?: string;
   id?: string;
+  required?: boolean;
   className?: string;
   style?: CSSProperties;
 }
@@ -43,25 +46,42 @@ export function Textarea({
   error,
   success,
   helperText,
+  maxLength,
+  showCount = false,
   rows = 4,
   name,
   id,
+  required = false,
   className = '',
   style: customStyle = {},
 }: TextareaProps) {
   const [internalState, setInternalState] = useState<LiminalState>('idle');
   const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
+  const [internalVal, setInternalVal] = useState<string>(value ?? defaultValue ?? '');
+
+  const localTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const reducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setInternalVal(value);
+    }
+  }, [value]);
+
+  const effectiveValue = value !== undefined ? value : internalVal;
+  const currentLength = effectiveValue.length;
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  const surfaceLevel = 2;
 
   const currentState: LiminalState = disabled ? 'disabled' : internalState;
 
   // Resolve base interactive style from engine
   const limStyle = getLiminalStyle({
-    surfaceLevel: 2,
+    surfaceLevel,
     interactive: true,
     isInput: true,
     state: currentState,
@@ -85,56 +105,70 @@ export function Textarea({
   if (!disabled) {
     if (error) {
       border = `1px solid ${SEMANTICS.DANGER.border}`;
-      const baseRim = getDirectionalRim(2, 2, false);
+      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
       if (baseRim) {
         background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
       }
     } else if (success) {
       border = `1px solid ${SEMANTICS.SUCCESS.border}`;
-      const baseRim = getDirectionalRim(2, 2, false);
+      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
       if (baseRim) {
         background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
       }
     }
   }
 
-  const textareaStyle: CSSProperties = {
-    width: '100%',
-    minHeight: '100px',
-    padding: '12px 14px',
+  const fieldWrapperStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: `${SPACING[3]}px`, // 12px
     borderRadius: `${RADIUS.control}px`, // 10px
     boxSizing: 'border-box',
-    transition: LiminalMotionEngine.TRANSITION.slow,
+    width: '100%',
+    transition: reducedMotion ? 'none' : LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
     ...focusRing,
-    opacity: limStyle.style.opacity,
+    opacity: disabled ? 0.5 : limStyle.style.opacity,
     cursor: disabled ? 'not-allowed' : 'text',
-    color: getTextStyle('primary', 2).color,
+    boxShadow: limStyle.style.boxShadow,
+  };
+
+  const textareaElementStyle: CSSProperties = {
+    flex: 1,
+    background: 'transparent',
+    border: 'none',
+    outline: 'none',
+    boxShadow: 'none',
+    color: getTextStyle('primary', surfaceLevel).color,
     fontSize: `${TYPOGRAPHY[3].fs}px`, // 16px
-    fontFamily: 'inherit',
     lineHeight: 1.6,
+    fontFamily: 'inherit',
+    width: '100%',
+    padding: 0,
     resize: 'vertical',
+    cursor: disabled ? 'not-allowed' : 'text',
   };
 
   const labelStyle: CSSProperties = {
     fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
-    letterSpacing: TYPOGRAPHY[2].ls, // +0.01em
-    fontWeight: TYPOGRAPHY[2].weight, // 500
-    color: getTextStyle('tertiary', 2).color,
+    lineHeight: TYPOGRAPHY[2].lh,
+    letterSpacing: TYPOGRAPHY[2].ls,
+    fontWeight: 500,
+    color: getTextStyle('secondary', surfaceLevel).color,
+    marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
-    marginBottom: `${SPACING[2]}px`, // 8px
   };
 
   const helperStyle: CSSProperties = {
     fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
-    letterSpacing: TYPOGRAPHY[1].ls, // +0.04em
-    marginTop: `${SPACING[1]}px`, // 4px
+    lineHeight: TYPOGRAPHY[1].lh,
+    letterSpacing: TYPOGRAPHY[1].ls,
     color: error
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('quaternary', 2).color,
+      : getTextStyle('tertiary', surfaceLevel).color,
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -142,6 +176,26 @@ export function Textarea({
       setIsKeyboardFocused(true);
     }
   };
+
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    if (value === undefined) {
+      setInternalVal(e.target.value);
+    }
+    onChange?.(e);
+  };
+
+  const shouldRenderCount = showCount && maxLength !== undefined;
+  const isCountWarning = maxLength !== undefined && currentLength > maxLength * 0.9;
+  const isCountDanger = maxLength !== undefined && currentLength >= maxLength;
+  const countColor = isCountDanger
+    ? SEMANTICS.DANGER.text
+    : isCountWarning
+    ? SEMANTICS.WARNING.text
+    : getTextStyle('tertiary', surfaceLevel).color;
+
+  const helperId = id && (error || success || helperText) ? `${id}-helper` : undefined;
+  const countId = id && shouldRenderCount ? `${id}-count` : undefined;
+  const ariaDescribedBy = [helperId, countId].filter(Boolean).join(' ') || undefined;
 
   return (
     <div
@@ -160,38 +214,83 @@ export function Textarea({
         </label>
       )}
 
-      <textarea
-        id={id}
-        name={name}
-        rows={rows}
-        value={value}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        disabled={disabled}
-        onChange={onChange}
-        onKeyDown={handleKeyDown}
-        onMouseDown={() => setIsKeyboardFocused(false)}
+      <div
+        style={fieldWrapperStyle}
         onMouseEnter={() => !disabled && internalState !== 'focus' && setInternalState('hover')}
         onMouseLeave={() => !disabled && internalState !== 'focus' && setInternalState('idle')}
-        onFocus={(e) => {
-          if (!disabled) {
-            setInternalState('focus');
-          }
-          onFocus?.(e);
-        }}
-        onBlur={(e) => {
-          setInternalState('idle');
+        onMouseDown={() => {
           setIsKeyboardFocused(false);
-          onBlur?.(e);
         }}
-        style={textareaStyle}
-      />
+      >
+        <textarea
+          ref={localTextareaRef}
+          id={id}
+          name={name}
+          rows={rows}
+          value={value}
+          defaultValue={defaultValue}
+          placeholder={placeholder}
+          disabled={disabled}
+          required={required}
+          maxLength={maxLength}
+          aria-describedby={ariaDescribedBy}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onFocus={(e) => {
+            if (!disabled) {
+              setInternalState('focus');
+            }
+            onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setInternalState('idle');
+            setIsKeyboardFocused(false);
+            onBlur?.(e);
+          }}
+          style={textareaElementStyle}
+        />
+      </div>
 
-      {(error || success || helperText) && (
-        <span style={helperStyle}>{error || success || helperText}</span>
+      {((error || success || helperText) || shouldRenderCount) && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: (error || success || helperText) ? 'space-between' : 'flex-end',
+            width: '100%',
+            marginTop: `${SPACING[1]}px`, // 4px
+            gap: `${SPACING[2]}px`,
+          }}
+        >
+          {(error || success || helperText) ? (
+            <span id={helperId} style={helperStyle}>
+              {error || success || helperText}
+            </span>
+          ) : (
+            <span />
+          )}
+
+          {shouldRenderCount && (
+            <div
+              id={countId}
+              style={{
+                fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+                lineHeight: TYPOGRAPHY[1].lh,
+                letterSpacing: TYPOGRAPHY[1].ls,
+                color: countColor,
+                fontFamily: 'monospace',
+                flexShrink: 0,
+                userSelect: 'none',
+              }}
+            >
+              {currentLength}/{maxLength}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
 }
 
 export default Textarea;
+

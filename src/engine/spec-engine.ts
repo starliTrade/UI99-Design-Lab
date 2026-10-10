@@ -67,6 +67,14 @@ export const SHADOWS = {
   4: '0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)',
 } as const;
 
+export const Z_INDEX = {
+  dropdown: 1000,
+  modal: 2000,
+  tooltip: 3000,
+  popover: 4000,
+  floating: 9999, // برای Combobox/MultiSelect
+} as const;
+
 export type LiminalState = 'idle' | 'hover' | 'focus' | 'active' | 'disabled';
 export type TextLevel = 'primary' | 'secondary' | 'tertiary' | 'quaternary';
 

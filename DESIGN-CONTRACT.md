@@ -208,3 +208,113 @@ Hue 15 (Ruby `#E86575`), 45 (Amber `#E09540`), 75 (Gold `#C8B030`), 105 (Lime `#
 - [x] رعایت سقف بودجه مه (دقیقاً ۱ مورد هیرو در کل برنامه).
 - [x] حمایت کامل از `prefers-reduced-motion` در تمامی انیمیشن‌های ورود و خروج.
 - [x] عدم استفاده از رنگ سفید خالص برای تایپوگرافی.
+
+---
+
+## 13. DATA TABLE (جداول داده و مدیریت رکوردها)
+طراحی جداول در لیمینال بر اساس حداقل تداخل بصری و خوانایی حداکثری داده‌ها شکل گرفته است:
+- **عدم وجود خطوط عمودی (No Vertical Borders):** تفکیک ستون‌ها صرفاً از طریق فاصله‌گذاری افقی مناسب (`padding`) و تراز متن انجام می‌شود. خطوط عمودی مطلقا ممنوع است.
+- **تفکیک سطرهای افقی (Hairline Dividers):** فقط خط افقی بسیار ملایم در زیر هر سطر با رنگ لبه کناری (`borderBottom: 1px solid ${rimSideColor}`).
+- **استایل سرستون‌ها و مرتب‌سازی (Header & Sort):**
+  - فونت سرستون‌ها: `TYPOGRAPHY[1]` (11px)، به همراه `textTransform: uppercase` و `color: getTextStyle('tertiary', 1)`.
+  - ستون‌های قابل مرتب‌سازی با آیکون‌های Phosphor (`CaretUp` / `CaretDown`) و نشانگر وضعیت فعال با رنگ اولیه `primary`.
+- **انتخاب سطرها (Row Selection):**
+  - استفاده از کامپوننت `Checkbox` لیمینال در ستون اول.
+  - سطر انتخاب‌شده با پس‌زمینه هایلایت نردبان (`getLadderColor(2.5)`) مشخص می‌شود.
+  - تعامل هاور سطرها با ترانزیشن نرم `LiminalMotionEngine.getTransition('background', 'fast')`.
+
+---
+
+## 14. CALENDAR & DATEPICKER (تقویم و انتخابگر تاریخ)
+شبکه‌ی تقویم و پنجره‌ی پاپ‌آپ تاریخ بر پایه محاسبات هندسی دقیق و دسترسی‌پذیری کامل:
+- **معماری شناور (Floating Architecture):**
+  - رندر مستقیم پنجره‌ی انتخابگر با `LiminalPortal` در انتهای سند.
+  - موقعیت‌یابی با هوک `useFloating` همراه با تشخیص خودکار برخورد (`flip`, `shift`).
+  - بستن هوشمند از طریق `useClickOutside` و کلید Escape (`useEscapeKey`).
+- **ناوبری کیبورد (Roving TabIndex):**
+  - شبکه‌ی روزها دارای ویژگی‌های استاندارد ARIA (`role="grid"`, `role="row"`, `role="gridcell"`).
+  - حرکت بین روزها با کلیدهای جهت‌نما (ArrowUp/Down/Left/Right) و کلیدهای Home/End بر اساس هوک `useRovingTabIndex`.
+- **استایل سلول‌های روز (Day Cell States):**
+  - ابعاد: ۳۶×۳۶ پیکسل با `borderRadius: RADIUS.control`.
+  - حالت پیش‌فرض (Idle): پس‌زمینه شفاف `transparent`.
+  - حالت هاور (Hover): پس‌زمینه `getLadderColor(2.5)`.
+  - روز جاری (Today): کادر ظریف `1px solid ${getLadderColor(3)}` و رنگ برند.
+  - حالت انتخاب‌شده (Selected): پس‌زمینه `getLadderColor(4)` و رنگ متن `getTextStyle('primary', 4)`.
+
+---
+
+## 15. COMMAND PALETTE (پالت دستورات و جستجوی سراسری ⌘K)
+ابزار سریع دسترسی به دستورات و ناوبری با تمرکز بر تعامل سریع و استایل بدون اصطکاک:
+- **لایه‌ی بک‌دراپ (Backdrop Layer):**
+  - رندر از طریق `LiminalPortal`.
+  - پس‌زمینه تیره ملایم (`rgba(3, 4, 6, 0.60)`) با فیلتر بلور ۴ پیکسل (`backdropFilter: blur(4px)`).
+  - قفل خودکار اسکرول پس‌زمینه با `useScrollLock`.
+- **پنل دیالوگ (Dialog Panel):**
+  - حداکثر عرض ۴۸۰ پیکسل (`maxWidth: 480px`) با `borderRadius: RADIUS.container` (24px).
+  - استایل عمق: تلفیق مه آرام (`getMistStyle('quiet')`) به همراه بالاترین سطح سایه شناور (`SHADOWS[4]`).
+  - مدیریت فوکوس با هوک `useFocusTrap` و بستن با `useEscapeKey` یا کلیک روی بک‌دراپ.
+- **کلید میانبر و ناوبری کیبورد:**
+  - گوش دادن سراسری به کلید ترکیبی `Meta+K` یا `Ctrl+K`.
+  - فیلتر آنی و زنده بر روی عنوان دستورات با فیلد جستجوی `<Input>`.
+  - ناوبری لیست نتایج به صورت عمودی با `useRovingTabIndex` و اجرای دستور انتخابی با کلید `Enter`.
+
+---
+
+## 16. VARIANTS ENGINE (موتور وریانت‌ها و الگوی cva با استایل‌های درون‌خطی)
+ارتقای سیستم کامپوننت‌ها به ساختار منعطف مشابه shadcn/ui بر بستر استایل‌های درون‌خطی و توکن‌های ریاضی لیمینال:
+- **معماری هسته (`createVariants`):**
+  - شبیه‌سازی الگوی کلاسیک `class-variance-authority` (cva) اما منحصراً برای خروجی شیء `CSSProperties`.
+  - استخراج خودکار تایپ‌ها با `VariantProps<typeof componentVariants>`.
+  - پشتیبانی از استایل پایه (`base`)، گروه‌های وریانت (`variants`)، ترکیبات چندشرطی (`compoundVariants`)، و مقادیر پیش‌فرض (`defaultVariants`).
+- **وریانت‌های استاندارد کامپوننت دکمه (`buttonVariants`):**
+  - **نقش‌های وریانت (6 Variants):** `primary` (سفید ملایم برندی)، `secondary` (سطح ۲ با لبه ۲)، `ghost` (بدون لبه با هاور S2.5)، `danger` (قرمز هشدار معنایی)، `outline` (لبه ۱ پیکسلی نردبان ۳ با هاور ۴)، `link` (بدون مرز با خط زیرین).
+  - **مقیاس ابعاد (4 Sizes):** `sm` (ارتفاع ۳۲)، `md` (ارتفاع ۴۴)، `lg` (ارتفاع ۵۲)، `icon` (۴۴×۴۴ مربع با پدینگ صفر).
+- **قوانین حاکم بر وریانت‌ها:**
+  - هرگز هیچ کلاس خارجی جایگزین محاسبات رنگی و ترانزیشن‌های لیمینال نمی‌شود.
+  - اولویت نهایی با پراپ `style` کاربر و مدیریت حالت تعاملی `useLiminalInteraction` است.
+
+---
+
+## 17. COMPOSITION & SLOT PATTERN (الگوی چندشکلی asChild و کامپوننت Slot)
+ترکیب‌پذیری بدون اصطکاک الهام‌گرفته از Radix UI با ادغام هوشمند استایل‌های درون‌خطی و دسترسی‌پذیری:
+- **معماری کامپوننت `Slot` (`src/engine/liminal-slot.tsx`):**
+  - انتقال و شبیه‌سازی مشخصات والد روی تنها فرزند مستقیم (`React.cloneElement`).
+  - **ادغام استایل (Style Merging):** ترکیب اولویت‌بندی‌شده‌ی استایل‌های تولیدی سیستم با استایل‌های اختصاصی فرزند (`{ ...parent.style, ...child.style }`).
+  - **ادغام رویدادها (Event Handlers Composition):** فراخوانی زنجیره‌ای رویدادهای تعاملی (ابتدا متد والد جهت اعتبارسنجی وضعیت‌های لودینگ/غیرفعال، سپس متد فرزند در صورت عدم توقف `defaultPrevented`).
+  - **ادغام ارجاعات (Ref Composition):** اتصال چندگانه با `composeRefs` بدون تداخل با ری‌اکت ۱۹.
+- **پشتیبانی در `Button` (`asChild?: boolean`):**
+  - جایگزینی مستقیم تگ پیش‌فرض با `Slot` به محض فعال بودن `asChild`.
+  - تزریق خودکار نشانگر لودینگ بدون تغییر ساختار صفحه (Zero-Layout-Shift) و مدیریت وضعیت‌های دسترسی‌پذیری (`aria-busy`, `aria-disabled`).
+
+---
+
+## 18. CSS VARIABLES LAYER & THEMING INFRASTRUCTURE (زیرساخت متغیرهای CSS و تم‌پذیری)
+تلفیق موتور استایل‌های ریاضی با متغیرهای بومی CSS جهت امکان تغییر تم زنده و گسترش در آینده:
+- **تعریف متغیرها در `:root` (`src/index.css`):**
+  - نردبان رنگی: `--liminal-s0` تا `--liminal-s5`.
+  - رنگ‌های معنایی: `--liminal-success`, `--liminal-warning`, `--liminal-danger`, `--liminal-info`.
+  - هویت برندی: `--liminal-brand` (#E9ECF2) و `--liminal-brand-on` (#060709).
+  - کنتراست متن: `--liminal-text-primary`, `--liminal-text-secondary`, `--liminal-text-tertiary`.
+  - شعاع‌های هندسی: `--liminal-radius-chip`, `--liminal-radius-control`, `--liminal-radius-card`.
+- **ارجاع در `LiminalColorEngine` با مقادیر Fallback:**
+  - تمام توکن‌های کلیدی از فرمت `var(--liminal-*, fallback)` استفاده می‌کنند.
+  - توابع تحلیل رنگ (نظیر `hexToRgb`) به صورت خودکار مقدار پیش‌فرض را برای محاسبات ریاضی استخراج می‌کنند تا از هرگونه شکست عملکردی جلوگیری شود.
+  - تغییر مقادیر متغیرها در DevTools یا روت اپلیکیشن مستقیماً و بلادرنگ در ظاهر تمامی کامپوننت‌ها منعکس می‌گردد.
+
+---
+
+## 19. DROPDOWN MENU (منوی بازشونده‌ی شناور و کامپوزیشن رادیکس)
+سیستم منوی بازشونده‌ی شناور با تفکیک دقیق لایه‌ها و ترکیب‌پذیری کامل به سبک Radix UI / shadcn:
+- **معماری هسته و لایه شناور (`src/components/nav/DropdownMenu/`):**
+  - کانتینر اصلی (`DropdownMenu`) جهت مدیریت متمرکز حالت باز/بسته، ناوبری کیبورد و هماهنگی موقعیت با هوک `usePositioning`.
+  - رندر در لایه‌ی بالای پرتال (`LiminalPortal`) جهت جلوگیری از هرگونه تداخل با `overflow` و `z-index` کانتینرهای والد.
+  - موقعیت‌یابی هوشمند با تصحیح خودکار برخورد به مرز صفحه (`flip` و `shift`) و ترازهای متنوع (`bottom-start`, `bottom-end`).
+- **استایل و جلوه‌های نوری:**
+  - پس‌زمینه و هاله: تلفیق مه آرام (`LiminalColorEngine.getMistStyle('quiet')`) با سایه دو لایه‌ی پنومبرا (`SHADOWS[2]`) و فیلتر مات‌کننده `backdropFilter`.
+  - کادر هدایتی: استفاده انحصاری از ریم نوری جهت‌دار (`getDirectionalRim(2, 1, false)`).
+  - مدیریت فوکوس: فوکوس رینگ ایزوله‌ی کیبورد از طریق `LiminalComponentEngine.getFocusRing` و تله فوکوس با `useFocusTrap` و بستن با `useEscapeKey`.
+  - انیمیشن ورود و خروج: مقیاس‌گیری ملایم `LiminalMotionEngine.scaleIn(0.96)` با رعایت بی‌قیدوشرط `useReducedMotion()`.
+- **ترکیب‌پذیری اجزا (`asChild` و `Slot`):**
+  - تمامی اجزای منو (`Trigger`, `Content`, `Item`, `CheckboxItem`, `RadioItem`, `Separator`, `Label`) از الگوی `asChild` پشتیبانی می‌کنند.
+  - پشتیبانی از آیتم‌های چک‌باکس با آیکون `Check` و رادیو با آیکون `Circle` با تراز دقیق نشانگرها.
+  - نمایش کلیدهای میانبر (`DropdownMenuShortcut`) با استایل کد مونو، پس‌زمینه نردبان ۲ و بردر نردبان ۳.

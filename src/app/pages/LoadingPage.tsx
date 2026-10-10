@@ -65,8 +65,8 @@ export function LoadingPage() {
       }
     >
       <PageHeader
-        title="در حال بارگذاری شاخص‌های شارد..."
-        subtitle="ارتباط رمزنگاری‌شده با کلاسترهای سخت‌افزاری در حال برقراری است (انتقال خودکار پس از ۳ ثانیه)"
+        title="Loading shard metrics..."
+        subtitle="Establishing encrypted connection with hardware clusters (Auto-redirect after 3s)"
       />
 
       {/* 1. Header & Profile Skeleton */}

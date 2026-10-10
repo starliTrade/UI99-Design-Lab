@@ -1,0 +1,124 @@
+import React, { useState, useEffect } from 'react';
+import type { CSSProperties } from 'react';
+import { Calendar as CalendarIcon } from '@phosphor-icons/react';
+import { Input } from '../../inputs/Input';
+import { Calendar } from './Calendar';
+import { LiminalIcon } from '../../../engine/liminal-icon-engine';
+import { LiminalPortal } from '../../../engine/liminal-portal';
+import { useFloating } from '../../../engine/liminal-floating';
+import { getMistStyle } from '../../../engine/liminal-color-engine';
+import { SHADOWS } from '../../../engine/spec-engine';
+import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+
+export interface DatePickerProps {
+  mode?: 'single' | 'range';
+  value?: Date | [Date, Date | null] | null;
+  selectedDate?: Date | [Date, Date | null] | null;
+  onChange?: (date: Date | [Date, Date | null] | null) => void;
+  onSelectDate?: (date: Date | [Date, Date | null] | null) => void;
+  placeholder?: string;
+  label?: string;
+  disabled?: boolean;
+  className?: string;
+  style?: CSSProperties;
+}
+
+export function DatePicker({
+  mode = 'single',
+  value,
+  selectedDate: propSelectedDate,
+  onChange,
+  onSelectDate,
+  placeholder = 'Select date',
+  label,
+  disabled = false,
+  className = '',
+  style: customStyle = {},
+}: DatePickerProps) {
+  const effectiveValue = value !== undefined ? value : (propSelectedDate !== undefined ? propSelectedDate : null);
+  const [selected, setSelected] = useState<Date | [Date, Date | null] | null>(effectiveValue);
+
+  const { triggerRef, floatingRef, position, isOpen, open, close } = useFloating({
+    placement: 'bottom-start',
+    offset: { y: 8 },
+    flip: true,
+    shift: true,
+    closeOnClickOutside: true,
+    closeOnEscape: true,
+  });
+
+  useEffect(() => {
+    if (effectiveValue !== undefined) {
+      setSelected(effectiveValue);
+    }
+  }, [effectiveValue]);
+
+  const formatDate = (d: Date | [Date, Date | null] | null) => {
+    if (!d) return '';
+    if (Array.isArray(d)) {
+      const [start, end] = d;
+      const sStr = start ? start.toISOString().split('T')[0] : '';
+      const eStr = end ? end.toISOString().split('T')[0] : '...';
+      return `${sStr} to ${eStr}`;
+    }
+    return d.toISOString().split('T')[0];
+  };
+
+  const handleSelect = (date: Date | [Date, Date | null] | null) => {
+    setSelected(date);
+    onChange?.(date);
+    onSelectDate?.(date);
+    if (mode === 'single' || (Array.isArray(date) && date[0] && date[1])) {
+      close();
+    }
+  };
+
+  return (
+    <div
+      className={className}
+      style={{ position: 'relative', width: '100%', boxSizing: 'border-box', ...customStyle }}
+    >
+      <div ref={triggerRef as React.RefObject<HTMLDivElement>} onClick={() => !disabled && open()}>
+        <Input
+          value={formatDate(selected)}
+          placeholder={placeholder}
+          label={label}
+          disabled={disabled}
+          readOnly
+          aria-expanded={isOpen}
+          aria-haspopup="dialog"
+          leftIcon={<LiminalIcon icon={CalendarIcon} size="sm" weight="regular" />}
+          style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
+        />
+      </div>
+
+      {isOpen && !disabled && (
+        <LiminalPortal>
+          <div
+            ref={floatingRef as React.RefObject<HTMLDivElement>}
+            role="dialog"
+            aria-modal="true"
+            style={{
+              position: 'fixed',
+              top: `${position.y}px`,
+              left: `${position.x}px`,
+              zIndex: 1000,
+              ...getMistStyle('quiet'),
+              boxShadow: SHADOWS[3],
+              borderRadius: `${LiminalLayoutEngine.RADIUS.card}px`,
+              boxSizing: 'border-box',
+            }}
+          >
+            <Calendar
+              mode={mode}
+              selectedDate={selected}
+              onSelectDate={handleSelect}
+            />
+          </div>
+        </LiminalPortal>
+      )}
+    </div>
+  );
+}
+
+export default DatePicker;

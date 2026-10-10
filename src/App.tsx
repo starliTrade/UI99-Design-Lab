@@ -5,7 +5,7 @@ import { LiminalLayoutEngine } from './engine/liminal-layout-engine';
 import { AtomsDemo, MotionDemo } from './components/atoms';
 import { InputsDemo } from './components/inputs';
 import { ContainersDemo } from './components/containers';
-import { NavDemo } from './components/nav';
+import { NavDemo, CommandPalette } from './components/nav';
 import { DataDemo } from './components/data';
 import { FeedbackDemo } from './components/feedback';
 import { LayoutDemo } from './components/layout';
@@ -49,6 +49,18 @@ export function App() {
   const [concentricPadding, setConcentricPadding] = useState<number>(12);
   const [selectedSegment, setSelectedSegment] = useState<string>('node-alpha');
   const [toastVisible, setToastVisible] = useState<boolean>(false);
+  const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
 
   // Mobile-first horizontal scroll tracking for main tabs
   const navScrollRef = React.useRef<HTMLElement>(null);
@@ -204,6 +216,29 @@ export function App() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const commandGroups = [
+    {
+      title: 'Navigation',
+      items: [
+        { id: 'app', label: 'Go to App Demo', shortcut: 'G A', action: () => setActiveTab('app') },
+        { id: 'gateway', label: 'Go to Gateway Console', shortcut: 'G G', action: () => setActiveTab('gateway') },
+        { id: 'motion', label: 'Go to Motion Engine', shortcut: 'G M', action: () => setActiveTab('motion') },
+        { id: 'atoms', label: 'Go to Atoms', shortcut: 'G AT', action: () => setActiveTab('atoms') },
+        { id: 'inputs', label: 'Go to Inputs', shortcut: 'G IN', action: () => setActiveTab('inputs') },
+        { id: 'nav', label: 'Go to Navigation', shortcut: 'G NV', action: () => setActiveTab('nav') },
+        { id: 'data', label: 'Go to Data & Tables', shortcut: 'G DT', action: () => setActiveTab('data') },
+      ],
+    },
+    {
+      title: 'Actions',
+      items: [
+        { id: 'copy', label: 'Copy Full Design Contract', shortcut: '⌘ C', action: copyFullContract },
+        { id: 'toast', label: 'Trigger Toast Notification', shortcut: '⌘ T', action: triggerToast },
+        { id: 'drawer', label: 'Open Bottom Drawer', shortcut: '⌘ D', action: () => setBottomDrawerOpen(true) },
+      ],
+    },
+  ];
+
   return (
     <div
       className="min-h-screen transition-all duration-300"
@@ -298,6 +333,21 @@ export function App() {
                 <span>Fluid</span>
               </button>
             </div>
+
+            {/* Command Palette Trigger Button */}
+            <button
+              onClick={() => setIsCommandOpen(true)}
+              className="px-2 py-1.5 transition-all cursor-pointer flex items-center gap-1"
+              style={{
+                ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                borderRadius: `${RADIUS.control}px`,
+                color: getTextStyle('primary', 3).color,
+              }}
+              title="Search commands (⌘K)"
+            >
+              <LiminalIcon icon={MagnifyingGlass} size="xs" weight="light" />
+              <span className="hidden sm:inline text-[10px]">⌘K</span>
+            </button>
 
             {/* Contract Copy Button (Surface 3 · Rim 2) */}
             <button
@@ -1466,6 +1516,12 @@ export function App() {
           LIMINAL v1.0 MOBILE-FIRST TESTBENCH · 100% RESPONSIVE · STRICTLY LOCKED SPEC
         </footer>
       </main>
+
+      <CommandPalette
+        isOpen={isCommandOpen}
+        onClose={() => setIsCommandOpen(false)}
+        groups={commandGroups}
+      />
     </div>
   );
 }

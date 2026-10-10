@@ -7,7 +7,12 @@ export type BadgeSemantic = 'success' | 'warning' | 'danger' | 'info';
 
 export interface BadgeProps {
   semantic?: BadgeSemantic;
+  variant?: BadgeSemantic;
   hue?: number;
+  role?: string;
+  'aria-selected'?: boolean | 'true' | 'false';
+  'aria-label'?: string;
+  id?: string;
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
@@ -15,11 +20,17 @@ export interface BadgeProps {
 
 export function Badge({
   semantic = 'info',
+  variant,
   hue,
+  role,
+  'aria-selected': ariaSelected,
+  'aria-label': ariaLabel,
+  id,
   children,
   className = '',
   style: customStyle = {},
 }: BadgeProps) {
+  const effectiveSemantic = variant ?? semantic;
   let background: string;
   let border: string;
   let color: string;
@@ -30,7 +41,7 @@ export function Badge({
     border = '1px solid rgba(255, 255, 255, 0.12)';
     color = ext?.hex ?? '#8CC3F2';
   } else {
-    const semanticKey = semantic.toUpperCase() as 'SUCCESS' | 'WARNING' | 'DANGER' | 'INFO';
+    const semanticKey = effectiveSemantic.toUpperCase() as 'SUCCESS' | 'WARNING' | 'DANGER' | 'INFO';
     const role = LiminalColorEngine.SEMANTICS[semanticKey] ?? LiminalColorEngine.SEMANTICS.INFO;
     background = role.subtle;
     border = `1px solid ${role.border}`;
@@ -56,7 +67,14 @@ export function Badge({
   };
 
   return (
-    <span className={className} style={badgeStyle}>
+    <span
+      id={id}
+      role={role}
+      aria-selected={ariaSelected}
+      aria-label={ariaLabel}
+      className={className}
+      style={badgeStyle}
+    >
       {children}
     </span>
   );

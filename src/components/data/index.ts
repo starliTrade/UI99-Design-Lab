@@ -3,4 +3,8 @@ export * from './Table';
 export * from './Progress';
 export * from './Avatar';
 export * from './AvatarGroup';
+export * from './Pagination';
+export * from './FilterBar';
+export * from './Calendar';
 export * from './DataDemo';
+

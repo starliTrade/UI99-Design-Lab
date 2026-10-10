@@ -43,7 +43,7 @@ export function Divider({
       : {
           width: '1px',
           height: '100%',
-          minHeight: '16px',
+          minHeight: `${LiminalLayoutEngine.SPACING[4]}px`,
           background: dividerColor,
           margin: `0 ${margin}px`,
           border: 'none',

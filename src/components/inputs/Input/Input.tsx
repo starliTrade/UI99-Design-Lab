@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
-import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent, MouseEvent } from 'react';
+import { Eye, EyeSlash, X } from '@phosphor-icons/react';
 import {
   getLiminalStyle,
   getDirectionalRim,
-  getLadderColor,
   getTextStyle,
-  LADDER,
   LiminalState,
 } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { LiminalIcon } from '../../../engine/liminal-icon-engine';
+import { useReducedMotion } from '../../../engine/liminal-hooks';
 
 export interface InputProps {
   type?: 'text' | 'email' | 'password' | 'search' | 'number' | 'tel' | 'url';
@@ -30,54 +31,130 @@ export interface InputProps {
   suffix?: ReactNode;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
+  togglePassword?: boolean;
+  maxLength?: number;
+  showCount?: boolean;
+  clearable?: boolean;
+  allowClear?: boolean;
+  onClear?: () => void;
   name?: string;
   id?: string;
   required?: boolean;
   autoComplete?: string;
+  readOnly?: boolean;
+  autoFocus?: boolean;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  role?: string;
+  ariaExpanded?: boolean;
+  ariaHasPopup?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
+  ariaControls?: string;
+  ariaActiveDescendant?: string;
+  ariaAutocomplete?: 'none' | 'inline' | 'list' | 'both';
   className?: string;
   style?: CSSProperties;
 }
 
-export function Input({
-  type = 'text',
-  label,
-  placeholder,
-  value,
-  defaultValue,
-  onChange,
-  onFocus,
-  onBlur,
-  disabled = false,
-  error,
-  success,
-  helperText,
-  prefix,
-  suffix,
-  leftIcon,
-  rightIcon,
-  name,
-  id,
-  required = false,
-  autoComplete,
-  className = '',
-  style: customStyle = {},
-}: InputProps) {
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input(
+  {
+    type = 'text',
+    label,
+    placeholder,
+    value,
+    defaultValue,
+    onChange,
+    onFocus,
+    onBlur,
+    disabled = false,
+    error,
+    success,
+    helperText,
+    prefix,
+    suffix,
+    leftIcon,
+    rightIcon,
+    togglePassword = false,
+    maxLength,
+    showCount = false,
+    clearable = false,
+    allowClear = false,
+    onClear,
+    name,
+    id,
+    required = false,
+    autoComplete,
+    readOnly,
+    autoFocus,
+    onKeyDown,
+    role,
+    ariaExpanded,
+    ariaHasPopup,
+    ariaControls,
+    ariaActiveDescendant,
+    ariaAutocomplete,
+    className = '',
+    style: customStyle = {},
+  }: InputProps,
+  forwardedRef
+) {
   const [internalState, setInternalState] = useState<LiminalState>('idle');
   const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isToggleHovered, setIsToggleHovered] = useState<boolean>(false);
+  const [isClearHovered, setIsClearHovered] = useState<boolean>(false);
+  const [internalVal, setInternalVal] = useState<string>(value ?? defaultValue ?? '');
+
+  const localInputRef = useRef<HTMLInputElement>(null);
+  const reducedMotion = useReducedMotion();
+
+  // Combine ref
+  const setInputRef = (element: HTMLInputElement | null) => {
+    (localInputRef as React.MutableRefObject<HTMLInputElement | null>).current = element;
+    if (typeof forwardedRef === 'function') {
+      forwardedRef(element);
+    } else if (forwardedRef) {
+      (forwardedRef as React.MutableRefObject<HTMLInputElement | null>).current = element;
+    }
+  };
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setInternalVal(value);
+    }
+  }, [value]);
+
+  const effectiveValue = value !== undefined ? value : internalVal;
+  const currentLength = effectiveValue.length;
+
+  // Validate togglePassword usage: if type !== 'password' and togglePassword=true, warn and ignore
+  const isPasswordType = type === 'password';
+  const shouldEnableToggle = isPasswordType && togglePassword;
+
+  useEffect(() => {
+    if (togglePassword && !isPasswordType) {
+      console.warn(
+        `[Liminal Input] togglePassword prop is only supported when type="password". Received type="${type}". The toggle is ignored.`
+      );
+    }
+  }, [togglePassword, isPasswordType, type]);
+
+  const effectiveType = shouldEnableToggle ? (showPassword ? 'text' : 'password') : type;
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  const surfaceLevel = 2;
 
-  const leftElement = prefix ?? leftIcon;
-  const rightElement = suffix ?? rightIcon;
+  const rawLeft = prefix ?? leftIcon;
+  const rawRight = suffix ?? rightIcon;
+
+  const isClearable = (clearable || allowClear) && !disabled && currentLength > 0;
 
   const currentState: LiminalState = disabled ? 'disabled' : internalState;
 
   // Resolve base interactive input style from engine
   const limStyle = getLiminalStyle({
-    surfaceLevel: 2,
+    surfaceLevel,
     interactive: true,
     isInput: true,
     state: currentState,
@@ -101,25 +178,26 @@ export function Input({
   if (!disabled) {
     if (error) {
       border = `1px solid ${SEMANTICS.DANGER.border}`;
-      const baseRim = getDirectionalRim(2, 2, false);
+      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
       if (baseRim) {
         background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
       }
     } else if (success) {
       border = `1px solid ${SEMANTICS.SUCCESS.border}`;
-      const baseRim = getDirectionalRim(2, 2, false);
+      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
       if (baseRim) {
         background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
       }
     }
   }
 
+  // WS-2 Container style: flex, items-center, gap 8px (SPACING[2]), padding 12px (SPACING[3]), disabled opacity 0.5
   const fieldWrapperStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
-    minHeight: '44px', // mobile touch target compliant
-    padding: '0 14px',
+    padding: `${SPACING[3]}px`, // 12px
+    minHeight: '44px',
     borderRadius: `${RADIUS.control}px`, // 10px
     boxSizing: 'border-box',
     width: '100%',
@@ -127,18 +205,19 @@ export function Input({
     background,
     border,
     ...focusRing,
-    opacity: limStyle.style.opacity,
+    opacity: disabled ? 0.5 : limStyle.style.opacity,
     cursor: disabled ? 'not-allowed' : 'text',
     boxShadow: limStyle.style.boxShadow,
   };
 
+  // WS-2 Inner input element style: flex: 1, border: none, background: transparent, padding: 0
   const inputElementStyle: CSSProperties = {
     flex: 1,
     background: 'transparent',
     border: 'none',
     outline: 'none',
-    color: getTextStyle('primary', 2).color,
-    fontSize: `${TYPOGRAPHY[3].fs}px`, // 15px
+    color: getTextStyle('primary', surfaceLevel).color,
+    fontSize: `${TYPOGRAPHY[3].fs}px`, // 16px
     lineHeight: TYPOGRAPHY[3].lh,
     fontFamily: 'inherit',
     width: '100%',
@@ -151,7 +230,7 @@ export function Input({
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
-    color: getTextStyle('secondary', 2).color,
+    color: getTextStyle('secondary', surfaceLevel).color,
     marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
   };
@@ -160,27 +239,212 @@ export function Input({
     fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
     lineHeight: TYPOGRAPHY[1].lh,
     letterSpacing: TYPOGRAPHY[1].ls,
-    marginTop: `${SPACING[1]}px`, // 4px
     color: error
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('tertiary', 2).color,
-  };
-
-  const adornmentStyle: CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: getTextStyle('tertiary', 2).color,
-    flexShrink: 0,
+      : getTextStyle('tertiary', surfaceLevel).color,
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Tab') {
       setIsKeyboardFocused(true);
     }
+    onKeyDown?.(e);
   };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (value === undefined) {
+      setInternalVal(e.target.value);
+    }
+    onChange?.(e);
+  };
+
+  // Toggle Password Action (WS-1)
+  const toggleIconColor = isToggleHovered
+    ? getTextStyle('secondary', surfaceLevel).color
+    : getTextStyle('tertiary', surfaceLevel).color;
+
+  const toggleButtonStyle: CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'transparent',
+    border: 'none',
+    outline: 'none',
+    boxShadow: 'none',
+    padding: 0,
+    margin: 0,
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    color: toggleIconColor,
+    flexShrink: 0,
+    transition: reducedMotion
+      ? 'none'
+      : LiminalMotionEngine.getTransition('color', 'fast'),
+  };
+
+  const handleToggleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!disabled) {
+      setShowPassword((prev) => !prev);
+    }
+  };
+
+  const passwordToggleElement = shouldEnableToggle ? (
+    <button
+      type="button"
+      tabIndex={-1}
+      aria-label="Toggle password visibility"
+      disabled={disabled}
+      onClick={handleToggleClick}
+      onMouseEnter={() => setIsToggleHovered(true)}
+      onMouseLeave={() => setIsToggleHovered(false)}
+      style={toggleButtonStyle}
+    >
+      <LiminalIcon
+        icon={showPassword ? EyeSlash : Eye}
+        size="sm"
+        weight="light"
+      />
+    </button>
+  ) : null;
+
+  // Clear Action (WS-4)
+  const clearIconColor = isClearHovered
+    ? getTextStyle('secondary', surfaceLevel).color
+    : getTextStyle('tertiary', surfaceLevel).color;
+
+  const clearButtonStyle: CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'transparent',
+    border: 'none',
+    outline: 'none',
+    boxShadow: 'none',
+    padding: 0,
+    margin: 0,
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    color: clearIconColor,
+    flexShrink: 0,
+    transition: reducedMotion
+      ? 'none'
+      : LiminalMotionEngine.getTransition('color', 'fast'),
+  };
+
+  const handleClearClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (disabled) return;
+
+    if (value === undefined) {
+      setInternalVal('');
+    }
+
+    if (localInputRef.current) {
+      localInputRef.current.value = '';
+      const syntheticEvent = {
+        ...e,
+        target: localInputRef.current,
+        currentTarget: localInputRef.current,
+      } as unknown as ChangeEvent<HTMLInputElement>;
+      onChange?.(syntheticEvent);
+      localInputRef.current.focus();
+    }
+    onClear?.();
+  };
+
+  const clearButtonElement = isClearable ? (
+    <button
+      type="button"
+      tabIndex={-1}
+      aria-label="Clear input"
+      disabled={disabled}
+      onClick={handleClearClick}
+      onMouseEnter={() => setIsClearHovered(true)}
+      onMouseLeave={() => setIsClearHovered(false)}
+      style={clearButtonStyle}
+    >
+      <LiminalIcon
+        icon={X}
+        size="sm"
+        weight="light"
+      />
+    </button>
+  ) : null;
+
+  // Render Adornments (WS-2: Icon vs Text)
+  const renderAdornment = (node: ReactNode) => {
+    if (node === null || node === undefined || node === false) return null;
+
+    const tertiaryColor = getTextStyle('tertiary', surfaceLevel).color;
+
+    // Text prefix/suffix: 13px (TYPOGRAPHY[2].fs), color tertiary
+    if (typeof node === 'string' || typeof node === 'number') {
+      return (
+        <span
+          style={{
+            fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+            lineHeight: TYPOGRAPHY[2].lh,
+            color: tertiaryColor,
+            userSelect: 'none',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}
+        >
+          {node}
+        </span>
+      );
+    }
+
+    // Phosphor icon component passed directly as a type/function
+    if (typeof node === 'function') {
+      const IconComponent = node as any;
+      return (
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: tertiaryColor,
+            flexShrink: 0,
+          }}
+        >
+          <LiminalIcon icon={IconComponent} size="sm" weight="light" />
+        </span>
+      );
+    }
+
+    // ReactNode / JSX element
+    return (
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: tertiaryColor,
+          flexShrink: 0,
+        }}
+      >
+        {node}
+      </span>
+    );
+  };
+
+  // WS-3: Character Count calculations
+  const shouldRenderCount = showCount && maxLength !== undefined;
+  const isCountWarning = maxLength !== undefined && currentLength > maxLength * 0.9;
+  const isCountDanger = maxLength !== undefined && currentLength >= maxLength;
+  const countColor = isCountDanger
+    ? SEMANTICS.DANGER.text
+    : isCountWarning
+    ? SEMANTICS.WARNING.text
+    : getTextStyle('tertiary', surfaceLevel).color;
+
+  const helperId = id && (error || success || helperText) ? `${id}-helper` : undefined;
+  const countId = id && shouldRenderCount ? `${id}-count` : undefined;
+  const ariaDescribedBy = [helperId, countId].filter(Boolean).join(' ') || undefined;
 
   return (
     <div
@@ -207,10 +471,11 @@ export function Input({
           setIsKeyboardFocused(false);
         }}
       >
-        {leftElement && <span style={adornmentStyle}>{leftElement}</span>}
+        {renderAdornment(rawLeft)}
 
         <input
-          type={type}
+          ref={setInputRef}
+          type={effectiveType}
           id={id}
           name={name}
           value={value}
@@ -218,8 +483,18 @@ export function Input({
           placeholder={placeholder}
           disabled={disabled}
           required={required}
+          readOnly={readOnly}
+          autoFocus={autoFocus}
+          maxLength={maxLength}
           autoComplete={autoComplete}
-          onChange={onChange}
+          aria-describedby={ariaDescribedBy}
+          role={role}
+          aria-expanded={ariaExpanded}
+          aria-haspopup={ariaHasPopup}
+          aria-controls={ariaControls}
+          aria-activedescendant={ariaActiveDescendant}
+          aria-autocomplete={ariaAutocomplete}
+          onChange={handleChange}
           onKeyDown={handleKeyDown}
           onFocus={(e) => {
             if (!disabled) {
@@ -235,14 +510,50 @@ export function Input({
           style={inputElementStyle}
         />
 
-        {rightElement && <span style={adornmentStyle}>{rightElement}</span>}
+        {renderAdornment(rawRight)}
+        {clearButtonElement}
+        {passwordToggleElement}
       </div>
 
-      {(error || success || helperText) && (
-        <span style={helperStyle}>{error || success || helperText}</span>
+      {((error || success || helperText) || shouldRenderCount) && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: (error || success || helperText) ? 'space-between' : 'flex-end',
+            width: '100%',
+            marginTop: `${SPACING[1]}px`, // 4px
+            gap: `${SPACING[2]}px`,
+          }}
+        >
+          {(error || success || helperText) ? (
+            <span id={helperId} style={helperStyle}>
+              {error || success || helperText}
+            </span>
+          ) : (
+            <span />
+          )}
+
+          {shouldRenderCount && (
+            <div
+              id={countId}
+              style={{
+                fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+                lineHeight: TYPOGRAPHY[1].lh,
+                letterSpacing: TYPOGRAPHY[1].ls,
+                color: countColor,
+                fontFamily: 'monospace',
+                flexShrink: 0,
+                userSelect: 'none',
+              }}
+            >
+              {currentLength}/{maxLength}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
-}
+});
 
 export default Input;

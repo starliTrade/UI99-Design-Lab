@@ -10,22 +10,7 @@
  */
 
 import React, { forwardRef, type ComponentPropsWithRef, type ElementType, type ReactNode } from 'react';
-
-// ===== SLOT COMPONENT (Radix-style asChild) =====
-export interface SlotProps extends React.HTMLAttributes<HTMLElement> {
-  children?: ReactNode;
-}
-
-export const Slot = forwardRef<HTMLElement, SlotProps>(({ children, ...props }, ref) => {
-  if (React.isValidElement(children)) {
-    return React.cloneElement(children, {
-      ...mergeProps(props, children.props as any),
-      ref: ref || (children as any).ref,
-    });
-  }
-  return React.createElement(React.Fragment, null, children);
-});
-Slot.displayName = 'Slot';
+import { Slot, type SlotProps, composeEventHandlers } from './liminal-slot';
 
 // ===== UTILITY FUNCTIONS =====
 
@@ -43,22 +28,6 @@ export function composeStyles(
   ...styles: (React.CSSProperties | undefined | null)[]
 ): React.CSSProperties {
   return Object.assign({}, ...styles.filter(Boolean));
-}
-
-/**
- * Compose event handlers (call both internal + user handlers)
- */
-export function composeEventHandlers<E>(
-  internalHandler?: (event: E) => void,
-  userHandler?: (event: E) => void,
-  { checkForDefaultPrevented = true } = {}
-): (event: E) => void {
-  return (event: E) => {
-    internalHandler?.(event);
-    if (!checkForDefaultPrevented || !(event as any).defaultPrevented) {
-      userHandler?.(event);
-    }
-  };
 }
 
 /**
@@ -120,6 +89,7 @@ export function createLiminalComponent<P extends Record<string, any>>(
     const mergedProps = {
       ...defaultProps,
       ...restProps,
+      asChild,
       className: composeClassNames(className, `liminal-${displayName.toLowerCase()}`),
       style,
       'data-liminal-component': displayName.toLowerCase(),
@@ -127,7 +97,7 @@ export function createLiminalComponent<P extends Record<string, any>>(
 
     const element = render({ ...mergedProps, ref } as any);
 
-    if (asChild && React.isValidElement(element)) {
+    if (asChild && React.isValidElement(element) && (element.type as any) !== Slot) {
       return React.createElement(Slot, mergedProps, element);
     }
 

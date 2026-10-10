@@ -163,7 +163,7 @@ export function Toast({
             <div className="flex flex-col">
               {title && <span className="font-semibold text-white/90">{title}</span>}
               {description && (
-                <span style={{ color: getTextStyle('secondary', 4).color, fontSize: '11px', marginTop: '2px' }}>
+                <span style={{ color: getTextStyle('secondary', 4).color, fontSize: `${TYPOGRAPHY[1].fs}px`, marginTop: '2px' }}>
                   {description}
                 </span>
               )}

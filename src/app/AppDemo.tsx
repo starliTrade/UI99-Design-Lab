@@ -21,11 +21,11 @@ function NavigationToolbar() {
   const SPACING = LiminalLayoutEngine.SPACING;
 
   const routes: Array<{ route: Route; label: string; icon: React.ReactNode }> = [
-    { route: { name: 'dashboard' }, label: 'داشبورد مرکزی', icon: <LiminalIcon icon={SquaresFour} size="xs" weight="light" /> },
-    { route: { name: 'project', id: 'alpha' }, label: 'پروژه Alpha', icon: <LiminalIcon icon={GitBranch} size="xs" weight="light" /> },
-    { route: { name: 'login' }, label: 'ورود (Auth Gate)', icon: <LiminalIcon icon={Lock} size="xs" weight="light" /> },
-    { route: { name: 'loading' }, label: 'تست Loading (۳ ثانیه)', icon: <LiminalIcon icon={Hourglass} size="xs" weight="light" /> },
-    { route: { name: '404' }, label: 'تست ۴۰۴ Not Found', icon: <LiminalIcon icon={WarningOctagon} size="xs" weight="light" /> },
+    { route: { name: 'dashboard' }, label: 'Central Dashboard', icon: <LiminalIcon icon={SquaresFour} size="xs" weight="light" /> },
+    { route: { name: 'project', id: 'alpha' }, label: 'Project Alpha', icon: <LiminalIcon icon={GitBranch} size="xs" weight="light" /> },
+    { route: { name: 'login' }, label: 'Login (Auth Gate)', icon: <LiminalIcon icon={Lock} size="xs" weight="light" /> },
+    { route: { name: 'loading' }, label: 'Loading Test (3s)', icon: <LiminalIcon icon={Hourglass} size="xs" weight="light" /> },
+    { route: { name: '404' }, label: '404 Not Found Test', icon: <LiminalIcon icon={WarningOctagon} size="xs" weight="light" /> },
   ];
 
   return (

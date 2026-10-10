@@ -9,3 +9,5 @@ export * from './liminal-portal';
 export * from './liminal-positioning-engine';
 export * from './liminal-floating';
 export * from './liminal-icon-engine';
+export * from './liminal-variants';
+export * from './liminal-slot';

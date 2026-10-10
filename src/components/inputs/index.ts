@@ -1,5 +1,7 @@
 export * from './Input';
 export * from './Select';
+export * from './Combobox';
+export * from './MultiSelect';
 export * from './Textarea';
 export * from './Checkbox';
 export * from './Radio';

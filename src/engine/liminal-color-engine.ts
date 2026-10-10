@@ -45,7 +45,7 @@ export class LiminalColorEngine {
       subtle: 'rgba(52, 192, 139, 0.10)',
       border: 'rgba(52, 192, 139, 0.22)',
       text: '#6EE0B4',
-      solid: '#34C08B',
+      solid: 'var(--liminal-success, #34C08B)',
       onSolid: '#04140D',
     },
     WARNING: {
@@ -53,7 +53,7 @@ export class LiminalColorEngine {
       subtle: 'rgba(233, 180, 76, 0.10)',
       border: 'rgba(233, 180, 76, 0.22)',
       text: '#F2CE77',
-      solid: '#E9B44C',
+      solid: 'var(--liminal-warning, #E9B44C)',
       onSolid: '#1A1204',
     },
     DANGER: {
@@ -61,7 +61,7 @@ export class LiminalColorEngine {
       subtle: 'rgba(229, 99, 122, 0.10)',
       border: 'rgba(229, 99, 122, 0.22)',
       text: '#F091A2',
-      solid: '#E5637A',
+      solid: 'var(--liminal-danger, #E25555)',
       onSolid: '#1A060A',
     },
     INFO: {
@@ -69,7 +69,7 @@ export class LiminalColorEngine {
       subtle: 'rgba(90, 167, 232, 0.10)',
       border: 'rgba(90, 167, 232, 0.22)',
       text: '#8CC3F2',
-      solid: '#5AA7E8',
+      solid: 'var(--liminal-info, #4F8FEA)',
       onSolid: '#04101A',
     },
   };
@@ -90,13 +90,28 @@ export class LiminalColorEngine {
     { hue: 350, hex: '#E083AE', label: 'Rose' },
   ];
 
-  // 4. BRAND PRIMARY
+  // 4. BRAND PRIMARY (referencing CSS Variables with fallback)
   static readonly BRAND_PRIMARY = {
-    hex: '#E9ECF2',
+    hex: 'var(--liminal-brand, #E9ECF2)',
     name: 'Soft White',
-    onColor: '#060709',
+    onColor: 'var(--liminal-brand-on, #060709)',
     description: 'Monochrome identity. LOCKED. Swap-able to any extended hue if rebranded.',
   };
+
+  /**
+   * Helper function to retrieve ladder colors referencing CSS Variables
+   */
+  static getLadderColor(level: number): string {
+    const colors = [
+      'var(--liminal-s0, #060709)',
+      'var(--liminal-s1, #08090C)',
+      'var(--liminal-s2, #0A0B0F)',
+      'var(--liminal-s3, #0D0E12)',
+      'var(--liminal-s4, #101115)',
+      'var(--liminal-s5, #131418)',
+    ];
+    return colors[Math.min(Math.max(Math.round(level), 0), 5)] || 'var(--liminal-s2, #0A0B0F)';
+  }
 
   // 5. RAMP FORMULA
   static getHueFactor(H: number): number {
@@ -140,6 +155,8 @@ export class LiminalColorEngine {
       const ringColor = params.baseColor
         ? (params.baseColor.startsWith('#')
             ? `${params.baseColor}73`
+            : params.baseColor.startsWith('var(')
+            ? 'rgba(233, 236, 242, 0.45)'
             : params.baseColor.replace(/[\d.]+\)$/g, '0.45)'))
         : 'rgba(233, 236, 242, 0.45)';
       outline = `2px solid ${ringColor}`;
@@ -159,24 +176,29 @@ export class LiminalColorEngine {
   }
 
   static hexToRgb(hex: string): { r: number; g: number; b: number } {
-    const c = hex.replace('#', '');
+    let cleanHex = hex;
+    if (cleanHex.startsWith('var(')) {
+      const match = cleanHex.match(/,\s*(#[A-Fa-f0-9]{6}|#[A-Fa-f0-9]{3})/);
+      cleanHex = match ? match[1] : '#E9ECF2';
+    }
+    const c = cleanHex.replace('#', '');
     return {
-      r: parseInt(c.substring(0, 2), 16),
-      g: parseInt(c.substring(2, 4), 16),
-      b: parseInt(c.substring(4, 6), 16),
+      r: parseInt(c.substring(0, 2), 16) || 233,
+      g: parseInt(c.substring(2, 4), 16) || 236,
+      b: parseInt(c.substring(4, 6), 16) || 242,
     };
   }
 
   static readonly MIST_SPEC = {
     hero: {
-      ring: 0.18, ringBlur: 9,
+      ring: 0.18, ringBlur: 9, backdropBlur: 16,
       halo1: '0 0 44px', halo1a: 0.07,
       halo2: '0 0 90px', halo2a: 0.04,
       caustic: 0.06, whisper: 0.048, shade: 0.30,
       fill: 'linear-gradient(180deg, rgba(13,14,18,0.66) 0%, rgba(10,11,15,0.48) 100%)',
     },
     quiet: {
-      ring: 0.16, ringBlur: 10,
+      ring: 0.16, ringBlur: 10, backdropBlur: 16,
       halo1: '0 0 40px', halo1a: 0.06,
       halo2: '0 0 84px', halo2a: 0.035,
       caustic: 0.055, whisper: 0.044, shade: 0.28,
@@ -192,21 +214,22 @@ export class LiminalColorEngine {
    */
   static getMistStyle(hex: string, tier: MistTier = 'quiet') {
     const { r, g, b } = this.hexToRgb(hex);
-    const H = `${r}, ${g}, ${b}`;
     const S = this.MIST_SPEC[tier];
     return {
       background: S.fill,
+      backdropFilter: `blur(${S.backdropBlur}px)`,
+      WebkitBackdropFilter: `blur(${S.backdropBlur}px)`,
       boxShadow: [
-        `${S.halo1} rgba(${H}, ${S.halo1a})`,
-        `${S.halo2} rgba(${H}, ${S.halo2a})`,
-        `inset 0 -6px 22px -6px rgba(${H}, ${S.caustic})`,
-        `inset 0 1px 14px rgba(${H}, ${S.whisper})`,
+        `${S.halo1} rgba(${r}, ${g}, ${b}, ${S.halo1a})`,
+        `${S.halo2} rgba(${r}, ${g}, ${b}, ${S.halo2a})`,
+        `inset 0 -6px 22px -6px rgba(${r}, ${g}, ${b}, ${S.caustic})`,
+        `inset 0 1px 14px rgba(${r}, ${g}, ${b}, ${S.whisper})`,
         `inset 0 4px 14px -4px rgba(1, 2, 3, ${S.shade})`,
       ].join(', '),
       ringLayer: {
         position: 'absolute', inset: 0,
         borderRadius: 'inherit',
-        border: `1px solid rgba(${H}, ${S.ring})`,
+        border: `1px solid rgba(${r}, ${g}, ${b}, ${S.ring})`,
         filter: `blur(${S.ringBlur}px)`,
         pointerEvents: 'none',
       } as const,
@@ -215,4 +238,8 @@ export class LiminalColorEngine {
 }
 
 export type MistTier = 'hero' | 'quiet';
+
+export function getMistStyle(tier: MistTier = 'quiet') {
+  return LiminalColorEngine.getMistStyle(LiminalColorEngine.BRAND_PRIMARY.hex, tier);
+}
 

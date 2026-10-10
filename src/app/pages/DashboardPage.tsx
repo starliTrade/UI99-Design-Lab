@@ -47,44 +47,44 @@ export function DashboardPage() {
   const BRAND = LiminalColorEngine.BRAND_PRIMARY;
 
   const breadcrumbItems = [
-    { label: 'خانه', onClick: () => navigate({ name: 'dashboard' }) },
-    { label: 'داشبورد', active: true },
+    { label: 'Home', onClick: () => navigate({ name: 'dashboard' }) },
+    { label: 'Dashboard', active: true },
   ];
 
   const tableColumns: TableColumn[] = [
-    { key: 'name', title: 'عنوان پروژه', align: 'right' },
-    { key: 'tier', title: 'سطح امنیت', align: 'right' },
-    { key: 'progress', title: 'وضعیت پیشرفت', align: 'center' },
-    { key: 'status', title: 'وضعیت استقرار', align: 'left' },
+    { key: 'name', title: 'Project Title', align: 'right' },
+    { key: 'tier', title: 'Security Tier', align: 'right' },
+    { key: 'progress', title: 'Progress Status', align: 'center' },
+    { key: 'status', title: 'Deployment Status', align: 'left' },
   ];
 
   const tableData = [
     {
       id: 'proj-alpha',
-      name: 'بازطراحی کلاستر Alpha',
+      name: 'Alpha Cluster Redesign',
       tier: 'HSM Enclave Level 4',
-      progress: '۸۴٪',
+      progress: '84%',
       status: <Badge semantic="success">Nominal</Badge>,
     },
     {
       id: 'proj-beta',
-      name: 'مهاجرت دیتابیس توزیع‌شده',
+      name: 'Distributed Database Migration',
       tier: 'PostgreSQL Shard Cluster',
-      progress: '۶۲٪',
+      progress: '62%',
       status: <Badge semantic="info">Syncing</Badge>,
     },
     {
       id: 'proj-gamma',
-      name: 'بازرسی امنیتی پروتکل TLS 1.3',
+      name: 'TLS 1.3 Protocol Security Audit',
       tier: 'Zero-Trust Gateway',
-      progress: '۹۸٪',
+      progress: '98%',
       status: <Badge semantic="success">Verified</Badge>,
     },
     {
       id: 'proj-delta',
-      name: 'بهینه‌سازی لودسل‌های شبکه',
-      tier: 'Anycast Transit Transit',
-      progress: '۲۹٪',
+      name: 'Network Load Cell Optimization',
+      tier: 'Anycast Transit',
+      progress: '29%',
       status: <Badge semantic="warning">Elevated</Badge>,
     },
   ];
@@ -128,7 +128,7 @@ export function DashboardPage() {
               <div style={{ width: '180px' }} className="hidden sm:block">
                 <Input
                   type="search"
-                  placeholder="جستجو در شاردها..."
+                  placeholder="Search shards..."
                   prefix={<LiminalIcon icon={MagnifyingGlass} size="xs" weight="light" />}
                 />
               </div>
@@ -144,7 +144,7 @@ export function DashboardPage() {
                   display: 'flex',
                   alignItems: 'center',
                 }}
-                title="پروفایل کاربری"
+                title="User Profile"
               >
                 <Avatar name="Kaelen Vos" size="sm" hue={230} />
               </button>
@@ -152,41 +152,41 @@ export function DashboardPage() {
           }
         >
           <NavItem active onClick={() => navigate({ name: 'dashboard' })}>
-            داشبورد
+            Dashboard
           </NavItem>
           <NavItem onClick={() => navigate({ name: 'project', id: 'alpha' })}>
-            پروژه‌ها
+            Projects
           </NavItem>
           <NavItem onClick={() => navigate({ name: 'loading' })}>
-            تحلیل‌ها
+            Analytics
           </NavItem>
         </Topbar>
       }
       sidebar={
         <Sidebar width={220} sticky>
-          <Sidebar.Section label="منوی اصلی">
+          <Sidebar.Section label="Main Menu">
             <NavItem active onClick={() => navigate({ name: 'dashboard' })}>
               <LiminalIcon icon={SquaresFour} size="sm" weight="light" />
-              <span>داشبورد مرکزی</span>
+              <span>Central Dashboard</span>
             </NavItem>
             <NavItem onClick={() => navigate({ name: 'project', id: 'alpha' })}>
               <LiminalIcon icon={GitBranch} size="sm" weight="light" />
-              <span>پروژه‌ها</span>
+              <span>Projects</span>
             </NavItem>
             <NavItem onClick={() => navigate({ name: 'loading' })}>
               <LiminalIcon icon={ChartBar} size="sm" weight="light" />
-              <span>تحلیل داده</span>
+              <span>Data Analytics</span>
             </NavItem>
           </Sidebar.Section>
 
-          <Sidebar.Section label="مدیریت">
+          <Sidebar.Section label="Management">
             <NavItem onClick={() => navigate({ name: '404' })}>
               <LiminalIcon icon={Bell} size="sm" weight="light" />
-              <span>اعلانات سیستم</span>
+              <span>System Alerts</span>
             </NavItem>
             <NavItem onClick={() => navigate({ name: 'login' })}>
               <LiminalIcon icon={Gear} size="sm" weight="light" />
-              <span>تنظیمات هویت</span>
+              <span>Identity Settings</span>
             </NavItem>
           </Sidebar.Section>
         </Sidebar>
@@ -195,7 +195,7 @@ export function DashboardPage() {
         <Footer
           left={
             <span>
-              کنسول عملیاتی لیمینال v1.0 · تمام شاخص‌ها با زمان واقعی همگام هستند
+              Liminal Operations Console v1.0 · All metrics synced in real time
             </span>
           }
         >
@@ -209,7 +209,7 @@ export function DashboardPage() {
               fontSize: '12px',
             }}
           >
-            داشبورد
+            Dashboard
           </button>
           <button
             onClick={() => navigate({ name: 'project', id: 'alpha' })}
@@ -221,7 +221,7 @@ export function DashboardPage() {
               fontSize: '12px',
             }}
           >
-            پروژه Alpha
+            Project Alpha
           </button>
           <button
             onClick={() => navigate({ name: 'login' })}
@@ -233,7 +233,7 @@ export function DashboardPage() {
               fontSize: '12px',
             }}
           >
-            خروج از حساب
+            Sign Out
           </button>
         </Footer>
       }
@@ -241,8 +241,8 @@ export function DashboardPage() {
       {/* 1. Page Header */}
       <PageHeader
         breadcrumb={<Breadcrumb items={breadcrumbItems} />}
-        title="نمای کلی سیستم"
-        subtitle="شاخص‌های بلادرنگ و تله‌متری کلاسترهای ابری با تفکیک ادراکی"
+        title="System Overview"
+        subtitle="Real-time cloud cluster metrics and telemetry with perceptual separation"
         actions={
           /* The Single Allowed Hero Mist in the entire App */
           <Mist
@@ -252,50 +252,50 @@ export function DashboardPage() {
             onClick={() => navigate({ name: 'project', id: 'alpha' })}
           >
             <LiminalIcon icon={Plus} size="xs" weight="light" />
-            <span>پروژه جدید</span>
+            <span>New Project</span>
           </Mist>
         }
       />
 
       {/* 2. Key Metrics Section */}
       <PageSection
-        title="آمار کلیدی تله‌متری"
-        subtitle="عملکرد گره‌های فعال و منابع محاسباتی"
+        title="Key Telemetry Statistics"
+        subtitle="Active node performance and compute resources"
       >
         <Grid gap="md">
           <GridCol col={3} md={6} sm={12}>
             <Stat
-              label="تراکنش‌های امضاشده"
-              value="۱,۴۸۲,۹۰۰"
-              trend={{ direction: 'up', value: '+۱۴.۲٪', semantic: 'success' }}
-              subtitle="در مقایسه با دوره قبل"
+              label="Signed Transactions"
+              value="1,482,900"
+              trend={{ direction: 'up', value: '+14.2%', semantic: 'success' }}
+              subtitle="Compared to previous period"
             />
           </GridCol>
 
           <GridCol col={3} md={6} sm={12}>
             <Stat
-              label="کلاسترهای برخط"
-              value="۱۴۴ / ۱۴۴"
-              trend={{ direction: 'up', value: '۱۰۰٪', semantic: 'info' }}
-              subtitle="وضعیت پایداری بهینه"
+              label="Online Clusters"
+              value="144 / 144"
+              trend={{ direction: 'up', value: '100%', semantic: 'info' }}
+              subtitle="Optimal stability state"
             />
           </GridCol>
 
           <GridCol col={3} md={6} sm={12}>
             <Stat
-              label="نرخ تاخیر شبکه"
-              value="۲.۴ ms"
-              trend={{ direction: 'down', value: '-۱۸٪', semantic: 'success' }}
-              subtitle="ترافیک داخلی منطقه"
+              label="Network Latency Rate"
+              value="2.4 ms"
+              trend={{ direction: 'down', value: '-18%', semantic: 'success' }}
+              subtitle="Regional internal traffic"
             />
           </GridCol>
 
           <GridCol col={3} md={6} sm={12}>
             <Stat
-              label="مصرف حافظه Enclave"
-              value="۵۴.۲٪"
-              trend={{ direction: 'neutral', value: 'نرمال', semantic: 'info' }}
-              subtitle="فضای ذخیره‌سازی آزاد"
+              label="Enclave Memory Usage"
+              value="54.2%"
+              trend={{ direction: 'neutral', value: 'Normal', semantic: 'info' }}
+              subtitle="Free storage space"
             />
           </GridCol>
         </Grid>
@@ -303,8 +303,8 @@ export function DashboardPage() {
 
       {/* 3. Recent Projects Section */}
       <PageSection
-        title="پروژه‌های اخیر"
-        subtitle="فهرست مخازن و استقرارهای در حال اجرای زیرساخت"
+        title="Recent Projects"
+        subtitle="List of active infrastructure repositories and deployments"
         divider
         actions={
           <Button
@@ -312,7 +312,7 @@ export function DashboardPage() {
             variant="secondary"
             onClick={() => navigate({ name: 'project', id: 'alpha' })}
           >
-            <span>مشاهده جزئیات Alpha</span>
+            <span>View Alpha Details</span>
             <LiminalIcon icon={ArrowUpRight} size="xs" weight="light" className="mr-1" />
           </Button>
         }
@@ -341,8 +341,8 @@ export function DashboardPage() {
 
       {/* 4. Team & Progress Section */}
       <PageSection
-        title="تیم توسعه و وضعیت اسپرینت‌ها"
-        subtitle="تخصیص منابع انسانی و پیشرفت فازهای عملیاتی"
+        title="Development Team & Sprint Status"
+        subtitle="Human resource allocation and operational phase progress"
         divider
       >
         <Grid gap="lg">
@@ -352,10 +352,10 @@ export function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: getTextStyle('primary', 1).color }}>
-                      تیم معماری هسته لیمینال
+                      Liminal Core Architecture Team
                     </h4>
                     <p style={{ margin: 0, fontSize: '11px', color: getTextStyle('secondary', 1).color, marginTop: '2px' }}>
-                      ۵ مهندس ارشد فعال در این کلاستر
+                      5 active senior engineers in this cluster
                     </p>
                   </div>
 
@@ -373,19 +373,19 @@ export function DashboardPage() {
                     value={84}
                     semantic="success"
                     showLabel
-                    label="مهاجرت به معماری بدون شیمر (Zero-Shimmer)"
+                    label="Migration to Zero-Shimmer Architecture"
                   />
                   <Progress
                     value={68}
                     semantic="info"
                     showLabel
-                    label="همگام‌سازی شاخص‌های نردبان نوری S0..S5"
+                    label="S0..S5 Tonal Ladder Metrics Sync"
                   />
                   <Progress
                     value={42}
                     semantic="warning"
                     showLabel
-                    label="پیاده‌سازی تست‌های بارگذاری HSM"
+                    label="HSM Load Testing Implementation"
                   />
                 </div>
               </div>
@@ -396,43 +396,43 @@ export function DashboardPage() {
             <Card padding="md">
               <div className="space-y-3">
                 <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: getTextStyle('primary', 1).color }}>
-                  راهنمای سریع ناوبری
+                  Quick Navigation Guide
                 </h4>
 
                 <div className="space-y-2 text-xs">
                   <button
                     onClick={() => navigate({ name: 'project', id: 'alpha' })}
-                    className="w-full p-2 text-right rounded-md transition-all cursor-pointer flex items-center justify-between"
+                    className="w-full p-2 text-left rounded-md transition-all cursor-pointer flex items-center justify-between"
                     style={{
                       background: 'rgba(255, 255, 255, 0.03)',
                       color: getTextStyle('primary', 1).color,
                     }}
                   >
-                    <span>صفحه پروژه Alpha</span>
+                    <span>Project Alpha Page</span>
                     <LiminalIcon icon={ArrowUpRight} size="xs" weight="light" />
                   </button>
 
                   <button
                     onClick={() => navigate({ name: 'loading' })}
-                    className="w-full p-2 text-right rounded-md transition-all cursor-pointer flex items-center justify-between"
+                    className="w-full p-2 text-left rounded-md transition-all cursor-pointer flex items-center justify-between"
                     style={{
                       background: 'rgba(255, 255, 255, 0.03)',
                       color: getTextStyle('primary', 1).color,
                     }}
                   >
-                    <span>تست صفحه در حال بارگذاری</span>
+                    <span>Loading Page Test</span>
                     <LiminalIcon icon={ArrowUpRight} size="xs" weight="light" />
                   </button>
 
                   <button
                     onClick={() => navigate({ name: '404' })}
-                    className="w-full p-2 text-right rounded-md transition-all cursor-pointer flex items-center justify-between"
+                    className="w-full p-2 text-left rounded-md transition-all cursor-pointer flex items-center justify-between"
                     style={{
                       background: 'rgba(255, 255, 255, 0.03)',
                       color: getTextStyle('primary', 1).color,
                     }}
                   >
-                    <span>تست صفحه ۴۰۴</span>
+                    <span>404 Page Test</span>
                     <LiminalIcon icon={ArrowUpRight} size="xs" weight="light" />
                   </button>
                 </div>

@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { getLadderColor } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
+import { useReducedMotion } from '../../../engine/liminal-hooks';
 
 export interface AvatarProps {
   src?: string;
   name?: string;
   size?: 'sm' | 'md' | 'lg';
   hue?: number;
+  status?: 'online' | 'offline' | 'away' | 'busy';
   className?: string;
   style?: CSSProperties;
 }
@@ -36,19 +38,22 @@ export function Avatar({
   name,
   size = 'md',
   hue,
+  status,
   className = '',
   style: customStyle = {},
 }: AvatarProps) {
   const [imageError, setImageError] = useState<boolean>(false);
+  const reducedMotion = useReducedMotion();
 
-  const sizes: Record<'sm' | 'md' | 'lg', { px: number; fs: number }> = {
-    sm: { px: 24, fs: 10 },
-    md: { px: 32, fs: 12 },
-    lg: { px: 44, fs: 15 },
+  const sizes: Record<'sm' | 'md' | 'lg', { px: number; fs: number; dotPx: number }> = {
+    sm: { px: 24, fs: 10, dotPx: 7 },
+    md: { px: 32, fs: 12, dotPx: 9 },
+    lg: { px: 44, fs: 15, dotPx: 12 },
   };
 
-  const { px, fs } = sizes[size];
+  const { px, fs, dotPx } = sizes[size];
   const rimSideColor = getLadderColor(1.5); // #090A0D rimSide border
+  const canvasBorderColor = getLadderColor(0); // Canvas #060709 separator
 
   // Pick color from EXTENDED_SPECTRUM
   const spectrum = LiminalColorEngine.EXTENDED_SPECTRUM;
@@ -85,10 +90,22 @@ export function Avatar({
     boxSizing: 'border-box',
     background: hexToRgba(spectrumItem.hex, 0.15),
     color: spectrumItem.hex,
+    position: 'relative',
     ...customStyle,
   };
 
   const showImage = Boolean(src && !imageError);
+
+  // Status color mapping
+  const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  const statusColors = {
+    online: SEMANTICS.SUCCESS.solid,
+    offline: getLadderColor(3),
+    away: SEMANTICS.WARNING.solid,
+    busy: SEMANTICS.DANGER.solid,
+  };
+
+  const dotColor = status ? statusColors[status] : undefined;
 
   return (
     <span className={className} style={avatarStyle} title={name}>
@@ -108,8 +125,39 @@ export function Avatar({
       ) : (
         getInitials(name)
       )}
+
+      {status && dotColor && (
+        <>
+          {!reducedMotion && status === 'online' && (
+            <style>
+              {`
+                @keyframes avatar-pulse {
+                  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 192, 139, 0.7); }
+                  70% { transform: scale(1); box-shadow: 0 0 0 4px rgba(52, 192, 139, 0); }
+                  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 192, 139, 0); }
+                }
+              `}
+            </style>
+          )}
+          <span
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              width: `${dotPx}px`,
+              height: `${dotPx}px`,
+              borderRadius: '50%',
+              backgroundColor: dotColor,
+              border: `2px solid ${canvasBorderColor}`,
+              boxSizing: 'content-box',
+              animation: !reducedMotion && status === 'online' ? 'avatar-pulse 2s infinite ease-in-out' : 'none',
+            }}
+          />
+        </>
+      )}
     </span>
   );
 }
 
 export default Avatar;
+

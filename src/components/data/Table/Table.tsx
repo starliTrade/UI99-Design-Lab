@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import type { CSSProperties, MouseEvent } from 'react';
+import type { CSSProperties, ReactNode, MouseEvent } from 'react';
 import {
+  getLiminalStyle,
   getDirectionalRim,
   getLadderColor,
   getTextStyle,
 } from '../../../engine/spec-engine';
-import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { Checkbox } from '../../inputs/Checkbox';
 
 export interface TableColumn {
@@ -19,14 +20,15 @@ export interface TableColumn {
 }
 
 export interface TableProps {
-  columns: TableColumn[];
-  data: Array<Record<string, any>>;
+  columns?: TableColumn[];
+  data?: Array<Record<string, any>>;
   selectable?: boolean;
   keyExtractor?: (item: any) => string | number;
   onRowClick?: (row: Record<string, any>, index: number) => void;
   selectedRows?: number[];
   onSelectRow?: (index: number, selected: boolean) => void;
   onSelectAll?: (selected: boolean) => void;
+  children?: ReactNode;
   className?: string;
   style?: CSSProperties;
 }
@@ -40,18 +42,55 @@ export function Table({
   selectedRows = [],
   onSelectRow,
   onSelectAll,
+  children,
   className = '',
   style: customStyle = {},
 }: TableProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  const SPACING = LiminalLayoutEngine.SPACING;
-  const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
+  const surfaceLevel = 2;
+  const limStyle = getLiminalStyle({
+    surfaceLevel,
+    isContainer: true,
+  });
 
-  const rimSideColor = getLadderColor(1.5); // #090A0D half-step rimSide
+  const rimSideColor = getLadderColor(1.5);
   const selectedRim = getDirectionalRim(2, 1, false);
 
-  const allSelected = data.length > 0 && selectedRows.length === data.length;
+  const containerStyle: CSSProperties = {
+    width: '100%',
+    overflowX: 'auto',
+    boxSizing: 'border-box',
+    WebkitOverflowScrolling: 'touch',
+    borderRadius: '12px',
+    background: limStyle.style.background,
+    border: limStyle.style.border,
+    boxShadow: limStyle.style.boxShadow,
+    ...customStyle,
+  };
+
+  const tableStyle: CSSProperties = {
+    width: '100%',
+    borderCollapse: 'separate',
+    borderSpacing: 0,
+    textAlign: 'right',
+    fontFamily: 'inherit',
+    boxSizing: 'border-box',
+  };
+
+  // If composite children are passed directly (Phase 2 Data Table architecture)
+  if (!columns && !data) {
+    return (
+      <div className={className} style={containerStyle}>
+        <table role="table" style={tableStyle}>
+          {children}
+        </table>
+      </div>
+    );
+  }
+
+  // Legacy fallback renderer for existing pages using columns & data props
+  const allSelected = Boolean(data && data.length > 0 && selectedRows.length === data.length);
 
   const handleSelectAll = (checked: boolean) => {
     onSelectAll?.(checked);
@@ -63,28 +102,13 @@ export function Table({
     onSelectRow?.(index, !isCurrentlySelected);
   };
 
+  const SPACING = 12;
+  const TYPOGRAPHY_FS = 13;
+  const TYPOGRAPHY_LH = 1.5;
+
   return (
-    <div
-      className={className}
-      style={{
-        width: '100%',
-        overflowX: 'auto',
-        boxSizing: 'border-box',
-        WebkitOverflowScrolling: 'touch',
-        ...customStyle,
-      }}
-    >
-      <table
-        role="table"
-        style={{
-          width: '100%',
-          borderCollapse: 'separate',
-          borderSpacing: 0,
-          textAlign: 'right',
-          fontFamily: 'inherit',
-          boxSizing: 'border-box',
-        }}
-      >
+    <div className={className} style={containerStyle}>
+      <table role="table" style={tableStyle}>
         <thead>
           <tr role="row">
             {selectable && (
@@ -92,7 +116,7 @@ export function Table({
                 scope="col"
                 style={{
                   width: '44px',
-                  padding: `${SPACING[3]}px ${SPACING[3]}px`,
+                  padding: `${SPACING}px ${SPACING}px`,
                   borderBottom: `1px solid ${rimSideColor}`,
                   textAlign: 'center',
                 }}
@@ -105,15 +129,14 @@ export function Table({
               </th>
             )}
 
-            {columns.map((col) => (
+            {columns?.map((col) => (
               <th
                 key={col.key}
                 scope="col"
                 style={{
                   width: col.width,
-                  padding: `${SPACING[3]}px ${SPACING[4]}px`,
-                  fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
-                  lineHeight: TYPOGRAPHY[1].lh,
+                  padding: `${SPACING}px ${LiminalLayoutEngine.SPACING[4]}px`,
+                  fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[1].fs}px`,
                   letterSpacing: '+0.06em',
                   textTransform: 'uppercase',
                   fontWeight: 500,
@@ -131,7 +154,7 @@ export function Table({
         </thead>
 
         <tbody>
-          {data.map((row, index) => {
+          {data?.map((row, index) => {
             const isSelected = selectedRows.includes(index);
             const isHovered = hoveredIndex === index;
 
@@ -139,7 +162,7 @@ export function Table({
             if (isSelected) {
               rowBg = selectedRim ? selectedRim.cssBackground : getLadderColor(2);
             } else if (isHovered) {
-              rowBg = rimSideColor; // S1.5 half-step #090A0D
+              rowBg = rimSideColor;
             }
 
             return (
@@ -160,7 +183,7 @@ export function Table({
                 {selectable && (
                   <td
                     style={{
-                      padding: `${SPACING[3]}px ${SPACING[3]}px`,
+                      padding: `${SPACING}px ${SPACING}px`,
                       borderBottom: `1px solid ${rimSideColor}`,
                       textAlign: 'center',
                     }}
@@ -174,7 +197,7 @@ export function Table({
                   </td>
                 )}
 
-                {columns.map((col) => {
+                {columns?.map((col) => {
                   const isPrimaryCol = col.key === 'name' || col.key === 'title';
                   const cellValue = row[col.key];
 
@@ -182,9 +205,9 @@ export function Table({
                     <td
                       key={col.key}
                       style={{
-                        padding: `${SPACING[3]}px ${SPACING[4]}px`,
-                        fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
-                        lineHeight: TYPOGRAPHY[2].lh,
+                        padding: `${SPACING}px 16px`,
+                        fontSize: `${TYPOGRAPHY_FS}px`,
+                        lineHeight: TYPOGRAPHY_LH,
                         color: isPrimaryCol
                           ? getTextStyle('primary', 1).color
                           : getTextStyle('secondary', 1).color,
