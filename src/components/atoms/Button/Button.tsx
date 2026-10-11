@@ -24,6 +24,7 @@ import {
 } from '../../../engine/liminal-variants';
 import { Slot } from '../../../engine/liminal-slot';
 import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
@@ -66,6 +67,8 @@ export const buttonVariants = createVariants({
         border: 'none',
       },
       outline: {
+        // The host-anchored border is resolved at runtime (step 4); this is the
+        // static fallback for the variant definition itself.
         border: `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}`,
         color: getTextStyle('primary', 2).color,
       },
@@ -162,6 +165,7 @@ export const Button = createLiminalComponent<ButtonProps>(
     },
   },
   (props) => {
+    const host = useHostSurface();
     const {
       asChild = false,
       variant = 'secondary',
@@ -288,7 +292,7 @@ export const Button = createLiminalComponent<ButtonProps>(
     let staticStyle: CSSProperties = {};
 
     const control = (state: 'idle' | 'hover' | 'active') =>
-      resolveSurface({ role: 'control', state }).background;
+      resolveSurface({ role: 'control', state, on: host }).background;
 
     if (variant === 'primary') {
       const brand = LiminalColorEngine.BRAND_PRIMARY;
@@ -316,7 +320,7 @@ export const Button = createLiminalComponent<ButtonProps>(
       hoverBg = SURFACE_TINT.subtle;
       activeBg = SURFACE_TINT.medium;
       staticStyle = {
-        border: `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}`,
+        border: `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}`,
         color: getTextStyle('primary', 2).color,
       };
     } else if (variant === 'link') {

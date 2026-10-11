@@ -19,6 +19,7 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useRovingTabIndex } from '../../../engine/liminal-hooks';
 import { resolveSurface } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 interface TabsContextType {
   activeValue: string;
@@ -58,6 +59,7 @@ export function Tab({
   className = '',
   style: customStyle = {},
 }: TabProps) {
+  const host = useHostSurface();
   const context = useContext(TabsContext);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -90,7 +92,7 @@ export function Tab({
   let shadow = 'none';
 
   if (isActive) {
-    bg = activeRim ? activeRim.cssBackground : resolveSurface({ role: 'control', state: 'active' }).background;
+    bg = activeRim ? activeRim.cssBackground : resolveSurface({ role: 'control', state: 'active', on: host }).background;
     color = getTextStyle('primary', 1).color;
     shadow = '0 1px 3px rgba(1, 2, 3, 0.22)'; // Micro E1 elevation per LIMINAL spec
   }

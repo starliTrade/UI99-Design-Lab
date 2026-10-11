@@ -12,6 +12,7 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export interface CalendarProps {
   mode?: 'single' | 'range';
@@ -32,6 +33,7 @@ export function Calendar({
   className = '',
   style: customStyle = {},
 }: CalendarProps) {
+  const host = useHostSurface();
   const [internalMonth, setInternalMonth] = useState<Date>(controlledMonth || new Date());
   const reducedMotion = useReducedMotion();
   const SPACING = LiminalLayoutEngine.SPACING;
@@ -130,8 +132,8 @@ export function Calendar({
     width: '320px',
     padding: `${SPACING[3]}px`,
     borderRadius: `${RADIUS.card}px`,
-    background: resolveSurface({ role: 'control' }).background,
-    border: `1px solid ${resolveBorder({ role: 'control', kind: 'hairline' })}`,
+    background: resolveSurface({ role: 'control', on: host }).background,
+    border: `1px solid ${resolveBorder({ role: 'control', kind: 'hairline', on: host })}`,
     boxShadow: SHADOWS[3],
     boxSizing: 'border-box',
     userSelect: 'none',
@@ -231,13 +233,14 @@ interface DayCellProps {
 }
 
 function DayCell({ date, selected, today, onClick, reducedMotion }: DayCellProps) {
+  const host = useHostSurface();
   const [isHovered, setIsHovered] = useState(false);
 
   let bg = 'transparent';
   if (selected) {
-    bg = resolveSurface({ role: 'control', state: 'hover' }).background;
+    bg = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
   } else if (isHovered) {
-    bg = resolveSurface({ role: 'control' }).background;
+    bg = resolveSurface({ role: 'control', on: host }).background;
   }
 
   const cellStyle: CSSProperties = {
@@ -247,11 +250,11 @@ function DayCell({ date, selected, today, onClick, reducedMotion }: DayCellProps
     height: '36px',
     borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
     background: bg,
-    color: selected ? getTextStyle('primary', 4).color : today ? resolveBorder({ role: 'control', kind: 'edge' }) : getTextStyle('primary', 1).color,
+    color: selected ? getTextStyle('primary', 4).color : today ? resolveBorder({ role: 'control', kind: 'edge', on: host }) : getTextStyle('primary', 1).color,
     fontWeight: selected || today ? 600 : 400,
     fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
     cursor: 'pointer',
-    border: today && !selected ? `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}` : '1px solid transparent',
+    border: today && !selected ? `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}` : '1px solid transparent',
     transition: reducedMotion
       ? 'none'
       : `${LiminalMotionEngine.getTransition('background', 'fast')}, ${LiminalMotionEngine.getTransition('color', 'fast')}`,
