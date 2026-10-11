@@ -22,7 +22,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon, ICON_SIZES } from '../../../engine/liminal-icon-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
 import { Slot } from '../../../engine/liminal-slot';
-import { resolveSurface } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
 import {
   useDropdownMenuContext,
   RadioGroupContext,
@@ -251,7 +251,9 @@ export const DropdownMenuCheckboxItem = forwardRef<HTMLElement, DropdownMenuChec
     let textColor = getTextStyle('primary', 2).color;
 
     if (!disabled && (isHovered || isFocused)) {
-      background = isFocused ? getLadderColor(3) : getLadderColor(2.5);
+      background = isFocused
+          ? resolveSurface({ role: 'menu', state: 'hover' }).background
+          : 'transparent';
       textColor = getTextStyle('primary', 3).color;
     }
 
@@ -403,7 +405,9 @@ export const DropdownMenuRadioItem = forwardRef<HTMLElement, DropdownMenuRadioIt
     let textColor = getTextStyle('primary', 2).color;
 
     if (!disabled && (isHovered || isFocused)) {
-      background = isFocused ? getLadderColor(3) : getLadderColor(2.5);
+      background = isFocused
+          ? resolveSurface({ role: 'menu', state: 'hover' }).background
+          : 'transparent';
       textColor = getTextStyle('primary', 3).color;
     }
 
@@ -527,7 +531,7 @@ export const DropdownMenuSeparator = forwardRef<HTMLDivElement, DropdownMenuSepa
     const separatorStyle: CSSProperties = {
       height: '1px',
       margin: `${SPACING[1]}px 0`,
-      background: getLadderColor(2.5),
+      background: resolveSurface({ role: 'menu', state: 'hover' }).background,
       border: 'none',
       width: '100%',
       boxSizing: 'border-box',
@@ -625,10 +629,10 @@ export function DropdownMenuShortcut({
     fontSize: `${TYPOGRAPHY[1].fs}px`,
     fontFamily: 'monospace',
     color: getTextStyle('tertiary', 1).color,
-    background: getLadderColor(2),
+    background: resolveSurface({ role: 'menu' }).background,
     padding: `${SPACING[1]}px ${SPACING[2]}px`,
     borderRadius: `${RADIUS.chip}px`,
-    border: `1px solid ${getLadderColor(3)}`,
+    border: `1px solid ${resolveBorder({ role: 'menu', kind: 'edge' })}`,
     marginLeft: 'auto',
     letterSpacing: '0.05em',
     lineHeight: 1,

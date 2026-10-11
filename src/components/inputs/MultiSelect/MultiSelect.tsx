@@ -17,6 +17,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { LiminalPortal } from '../../../engine/liminal-portal';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveSurface } from '../../../engine/liminal-surface';
 import { Badge } from '../../atoms/Badge';
 
 export interface MultiSelectOption {
@@ -652,10 +653,10 @@ export function MultiSelect({
                 let optColor = getTextStyle('secondary', 3).color;
 
                 if (isSelected) {
-                  optBg = getLadderColor(4);
+                  optBg = resolveSurface({ role: 'menu', state: 'hover' }).background;
                   optColor = getTextStyle('primary', 3).color;
                 } else if (isHighlighted) {
-                  optBg = getLadderColor(3.5);
+                  optBg = resolveSurface({ role: 'menu' }).background;
                   optColor = getTextStyle('primary', 3).color;
                 }
 

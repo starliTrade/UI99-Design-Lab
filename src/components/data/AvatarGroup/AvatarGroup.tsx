@@ -1,6 +1,7 @@
 import React, { Children, cloneElement, isValidElement } from 'react';
 import type { CSSProperties, ReactNode, ReactElement } from 'react';
 import { getLadderColor, getTextStyle } from '../../../engine/spec-engine';
+import { resolveSurface } from '../../../engine/liminal-surface';
 
 export interface AvatarGroupProps {
   children: ReactNode;
@@ -24,7 +25,7 @@ export function AvatarGroup({
   const visibleChildren = showOverflow ? allChildren.slice(0, max) : allChildren;
   const overflowCount = total - (max ?? total);
 
-  const canvasBorderColor = getLadderColor(0); // Canvas #060709 separator
+  const canvasBorderColor = resolveSurface({ role: 'canvas' }).background;
 
   const sizes: Record<'sm' | 'md' | 'lg', { px: number; fs: number; overlap: number }> = {
     sm: { px: 24, fs: 10, overlap: -6 },
@@ -46,7 +47,7 @@ export function AvatarGroup({
     width: `${px}px`,
     height: `${px}px`,
     borderRadius: '50%',
-    background: getLadderColor(3), // Surface 3 #0d0e11
+    background: resolveSurface({ role: 'control' }).background,
     color: getTextStyle('secondary', 3).color,
     border: `2px solid ${canvasBorderColor}`,
     display: 'inline-flex',

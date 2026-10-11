@@ -1,6 +1,7 @@
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { getLadderColor } from '../../../engine/spec-engine';
+import { resolveBorder } from '../../../engine/liminal-surface';
 
 export interface TableHeaderProps {
   children: ReactNode;
@@ -13,7 +14,8 @@ export function TableHeader({
   className = '',
   style: customStyle = {},
 }: TableHeaderProps) {
-  const rimSideColor = getLadderColor(1.5);
+  // A row separator: a seam inside the work surface.
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
 
   const headerStyle: CSSProperties = {
     borderBottom: `1px solid ${rimSideColor}`,

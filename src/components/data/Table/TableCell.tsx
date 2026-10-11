@@ -2,6 +2,7 @@ import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { getLadderColor, getTextStyle } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { resolveBorder } from '../../../engine/liminal-surface';
 
 export interface TableCellProps {
   children?: ReactNode;
@@ -22,7 +23,8 @@ export function TableCell({
 }: TableCellProps) {
   const SPACING = LiminalLayoutEngine.SPACING;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
-  const rimSideColor = getLadderColor(1.5);
+  // A row separator: a seam inside the work surface.
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
 
   const tdStyle: CSSProperties = {
     padding: `${SPACING[3]}px ${SPACING[4]}px`,

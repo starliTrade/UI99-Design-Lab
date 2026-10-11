@@ -11,6 +11,7 @@ import {
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
 
 export interface CalendarProps {
   mode?: 'single' | 'range';
@@ -129,8 +130,8 @@ export function Calendar({
     width: '320px',
     padding: `${SPACING[3]}px`,
     borderRadius: `${RADIUS.card}px`,
-    background: getLadderColor(1),
-    border: `1px solid ${getLadderColor(2)}`,
+    background: resolveSurface({ role: 'control' }).background,
+    border: `1px solid ${resolveBorder({ role: 'control', kind: 'hairline' })}`,
     boxShadow: SHADOWS[3],
     boxSizing: 'border-box',
     userSelect: 'none',
@@ -234,9 +235,9 @@ function DayCell({ date, selected, today, onClick, reducedMotion }: DayCellProps
 
   let bg = 'transparent';
   if (selected) {
-    bg = getLadderColor(4);
+    bg = resolveSurface({ role: 'control', state: 'hover' }).background;
   } else if (isHovered) {
-    bg = getLadderColor(2.5);
+    bg = resolveSurface({ role: 'control' }).background;
   }
 
   const cellStyle: CSSProperties = {
@@ -246,11 +247,11 @@ function DayCell({ date, selected, today, onClick, reducedMotion }: DayCellProps
     height: '36px',
     borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
     background: bg,
-    color: selected ? getTextStyle('primary', 4).color : today ? getLadderColor(5) : getTextStyle('primary', 1).color,
+    color: selected ? getTextStyle('primary', 4).color : today ? resolveBorder({ role: 'control', kind: 'edge' }) : getTextStyle('primary', 1).color,
     fontWeight: selected || today ? 600 : 400,
     fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
     cursor: 'pointer',
-    border: today && !selected ? `1px solid ${getLadderColor(3)}` : '1px solid transparent',
+    border: today && !selected ? `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}` : '1px solid transparent',
     transition: reducedMotion
       ? 'none'
       : `${LiminalMotionEngine.getTransition('background', 'fast')}, ${LiminalMotionEngine.getTransition('color', 'fast')}`,

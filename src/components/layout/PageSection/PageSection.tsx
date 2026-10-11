@@ -2,6 +2,7 @@ import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { getLadderColor, getTextStyle } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { resolveBorder } from '../../../engine/liminal-surface';
 
 export interface PageSectionProps {
   title?: string;
@@ -26,7 +27,7 @@ export function PageSection({
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
   // rimSide half-step S1.5 (#090A0D) for top divider
-  const rimSideColor = getLadderColor(1.5);
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
 
   const wrapperStyle: CSSProperties = {
     display: 'flex',

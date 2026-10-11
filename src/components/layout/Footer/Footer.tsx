@@ -2,6 +2,7 @@ import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { getLadderColor, getTextStyle } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { resolveBorder } from '../../../engine/liminal-surface';
 
 export interface FooterProps {
   left?: ReactNode;
@@ -19,7 +20,8 @@ export function Footer({
   const SPACING = LiminalLayoutEngine.SPACING;
 
   // rimSide half-step S1.5 (#090A0D) for top border (harmonious with Divider)
-  const borderTopColor = getLadderColor(1.5);
+  // The footer is chrome: its top edge separates it from the work surface.
+  const borderTopColor = resolveBorder({ role: 'chrome', kind: 'hairline' });
 
   const footerStyle: CSSProperties = {
     marginTop: `${SPACING[8]}px`, // 64px

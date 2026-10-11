@@ -8,6 +8,7 @@ import { getLiminalStyle, getTextStyle, getLadderColor } from '../../../engine/s
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveSurface } from '../../../engine/liminal-surface';
 
 export interface ActiveFilter {
   id: string;
@@ -110,7 +111,7 @@ function RemoveFilterButton({ label, onClick, reducedMotion }: RemoveFilterButto
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: isHovered ? getLadderColor(2.5) : 'transparent',
+    background: isHovered ? resolveSurface({ role: 'control', state: 'hover' }).background : 'transparent',
     border: 'none',
     borderRadius: '50%',
     width: `${LiminalLayoutEngine.SPACING[4]}px`,

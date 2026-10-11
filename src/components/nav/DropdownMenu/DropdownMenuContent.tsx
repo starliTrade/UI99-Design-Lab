@@ -23,6 +23,7 @@ import {
   useReducedMotion,
 } from '../../../engine/liminal-hooks';
 import { Slot } from '../../../engine/liminal-slot';
+import { resolveBorder } from '../../../engine/liminal-surface';
 import { useDropdownMenuContext } from './DropdownMenu';
 
 export interface DropdownMenuContentProps extends HTMLAttributes<HTMLDivElement> {
@@ -122,7 +123,7 @@ export const DropdownMenuContent = forwardRef<HTMLDivElement, DropdownMenuConten
       boxShadow: `${SHADOWS[2]}, ${mist.boxShadow}`,
       borderRadius: `${RADIUS.control}px`,
       padding: `${SPACING[1]}px`,
-      border: rim ? '1px solid transparent' : `1px solid ${getLadderColor(2.5)}`,
+      border: rim ? '1px solid transparent' : `1px solid ${resolveBorder({ role: 'menu', kind: 'hairline' })}`,
       outline: 'none',
       boxSizing: 'border-box',
       display: 'flex',

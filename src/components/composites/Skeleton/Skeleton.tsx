@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { getLadderColor } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveSurface } from '../../../engine/liminal-surface';
 
 export interface SkeletonProps {
   variant?: 'text' | 'title' | 'circle' | 'card' | 'custom';
@@ -27,8 +28,8 @@ export function Skeleton({
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
 
-  const s2Color = getLadderColor(2); // Surface 2 #0a0b10
-  const s25Color = getLadderColor(2.5); // Half-step S2.5 #0b0d11
+  const s2Color = resolveSurface({ role: 'work' }).background;
+  const s25Color = resolveSurface({ role: 'work', state: 'hover' }).background;
 
   // Dimensions by variant
   let defWidth: string | number = '100%';

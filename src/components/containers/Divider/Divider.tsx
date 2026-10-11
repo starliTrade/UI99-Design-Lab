@@ -2,6 +2,7 @@ import React from 'react';
 import type { CSSProperties } from 'react';
 import { getLadderColor } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { resolveBorder } from '../../../engine/liminal-surface';
 
 export interface DividerProps {
   orientation?: 'horizontal' | 'vertical';
@@ -19,7 +20,8 @@ export function Divider({
   const SPACING = LiminalLayoutEngine.SPACING;
 
   // Exact half-step S1.5 (#090A0D = canonical rimSide) for optical continuity
-  const dividerColor = getLadderColor(1.5);
+  // A divider is a seam inside the work surface, not a decorative line.
+  const dividerColor = resolveBorder({ role: 'work', kind: 'hairline' });
 
   const spacingValues: Record<'sm' | 'md' | 'lg', number> = {
     sm: SPACING[2], // 8px

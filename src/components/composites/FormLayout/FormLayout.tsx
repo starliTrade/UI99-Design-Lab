@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode, FormEvent } from 'react';
 import { getLadderColor, getTextStyle } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
+import { resolveBorder } from '../../../engine/liminal-surface';
 
 export interface FormLayoutProps {
   children: ReactNode;
@@ -159,7 +160,7 @@ export function FormActions({
   style: customStyle = {},
 }: FormActionsProps) {
   const SPACING = LiminalLayoutEngine.SPACING;
-  const rimSideColor = getLadderColor(1.5); // S1.5 border
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' }); // S1.5 border
 
   return (
     <div
@@ -187,7 +188,7 @@ export function FormLayout({
   className = '',
   style: customStyle = {},
 }: FormLayoutProps) {
-  const rimSideColor = getLadderColor(1.5);
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
 
   return (
     <form

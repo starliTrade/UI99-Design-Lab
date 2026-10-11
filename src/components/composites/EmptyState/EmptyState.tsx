@@ -8,6 +8,7 @@ import {
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { Tray } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
+import { resolveInset } from '../../../engine/liminal-surface';
 
 export interface EmptyStateProps {
   icon?: ReactNode;
@@ -53,7 +54,7 @@ export function EmptyState({
     alignItems: 'center',
     justifyContent: 'center',
     border: '1px solid transparent',
-    background: wellRim ? wellRim.cssBackground : getLadderColor(1.5),
+    background: wellRim ? wellRim.cssBackground : resolveInset({ role: 'work' }),
     color: getTextStyle('tertiary', 1).color,
     boxShadow: 'none',
     flexShrink: 0,
