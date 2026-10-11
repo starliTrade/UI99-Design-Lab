@@ -7,6 +7,7 @@ import {
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { resolveSurface } from '../../../engine/liminal-surface';
 
 export interface ProgressProps {
   value: number;
@@ -70,7 +71,7 @@ export function Progress({
     width: '100%',
     height: `${trackHeight}px`,
     borderRadius: `${trackHeight / 2}px`,
-    background: getLadderColor(3), // Surface 3 #0d0e11
+    background: resolveSurface({ role: 'control' }).background,
     overflow: 'hidden',
     position: 'relative',
     boxSizing: 'border-box',

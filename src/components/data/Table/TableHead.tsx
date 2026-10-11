@@ -6,6 +6,7 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveBorder } from '../../../engine/liminal-surface';
 
 export interface TableHeadProps {
   children?: ReactNode;
@@ -31,7 +32,8 @@ export function TableHead({
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
-  const rimSideColor = getLadderColor(1.5);
+  // A row separator: a seam inside the work surface.
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
 
   const isSortable = typeof onSort === 'function';
 

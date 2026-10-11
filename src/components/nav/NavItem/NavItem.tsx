@@ -10,6 +10,7 @@ import {
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { resolveSurface } from '../../../engine/liminal-surface';
 
 export interface NavItemProps {
   children: ReactNode;
@@ -46,10 +47,10 @@ export function NavItem({
   let color = getTextStyle('tertiary', 2).color;
 
   if (active) {
-    bg = activeRim ? activeRim.cssBackground : getLadderColor(2);
+    bg = activeRim ? activeRim.cssBackground : resolveSurface({ role: 'chrome', state: 'hover' }).background;
     color = getTextStyle('primary', 2).color;
   } else if (isHovered && !disabled) {
-    bg = getLadderColor(2); // S2
+    bg = resolveSurface({ role: 'chrome' }).background;
     color = getTextStyle('secondary', 2).color;
   }
 

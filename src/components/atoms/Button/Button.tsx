@@ -23,6 +23,7 @@ import {
   type VariantProps,
 } from '../../../engine/liminal-variants';
 import { Slot } from '../../../engine/liminal-slot';
+import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
@@ -72,7 +73,7 @@ export const buttonVariants = createVariants({
       },
       outline: {
         background: 'transparent',
-        border: `1px solid ${LiminalColorEngine.getLadderColor(3)}`,
+        border: `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}`,
         color: getTextStyle('primary', 2).color,
       },
       link: {
@@ -322,9 +323,9 @@ export const Button = createLiminalComponent<ButtonProps>(
     } else if (variant === 'ghost') {
       let ghostBg = 'transparent';
       if (currentState === 'hover') {
-        ghostBg = getLadderColor(2.5);
+        ghostBg = resolveSurface({ role: 'control', state: 'hover' }).background;
       } else if (currentState === 'active') {
-        ghostBg = getLadderColor(1.5);
+        ghostBg = resolveSurface({ role: 'control', state: 'active' }).background;
       }
 
       computedStyle = LiminalComponentEngine.resolveInteractiveSurface({
@@ -354,13 +355,13 @@ export const Button = createLiminalComponent<ButtonProps>(
       };
     } else if (variant === 'outline') {
       let outlineBg = 'transparent';
-      let outlineBorder = `1px solid ${LiminalColorEngine.getLadderColor(3)}`;
+      let outlineBorder = `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}`;
       if (currentState === 'hover') {
         outlineBg = SURFACE_TINT.subtle;
-        outlineBorder = `1px solid ${LiminalColorEngine.getLadderColor(4)}`;
+        outlineBorder = `1px solid ${resolveBorder({ role: 'control', kind: 'edge', state: 'hover' })}`;
       } else if (currentState === 'active') {
         outlineBg = SURFACE_TINT.medium;
-        outlineBorder = `1px solid ${LiminalColorEngine.getLadderColor(5)}`;
+        outlineBorder = `1px solid ${resolveBorder({ role: 'control', kind: 'edge', state: 'active' })}`;
       }
 
       const focusRing = LiminalComponentEngine.getFocusRing(currentState === 'focus' && isKeyboardFocused);

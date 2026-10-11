@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { getLadderColor } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveBorder, resolveSurface } from '../../../engine/liminal-surface';
 
 export interface AvatarProps {
   src?: string;
@@ -52,8 +53,8 @@ export function Avatar({
   };
 
   const { px, fs, dotPx } = sizes[size];
-  const rimSideColor = getLadderColor(1.5); // #090A0D rimSide border
-  const canvasBorderColor = getLadderColor(0); // Canvas #060709 separator
+  const rimSideColor = resolveBorder({ role: 'control', kind: 'hairline' });
+  const canvasBorderColor = resolveSurface({ role: 'canvas' }).background;
 
   // Pick color from EXTENDED_SPECTRUM
   const spectrum = LiminalColorEngine.EXTENDED_SPECTRUM;
@@ -100,7 +101,7 @@ export function Avatar({
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
   const statusColors = {
     online: SEMANTICS.SUCCESS.solid,
-    offline: getLadderColor(3),
+    offline: resolveSurface({ role: 'control' }).background,
     away: SEMANTICS.WARNING.solid,
     busy: SEMANTICS.DANGER.solid,
   };

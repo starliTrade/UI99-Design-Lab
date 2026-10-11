@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode, MouseEvent } from 'react';
 import { getLadderColor, getDirectionalRim } from '../../../engine/spec-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveBorder, resolveSurface } from '../../../engine/liminal-surface';
 
 export interface TableRowProps {
   children: ReactNode;
@@ -23,14 +24,15 @@ export function TableRow({
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const reducedMotion = useReducedMotion();
 
-  const rimSideColor = getLadderColor(1.5);
+  // A row separator: a seam inside the work surface.
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
   const selectedRim = getDirectionalRim(2, 1, false);
 
   let rowBg = 'transparent';
   if (isSelected) {
-    rowBg = selectedRim ? selectedRim.cssBackground : getLadderColor(3);
+    rowBg = selectedRim ? selectedRim.cssBackground : resolveSurface({ role: 'work', state: 'hover' }).background;
   } else if (isHovered) {
-    rowBg = getLadderColor(2.5);
+    rowBg = resolveSurface({ role: 'work', state: 'hover' }).background;
   }
 
   const rowStyle: CSSProperties = {

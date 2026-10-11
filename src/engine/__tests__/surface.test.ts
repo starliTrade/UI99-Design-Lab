@@ -7,10 +7,11 @@ import {
   FLOATING_ROLES,
   STATE_SHIFT,
   roleDepthInQuanta,
+  resolveBorder,
   type SurfaceRole,
   type SurfaceState,
 } from '../liminal-surface';
-import { LADDER, PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR } from '../liminal-ladder';
+import { LADDER, HALF, PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR } from '../liminal-ladder';
 import { contrastRatioHex, oklchLightness } from '../liminal-color-math';
 
 const ROLES = Object.keys(ROLE_LEVEL) as SurfaceRole[];
@@ -186,6 +187,59 @@ describe('surface decision engine — the measured depth', () => {
         quanta,
         `${ordered[i - 1]} → ${ordered[i]} is only ${quanta.toFixed(2)}q`,
       ).toBeGreaterThanOrEqual(1.0);
+    }
+  });
+});
+
+describe('surface decision engine — the border rule', () => {
+  it('makes a hairline a half-step above its surface', () => {
+    const surface = resolveSurface({ role: 'work' });
+    const hairline = resolveBorder({ role: 'work', kind: 'hairline' });
+    const step = oklchLightness(hairline) - oklchLightness(surface.background);
+    const quanta = step / PERCEPTUAL_QUANTUM;
+    expect(quanta, `hairline is ${quanta.toFixed(2)}q above the surface`).toBeLessThan(1);
+    expect(quanta).toBeGreaterThan(0);
+  });
+
+  it('makes an edge a full step above its surface', () => {
+    const surface = resolveSurface({ role: 'work' });
+    const edge = resolveBorder({ role: 'work', kind: 'edge' });
+    const step = oklchLightness(edge) - oklchLightness(surface.background);
+    const quanta = step / PERCEPTUAL_QUANTUM;
+    expect(quanta, `edge is ${quanta.toFixed(2)}q above the surface`).toBeGreaterThanOrEqual(1);
+  });
+
+  it('scales the border with the role — a divider on a popover is stronger than on the work surface', () => {
+    const onWork = resolveBorder({ role: 'work' });
+    const onPopover = resolveBorder({ role: 'popover' });
+    expect(oklchLightness(onPopover)).toBeGreaterThan(oklchLightness(onWork));
+  });
+
+  it('always resolves a border to a real ladder colour', () => {
+    // A border may be a full step (LADDER) or a half step (HALF) — never a value
+    // that does not exist, and never something off the scale.
+    const known = new Set<string>([...LADDER, ...HALF]);
+    for (const role of ROLES) {
+      for (const kind of ['hairline', 'edge'] as const) {
+        const c = resolveBorder({ role: role as SurfaceRole, kind, state: 'hover' });
+        expect(known, `${role}/${kind} resolved to ${c}`).toContain(c);
+      }
+    }
+  });
+
+  it('inverts the border at the ceiling, where there is no room above', () => {
+    const surface = resolveSurface({ role: 'toast' });
+    const hairline = resolveBorder({ role: 'toast' });
+    expect(hairline, 'a ceiling separator must not vanish').not.toBe(surface.background);
+    expect(oklchLightness(hairline)).toBeLessThan(oklchLightness(surface.background));
+  });
+
+  it('keeps a hairline visible against its own surface', () => {
+    // Below the quantum it is a seam; it must still be distinguishable at all.
+    for (const role of ROLES) {
+      const surface = resolveSurface({ role: role as SurfaceRole });
+      const hairline = resolveBorder({ role: role as SurfaceRole });
+      expect(hairline, `${role} hairline equals its surface`).not.toBe(surface.background);
     }
   });
 });

@@ -11,6 +11,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { LiminalPortal } from '../../../engine/liminal-portal';
 import { useFocusTrap, useEscapeKey, useScrollLock, useRovingTabIndex, useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
 import { Input } from '../../inputs/Input';
 
 export interface CommandPaletteItem {
@@ -118,13 +119,13 @@ export function CommandPalette({
     animation: reducedMotion ? 'none' : LiminalMotionEngine.scaleIn(0.96),
     outline: 'none',
     boxSizing: 'border-box',
-    border: `1px solid ${getLadderColor(3)}`,
+    border: `1px solid ${resolveBorder({ role: 'modal', kind: 'edge' })}`,
     ...customStyle,
   };
 
   const headerStyle: CSSProperties = {
     padding: `${SPACING[3]}px`,
-    borderBottom: `1px solid ${getLadderColor(2.5)}`,
+    borderBottom: `1px solid ${resolveBorder({ role: 'modal', kind: 'hairline' })}`,
   };
 
   const bodyStyle: CSSProperties = {
@@ -228,7 +229,7 @@ export function CommandPalette({
                             padding: `${SPACING[2]}px ${SPACING[3]}px`,
                             borderRadius: `${RADIUS.chip}px`,
                             cursor: 'pointer',
-                            background: isActive ? getLadderColor(3) : 'transparent',
+                            background: isActive ? resolveSurface({ role: 'menu', state: 'hover' }).background : 'transparent',
                             color: isActive ? getTextStyle('primary', 3).color : getTextStyle('primary', 1).color,
                             fontSize: `${TYPOGRAPHY[2].fs}px`,
                             fontWeight: isActive ? 500 : 400,
@@ -250,10 +251,10 @@ export function CommandPalette({
                                 fontSize: `${TYPOGRAPHY[1].fs}px`,
                                 fontFamily: 'monospace',
                                 color: getTextStyle('tertiary', 1).color,
-                                background: getLadderColor(2),
+                                background: resolveSurface({ role: 'menu' }).background,
                                 padding: `${SPACING[1]}px ${SPACING[2]}px`,
                                 borderRadius: `${RADIUS.chip}px`,
-                                border: `1px solid ${getLadderColor(3)}`,
+                                border: `1px solid ${resolveBorder({ role: 'modal', kind: 'edge' })}`,
                               }}
                             >
                               {item.shortcut}

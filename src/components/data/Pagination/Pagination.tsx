@@ -10,6 +10,7 @@ import {
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
 
 export interface PaginationProps {
   currentPage: number;
@@ -161,9 +162,9 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
 
   let bg = 'transparent';
   if (isCurrent) {
-    bg = getLadderColor(3);
+    bg = resolveSurface({ role: 'control' }).background;
   } else if (isHovered) {
-    bg = getLadderColor(2.5);
+    bg = resolveSurface({ role: 'control', state: 'hover' }).background;
   }
 
   const style: CSSProperties = {
@@ -175,7 +176,7 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
     padding: '0 8px',
     borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
     background: bg,
-    border: isCurrent ? `1px solid ${getLadderColor(4)}` : '1px solid transparent',
+    border: isCurrent ? `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}` : '1px solid transparent',
     color: isCurrent ? getTextStyle('primary', 1).color : getTextStyle('secondary', 1).color,
     fontWeight: isCurrent ? 600 : 400,
     fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,

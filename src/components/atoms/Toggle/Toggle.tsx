@@ -4,6 +4,7 @@ import { getDirectionalRim, getLadderColor, SURFACE_TINT } from '../../../engine
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { resolveSurface } from '../../../engine/liminal-surface';
 
 export interface ToggleProps {
   checked?: boolean;
@@ -61,7 +62,7 @@ export function Toggle({
       ? brand.hex
       : offRim
       ? offRim.cssBackground
-      : getLadderColor(3),
+      : resolveSurface({ role: 'control' }).background,
     outline: 'none',
     padding: 0,
     ...customStyle,

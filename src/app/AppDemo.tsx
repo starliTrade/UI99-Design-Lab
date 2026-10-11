@@ -15,6 +15,7 @@ import {
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../engine/liminal-icon-engine';
 import { getLadderColor } from '../engine/spec-engine';
+import { resolveSurface } from '../engine/liminal-surface';
 
 function NavigationToolbar() {
   const { current, navigate } = useNavigation();
@@ -32,7 +33,7 @@ function NavigationToolbar() {
   return (
     <div
       style={{
-        background: getLadderColor(1),
+        background: resolveSurface({ role: 'chrome' }).background,
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         padding: '10px 16px',
         display: 'flex',
@@ -103,7 +104,7 @@ export function AppDemo() {
         borderRadius: `${RADIUS.container}px`,
         overflow: 'hidden',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        background: getLadderColor(0),
+        background: resolveSurface({ role: 'canvas' }).background,
         boxSizing: 'border-box',
       }}
     >

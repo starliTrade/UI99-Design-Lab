@@ -2,6 +2,7 @@ import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { getLiminalStyle, getDirectionalRim, getLadderColor, getTextStyle, SURFACE_TINT } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { resolveSurface } from '../../../engine/liminal-surface';
 import { Divider } from '../Divider';
 
 export interface CardProps {
@@ -48,7 +49,7 @@ export function InsetWell({
   const concaveRim = getDirectionalRim(1, 2, true);
 
   const wellStyle: CSSProperties = {
-    background: concaveRim ? concaveRim.cssBackground : getLadderColor(0.5),
+    background: concaveRim ? concaveRim.cssBackground : resolveSurface({ role: 'work', state: 'active' }).background,
     border: concaveRim ? '1px solid transparent' : 'none',
     borderRadius: `${innerRadius}px`,
     padding: `${paddingVal}px`,

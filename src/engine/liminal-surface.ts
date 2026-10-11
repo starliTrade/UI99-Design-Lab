@@ -234,6 +234,69 @@ export function roleDepthInSteps(role: SurfaceRole): number {
 }
 
 /**
+ * BORDER RULE.
+ *
+ * A border is not a decoration — it is a separator, and how strong it should be
+ * depends on what it separates. Two kinds, both derived from the surface they
+ * sit on rather than chosen per component:
+ *
+ *   hairline — one HALF step above the surface. For separators inside a surface:
+ *              table row dividers, a topbar's bottom edge, a footer's top edge.
+ *              Deliberately below the perceptual quantum, so it reads as a seam
+ *              rather than as a line.
+ *
+ *   edge     — one FULL step above the surface. For the outline of a control
+ *              that must read as a distinct object: inputs, outline buttons,
+ *              calendar cells. Above the quantum, so it is reliably visible.
+ *
+ * Both are computed from the role's own level, so a divider on a popover is
+ * automatically stronger than one on the work surface — which is what the eye
+ * expects, and what 19 hand-chosen numbers could not express.
+ *
+ * EDGE CASE — the ceiling. The toast sits at S8, the top of the ladder, so
+ * there is no room above it. Rather than silently returning the surface colour
+ * (which would make the border invisible), the border inverts and goes one step
+ * BELOW: at the ceiling a separator is a shadow, not a highlight.
+ */
+export type BorderKind = 'hairline' | 'edge';
+
+export function resolveBorder(request: {
+  role: SurfaceRole;
+  kind?: BorderKind;
+  state?: SurfaceState;
+}): string {
+  const { role, kind = 'hairline', state = 'idle' } = request;
+  const base = ROLE_LEVEL[role] + STATE_SHIFT[state];
+  const offset = kind === 'hairline' ? 0.5 : 1;
+  const above = base + offset;
+  // At the ceiling there is no room above, so the border inverts and goes below.
+  const level = above > MAX_LEVEL ? Math.max(0, base - offset) : above;
+  return getLadderColor(level);
+}
+
+/**
+ * INSET WELL RULE.
+ *
+ * A well is the opposite of a raised surface: a region that reads as *below*
+ * its parent — an empty-state container, a concave pressed control, a code
+ * block. It sits one and a half steps BELOW the role it is cut into, which
+ * lands it between the canvas and chrome rather than inventing a value.
+ */
+export function resolveInset(request: { role: SurfaceRole }): string {
+  const base = ROLE_LEVEL[request.role];
+  return getLadderColor(Math.max(0, base - 1.5));
+}
+
+/** A 1px border declaration for the given role and kind. */
+export function resolveBorderStyle(request: {
+  role: SurfaceRole;
+  kind?: BorderKind;
+  state?: SurfaceState;
+}): CSSProperties {
+  return { border: `1px solid ${resolveBorder(request)}` };
+}
+
+/**
  * The depth a role sits at relative to the canvas, in perceptual quanta.
  * This is the number that matters: it says how many thresholds of separation
  * the user actually perceives. The work surface, for example, sits at ~2.5q.

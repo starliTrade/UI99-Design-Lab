@@ -75,6 +75,14 @@ export default tseslint.config(
           selector: 'Literal[value=/^cubic-bezier\\(/]',
           message: 'Raw easing curve. Use LiminalMotionEngine.EASING.',
         },
+        {
+          // A component must declare WHAT it is, not which ladder step it wants.
+          // Before this rule every component chose its own depth, which is how the
+          // toolbar ended up at S2 while the nav beneath it sat at S1.
+          selector: "CallExpression[callee.name='getLadderColor']",
+          message:
+            'Do not pick a ladder level by number. Declare a role: resolveSurface({ role, state }), resolveBorder({ role, kind }) or resolveInset({ role }).',
+        },
       ],
     },
   },

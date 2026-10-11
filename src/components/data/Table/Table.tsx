@@ -8,6 +8,7 @@ import {
 } from '../../../engine/spec-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { resolveBorder, resolveSurface } from '../../../engine/liminal-surface';
 import { Checkbox } from '../../inputs/Checkbox';
 
 export interface TableColumn {
@@ -54,7 +55,8 @@ export function Table({
     isContainer: true,
   });
 
-  const rimSideColor = getLadderColor(1.5);
+  // A row separator: a seam inside the work surface.
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
   const selectedRim = getDirectionalRim(2, 1, false);
 
   const containerStyle: CSSProperties = {
@@ -160,7 +162,7 @@ export function Table({
 
             let rowBg = 'transparent';
             if (isSelected) {
-              rowBg = selectedRim ? selectedRim.cssBackground : getLadderColor(2);
+              rowBg = selectedRim ? selectedRim.cssBackground : resolveSurface({ role: 'work', state: 'hover' }).background;
             } else if (isHovered) {
               rowBg = rimSideColor;
             }

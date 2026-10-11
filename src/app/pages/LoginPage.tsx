@@ -18,6 +18,7 @@ import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { Lock, Shield, ArrowRight, Stack, Key } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
+import { resolveInset } from '../../engine/liminal-surface';
 
 export function LoginPage() {
   const { navigate } = useNavigation();
@@ -149,7 +150,7 @@ export function LoginPage() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     border: '1px solid transparent',
-                    background: wellRim ? wellRim.cssBackground : getLadderColor(1.5),
+                    background: wellRim ? wellRim.cssBackground : resolveInset({ role: 'work' }),
                     color: getTextStyle('tertiary', 1).color,
                     marginBottom: `${SPACING[3]}px`,
                   }}

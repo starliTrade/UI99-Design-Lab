@@ -2,6 +2,7 @@ import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { getLadderColor, VEIL } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { resolveBorder } from '../../../engine/liminal-surface';
 
 export interface TopbarProps {
   logo?: ReactNode;
@@ -23,7 +24,8 @@ export function Topbar({
   const SPACING = LiminalLayoutEngine.SPACING;
 
   // rimSide half-step S1.5 (#090A0D) for bottom border (harmonious with Divider)
-  const borderBottomColor = getLadderColor(1.5);
+  // The topbar is chrome: its bottom edge separates it from the work surface.
+  const borderBottomColor = resolveBorder({ role: 'chrome', kind: 'hairline' });
 
   const topbarStyle: CSSProperties = {
     position: sticky ? 'sticky' : 'relative',
