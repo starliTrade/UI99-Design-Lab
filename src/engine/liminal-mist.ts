@@ -241,19 +241,23 @@ export function resolveMist(role: SurfaceRole, options: MistOptions = {}): MistS
  * carried by the icon and the text. Chromatic halos fight the liminal calm —
  * the same reason the brand itself is monochrome.
  */
-export function mistCssVars(role: SurfaceRole): Record<string, string> {
-  const m = resolveMist(role);
-  // Soft White #E9ECF2 — the brand. Kept as literal channels because the halo
-  // is composed into rgba() strings, which cannot read a CSS variable.
+export function mistCssVars(role: SurfaceRole, options: MistOptions = {}): Record<string, string> {
+  const m = resolveMist(role, options);
   const { r, g, b } = { r: 233, g: 236, b: 242 };
+  const light = m.light
+    .map((l) => `0 0 ${l.blur}px rgba(${r}, ${g}, ${b}, ${l.alpha.toFixed(4)})`)
+    .join(', ');
+  const edgeGradient = `linear-gradient(180deg, ${m.edgeStops
+    .map((st) => `rgba(${r}, ${g}, ${b}, ${st.alpha.toFixed(4)}) ${st.pos}%`)
+    .join(', ')})`;
   return {
     '--liminal-mist-blur': `${m.blur}px`,
     '--liminal-mist-fill': m.fillColor,
     '--liminal-mist-fill-alpha': String(m.fillAlpha),
-    '--liminal-mist-halo': `rgba(${r}, ${g}, ${b}, ${m.haloAlpha})`,
-    '--liminal-mist-halo-radius': `${m.haloRadius}px`,
+    '--liminal-mist-light': light,
     '--liminal-mist-shadow-blur': `${m.shadowBlur}px`,
     '--liminal-mist-shadow-alpha': String(m.shadowAlpha),
-    '--liminal-mist-ring': `rgba(${r}, ${g}, ${b}, ${m.ringAlpha})`,
+    '--liminal-mist-edge-glow': `${m.edgeGlow}px`,
+    '--liminal-mist-edge-gradient': edgeGradient,
   };
 }
