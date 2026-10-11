@@ -7,6 +7,7 @@ import {
   getTextStyle,
   LiminalState,
 } from '../../../engine/spec-engine';
+import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
@@ -96,8 +97,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   }: InputProps,
   forwardedRef
 ) {
-  const [internalState, setInternalState] = useState<LiminalState>('idle');
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isToggleHovered, setIsToggleHovered] = useState<boolean>(false);
   const [isClearHovered, setIsClearHovered] = useState<boolean>(false);
@@ -150,30 +149,22 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
 
   const isClearable = (clearable || allowClear) && !disabled && currentLength > 0;
 
-  const currentState: LiminalState = disabled ? 'disabled' : internalState;
 
-  // Resolve base interactive input style from engine
-  const limStyle = getLiminalStyle({
-    surfaceLevel,
-    interactive: true,
-    isInput: true,
-    state: currentState,
-  });
+  // The interaction states are CSS's job now (:hover, :focus-within). Only the
+  // validation states stay in JavaScript, because they depend on props rather
+  // than on what the pointer or the keyboard is doing.
+  const idleSurface = resolveSurface({ role: 'control' }).background;
+  const hoverSurface = resolveSurface({ role: 'control', state: 'hover' }).background;
+  const focusSurface = resolveSurface({ role: 'control', state: 'focus' }).background;
 
-  // Focus ring via engine
   const ringColor = error
     ? SEMANTICS.DANGER.solid
     : success
     ? SEMANTICS.SUCCESS.solid
     : LiminalColorEngine.BRAND_PRIMARY.hex;
-  const focusRing = LiminalComponentEngine.getFocusRing(
-    currentState === 'focus' && isKeyboardFocused,
-    ringColor
-  );
 
-  // Background and border resolution based on error/success/states
-  let background = limStyle.style.background;
-  let border = limStyle.style.border;
+  let background = idleSurface;
+  let border = `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}`;
 
   if (!disabled) {
     if (error) {
@@ -192,7 +183,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   }
 
   // WS-2 Container style: flex, items-center, gap 8px (SPACING[2]), padding 12px (SPACING[3]), disabled opacity 0.5
-  const fieldWrapperStyle: CSSProperties = {
+  const fieldWrapperStyle = {
+    '--liminal-surface-idle': background,
+    '--liminal-surface-hover': disabled || error || success ? background : hoverSurface,
+    '--liminal-surface-focus': disabled || error || success ? background : focusSurface,
+    '--liminal-border-focus': ringColor,
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
@@ -204,11 +199,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     transition: LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
-    ...focusRing,
-    opacity: disabled ? 0.5 : limStyle.style.opacity,
+    opacity: disabled ? 0.5 : 1,
     cursor: disabled ? 'not-allowed' : 'text',
-    boxShadow: limStyle.style.boxShadow,
-  };
+  } as CSSProperties;
 
   // WS-2 Inner input element style: flex: 1, border: none, background: transparent, padding: 0
   const inputElementStyle: CSSProperties = {
@@ -247,9 +240,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Tab') {
-      setIsKeyboardFocused(true);
-    }
     onKeyDown?.(e);
   };
 
@@ -470,12 +460,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       )}
 
       <div
+        data-liminal-focus-within=""
+        data-liminal-disabled={disabled ? "" : undefined}
         style={fieldWrapperStyle}
-        onMouseEnter={() => !disabled && internalState !== 'focus' && setInternalState('hover')}
-        onMouseLeave={() => !disabled && internalState !== 'focus' && setInternalState('idle')}
-        onMouseDown={() => {
-          setIsKeyboardFocused(false);
-        }}
       >
         {renderAdornment(rawLeft)}
 
@@ -502,17 +489,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
           aria-autocomplete={ariaAutocomplete}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          onFocus={(e) => {
-            if (!disabled) {
-              setInternalState('focus');
-            }
-            onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setInternalState('idle');
-            setIsKeyboardFocused(false);
-            onBlur?.(e);
-          }}
+          onFocus={onFocus}
+          onBlur={onBlur}
           style={inputElementStyle}
         />
 

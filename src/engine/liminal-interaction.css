@@ -68,6 +68,22 @@
   transform: translateY(0.5px);
 }
 
+/* ── Focus within ─────────────────────────────────────────────────────────
+ * An input's surface is a wrapper around the real <input>, so the wrapper has
+ * to react when the control inside it takes focus. :focus-within is the
+ * browser's answer, and it is what replaces the JS focus tracking in the
+ * input components.
+ */
+[data-liminal-focus-within]:focus-within {
+  background: var(--liminal-surface-focus);
+  border-color: var(--liminal-border-focus, var(--liminal-brand, #E9ECF2));
+}
+
+[data-liminal-focus-within]:focus-within .liminal-focus-ring {
+  outline: 2px solid var(--liminal-brand, #E9ECF2);
+  outline-offset: 2px;
+}
+
 /* ── Focus ────────────────────────────────────────────────────────────────
  * `:focus-visible` is the browser's own answer to "was this keyboard focus?".
  * It replaces the hand-rolled Tab-key tracking, which could not see
