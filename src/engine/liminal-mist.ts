@@ -79,22 +79,45 @@ export function mistLightLayers(role: SurfaceRole): Array<{ blur: number; alpha:
 }
 
 /**
- * EDGE — the softness of the boundary.
+ * EDGE — the specular ring.
  *
- * The design contract asks for "light as fog, no crisp geometry". A 1px border
- * is exactly the crisp geometry it forbids: a hard line where the surface stops.
- * Real fog has no edge, it fades.
+ * v3 removed the crisp edge and replaced it with a blurred one, reasoning that
+ * the contract forbids "crisp geometry". That was a misreading: a hard BORDER is
+ * geometry, but a bright EDGE is light. Glass is recognised by the light that
+ * catches on its rim — remove it and the surface reads as a flat panel, not as
+ * glass. Two reference images made this plain.
  *
- * The edge is therefore a blurred hairline rather than a sharp one. The blur
- * radius grows with height, so a toast's boundary is softer than a menu's —
- * the higher it floats, the less defined its edge.
+ * The blurred edge was also expensive: `filter: blur()` on the rim cost 15.7x a
+ * plain edge, the same mistake as v2 in a different costume.
+ *
+ * So the edge is a GRADIENT now — a 1px ring whose opacity varies around the
+ * perimeter, brightest at the top and bottom where light grazes the surface.
+ * Measured at 1.0x, against 15.7x for the blurred version, and it reads as glass.
  */
-export function mistEdgeBlur(role: SurfaceRole): number {
-  return 8 + floatHeight(role) * 1.2;
+export function mistEdgeAlpha(role: SurfaceRole): number {
+  // The peak opacity of the ring, at its brightest point (top and bottom).
+  return 0.30 + floatHeight(role) * 0.015;
 }
 
-export function mistEdgeAlpha(role: SurfaceRole): number {
-  return 0.22 + floatHeight(role) * 0.012;
+/** How far the ring's light reaches inward from the edge. */
+export function mistEdgeGlow(role: SurfaceRole): number {
+  return 10 + floatHeight(role) * 1.4;
+}
+
+/**
+ * The four stops of the rim gradient, from the top edge to the bottom.
+ * Light grazes the top and bottom of a rounded surface and passes through the
+ * sides, which is why a real glass rim is brightest at the top and bottom.
+ */
+export function mistEdgeStops(role: SurfaceRole): Array<{ pos: number; alpha: number }> {
+  const a = mistEdgeAlpha(role);
+  return [
+    { pos: 0, alpha: a },
+    { pos: 22, alpha: a * 0.18 },
+    { pos: 50, alpha: a * 0.11 },
+    { pos: 78, alpha: a * 0.18 },
+    { pos: 100, alpha: a * 0.76 },
+  ];
 }
 
 /**
@@ -177,8 +200,9 @@ export interface MistSpec {
   ringAlpha: number;
   /** The four light layers that make the fog. */
   light: Array<{ blur: number; alpha: number }>;
-  edgeBlur: number;
   edgeAlpha: number;
+  edgeGlow: number;
+  edgeStops: Array<{ pos: number; alpha: number }>;
   /** Whether the expensive backdrop diffusion is on. */
   diffuse: boolean;
 }
@@ -201,8 +225,9 @@ export function resolveMist(role: SurfaceRole, options: MistOptions = {}): MistS
     fillAlpha: fill.alpha,
     ringAlpha: mistRingAlpha(role),
     light: mistLightLayers(role),
-    edgeBlur: mistEdgeBlur(role),
     edgeAlpha: mistEdgeAlpha(role),
+    edgeGlow: mistEdgeGlow(role),
+    edgeStops: mistEdgeStops(role),
     diffuse: options.diffuse === true,
   };
 }

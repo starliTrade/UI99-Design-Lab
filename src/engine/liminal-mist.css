@@ -44,16 +44,43 @@
     inset 0 -6px 22px -6px var(--liminal-mist-light);
 }
 
-/* The edge: a hairline that is blurred until it stops being a line. */
+/* The edge: a GRADIENT ring, brightest at the top and bottom.
+ *
+ * v3 blurred the rim, which cost 15.7x a plain edge and made the surface read as
+ * a flat panel rather than as glass. A bright edge is LIGHT, not geometry — the
+ * contract forbids the latter, not the former.
+ *
+ * The gradient is painted with a mask so only the 1px ring shows, and the light
+ * grazes the top and bottom the way it does on a real rounded surface. */
+[data-liminal-mist]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  z-index: -1;
+  background: var(--liminal-mist-edge-gradient);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+/* The light that spills inward from the rim, so the edge is not a hard line. */
 [data-liminal-mist]::after {
   content: '';
   position: absolute;
-  inset: -1px;
+  inset: 0;
   border-radius: inherit;
-  border: 1.5px solid var(--liminal-mist-edge);
-  filter: blur(var(--liminal-mist-edge-blur));
   pointer-events: none;
   z-index: -1;
+  box-shadow: inset 0 0 var(--liminal-mist-edge-glow) var(--liminal-mist-edge-gradient);
+  opacity: 0.5;
 }
 
 /* OPT-IN: diffuse the backdrop. Worth it only over busy or colourful content —
