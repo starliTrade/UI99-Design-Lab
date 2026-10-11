@@ -1,0 +1,68 @@
+/**
+ * LIMINAL · MIST LAYER
+ * «مه، نوری است که یک سطح شناور می‌گیرد.»
+ *
+ * Every value here comes from a custom property the mist engine publishes
+ * (see liminal-mist.ts). Nothing is hand-tuned: the blur, the halo, the shadow
+ * and the fill all follow from the surface's ladder level.
+ *
+ * The ring is a ::after pseudo-element now. The old mist needed a separate
+ * absolutely-positioned <div> because inline styles cannot reach pseudo-elements
+ * — that element is gone.
+ */
+
+[data-liminal-mist] {
+  position: relative;
+  isolation: isolate;
+  background: color-mix(
+    in oklab,
+    var(--liminal-mist-fill) calc(var(--liminal-mist-fill-alpha) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--liminal-mist-blur));
+  backdrop-filter: blur(var(--liminal-mist-blur));
+  box-shadow:
+    /* the light the surface catches from the room */
+    0 0 var(--liminal-mist-halo-radius) var(--liminal-mist-halo),
+    /* how far it is lifted off the page */
+    0 calc(var(--liminal-mist-shadow-blur) / 4) var(--liminal-mist-shadow-blur)
+      rgba(1, 2, 3, var(--liminal-mist-shadow-alpha)),
+    /* the fog pooling at the bottom edge */
+    inset 0 -6px 22px -6px var(--liminal-mist-halo);
+}
+
+/* The seam where the fog meets the page. One hairline, blurred. */
+[data-liminal-mist]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--liminal-mist-ring);
+  filter: blur(6px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* A surface that must not diffuse what is behind it — a toast over a busy
+ * table, for example — opts out of the backdrop filter while keeping the light. */
+[data-liminal-mist='solid'] {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: var(--liminal-mist-fill);
+}
+
+/* Browsers without backdrop-filter get a solid fill rather than a transparent
+ * panel with unreadable content behind it. */
+@supports not (backdrop-filter: blur(1px)) {
+  [data-liminal-mist] {
+    background: var(--liminal-mist-fill);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-liminal-mist] {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--liminal-mist-fill);
+  }
+}

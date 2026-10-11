@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import type { CSSProperties, ReactNode, MouseEvent, FocusEvent } from 'react';
-import { LiminalColorEngine, MistTier } from '../../../engine/liminal-color-engine';
+import React from 'react';
+import type { CSSProperties, ReactNode, MouseEvent } from 'react';
+import { mistCssVars } from '../../../engine/liminal-mist';
+import type { SurfaceRole } from '../../../engine/liminal-surface';
 import { getTextStyle } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
-import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
-import { getFocusRing } from '../../../engine/spec-engine';
 
 export interface MistProps {
   as?: 'button' | 'div';
-  tier?: MistTier;
-  light?: string; // hex color
+  /**
+   * Which floating surface this is. The mist derives its blur, halo, shadow and
+   * fill from this role's ladder level — a toast floats higher than a menu, so
+   * it diffuses more and casts a larger shadow.
+   */
+  role?: Extract<SurfaceRole, 'menu' | 'popover' | 'modal' | 'toast'>;
+  /** 'hero' is the single allowed emphasised mist in an app; 'quiet' is the rest. */
+  tier?: 'hero' | 'quiet';
   radius?: number;
   children?: ReactNode;
   onClick?: (e: MouseEvent<HTMLElement>) => void;
@@ -22,8 +27,8 @@ export interface MistProps {
 
 export function Mist({
   as = 'button',
+  role = 'popover',
   tier = 'quiet',
-  light = LiminalColorEngine.BRAND_PRIMARY.hex,
   radius,
   children,
   onClick,
@@ -33,7 +38,6 @@ export function Mist({
   style = {},
   'aria-label': ariaLabel,
 }: MistProps) {
-
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const SPACING = LiminalLayoutEngine.SPACING;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
@@ -41,58 +45,45 @@ export function Mist({
   const defaultRadius = tier === 'hero' ? 9999 : RADIUS.card;
   const finalRadius = radius !== undefined ? radius : defaultRadius;
 
-  const mist = LiminalColorEngine.getMistStyle(light, tier);
-  const { r, g, b } = LiminalColorEngine.hexToRgb(light);
-  const H = `${r}, ${g}, ${b}`;
-
-  // The hover/press response is a BRIGHTNESS change, not a colour change: the
-  // surface keeps its material and catches more light. The browser applies it now.
-  const activeBoxShadow = mist.boxShadow;
+  // Every mist value comes from the role's height. Nothing is hand-tuned here.
+  const mistVars = mistCssVars(role);
 
   const baseStyle: CSSProperties = {
-    position: 'relative',
-    overflow: 'visible',
+    ...mistVars,
+    display: as === 'button' ? 'inline-flex' : undefined,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: `${SPACING[2]}px`,
+    padding: tier === 'hero' ? `${SPACING[3]}px ${SPACING[5]}px` : `${SPACING[2]}px ${SPACING[4]}px`,
     borderRadius: `${finalRadius}px`,
-    background: mist.background,
-    boxShadow: activeBoxShadow,
     color: getTextStyle('primary', 2).color,
     fontSize: `${TYPOGRAPHY[3].fs}px`,
     lineHeight: TYPOGRAPHY[3].lh,
     fontWeight: tier === 'hero' ? 600 : 500,
     cursor: disabled ? 'not-allowed' : as === 'button' || onClick ? 'pointer' : 'default',
     opacity: disabled ? 0.45 : 1,
-    transition: `${LiminalMotionEngine.getTransition('filter', 'normal')}, ${LiminalMotionEngine.getTransition('box-shadow', 'normal')}, ${LiminalMotionEngine.getTransition('transform', 'fast')}, ${LiminalMotionEngine.getTransition('outline', 'fast')}`,
     border: 'none',
     boxSizing: 'border-box',
-    display: as === 'button' ? 'inline-flex' : undefined,
-    alignItems: as === 'button' ? 'center' : undefined,
-    justifyContent: as === 'button' ? 'center' : undefined,
-    gap: as === 'button' ? `${SPACING[2]}px` : undefined,
-    padding: as === 'button' ? (tier === 'hero' ? `${SPACING[3]}px ${SPACING[5]}px` : `${SPACING[2]}px ${SPACING[4]}px`) : undefined,
-    userSelect: as === 'button' ? 'none' : undefined,
-    textDecoration: 'none',
     ...style,
+  } as CSSProperties;
+
+  const props = {
+    'data-liminal-mist': '',
+    'data-liminal-focusable': '',
+    'data-liminal-disabled': disabled ? '' : undefined,
+    className,
+    style: baseStyle,
+    onClick: disabled ? undefined : onClick,
+    'aria-label': ariaLabel,
   };
 
-  const Component = as === 'button' ? 'button' : 'div';
+  if (as === 'button') {
+    return (
+      <button type={type} disabled={disabled} {...(props as any)}>
+        {children}
+      </button>
+    );
+  }
 
-  return (
-    <Component
-      type={as === 'button' ? type : undefined}
-      disabled={as === 'button' ? disabled : undefined}
-      onClick={disabled ? undefined : onClick}
-      data-liminal-mist=""
-      data-liminal-focusable=""
-      data-liminal-disabled={disabled ? "" : undefined}
-      className={className}
-      style={baseStyle}
-      aria-label={ariaLabel}
-    >
-      {/* ─── RING LAYER (separate blurred 1px border element) ─── */}
-      <span aria-hidden="true" style={mist.ringLayer} />
-      {children}
-    </Component>
-  );
+  return <div {...(props as any)}>{children}</div>;
 }
-
-export default Mist;

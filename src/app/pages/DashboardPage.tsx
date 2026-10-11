@@ -248,7 +248,7 @@ export function DashboardPage() {
           <Mist
             as="button"
             tier="hero"
-            light={BRAND.hex}
+            role="popover"
             onClick={() => navigate({ name: 'project', id: 'alpha' })}
           >
             <LiminalIcon icon={Plus} size="xs" weight="light" />
