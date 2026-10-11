@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  /* Tonal Ladder — GENERATED from the contract (S0 anchor L=0.128, ΔL=0.015).
+  /* Tonal Ladder — S0 anchor L=0.128, target ΔL=0.0127.
      Source of truth: src/engine/spec-engine.ts (LADDER). Keep in sync. */
   --liminal-s0: #060709;
-  --liminal-s1: #090a0d;
-  --liminal-s2: #0c0d11;
-  --liminal-s3: #0f1014;
-  --liminal-s4: #121317;
-  --liminal-s5: #15161b;
+  --liminal-s1: #08090b;
+  --liminal-s2: #0a0b10;
+  --liminal-s3: #0d0e11;
+  --liminal-s4: #101114;
+  --liminal-s5: #131418;
 
   /* Semantics */
   --liminal-success: #34C08B;
@@ -37,11 +37,11 @@
 .dark {
   /* مقادیر پیش‌فرض منطبق بر سیستم، ساختار آماده برای گسترش */
   --liminal-s0: #060709;
-  --liminal-s1: #090a0d;
-  --liminal-s2: #0c0d11;
-  --liminal-s3: #0f1014;
-  --liminal-s4: #121317;
-  --liminal-s5: #15161b;
+  --liminal-s1: #08090b;
+  --liminal-s2: #0a0b10;
+  --liminal-s3: #0d0e11;
+  --liminal-s4: #101114;
+  --liminal-s5: #131418;
   --liminal-brand: #E9ECF2;
   --liminal-brand-on: #060709;
 }
@@ -95,10 +95,10 @@
 
 @keyframes liminal-skeleton-pulse {
   0%, 100% {
-    background-color: #0c0d11; /* S2 */
+    background-color: #0a0b10; /* S2 */
   }
   50% {
-    background-color: #0d0e12; /* S2.5 */
+    background-color: #0b0d11; /* S2.5 */
   }
 }
 

@@ -68,12 +68,21 @@ describe('LIMINAL contract — surface ladder', () => {
     }
   });
 
-  it('holds the locked perceptual step ΔL within [0.012, 0.020]', () => {
+  it('holds the realized perceptual step ΔL within [0.011, 0.015]', () => {
     for (let i = 1; i < LADDER.length; i++) {
       const step = lightnessStep(LADDER[i - 1], LADDER[i]);
-      expect(step, `ΔL for S${i - 1} → S${i} is ${step.toFixed(4)}`).toBeGreaterThanOrEqual(0.012);
-      expect(step, `ΔL for S${i - 1} → S${i} is ${step.toFixed(4)}`).toBeLessThanOrEqual(0.02);
+      expect(step, `ΔL for S${i - 1} → S${i} is ${step.toFixed(4)}`).toBeGreaterThanOrEqual(0.011);
+      expect(step, `ΔL for S${i - 1} → S${i} is ${step.toFixed(4)}`).toBeLessThanOrEqual(0.015);
     }
+  });
+
+  it('stays close to the target ΔL = 0.0127', () => {
+    // 8-bit hex cannot hit an exact ΔL, so the sequence is chosen to minimise
+    // the worst deviation from the target rather than to hit it exactly.
+    const TARGET = 0.0127;
+    const steps = LADDER.slice(1).map((hex, i) => lightnessStep(LADDER[i], hex));
+    const worst = Math.max(...steps.map((step) => Math.abs(step - TARGET)));
+    expect(worst, `worst deviation from target is ${worst.toFixed(4)}`).toBeLessThanOrEqual(0.002);
   });
 
   it('matches the contract claim that the canvas sits at L ≈ 0.128', () => {

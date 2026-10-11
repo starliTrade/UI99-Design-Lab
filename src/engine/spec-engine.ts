@@ -6,15 +6,25 @@ import type { CSSProperties } from 'react';
  * این سند، قرارداد کامل و قفل‌شده‌ی سیستم است. هیچ مقداری خارج از این سند مجاز نیست.
  */
 
-// Surface ladder — GENERATED FROM THE CONTRACT, NOT HAND-PICKED.
-// Each step is anchored at S0 (mother canvas, L = 0.128) and advances by the
-// locked perceptual step ΔL = 0.015 in OKLCH lightness, preserving the hue
-// (≈262–275°) and chroma (≈0.006–0.009) character of the original palette.
-// Hex quantization (8-bit) keeps the realized steps inside [0.012, 0.020];
-// this is asserted in src/engine/__tests__/tokens.test.ts.
-export const LADDER = ['#060709', '#090a0d', '#0c0d11', '#0f1014', '#121317', '#15161b'] as const;
+/**
+ * Surface ladder.
+ *
+ * TARGET ΔL = 0.0127 (OKLCH lightness), anchored at S0 (mother canvas, L = 0.128).
+ *
+ * Why 0.0127 and not the 0.015 the contract used to claim: 0.0127 is the average
+ * step of the original hand-picked palette. It is the number the design already
+ * encoded — 0.015 was an aspiration that was never true in the hexes and pushed
+ * the first surface measurably further from the canvas, away from the
+ * "threshold of perception" the system is built on. See
+ * design-lab/ladder-compare.html for the experiment that decided this.
+ *
+ * 8-bit hex cannot hit an exact ΔL, so the sequence is chosen to minimise the
+ * worst deviation from the target. Realized steps stay inside [0.011, 0.015],
+ * which is asserted in src/engine/__tests__/tokens.test.ts.
+ */
+export const LADDER = ['#060709', '#08090b', '#0a0b10', '#0d0e11', '#101114', '#131418'] as const;
 /** Midpoints between ladder steps, used for fractional surface levels. */
-export const HALF = ['#07080b', '#0a0b0f', '#0d0e12', '#101115', '#131419'] as const;
+export const HALF = ['#07080a', '#090a0e', '#0b0d11', '#0e0f12', '#111216'] as const;
 
 /**
  * Focus ring color.

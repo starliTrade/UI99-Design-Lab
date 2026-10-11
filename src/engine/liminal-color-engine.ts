@@ -83,13 +83,13 @@ export class LiminalColorEngine {
   static getLadderColor(level: number): string {
     const colors = [
       'var(--liminal-s0, #060709)',
-      'var(--liminal-s1, #090a0d)',
-      'var(--liminal-s2, #0c0d11)',
-      'var(--liminal-s3, #0f1014)',
-      'var(--liminal-s4, #121317)',
-      'var(--liminal-s5, #15161b)',
+      'var(--liminal-s1, #08090b)',
+      'var(--liminal-s2, #0a0b10)',
+      'var(--liminal-s3, #0d0e11)',
+      'var(--liminal-s4, #101114)',
+      'var(--liminal-s5, #131418)',
     ];
-    return colors[Math.min(Math.max(Math.round(level), 0), 5)] || 'var(--liminal-s2, #0c0d11)';
+    return colors[Math.min(Math.max(Math.round(level), 0), 5)] || 'var(--liminal-s2, #0a0b10)';
   }
 
   // 5. RAMP FORMULA
