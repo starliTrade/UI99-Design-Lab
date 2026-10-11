@@ -43,6 +43,26 @@
   background: var(--liminal-surface-hover);
 }
 
+/* Some components lift their TEXT on hover rather than their surface — a tab
+ * that brightens its label, for example. Opt in with data-liminal-hover-color
+ * so nothing changes colour by accident. */
+[data-liminal-hover-color]:hover:not([data-liminal-disabled]) {
+  color: var(--liminal-hover-color);
+}
+
+/* A child that only appears on hover — a sort affordance, a row action.
+ * The parent opts in; the child carries .liminal-reveal. */
+[data-liminal-hover-reveal] .liminal-reveal {
+  opacity: var(--liminal-reveal-idle, 0);
+  transition: opacity var(--liminal-duration-fast, 150ms)
+    var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+[data-liminal-hover-reveal]:hover .liminal-reveal,
+[data-liminal-hover-reveal]:focus-within .liminal-reveal {
+  opacity: var(--liminal-reveal-hover, 1);
+}
+
 [data-liminal-surface]:active:not([data-liminal-disabled]) {
   background: var(--liminal-surface-active);
   transform: translateY(0.5px);

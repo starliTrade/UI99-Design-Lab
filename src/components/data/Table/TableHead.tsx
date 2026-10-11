@@ -110,12 +110,11 @@ export function TableHead({
     // 'none'
     return (
       <span
+        className="liminal-reveal"
         style={{
           display: 'inline-flex',
           alignItems: 'center',
           color: getTextStyle('tertiary', 1).color,
-          opacity: isHovered ? 1 : 0,
-          transition: iconTransition,
         }}
         aria-hidden="true"
       >
@@ -134,8 +133,7 @@ export function TableHead({
         aria-sort={ariaSortValue}
         className={className}
         style={thStyle}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        data-liminal-hover-reveal=""
       >
         <button type="button" onClick={onSort} style={buttonStyle}>
           {align === 'left' && renderSortIcon()}

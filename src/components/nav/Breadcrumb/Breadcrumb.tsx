@@ -20,12 +20,12 @@ export interface BreadcrumbProps {
 }
 
 function BreadcrumbLink({ item }: { item: BreadcrumbItem }) {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  const style: CSSProperties = {
-    color: isHovered
-      ? getTextStyle('secondary', 1).color
-      : getTextStyle('tertiary', 1).color,
+  const style = {
+    // The resting colour here; the hover colour is a CSS variable the browser
+    // applies, so moving across the trail no longer re-renders React.
+    color: getTextStyle('tertiary', 1).color,
+    '--liminal-hover-color': getTextStyle('secondary', 1).color,
     textDecoration: 'none',
     transition: LiminalMotionEngine.getTransition('color', 'fast'),
     cursor: 'pointer',
@@ -42,8 +42,7 @@ function BreadcrumbLink({ item }: { item: BreadcrumbItem }) {
         type="button"
         style={style}
         onClick={item.onClick}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        data-liminal-hover-color=""
       >
         {item.label}
       </button>
@@ -54,8 +53,7 @@ function BreadcrumbLink({ item }: { item: BreadcrumbItem }) {
     <a
       href={item.href || '#'}
       style={style}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      data-liminal-hover-color=""
     >
       {item.label}
     </a>

@@ -158,16 +158,15 @@ interface PageButtonProps {
 }
 
 function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  // Hover is CSS's job now — no setState, no re-render per mouse move.
+  const bg = isCurrent
+    ? resolveSurface({ role: 'control' }).background
+    : 'transparent';
 
-  let bg = 'transparent';
-  if (isCurrent) {
-    bg = resolveSurface({ role: 'control' }).background;
-  } else if (isHovered) {
-    bg = resolveSurface({ role: 'control', state: 'hover' }).background;
-  }
-
-  const style: CSSProperties = {
+  const style = {
+    '--liminal-surface-idle': bg,
+    '--liminal-surface-hover': resolveSurface({ role: 'control', state: 'hover' }).background,
+    '--liminal-surface-active': resolveSurface({ role: 'control', state: 'active' }).background,
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -185,7 +184,7 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
     transition: reducedMotion
       ? 'none'
       : `${LiminalMotionEngine.getTransition('background', 'fast')}, ${LiminalMotionEngine.getTransition('color', 'fast')}`,
-  };
+  } as CSSProperties;
 
     return (
     <button
@@ -194,8 +193,7 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
       aria-current={isCurrent ? 'page' : undefined}
       aria-label={`Page ${page}`}
       style={style}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      data-liminal-surface=""
     >
       {page}
     </button>
