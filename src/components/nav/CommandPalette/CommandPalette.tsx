@@ -4,8 +4,7 @@ import { MagnifyingGlass, Command as CommandIcon } from '@phosphor-icons/react';
 import {
   getTextStyle,
   getLadderColor,
-  SHADOWS,
-} from '../../../engine/spec-engine';
+  SHADOWS, VEIL } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -93,7 +92,7 @@ export function CommandPalette({
     position: 'fixed',
     inset: 0,
     zIndex: 9999,
-    background: 'rgba(3, 4, 6, 0.60)',
+    background: VEIL.backdrop,
     backdropFilter: 'blur(4px)',
     WebkitBackdropFilter: 'blur(4px)',
     display: 'flex',

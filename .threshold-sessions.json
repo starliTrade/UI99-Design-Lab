@@ -1,0 +1,968 @@
+[
+  {
+    "at": "2026-10-11T18:00:47.813Z",
+    "q": 0.008299999999999997,
+    "r": 0.010655551183333148,
+    "slope": 0.0008,
+    "falseAlarms": 0,
+    "catchN": 4,
+    "trials": [
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      }
+    ]
+  },
+  {
+    "at": "2026-10-11T18:32:31.871Z",
+    "q": 0.007899999999999996,
+    "r": 0.011433326774999723,
+    "slope": 0.0012000000000000001,
+    "falseAlarms": 0,
+    "catchN": 4,
+    "trials": [
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      }
+    ]
+  },
+  {
+    "at": "2026-10-11T18:36:39.643Z",
+    "q": 0.008899999999999998,
+    "r": 0.012433326774999726,
+    "slope": 0.0012000000000000001,
+    "falseAlarms": 0,
+    "catchN": 4,
+    "trials": [
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080b",
+        "dl": 0.006425296999154895,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#0a0b0e",
+        "dl": 0.02171040860564863,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#07090b",
+        "dl": 0.009968525839681608,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#090a0d",
+        "dl": 0.01688850940361164,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07070a",
+        "dl": 0.002114107889086031,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      },
+      {
+        "hex": "#07080a",
+        "dl": 0.00588759308820197,
+        "catch": false,
+        "seen": false
+      },
+      {
+        "hex": "#080a0d",
+        "dl": 0.01564833678886754,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#08090c",
+        "dl": 0.011837940143959363,
+        "catch": false,
+        "seen": true
+      },
+      {
+        "hex": "#060709",
+        "dl": 0,
+        "catch": true,
+        "seen": false
+      }
+    ]
+  }
+]

@@ -15,8 +15,7 @@ import { useReducedMotion } from '../../../engine/liminal-hooks';
 import {
   getLadderColor,
   getTextStyle,
-  LiminalState,
-} from '../../../engine/spec-engine';
+  LiminalState, SURFACE_TINT } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import {
@@ -68,7 +67,7 @@ export const buttonVariants = createVariants({
       },
       danger: {
         background: LiminalColorEngine.SEMANTICS.DANGER.solid,
-        color: 'rgba(255, 255, 255, 0.88)',
+        color: getTextStyle('primary', 2).color,
         border: 'none',
       },
       outline: {
@@ -295,7 +294,7 @@ export const Button = createLiminalComponent<ButtonProps>(
         state: currentState,
       });
 
-      const bg = currentState === 'hover' ? '#F5F7FA' : currentState === 'active' ? '#DDE1E8' : brand.hex;
+      const bg = currentState === 'hover' ? LiminalColorEngine.BRAND_PRIMARY.hover : currentState === 'active' ? LiminalColorEngine.BRAND_PRIMARY.active : brand.hex;
       const outline = currentState === 'focus' && isKeyboardFocused ? stateStyle.outline : 'none';
 
       computedStyle = {
@@ -357,10 +356,10 @@ export const Button = createLiminalComponent<ButtonProps>(
       let outlineBg = 'transparent';
       let outlineBorder = `1px solid ${LiminalColorEngine.getLadderColor(3)}`;
       if (currentState === 'hover') {
-        outlineBg = 'rgba(255, 255, 255, 0.03)';
+        outlineBg = SURFACE_TINT.subtle;
         outlineBorder = `1px solid ${LiminalColorEngine.getLadderColor(4)}`;
       } else if (currentState === 'active') {
-        outlineBg = 'rgba(255, 255, 255, 0.06)';
+        outlineBg = SURFACE_TINT.medium;
         outlineBorder = `1px solid ${LiminalColorEngine.getLadderColor(5)}`;
       }
 

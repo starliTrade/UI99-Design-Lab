@@ -10,7 +10,7 @@ import { Stack } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
-import { getTextStyle } from '../../engine/spec-engine';
+import { getTextStyle, BRAND_ALPHA } from '../../engine/spec-engine';
 
 export function LoadingPage() {
   const { navigate } = useNavigation();
@@ -40,7 +40,7 @@ export function LoadingPage() {
                   width: '28px',
                   height: '28px',
                   borderRadius: `${RADIUS.chip}px`,
-                  background: 'rgba(233, 236, 242, 0.08)',
+                  background: BRAND_ALPHA.subtle,
                   border: '1px solid rgba(233, 236, 242, 0.16)',
                   display: 'inline-flex',
                   alignItems: 'center',

@@ -148,3 +148,41 @@ export function oklchLightness(hex: string): number {
 export function lightnessStep(a: string, b: string): number {
   return oklchLightness(b) - oklchLightness(a);
 }
+
+/**
+ * OKLCH → sRGB hex (the inverse of `rgbToOklch`).
+ *
+ * This is what lets the ladder be *generated* rather than hand-picked: the
+ * formula produces (L, C, h), and this turns it into the hex a browser can
+ * render. Out-of-gamut results are clamped per channel.
+ */
+export function oklchToHex({ L, C, h }: OKLCH): string {
+  const hr = (h * Math.PI) / 180;
+  const a = C * Math.cos(hr);
+  const b = C * Math.sin(hr);
+
+  const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+  const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+  const s_ = L - 0.0894841775 * a - 1.291485548 * b;
+
+  const l = l_ ** 3;
+  const m = m_ ** 3;
+  const s = s_ ** 3;
+
+  const r = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+  const g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+  const bl = -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s;
+
+  const encode = (c: number): number => {
+    const v = Math.max(0, Math.min(1, c));
+    const srgb = v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
+    return Math.round(srgb * 255);
+  };
+
+  return (
+    '#' +
+    [r, g, bl]
+      .map((c) => encode(c).toString(16).padStart(2, '0'))
+      .join('')
+  );
+}

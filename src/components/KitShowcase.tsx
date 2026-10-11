@@ -265,7 +265,7 @@ export function KitShowcase() {
       {(activeSubTab === 'all' || activeSubTab === 'inputs') && (
         <Card
           title="GROUP 2: INPUTS"
-          subtitle="Input · Select · Textarea · Checkbox with strict Focus Ring (2px solid ladder n+1)"
+          subtitle="Input · Select · Textarea · Checkbox with a visible Focus Ring (2px solid brand, ≥3:1)"
           action={<Badge semantic="info">Form Controls</Badge>}
         >
           <div className="space-y-5">
@@ -275,7 +275,7 @@ export function KitShowcase() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 leftIcon={<LiminalIcon icon={Globe} size="xs" weight="light" />}
-                helperText="Focus ring: outline 2px solid #0D0E12 (ladder n+1)"
+                helperText="Focus ring: outline 2px solid brand #E9ECF2 (≥3:1 on every surface)"
               />
 
               <Select
@@ -296,7 +296,7 @@ export function KitShowcase() {
                 label="Cryptographic Public Key"
                 rows={3}
                 defaultValue="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKbUf87... liminal-core-root"
-                helperText="Multi-line textarea on Surface 2 (#0A0B0F)"
+                helperText="Multi-line textarea on Surface 2 (#0a0b10)"
               />
 
               <div className="space-y-3">
@@ -344,7 +344,7 @@ export function KitShowcase() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <div className="text-xs font-bold" style={{ color: getTextStyle('primary', 2).color }}>
-                    Nested Panel on Surface 2 (#0A0B0F)
+                    Nested Panel on Surface 2 (#0a0b10)
                   </div>
                   <div className="text-[11px] mt-0.5" style={getTextStyle('tertiary', 2)}>
                     Concentric Radius Formula: r_inner = max(4, r_outer − padding) = 24 − 16 = 8px. Parallel curves!
@@ -582,7 +582,7 @@ export function KitShowcase() {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         title="Surface 5 Modal Dialog"
-        description="Ceiling L 0.203 (#131418) · Rim 3 · Elevation E3 Sub-Canvas Penumbra"
+        description="Ceiling L 0.192 (#131418) · Rim 3 · Elevation E3 Sub-Canvas Penumbra"
         footer={
           <>
             <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button>

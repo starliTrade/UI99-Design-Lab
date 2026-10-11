@@ -102,7 +102,7 @@ export function AtomsDemo() {
           {/* Primary Row */}
           <div>
             <div style={{ fontSize: '10px', color: getTextStyle('quaternary', 2).color, marginBottom: '6px' }}>
-              VARIANT: PRIMARY (BRAND_PRIMARY #E9ECF2)
+              VARIANT: PRIMARY (BRAND_PRIMARY {LiminalColorEngine.BRAND_PRIMARY.name})
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="primary" size="sm">Primary Sm</Button>

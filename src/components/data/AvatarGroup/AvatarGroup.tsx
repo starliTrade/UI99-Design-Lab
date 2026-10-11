@@ -46,7 +46,7 @@ export function AvatarGroup({
     width: `${px}px`,
     height: `${px}px`,
     borderRadius: '50%',
-    background: getLadderColor(3), // Surface 3 #0D0E12
+    background: getLadderColor(3), // Surface 3 #0d0e11
     color: getTextStyle('secondary', 3).color,
     border: `2px solid ${canvasBorderColor}`,
     display: 'inline-flex',

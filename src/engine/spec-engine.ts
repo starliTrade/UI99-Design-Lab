@@ -1,43 +1,15 @@
 import type { CSSProperties } from 'react';
+import { LADDER, HALF, getLadderColor, FOCUS_RING_COLOR } from './liminal-ladder';
+
+// Re-exported so existing imports keep working; the definitions live in
+// liminal-ladder.ts, which has no dependencies and therefore cannot create a cycle.
+export { LADDER, HALF, getLadderColor, FOCUS_RING_COLOR };
 
 /**
  * LIMINAL · DESIGN SYSTEM — MASTER CONTRACT v1.0 (COMPLETE)
  * "هر لایه روی آستانه‌ی ادراک — نه کمتر، نه بیشتر."
  * این سند، قرارداد کامل و قفل‌شده‌ی سیستم است. هیچ مقداری خارج از این سند مجاز نیست.
  */
-
-/**
- * Surface ladder.
- *
- * TARGET ΔL = 0.0127 (OKLCH lightness), anchored at S0 (mother canvas, L = 0.128).
- *
- * Why 0.0127 and not the 0.015 the contract used to claim: 0.0127 is the average
- * step of the original hand-picked palette. It is the number the design already
- * encoded — 0.015 was an aspiration that was never true in the hexes and pushed
- * the first surface measurably further from the canvas, away from the
- * "threshold of perception" the system is built on. See
- * design-lab/ladder-compare.html for the experiment that decided this.
- *
- * 8-bit hex cannot hit an exact ΔL, so the sequence is chosen to minimise the
- * worst deviation from the target. Realized steps stay inside [0.011, 0.015],
- * which is asserted in src/engine/__tests__/tokens.test.ts.
- */
-export const LADDER = ['#060709', '#08090b', '#0a0b10', '#0d0e11', '#101114', '#131418'] as const;
-/** Midpoints between ladder steps, used for fractional surface levels. */
-export const HALF = ['#07080a', '#090a0e', '#0b0d11', '#0e0f12', '#111216'] as const;
-
-/**
- * Focus ring color.
- * Must stay ≥3:1 (WCAG 2.2 non-text) against every surface in LADDER.
- * A ladder step (n+1) reads as dark-on-dark (~1.01:1) and is NOT acceptable.
- * Verified by src/engine/__tests__/tokens.test.ts.
- */
-export const FOCUS_RING_COLOR = 'var(--liminal-brand, #E9ECF2)';
-
-export const getLadderColor = (n: number): string => {
-  n = Math.max(0, Math.min(5, n));
-  return Number.isInteger(n) ? LADDER[n] : HALF[Math.floor(n)];
-};
 
 export const RIM = {
   0: { t: 0, s: 0, b: 0 },
@@ -90,6 +62,47 @@ export const SHADOWS = {
   2: '0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26)',
   3: '0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30)',
   4: '0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)',
+} as const;
+
+/**
+ * SURFACE TINTS — white laid over a surface to lift it.
+ *
+ * These replaced six ad-hoc alphas (0.01, 0.03, 0.04, 0.06, 0.08, 0.20) that
+ * had been invented locally in components. A tint is not a text level: it is a
+ * *fill*, so it does not belong in the text hierarchy and must not be used for
+ * type (its contrast is far below any text floor).
+ *
+ * Four steps, each with one job. If a fifth is needed, the need is the bug.
+ */
+export const SURFACE_TINT = {
+  /** Barely-there: inset wells, nested card fills. */
+  faint: 'rgba(255, 255, 255, 0.01)',
+  /** Subtle: hover on ghost/outline controls, quiet chips, hairlines. */
+  subtle: 'rgba(255, 255, 255, 0.03)',
+  /** Medium: badges, active outline controls, compact action hover. */
+  medium: 'rgba(255, 255, 255, 0.06)',
+  /** Strong: small affordances only — drawer handles, dots, separators. */
+  strong: 'rgba(255, 255, 255, 0.20)',
+  /** Solid: control parts that must stay legible — toggle knobs, slider thumbs. */
+  solid: 'rgba(255, 255, 255, 0.40)',
+} as const;
+
+/**
+ * VEILS — a surface laid over content to push it back.
+ *
+ * Veils are built from the sub-canvas wells, never from grey: the backdrop must
+ * read as *depth*, not as a colour.
+ */
+export const VEIL = {
+  /** Behind modals, sheets and the command palette. S-1 Penumbra at 0.60. */
+  backdrop: 'rgba(3, 4, 6, 0.60)',
+  /** Sticky header floating over scrolling content. S0 Canvas at 0.85. */
+  canvas: 'rgba(6, 7, 9, 0.85)',
+} as const;
+
+/** Brand laid over a surface — for quiet brand-tinted fills. */
+export const BRAND_ALPHA = {
+  subtle: 'rgba(233, 236, 242, 0.08)',
 } as const;
 
 export const Z_INDEX = {

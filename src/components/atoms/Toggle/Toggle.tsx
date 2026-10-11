@@ -1,6 +1,6 @@
 import React from 'react';
 import type { CSSProperties, KeyboardEvent } from 'react';
-import { getDirectionalRim } from '../../../engine/spec-engine';
+import { getDirectionalRim, getLadderColor, SURFACE_TINT } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -61,7 +61,7 @@ export function Toggle({
       ? brand.hex
       : offRim
       ? offRim.cssBackground
-      : '#0D0E12',
+      : getLadderColor(3),
     outline: 'none',
     padding: 0,
     ...customStyle,
@@ -78,7 +78,7 @@ export function Toggle({
     // checked=true: knob right 23px, background #060709
     // checked=false: knob right 3px, background rgba(255,255,255,.4)
     right: isChecked ? '23px' : '3px',
-    background: isChecked ? brand.onColor : 'rgba(255, 255, 255, 0.4)',
+    background: isChecked ? brand.onColor : SURFACE_TINT.solid,
     boxShadow: '0 1px 2px rgba(1, 2, 3, 0.22)',
   };
 

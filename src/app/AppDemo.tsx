@@ -14,6 +14,7 @@ import {
   WarningOctagon,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../engine/liminal-icon-engine';
+import { getLadderColor } from '../engine/spec-engine';
 
 function NavigationToolbar() {
   const { current, navigate } = useNavigation();
@@ -31,7 +32,7 @@ function NavigationToolbar() {
   return (
     <div
       style={{
-        background: '#08090C',
+        background: getLadderColor(1),
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         padding: '10px 16px',
         display: 'flex',
@@ -102,7 +103,7 @@ export function AppDemo() {
         borderRadius: `${RADIUS.container}px`,
         overflow: 'hidden',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        background: '#060709',
+        background: getLadderColor(0),
         boxSizing: 'border-box',
       }}
     >

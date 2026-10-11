@@ -6,6 +6,7 @@
  * No ad-hoc ms or raw bezier strings allowed outside this engine.
  */
 
+import { getLadderColor } from './liminal-ladder';
 export type MotionDurationKey = 'instant' | 'fast' | 'normal' | 'slow' | 'slower' | 'dramatic';
 export type MotionEasingKey = 'out' | 'in' | 'inOut' | 'spring' | 'linear';
 
@@ -116,8 +117,8 @@ export class LiminalMotionEngine {
   static readonly KEYFRAMES = {
     skeletonPulse: `
       @keyframes liminal-skeleton-pulse {
-        0%, 100% { background-color: #0A0B0F; }
-        50% { background-color: #0B0C10; }
+        0%, 100% { background-color: ${getLadderColor(2)}; }
+        50% { background-color: ${getLadderColor(2.5)}; }
       }
     `,
     spin: `
@@ -188,8 +189,8 @@ export const MOTION_KEYFRAMES = `
     to { opacity: 1; transform: scale(1); }
   }
   @keyframes liminal-skeleton-pulse {
-    0%, 100% { background-color: #0A0B0F; }
-    50% { background-color: #0B0C10; }
+    0%, 100% { background-color: ${getLadderColor(2)}; }
+    50% { background-color: ${getLadderColor(2.5)}; }
   }
   @keyframes liminal-spin {
     from { transform: rotate(0deg); }

@@ -1,3 +1,4 @@
+import { SURFACE_TINT } from '../../../engine/spec-engine';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
@@ -25,7 +26,7 @@ export function Tag({
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'rgba(255, 255, 255, 0.04)',
+    background: SURFACE_TINT.subtle,
     border: '1px solid rgba(255, 255, 255, 0.06)',
     color: ext.hex,
     borderRadius: `${LiminalLayoutEngine.RADIUS.chip}px`, // 6px

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
-import { getDirectionalRim, getTextStyle, SHADOWS, LADDER } from '../../../engine/spec-engine';
+import { getDirectionalRim, getTextStyle, SHADOWS, LADDER, VEIL } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import {
   useScrollLock,
@@ -86,7 +86,7 @@ export function Modal({
   const backdropStyle: CSSProperties = {
     position: 'fixed',
     inset: 0,
-    background: 'rgba(3, 4, 6, 0.60)', // Sub-canvas C-1 veil
+    background: VEIL.backdrop, // Sub-canvas C-1 veil
     backdropFilter: 'blur(3px)',
     WebkitBackdropFilter: 'blur(3px)',
     zIndex: 100,

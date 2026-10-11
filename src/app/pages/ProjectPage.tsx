@@ -19,7 +19,7 @@ import { Badge } from '../../components/atoms/Badge';
 import { Toggle } from '../../components/atoms/Toggle';
 import { Select } from '../../components/inputs/Select';
 import { Input } from '../../components/inputs/Input';
-import { getTextStyle } from '../../engine/spec-engine';
+import { getTextStyle, BRAND_ALPHA, SURFACE_TINT } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
@@ -101,7 +101,7 @@ export function ProjectPage({ id }: { id: string }) {
                   width: '28px',
                   height: '28px',
                   borderRadius: `${RADIUS.chip}px`,
-                  background: 'rgba(233, 236, 242, 0.08)',
+                  background: BRAND_ALPHA.subtle,
                   border: '1px solid rgba(233, 236, 242, 0.16)',
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -311,7 +311,7 @@ export function ProjectPage({ id }: { id: string }) {
               <Toggle checked={autoSync} onChange={setAutoSync} />
             </div>
 
-            <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.04)' }} />
+            <div style={{ height: '1px', background: SURFACE_TINT.subtle }} />
 
             <div className="flex items-center justify-between">
               <div>

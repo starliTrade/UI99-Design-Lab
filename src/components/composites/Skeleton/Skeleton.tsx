@@ -27,8 +27,8 @@ export function Skeleton({
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
 
-  const s2Color = getLadderColor(2); // Surface 2 #0A0B0F
-  const s25Color = getLadderColor(2.5); // Half-step S2.5 #0B0C10
+  const s2Color = getLadderColor(2); // Surface 2 #0a0b10
+  const s25Color = getLadderColor(2.5); // Half-step S2.5 #0b0d11
 
   // Dimensions by variant
   let defWidth: string | number = '100%';

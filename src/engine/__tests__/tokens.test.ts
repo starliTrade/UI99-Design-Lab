@@ -1,18 +1,30 @@
 import { describe, it, expect } from 'vitest';
 import {
   LADDER,
+  HALF,
   getTextAlpha,
   getLiminalStyle,
   TEXT_HIERARCHY,
 } from '../spec-engine';
+import {
+  PERCEPTUAL_QUANTUM,
+  CANVAS_L,
+  LADDER_STEP,
+  LADDER_CHROMA,
+  LADDER_HUE,
+  LADDER_SIZE,
+} from '../liminal-ladder';
 import { LiminalColorEngine } from '../liminal-color-engine';
 import { LiminalLayoutEngine } from '../liminal-layout-engine';
 import { LiminalComponentEngine } from '../liminal-component-engine';
 import {
+  rgbToOklch,
+  hexToRgb,
   contrastRatioHex,
   whiteAlphaContrastOn,
   oklchLightness,
   lightnessStep,
+  oklchToHex,
 } from '../liminal-color-math';
 
 /**
@@ -55,8 +67,39 @@ function outlineColor(style: Record<string, unknown>): string | null {
 }
 
 describe('LIMINAL contract — surface ladder', () => {
-  it('has exactly six surface steps', () => {
-    expect(LADDER).toHaveLength(6);
+  it('has nine surface steps', () => {
+    expect(LADDER).toHaveLength(9);
+    expect(LADDER).toHaveLength(LADDER_SIZE);
+  });
+
+  // ── The ladder is GENERATED, not hand-picked ────────────────────────────
+  it('is reproduced exactly by the formula L(n) = CANVAS_L + n × STEP', () => {
+    LADDER.forEach((hex, n) => {
+      const generated = oklchToHex({
+        L: CANVAS_L + n * LADDER_STEP,
+        C: LADDER_CHROMA,
+        h: LADDER_HUE,
+      });
+      expect(generated, `S${n}: formula gives ${generated}, ladder has ${hex}`).toBe(hex);
+    });
+  });
+
+  it('holds chroma near-constant across the ladder', () => {
+    // Chroma is what the eye reads as "tinted vs neutral", so it is the
+    // property worth asserting. A ladder whose chroma swings is several
+    // colours pretending to be one.
+    const chromas = LADDER.map((hex) => rgbToOklch(hexToRgb(hex)).C);
+    const ratio = Math.max(...chromas) / Math.min(...chromas);
+    expect(ratio, `chroma varies ${ratio.toFixed(2)}×`).toBeLessThanOrEqual(1.6);
+  });
+
+  it('keeps the ladder essentially neutral at this darkness', () => {
+    // At L ≈ 0.13 the reachable chroma is tiny, and the *realised* hue angle is
+    // quantisation noise: one unit in the blue channel moves it ~13°. The
+    // formula's input hue is constant (asserted above); what matters visually
+    // is that the tint stays faint enough for that noise to be invisible.
+    const chromas = LADDER.map((hex) => rgbToOklch(hexToRgb(hex)).C);
+    expect(Math.max(...chromas), 'the ladder must stay near-neutral').toBeLessThanOrEqual(0.01);
   });
 
   it('is perceptually monotonic (each step is lighter than the last)', () => {
@@ -68,29 +111,54 @@ describe('LIMINAL contract — surface ladder', () => {
     }
   });
 
-  it('holds the realized perceptual step ΔL within [0.011, 0.015]', () => {
+  // ── The measured quantum is the rule, not an arbitrary number ──────────
+  it('never steps by less than the measured perceptual quantum', () => {
+    // Below q, an adjacent pair is invisible at least half the time.
     for (let i = 1; i < LADDER.length; i++) {
       const step = lightnessStep(LADDER[i - 1], LADDER[i]);
-      expect(step, `ΔL for S${i - 1} → S${i} is ${step.toFixed(4)}`).toBeGreaterThanOrEqual(0.011);
-      expect(step, `ΔL for S${i - 1} → S${i} is ${step.toFixed(4)}`).toBeLessThanOrEqual(0.015);
+      expect(
+        step,
+        `ΔL for S${i - 1} → S${i} is ${step.toFixed(4)} = ${(step / PERCEPTUAL_QUANTUM).toFixed(2)}q`,
+      ).toBeGreaterThanOrEqual(PERCEPTUAL_QUANTUM);
     }
   });
 
-  it('stays close to the target ΔL = 0.0127', () => {
-    // 8-bit hex cannot hit an exact ΔL, so the sequence is chosen to minimise
-    // the worst deviation from the target rather than to hit it exactly.
-    const TARGET = 0.0127;
-    const steps = LADDER.slice(1).map((hex, i) => lightnessStep(LADDER[i], hex));
-    const worst = Math.max(...steps.map((step) => Math.abs(step - TARGET)));
-    expect(worst, `worst deviation from target is ${worst.toFixed(4)}`).toBeLessThanOrEqual(0.002);
+  it('never steps by more than 1.5 quanta', () => {
+    // Above 1.5q the ladder reads as jumpy rather than continuous.
+    for (let i = 1; i < LADDER.length; i++) {
+      const step = lightnessStep(LADDER[i - 1], LADDER[i]);
+      expect(
+        step,
+        `ΔL for S${i - 1} → S${i} is ${(step / PERCEPTUAL_QUANTUM).toFixed(2)}q`,
+      ).toBeLessThanOrEqual(PERCEPTUAL_QUANTUM * 1.5);
+    }
   });
 
-  it('matches the contract claim that the canvas sits at L ≈ 0.128', () => {
-    expect(oklchLightness('#060709')).toBeCloseTo(0.128, 2);
+  it('anchors the canvas at the darkest allowed value', () => {
+    expect(LADDER[0]).toBe('#060709');
   });
 
-  it('keeps the ceiling below the contract limit L ≤ 0.203', () => {
-    expect(oklchLightness('#131418')).toBeLessThanOrEqual(0.203);
+  it('keeps the ceiling at or below the contract limit L ≤ 0.204', () => {
+    expect(oklchLightness(LADDER[LADDER.length - 1])).toBeLessThanOrEqual(0.204);
+  });
+
+  it('places the work surface two steps above the canvas', () => {
+    // The user chose this depth by eye: 2.10q measured, 2.48q realised
+    // (8-bit hex cannot place it closer — see design-lab/ladder-from-threshold.html).
+    const workSurface = lightnessStep(LADDER[0], LADDER[2]);
+    const quanta = workSurface / PERCEPTUAL_QUANTUM;
+    expect(quanta, `work surface sits at ${quanta.toFixed(2)}q`).toBeGreaterThanOrEqual(2.0);
+    expect(quanta, `work surface sits at ${quanta.toFixed(2)}q`).toBeLessThanOrEqual(2.6);
+  });
+
+  it('keeps half-steps below the quantum (a state change is felt, not seen)', () => {
+    for (let i = 0; i < HALF.length; i++) {
+      const halfStep = lightnessStep(LADDER[i], HALF[i]);
+      expect(
+        halfStep,
+        `half-step at S${i} is ${(halfStep / PERCEPTUAL_QUANTUM).toFixed(2)}q`,
+      ).toBeLessThan(PERCEPTUAL_QUANTUM);
+    }
   });
 });
 

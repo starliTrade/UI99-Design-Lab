@@ -19,7 +19,7 @@ import { Button } from '../../components/atoms/Button';
 import { Badge } from '../../components/atoms/Badge';
 import { Mist } from '../../components/atoms/Mist';
 import { Input } from '../../components/inputs/Input';
-import { getTextStyle } from '../../engine/spec-engine';
+import { getTextStyle, BRAND_ALPHA, SURFACE_TINT } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
@@ -102,7 +102,7 @@ export function DashboardPage() {
                   width: '28px',
                   height: '28px',
                   borderRadius: `${RADIUS.chip}px`,
-                  background: 'rgba(233, 236, 242, 0.08)',
+                  background: BRAND_ALPHA.subtle,
                   border: '1px solid rgba(233, 236, 242, 0.16)',
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -404,7 +404,7 @@ export function DashboardPage() {
                     onClick={() => navigate({ name: 'project', id: 'alpha' })}
                     className="w-full p-2 text-left rounded-md transition-all cursor-pointer flex items-center justify-between"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.03)',
+                      background: SURFACE_TINT.subtle,
                       color: getTextStyle('primary', 1).color,
                     }}
                   >
@@ -416,7 +416,7 @@ export function DashboardPage() {
                     onClick={() => navigate({ name: 'loading' })}
                     className="w-full p-2 text-left rounded-md transition-all cursor-pointer flex items-center justify-between"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.03)',
+                      background: SURFACE_TINT.subtle,
                       color: getTextStyle('primary', 1).color,
                     }}
                   >
@@ -428,7 +428,7 @@ export function DashboardPage() {
                     onClick={() => navigate({ name: '404' })}
                     className="w-full p-2 text-left rounded-md transition-all cursor-pointer flex items-center justify-between"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.03)',
+                      background: SURFACE_TINT.subtle,
                       color: getTextStyle('primary', 1).color,
                     }}
                   >

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getLiminalStyle, getTextStyle, getLadderColor, LADDER, LiminalState } from './engine/spec-engine';
+import { CONTRACT, getContractSections, getContractText, getContractChecklist } from './engine/liminal-contract';
 import { LiminalColorEngine } from './engine/liminal-color-engine';
 import { LiminalLayoutEngine } from './engine/liminal-layout-engine';
 import { AtomsDemo, MotionDemo } from './components/atoms';
@@ -93,13 +94,13 @@ export function App() {
   // Surface Styles Strictly Derived from LIMINAL Engine
   const canvasBg = LADDER[0]; // #060709 (S0)
 
-  // S1: Container Cards (Surface 1 #08090C, Rim 1)
+  // S1: Container Cards (Surface 1 #08090b, Rim 1)
   const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true });
 
-  // S2: Nested Panels (Surface 2 #0A0B0F, Rim 1)
+  // S2: Nested Panels (Surface 2 #0a0b10, Rim 1)
   const panelStyle = getLiminalStyle({ surfaceLevel: 2, isContainer: true });
 
-  // Floating Header Bar: Surface 2 (#0A0B0F), Rim 1, Elevation E1 Sub-Canvas Shadow
+  // Floating Header Bar: Surface 2 (#0a0b10), Rim 1, Elevation E1 Sub-Canvas Shadow
   const headerBarStyle = getLiminalStyle({
     surfaceLevel: 2,
     isFloating: true,
@@ -107,7 +108,7 @@ export function App() {
     isContainer: true,
   });
 
-  // Floating Dropdown: Surface 4 (#101115), Rim 2, Elevation E1 Shadow
+  // Floating Dropdown: Surface 4 (#101114), Rim 2, Elevation E1 Shadow
   const dropdownComputed = getLiminalStyle({
     surfaceLevel: 4,
     isFloating: true,
@@ -115,7 +116,7 @@ export function App() {
     interactive: true,
   });
 
-  // Featured Floating Card: Surface 4 (#101115), Rim 2, Elevation E2 Shadow
+  // Featured Floating Card: Surface 4 (#101114), Rim 2, Elevation E2 Shadow
   const featuredComputed = getLiminalStyle({
     surfaceLevel: 4,
     isFeatured: true,
@@ -129,7 +130,7 @@ export function App() {
     isContainer: true,
   });
 
-  // Floating Toast: Surface 4 (#101115), Rim 2, Elevation E4 Shadow
+  // Floating Toast: Surface 4 (#101114), Rim 2, Elevation E4 Shadow
   const toastComputed = getLiminalStyle({
     surfaceLevel: 4,
     isFloating: true,
@@ -160,57 +161,10 @@ export function App() {
   };
 
   const copyFullContract = () => {
-    const text = `/* ==========================================================================
-   LIMINAL DESIGN SYSTEM — FULL CONTRACT (COLOR · RIM · SHADOW · STATES · LAYOUT)
-   ========================================================================== */
-
-:root {
-  /* == 1. COLOR & TONAL LADDER == */
-  --lim-l0-base:          #060709; /* Canvas */
-  --lim-l1-surface:       #08090C; /* Container */
-  --lim-l2-raised:        #0A0B0F; /* Nested Panel */
-  --lim-l3-control:       #0D0E12; /* Control */
-  --lim-l4-elevated:      #101115; /* Floating / Popover */
-  --lim-l5-overlay:       #131418; /* Modal / Ceiling L 0.203 */
-
-  /* == 2. DIRECTIONAL SPECULAR RIM (180deg Top > Side 55% > Bottom) == */
-  --rim-1-top: #0B0C10; --rim-1-side: #0A0B0E; --rim-1-bottom: #0A0B0F;
-  --rim-2-top: #0D0E12; --rim-2-side: #0B0C10; --rim-2-bottom: #0A0B0F;
-  --rim-3-top: #0E0F13; --rim-3-side: #0D0E12; --rim-3-bottom: #0B0C10;
-
-  /* == 3. SUB-CANVAS SHADOWS (Penumbra S-1 #030406 + S-2 #010203) == */
-  --shadow-e1: 0 2px 6px rgba(3,4,6,0.30), 0 1px 2px rgba(1,2,3,0.22);
-  --shadow-e2: 0 4px 12px rgba(3,4,6,0.36), 0 2px 4px rgba(1,2,3,0.26);
-  --shadow-e3: 0 8px 28px rgba(3,4,6,0.44), 0 3px 8px rgba(1,2,3,0.30);
-  --shadow-e4: 0 14px 44px rgba(3,4,6,0.50), 0 5px 12px rgba(1,2,3,0.34);
-
-  /* == 4. SPACING TOKENS (Atom = 4px) == */
-  --lim-space-1: 4px;   --lim-space-2: 8px;   --lim-space-3: 12px;
-  --lim-space-4: 16px;  --lim-space-5: 24px;  --lim-space-6: 32px;
-  --lim-space-7: 48px;  --lim-space-8: 64px;  --lim-space-9: 96px;
-
-  /* == 5. RADIUS TOKENS (r_inner = max(4, r_outer - padding)) == */
-  --lim-radius-chip:      6px;
-  --lim-radius-control:   10px;
-  --lim-radius-card:      16px;
-  --lim-radius-panel:     20px;
-  --lim-radius-container: 24px;
-  --lim-radius-full:      9999px;
-
-  /* == 6. TYPOGRAPHY TOKENS (Modular 1.2 ratio, base 16) == */
-  --lim-fs-1: 11px; --lim-fs-2: 13px; --lim-fs-3: 16px; --lim-fs-4: 19px;
-  --lim-fs-5: 23px; --lim-fs-6: 28px; --lim-fs-7: 33px; --lim-fs-8: 40px;
-
-  /* == 7. BRAND PRIMARY == */
-  --lim-brand-primary:  #E9ECF2;
-  --lim-brand-on-color: #060709;
-
-  /* == 11. LIMINAL MIST (HERO & QUIET TIERS) == */
-  /* Light as fog, zero crisp geometry. Blurred ring (9-10px) on separate layer. */
-  /* Hero: ring .18, halo 44px .07 + 90px .04 | Quiet: ring .16, halo 40px .06 + 84px .035 */
-  /* 11.4 Budget per view: Max 1 Hero Mist CTA per entire app, Quiet Mist for Alerts & Toasts */
-}`;
-    navigator.clipboard.writeText(text);
+    // The contract is generated from the engine (src/engine/liminal-contract.ts).
+    // It used to be a hand-written string here, and had drifted three token
+    // changes behind — it still described ΔL 0.015 and an invisible focus ring.
+    navigator.clipboard.writeText(getContractText());
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -280,7 +234,7 @@ export function App() {
 
           {/* Liminal Segmented Viewport Switcher & Copy Action */}
           <div className="flex items-center gap-2 font-mono text-[11px]">
-            {/* Viewport Switcher Track (Surface 1 #08090C · Rim 1) */}
+            {/* Viewport Switcher Track (Surface 1 #08090b · Rim 1) */}
             <div
               className="flex p-1"
               style={{
@@ -447,7 +401,7 @@ export function App() {
         {/* ─── TAB: REAL-WORLD MOBILE GATEWAY CONSOLE ─── */}
         {activeTab === 'gateway' && (
           <div className="space-y-4 animate-in fade-in-50 duration-200">
-            {/* Header Card (Container Surface 1 #08090C · Rim 1 · Radius 24px) */}
+            {/* Header Card (Container Surface 1 #08090b · Rim 1 · Radius 24px) */}
             <div
               className="p-4 sm:p-5 space-y-3 font-mono"
               style={{
@@ -635,7 +589,7 @@ export function App() {
                 </div>
               </div>
 
-              {/* Segmented Controller (Surface 2 #0A0B0F · Concentric Radius 16px) */}
+              {/* Segmented Controller (Surface 2 #0a0b10 · Concentric Radius 16px) */}
               <div
                 className="p-1 flex"
                 style={{
@@ -917,8 +871,8 @@ export function App() {
               >
                 {(
                   [
-                    { id: 'idle', label: '1. Idle', desc: '#0A0B0F · Rim 2' },
-                    { id: 'hover', label: '2. Hover', desc: '+0.5Δ (#0B0C10) · Rim 2' },
+                    { id: 'idle', label: '1. Idle', desc: '#0a0b10 · Rim 2' },
+                    { id: 'hover', label: '2. Hover', desc: '+0.5Δ (#0b0d11) · Rim 2' },
                     { id: 'focus', label: '3. Focus', desc: '+0.5Δ · Rim 3 · 2px Ring' },
                     { id: 'active', label: '4. Active', desc: '−0.5Δ · CONCAVE Rim' },
                     { id: 'disabled', label: '5. Disabled', desc: 'Rim 0 · bg→cont · α.25' },
@@ -1284,29 +1238,29 @@ export function App() {
                 style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
               >
                 <div className="flex items-center gap-2">
-                  <LiminalIcon icon={CheckCircle} size="sm" weight="light" color="#34C08B" />
+                  <LiminalIcon
+                    icon={CheckCircle}
+                    size="sm"
+                    weight="light"
+                    color={LiminalColorEngine.SEMANTICS.SUCCESS.solid}
+                  />
                   <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
-                    HARD RULES CHECKLIST (100% COMPLIANT)
+                    HARD RULES CHECKLIST
                   </span>
                 </div>
-                <span className="px-1.5 py-0.5 text-[9px] bg-[#04140D] text-[#6EE0B4] border border-[#34C08B]/30 rounded">
-                  ALL PASS ✅
+                <span
+                  className="px-1.5 py-0.5 text-[9px] rounded"
+                  style={{
+                    color: LiminalColorEngine.SEMANTICS.SUCCESS.text,
+                    border: `1px solid ${LiminalColorEngine.SEMANTICS.SUCCESS.border}`,
+                  }}
+                >
+                  ENFORCED IN CI
                 </span>
               </div>
 
               <div className="space-y-2 text-[11px]">
-                {[
-                  'ΔL never <0.012 or >0.020 ; dark ceiling L0.203 ; rim ceiling Rim3',
-                  'border = directional ladder gradient only (no external/white border-color)',
-                  'shadow = sub-canvas dual-layer (S-1/S-2), floating/featured only',
-                  'text never pure white ; Q non-critical only ; T/Q surface-compensated',
-                  'spacing cohesive ≤12 separating ≥16 atom 4 ; radius size-mapped + concentric',
-                  'type ratio 1.2 weight ≤700 ; warm hues lower chroma (anti-neon)',
-                  'all chromatic color on dark canvas only ; brand primary = Soft White #E9ECF2',
-                  'Mist هرگز tint پس‌زمینه یا border تخت رنگی تیز ندارد (Ring تار ۹-۱۰px)',
-                  'سقف بودجه‌ی Mist رعایت شود (حداکثر ۱ Hero در کل اپ)',
-                  'pill مجاز برای: badge · toggle · Hero Mist CTA',
-                ].map((rule, idx) => (
+                {getContractChecklist().map((rule, idx) => (
                   <div
                     key={idx}
                     className="p-2.5 flex items-start gap-2 rounded-lg"
@@ -1360,31 +1314,21 @@ export function App() {
                   color: getTextStyle('secondary', 2).color,
                 }}
               >
-                <p className="text-[#6EE0B4] font-bold">
-                  LIMINAL · DESIGN SYSTEM — MASTER CONTRACT v1.0 (COMPLETE)
+                <p style={{ color: LiminalColorEngine.SEMANTICS.SUCCESS.text, fontWeight: 700 }}>
+                  LIMINAL · DESIGN SYSTEM — MASTER CONTRACT v{CONTRACT.version} (COMPLETE)
                 </p>
                 <p className="italic">«هر لایه روی آستانه‌ی ادراک — نه کمتر، نه بیشتر.»</p>
-                <p>0) CORE CONSTANTS: OKLCH, Canvas L0: 0.128, ΔL: 0.015, Hue 270°, Base Chroma 0.008, Decay 2.5, JND 0.008.</p>
-                <p>1) TONAL LADDER: S0 #060709, S1 #08090C, S2 #0A0B0F, S3 #0D0E12, S4 #101115, S5 #131418. Sub-canvas: S-1 #030406, S-2 #010203.</p>
-                <p>2) DIRECTIONAL RIM: 180° Top &gt; Side 55% &gt; Bottom, 1px specular gradient, Rim 0..3.</p>
-                <p>3) SUB-CANVAS SHADOW: E1..E4 dual layer ambient (#030406) + contact (#010203), floating only.</p>
-                <p>4) STATES: Hover +0.5Δ bg, Focus +0.5Δ bg + Rim 3 + 2px outline ladder(n+1), Active −0.5Δ bg + CONCAVE rim + translateY(0.5px), Disabled α.25.</p>
-                <p>5) TEXT: Primary α0.88, Secondary α0.62, Tertiary α0.40, Quaternary α0.25. Surface compensation on S2/S3/S4/S5.</p>
-                <p>6) COLOR: Ramp base=oklch(0.78, C_text, H), Semantics Success/Warning/Danger/Info, 12 Extended Hues, Brand Soft White #E9ECF2.</p>
-                <p>7) SPACING/RADIUS/TYPE: Atom 4px, Cohesive ≤12, Separating ≥16. Radius chip 6, control 10, card 16, panel 20, container 24, r_inner = max(4, r_outer − padding). Type modular 1.2 ratio (11 to 40px), weights 400..700.</p>
-                <p className="text-[#8B9CF0] font-bold">۱۱) LIMINAL MIST (سیستم مه نوری — جایگزین Glass)</p>
-                <p>نور مانند مه در فضا پخش می‌شود: بدون مرز هندسی تیز. Ring روی یک لایه‌ی جداگانه با blur=9-10px اعمال می‌شود تا از هرگونه گوشه‌ی خشن جلوگیری شود.</p>
-                <p>سطوح مه: Hero (Ring .18/blur 9 · Halos 44px .07 + 90px .04 · Caustic .06 · Whisper .048 · Shade .30) | Quiet (Ring .16/blur 10 · Halos 40px .06 + 84px .035 · Caustic .055 · Whisper .044 · Shade .28).</p>
-                <p>مجاز فقط برای: CTA اصلی (حداکثر ۱ در کل اپ: Hero) · Alert (Quiet) · Toast (Quiet شناور). Tooltip خنثی است (بدون hue) — فقط rim و سایه.</p>
-                <p className="text-[#6EE0B4] font-bold mt-2">== ۱۱.۴ بودجه‌ی استفاده (Mist Budget per View) ==</p>
-                <p>مه یک استثناست، نه قاعده. در کل اپلیکیشن:</p>
-                <p>• دقیقاً ۱ عنصر Hero Mist CTA (دکمه‌ی «پروژه جدید» در داشبورد)</p>
-                <p>• Quiet Mist فقط برای Alertهای معنادار و Toastهای لحظات کلیدی</p>
-                <p className="mt-1 text-white/90">استاندارد پیش‌فرض برای همه‌ی عناصر دیگر:</p>
-                <p>• Rim جهت‌دار خنثی از نردبان (قانون اصلی rim)</p>
-                <p>• سایه زیر-بوم فقط برای شناورها (E1-E4)</p>
-                <p>• متن از سلسله‌مراتب ۴ سطحی</p>
-                <p className="text-[#FF7B72] font-semibold mt-1">«استفاده از مه فراتر از این بودجه = نقض سیاست لیمینال (چشم را از محتوا منحرف می‌کند).»</p>
+                <p style={{ color: getTextStyle('tertiary', 2).color, fontSize: 11, marginTop: 4 }}>
+                  Generated from the engine — this text cannot drift from the tokens it describes.
+                </p>
+                {getContractSections().map((section) => (
+                  <div key={section.id} style={{ marginTop: 10 }}>
+                    <p style={{ color: LiminalColorEngine.SEMANTICS.INFO.text, fontWeight: 600 }}>
+                      {section.title}
+                    </p>
+                    <p>{section.body}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

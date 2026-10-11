@@ -48,5 +48,35 @@ export default tseslint.config(
       'prefer-const': 'error',
     },
   },
+  {
+    // ── The raw-value ban ──────────────────────────────────────────────────
+    // Components must consume tokens, never literals. The engine is the only
+    // place a colour, easing or duration may be written by hand.
+    //
+    // This is the rule every mature design system has (stylelint's
+    // declaration-property-value-disallowed-list, MUI's theme lint). Without it
+    // a token layer is advisory: the audit found 92 hardcoded hexes and a
+    // hand-written copy of the contract that had drifted three changes behind.
+    files: ['src/components/**/*.{ts,tsx}', 'src/app/**/*.{ts,tsx}'],
+    ignores: ['src/components/**/*Demo.tsx', 'src/components/KitShowcase.tsx'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/^#[0-9a-fA-F]{3,8}$/]',
+          message:
+            'Raw hex colour. Use the engine: getLadderColor(), LiminalColorEngine, or getTextStyle().',
+        },
+        {
+          selector: 'Literal[value=/^rgba?\\(/]',
+          message: 'Raw rgb()/rgba() colour. Use the engine (LiminalColorEngine / getTextStyle).',
+        },
+        {
+          selector: 'Literal[value=/^cubic-bezier\\(/]',
+          message: 'Raw easing curve. Use LiminalMotionEngine.EASING.',
+        },
+      ],
+    },
+  },
   prettier,
 );
