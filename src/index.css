@@ -6,24 +6,27 @@
 
   /* ── 1. TONAL LADDER ─────────────────────────────────────────── */
   --liminal-s0: #060709; /* canvas */
-  --liminal-s1: #08090b;
-  --liminal-s2: #0a0b10;
-  --liminal-s3: #0d0e11;
-  --liminal-s4: #101114;
-  --liminal-s5: #131418;
+  --liminal-s1: #07090c;
+  --liminal-s2: #090b0e;
+  --liminal-s3: #0b0d10;
+  --liminal-s4: #0d0f12;
+  --liminal-s5: #0f1114;
+  --liminal-s6: #111316;
+  --liminal-s7: #131518;
+  --liminal-s8: #15171a;
   --liminal-s-minus-1: #030406; /* penumbra */
   --liminal-s-minus-2: #010203; /* contact umbra */
 
   /* ── 2. RIM ──────────────────────────────────────────────────── */
-  --liminal-rim-1-top: #090a0e;
-  --liminal-rim-1-side: #090a0e;
-  --liminal-rim-1-bottom: #08090b;
-  --liminal-rim-2-top: #0d0e11;
-  --liminal-rim-2-side: #0b0d11;
-  --liminal-rim-2-bottom: #0a0b10;
-  --liminal-rim-3-top: #111216;
-  --liminal-rim-3-side: #101114;
-  --liminal-rim-3-bottom: #0e0f12;
+  --liminal-rim-1-top: #080a0d;
+  --liminal-rim-1-side: #080a0d;
+  --liminal-rim-1-bottom: #07090c;
+  --liminal-rim-2-top: #0b0d10;
+  --liminal-rim-2-side: #0a0c0f;
+  --liminal-rim-2-bottom: #090b0e;
+  --liminal-rim-3-top: #0e1013;
+  --liminal-rim-3-side: #0d0f12;
+  --liminal-rim-3-bottom: #0c0e11;
 
   /* ── 3. SHADOW ───────────────────────────────────────────────── */
   --liminal-shadow-e1: 0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);
@@ -162,24 +165,27 @@
 
   /* ── 1. TONAL LADDER ─────────────────────────────────────────── */
   --liminal-s0: #060709; /* canvas */
-  --liminal-s1: #08090b;
-  --liminal-s2: #0a0b10;
-  --liminal-s3: #0d0e11;
-  --liminal-s4: #101114;
-  --liminal-s5: #131418;
+  --liminal-s1: #07090c;
+  --liminal-s2: #090b0e;
+  --liminal-s3: #0b0d10;
+  --liminal-s4: #0d0f12;
+  --liminal-s5: #0f1114;
+  --liminal-s6: #111316;
+  --liminal-s7: #131518;
+  --liminal-s8: #15171a;
   --liminal-s-minus-1: #030406; /* penumbra */
   --liminal-s-minus-2: #010203; /* contact umbra */
 
   /* ── 2. RIM ──────────────────────────────────────────────────── */
-  --liminal-rim-1-top: #090a0e;
-  --liminal-rim-1-side: #090a0e;
-  --liminal-rim-1-bottom: #08090b;
-  --liminal-rim-2-top: #0d0e11;
-  --liminal-rim-2-side: #0b0d11;
-  --liminal-rim-2-bottom: #0a0b10;
-  --liminal-rim-3-top: #111216;
-  --liminal-rim-3-side: #101114;
-  --liminal-rim-3-bottom: #0e0f12;
+  --liminal-rim-1-top: #080a0d;
+  --liminal-rim-1-side: #080a0d;
+  --liminal-rim-1-bottom: #07090c;
+  --liminal-rim-2-top: #0b0d10;
+  --liminal-rim-2-side: #0a0c0f;
+  --liminal-rim-2-bottom: #090b0e;
+  --liminal-rim-3-top: #0e1013;
+  --liminal-rim-3-side: #0d0f12;
+  --liminal-rim-3-bottom: #0c0e11;
 
   /* ── 3. SHADOW ───────────────────────────────────────────────── */
   --liminal-shadow-e1: 0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);

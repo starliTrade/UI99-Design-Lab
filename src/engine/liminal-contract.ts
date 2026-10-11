@@ -23,6 +23,7 @@ import {
 import { LiminalLayoutEngine } from './liminal-layout-engine';
 import { LiminalColorEngine } from './liminal-color-engine';
 import { LiminalMotionEngine } from './liminal-motion-engine';
+import { PERCEPTUAL_QUANTUM, RELIABLE_BOUNDARY } from './liminal-ladder';
 import { oklchLightness } from './liminal-color-math';
 
 /** Locked constants of the system. */
@@ -31,13 +32,19 @@ export const CONTRACT = {
   /** Canvas lightness — the absolute reference of the ladder. */
   canvasL: 0.128,
   /**
-   * Target perceptual step in OKLCH lightness.
-   * Measured from the design, not assumed: 0.0127 is the average step of the
-   * original hand-picked palette. See design-lab/ladder-compare.html.
+   * The perceptual quantum — ΔL at 50% detection, MEASURED on the user's own
+   * display with a constant-stimuli psychophysical test (three sessions).
+   * See design-lab/threshold-test-precise.html.
    */
-  targetDeltaL: 0.0127,
-  /** Realized steps must stay inside this band — 8-bit hex cannot hit ΔL exactly. */
-  deltaLBand: [0.011, 0.015] as const,
+  quantum: PERCEPTUAL_QUANTUM,
+  /** ΔL at 95% detection — the boundary that reads reliably. */
+  reliableBoundary: RELIABLE_BOUNDARY,
+  /**
+   * Realized ladder steps must stay inside this band, expressed in quanta.
+   * Below 1q an adjacent pair is invisible; above 1.5q the ladder reads jumpy.
+   * 8-bit hex cannot hit an exact ΔL, so the band is a range, not a value.
+   */
+  stepBand: [1.0, 1.5] as const,
 } as const;
 
 export interface ContractSection {
@@ -92,7 +99,9 @@ export function getContractSections(): ContractSection[] {
       title: '0) CORE CONSTANTS',
       body:
         `OKLCH perceptual space. Canvas L0 ${CONTRACT.canvasL}. ` +
-        `Target ΔL ${CONTRACT.targetDeltaL} (realized band ${CONTRACT.deltaLBand[0]}–${CONTRACT.deltaLBand[1]}). ` +
+        `Measured perceptual quantum q = ${CONTRACT.quantum} (50% detection), ` +
+        `reliable boundary r = ${CONTRACT.reliableBoundary} (95% detection, r/q = ${(CONTRACT.reliableBoundary / CONTRACT.quantum).toFixed(2)}). ` +
+        `Every ladder step must stay within [${CONTRACT.stepBand[0]}q, ${CONTRACT.stepBand[1]}q]. ` +
         `Hue family ≈262–275°, chroma ≈0.006–0.009.`,
     },
     {
@@ -192,7 +201,7 @@ export function getContractText(): string {
 export function getContractChecklist(): string[] {
   const ceilingL = oklchLightness(LADDER[LADDER.length - 1]).toFixed(3);
   return [
-    `ΔL within [${CONTRACT.deltaLBand[0]}, ${CONTRACT.deltaLBand[1]}] (target ${CONTRACT.targetDeltaL}) ; dark ceiling L${ceilingL} ; rim ceiling Rim3`,
+    `every ladder step within [${CONTRACT.stepBand[0]}q, ${CONTRACT.stepBand[1]}q], q = ${CONTRACT.quantum} (measured) ; dark ceiling L${ceilingL} ; rim ceiling Rim3`,
     'border = directional ladder gradient only (no external/white border-color)',
     'shadow = sub-canvas dual-layer (S-1/S-2), floating/featured only',
     `text never pure white ; tertiary ≥4.5:1 ; quaternary ≥3:1 and non-critical only`,

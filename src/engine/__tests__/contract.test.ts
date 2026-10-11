@@ -20,10 +20,12 @@ describe('generated contract — cannot drift from the tokens', () => {
     });
   });
 
-  it('states the measured ΔL target, not the old assumption', () => {
-    expect(text).toContain(`Target ΔL ${CONTRACT.targetDeltaL}`);
-    // The old, false value must not appear as the target.
+  it('states the measured perceptual quantum, not an assumption', () => {
+    expect(text).toContain(`q = ${CONTRACT.quantum}`);
+    expect(text).toContain(`r = ${CONTRACT.reliableBoundary}`);
+    // The old, unmeasured values must never come back as the basis.
     expect(text).not.toContain('Target ΔL 0.015');
+    expect(text).not.toContain('target 0.0127');
   });
 
   it('states the live text alphas', () => {
@@ -89,8 +91,9 @@ describe('generated checklist — numeric rules come from the tokens', () => {
   const checklist = getContractChecklist();
   const joined = checklist.join('\n');
 
-  it('states the live ΔL band, not the old one', () => {
-    expect(joined).toContain(`[${CONTRACT.deltaLBand[0]}, ${CONTRACT.deltaLBand[1]}]`);
+  it('states the live step band in quanta, not the old numbers', () => {
+    expect(joined).toContain(`[${CONTRACT.stepBand[0]}q, ${CONTRACT.stepBand[1]}q]`);
+    expect(joined).toContain(`q = ${CONTRACT.quantum}`);
     expect(joined).not.toContain('<0.012 or >0.020');
   });
 
