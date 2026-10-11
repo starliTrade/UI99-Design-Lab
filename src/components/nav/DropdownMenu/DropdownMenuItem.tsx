@@ -65,9 +65,6 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
     ref
   ) => {
     const { close } = useDropdownMenuContext();
-    const [isHovered, setIsHovered] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
-    const [isKeyboardFocused, setIsKeyboardFocused] = useState(false);
 
     const SPACING = LiminalLayoutEngine.SPACING;
     const RADIUS = LiminalLayoutEngine.RADIUS;
@@ -76,28 +73,21 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
     const isDanger = variant === 'danger';
     const isInteractive = !disabled;
 
-    let background = 'transparent';
-    let textColor = isDanger
+    // Hover and focus are CSS's job now. The item sits ON the menu surface:
+    // idle is transparent, and the browser lifts it by a half-step on hover or
+    // keyboard focus — never an absolute ladder level.
+    const idleBg = 'transparent';
+    const hoverBg = isDanger
+      ? LiminalColorEngine.SEMANTICS.DANGER.subtle
+      : resolveSurface({ role: 'menu', state: 'hover' }).background;
+    const textColor = isDanger
       ? LiminalColorEngine.SEMANTICS.DANGER.text
       : getTextStyle('primary', 2).color;
 
-    if (isInteractive && (isHovered || isFocused)) {
-      if (isDanger) {
-        background = LiminalColorEngine.SEMANTICS.DANGER.subtle;
-        textColor = LiminalColorEngine.SEMANTICS.DANGER.text;
-      } else {
-        // The item sits ON the menu surface: idle is transparent, focus lifts it
-        // by a half-step above the menu — never an absolute ladder level.
-        background = isFocused
-          ? resolveSurface({ role: 'menu', state: 'hover' }).background
-          : 'transparent';
-        textColor = getTextStyle('primary', 3).color;
-      }
-    }
-
-    const focusRing = LiminalComponentEngine.getFocusRing(isKeyboardFocused);
-
-    const itemStyle: CSSProperties = {
+    const itemStyle = {
+      '--liminal-surface-idle': idleBg,
+      '--liminal-surface-hover': hoverBg,
+      '--liminal-surface-active': hoverBg,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -108,7 +98,6 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
       fontWeight: 500,
       lineHeight: TYPOGRAPHY[2].lh,
       color: textColor,
-      background,
       cursor: disabled ? 'not-allowed' : 'pointer',
       opacity: disabled ? 0.4 : 1,
       pointerEvents: disabled ? 'none' : 'auto',
@@ -120,8 +109,7 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
       boxSizing: 'border-box',
       textAlign: 'left',
       textDecoration: 'none',
-      ...focusRing,
-      ...customStyle,
+        ...customStyle,
     };
 
     const handleClick = (e: MouseEvent<HTMLElement>) => {
@@ -133,45 +121,27 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
       }
     };
 
-    const handleMouseEnter = (e: MouseEvent<HTMLElement>) => {
-      if (!disabled) setIsHovered(true);
-      onMouseEnter?.(e);
-    };
-
-    const handleMouseLeave = (e: MouseEvent<HTMLElement>) => {
-      if (!disabled) setIsHovered(false);
-      onMouseLeave?.(e);
-    };
-
-    const handleFocus = (e: FocusEvent<HTMLElement>) => {
-      if (!disabled) setIsFocused(true);
-      onFocus?.(e);
-    };
-
-    const handleBlur = (e: FocusEvent<HTMLElement>) => {
-      if (!disabled) {
-        setIsFocused(false);
-        setIsKeyboardFocused(false);
-      }
-      onBlur?.(e);
-    };
+    const handleMouseEnter = onMouseEnter;
+    const handleMouseLeave = onMouseLeave;
+    const handleFocus = onFocus;
+    const handleBlur = onBlur;
 
     const handleKeyDown = (e: KeyboardEvent<HTMLElement>) => {
       if (disabled) return;
-      if (e.key === 'Tab') {
-        setIsKeyboardFocused(true);
-      } else if (e.key === 'Enter' || e.key === ' ') {
+      if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         handleClick(e as any);
       }
       onKeyDown?.(e);
     };
 
-    const itemProps = {
+    const itemProps: Record<string, unknown> = {
       role: 'menuitem' as const,
       tabIndex: disabled ? -1 : 0,
       'aria-disabled': disabled ? true : undefined,
       className,
+      'data-liminal-surface': '',
+      'data-liminal-disabled': disabled ? '' : undefined,
       style: itemStyle,
       onClick: handleClick,
       onMouseEnter: handleMouseEnter,
@@ -194,14 +164,14 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
 
     if (asChild) {
       return (
-        <Slot ref={ref} {...itemProps}>
+        <Slot ref={ref} {...(itemProps as any)}>
           {innerContent}
         </Slot>
       );
     }
 
     return (
-      <div ref={ref as any} {...itemProps}>
+      <div ref={ref as any} {...(itemProps as any)}>
         {innerContent}
       </div>
     );
@@ -239,27 +209,21 @@ export const DropdownMenuCheckboxItem = forwardRef<HTMLElement, DropdownMenuChec
     ref
   ) => {
     const { close } = useDropdownMenuContext();
-    const [isHovered, setIsHovered] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
-    const [isKeyboardFocused, setIsKeyboardFocused] = useState(false);
 
     const SPACING = LiminalLayoutEngine.SPACING;
     const RADIUS = LiminalLayoutEngine.RADIUS;
     const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
-    let background = 'transparent';
-    let textColor = getTextStyle('primary', 2).color;
+    // Hover and focus are CSS's job now — see the interaction layer.
+    const idleBg = 'transparent';
+    const hoverBg = resolveSurface({ role: 'menu', state: 'hover' }).background;
+    const textColor = getTextStyle('primary', 2).color;
 
-    if (!disabled && (isHovered || isFocused)) {
-      background = isFocused
-          ? resolveSurface({ role: 'menu', state: 'hover' }).background
-          : 'transparent';
-      textColor = getTextStyle('primary', 3).color;
-    }
 
-    const focusRing = LiminalComponentEngine.getFocusRing(isKeyboardFocused);
-
-    const itemStyle: CSSProperties = {
+    const itemStyle = {
+      '--liminal-surface-idle': idleBg,
+      '--liminal-surface-hover': hoverBg,
+      '--liminal-surface-active': hoverBg,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -270,7 +234,6 @@ export const DropdownMenuCheckboxItem = forwardRef<HTMLElement, DropdownMenuChec
       fontWeight: 500,
       lineHeight: TYPOGRAPHY[2].lh,
       color: textColor,
-      background,
       cursor: disabled ? 'not-allowed' : 'pointer',
       opacity: disabled ? 0.4 : 1,
       pointerEvents: disabled ? 'none' : 'auto',
@@ -281,8 +244,7 @@ export const DropdownMenuCheckboxItem = forwardRef<HTMLElement, DropdownMenuChec
       width: '100%',
       boxSizing: 'border-box',
       textAlign: 'left',
-      ...focusRing,
-      ...customStyle,
+        ...customStyle,
     };
 
     const handleClick = (e: MouseEvent<HTMLElement>) => {
@@ -294,7 +256,7 @@ export const DropdownMenuCheckboxItem = forwardRef<HTMLElement, DropdownMenuChec
       }
     };
 
-    const itemProps = {
+    const itemProps: Record<string, unknown> = {
       role: 'menuitemcheckbox' as const,
       'aria-checked': checked,
       tabIndex: disabled ? -1 : 0,
@@ -302,20 +264,11 @@ export const DropdownMenuCheckboxItem = forwardRef<HTMLElement, DropdownMenuChec
       className,
       style: itemStyle,
       onClick: handleClick,
-      onMouseEnter: () => !disabled && setIsHovered(true),
-      onMouseLeave: () => !disabled && setIsHovered(false),
-      onFocus: () => !disabled && setIsFocused(true),
-      onBlur: () => {
-        if (!disabled) {
-          setIsFocused(false);
-          setIsKeyboardFocused(false);
-        }
-      },
+      'data-liminal-surface': '',
+      'data-liminal-disabled': disabled ? '' : undefined,
       onKeyDown: (e: KeyboardEvent<HTMLElement>) => {
         if (disabled) return;
-        if (e.key === 'Tab') {
-          setIsKeyboardFocused(true);
-        } else if (e.key === 'Enter' || e.key === ' ') {
+      if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           handleClick(e as any);
         }
@@ -347,14 +300,14 @@ export const DropdownMenuCheckboxItem = forwardRef<HTMLElement, DropdownMenuChec
 
     if (asChild) {
       return (
-        <Slot ref={ref} {...itemProps}>
+        <Slot ref={ref} {...(itemProps as any)}>
           {innerContent}
         </Slot>
       );
     }
 
     return (
-      <div ref={ref as any} {...itemProps}>
+      <div ref={ref as any} {...(itemProps as any)}>
         {innerContent}
       </div>
     );
@@ -393,27 +346,21 @@ export const DropdownMenuRadioItem = forwardRef<HTMLElement, DropdownMenuRadioIt
     const group = useContext(RadioGroupContext);
     const isSelected = group?.value === value;
 
-    const [isHovered, setIsHovered] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
-    const [isKeyboardFocused, setIsKeyboardFocused] = useState(false);
 
     const SPACING = LiminalLayoutEngine.SPACING;
     const RADIUS = LiminalLayoutEngine.RADIUS;
     const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
-    let background = 'transparent';
-    let textColor = getTextStyle('primary', 2).color;
+    // Hover and focus are CSS's job now — see the interaction layer.
+    const idleBg = 'transparent';
+    const hoverBg = resolveSurface({ role: 'menu', state: 'hover' }).background;
+    const textColor = getTextStyle('primary', 2).color;
 
-    if (!disabled && (isHovered || isFocused)) {
-      background = isFocused
-          ? resolveSurface({ role: 'menu', state: 'hover' }).background
-          : 'transparent';
-      textColor = getTextStyle('primary', 3).color;
-    }
 
-    const focusRing = LiminalComponentEngine.getFocusRing(isKeyboardFocused);
-
-    const itemStyle: CSSProperties = {
+    const itemStyle = {
+      '--liminal-surface-idle': idleBg,
+      '--liminal-surface-hover': hoverBg,
+      '--liminal-surface-active': hoverBg,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -424,7 +371,6 @@ export const DropdownMenuRadioItem = forwardRef<HTMLElement, DropdownMenuRadioIt
       fontWeight: 500,
       lineHeight: TYPOGRAPHY[2].lh,
       color: textColor,
-      background,
       cursor: disabled ? 'not-allowed' : 'pointer',
       opacity: disabled ? 0.4 : 1,
       pointerEvents: disabled ? 'none' : 'auto',
@@ -435,8 +381,7 @@ export const DropdownMenuRadioItem = forwardRef<HTMLElement, DropdownMenuRadioIt
       width: '100%',
       boxSizing: 'border-box',
       textAlign: 'left',
-      ...focusRing,
-      ...customStyle,
+        ...customStyle,
     };
 
     const handleClick = (e: MouseEvent<HTMLElement>) => {
@@ -448,7 +393,7 @@ export const DropdownMenuRadioItem = forwardRef<HTMLElement, DropdownMenuRadioIt
       }
     };
 
-    const itemProps = {
+    const itemProps: Record<string, unknown> = {
       role: 'menuitemradio' as const,
       'aria-checked': isSelected,
       tabIndex: disabled ? -1 : 0,
@@ -456,20 +401,11 @@ export const DropdownMenuRadioItem = forwardRef<HTMLElement, DropdownMenuRadioIt
       className,
       style: itemStyle,
       onClick: handleClick,
-      onMouseEnter: () => !disabled && setIsHovered(true),
-      onMouseLeave: () => !disabled && setIsHovered(false),
-      onFocus: () => !disabled && setIsFocused(true),
-      onBlur: () => {
-        if (!disabled) {
-          setIsFocused(false);
-          setIsKeyboardFocused(false);
-        }
-      },
+      'data-liminal-surface': '',
+      'data-liminal-disabled': disabled ? '' : undefined,
       onKeyDown: (e: KeyboardEvent<HTMLElement>) => {
         if (disabled) return;
-        if (e.key === 'Tab') {
-          setIsKeyboardFocused(true);
-        } else if (e.key === 'Enter' || e.key === ' ') {
+      if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           handleClick(e as any);
         }
@@ -501,14 +437,14 @@ export const DropdownMenuRadioItem = forwardRef<HTMLElement, DropdownMenuRadioIt
 
     if (asChild) {
       return (
-        <Slot ref={ref} {...itemProps}>
+        <Slot ref={ref} {...(itemProps as any)}>
           {innerContent}
         </Slot>
       );
     }
 
     return (
-      <div ref={ref as any} {...itemProps}>
+      <div ref={ref as any} {...(itemProps as any)}>
         {innerContent}
       </div>
     );
