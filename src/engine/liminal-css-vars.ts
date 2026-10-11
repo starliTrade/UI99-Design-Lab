@@ -1,0 +1,140 @@
+/**
+ * LIMINAL · CSS VARIABLE GENERATOR
+ *
+ * Emits the `:root` token block from the engine. The engine is the single
+ * source of truth; this file is the only place that turns it into CSS.
+ *
+ * Why generate instead of hand-writing: the hand-written block covered ~19 of
+ * ~90 tokens, so most of the system could not be themed at runtime and nothing
+ * caught the drift. A test (src/engine/__tests__/css-vars.test.ts) asserts that
+ * src/index.css matches this output exactly, so the two cannot diverge.
+ *
+ * Run: bun run gen:css   (writes the block into src/index.css)
+ */
+
+import { LADDER, HALF } from './liminal-ladder';
+import {
+  RIM,
+  SHADOWS,
+  SURFACE_TINT,
+  VEIL,
+  BRAND_ALPHA,
+  Z_INDEX,
+  TEXT_HIERARCHY,
+  getDirectionalRim,
+} from './spec-engine';
+import { LiminalLayoutEngine } from './liminal-layout-engine';
+import { LiminalMotionEngine } from './liminal-motion-engine';
+import { LiminalColorEngine } from './liminal-color-engine';
+
+const lines: string[] = [];
+const section = (title: string) => {
+  lines.push('');
+  lines.push(`  /* ── ${title} ${'─'.repeat(Math.max(0, 58 - title.length))} */`);
+};
+const v = (name: string, value: string | number, note?: string) => {
+  const suffix = note ? ` /* ${note} */` : '';
+  lines.push(`  --liminal-${name}: ${value};${suffix}`);
+};
+
+export function generateCssVars(): string {
+  lines.length = 0;
+
+  // ── 1. TONAL LADDER ────────────────────────────────────────────────
+  section('1. TONAL LADDER');
+  LADDER.forEach((hex, i) => v(`s${i}`, hex, i === 0 ? 'canvas' : undefined));
+  v('s-minus-1', '#030406', 'penumbra');
+  v('s-minus-2', '#010203', 'contact umbra');
+
+  // ── 2. DIRECTIONAL RIM ─────────────────────────────────────────────
+  section('2. RIM');
+  ([1, 2, 3] as const).forEach((level) => {
+    const rim = getDirectionalRim(level, level);
+    if (!rim) return;
+    v(`rim-${level}-top`, rim.top);
+    v(`rim-${level}-side`, rim.side);
+    v(`rim-${level}-bottom`, rim.bot);
+  });
+
+  // ── 3. SUB-CANVAS SHADOW ───────────────────────────────────────────
+  section('3. SHADOW');
+  ([1, 2, 3, 4] as const).forEach((e) => v(`shadow-e${e}`, SHADOWS[e]));
+
+  // ── 4. SURFACE TINT ────────────────────────────────────────────────
+  section('4. SURFACE TINT (fills — never for type)');
+  Object.entries(SURFACE_TINT).forEach(([k, val]) => v(`tint-${k}`, val));
+
+  // ── 5. VEIL ────────────────────────────────────────────────────────
+  section('5. VEIL');
+  Object.entries(VEIL).forEach(([k, val]) => v(`veil-${k}`, val));
+
+  // ── 6. TEXT ────────────────────────────────────────────────────────
+  section('6. TEXT (never pure white)');
+  v('text-primary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.primary})`);
+  v('text-secondary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.secondary})`);
+  v('text-tertiary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.tertiary[0]})`, 'S0 floor; AA ≥4.5:1');
+  v('text-quaternary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.quaternary[0]})`, '≥3:1, non-text only');
+
+  // ── 7. SEMANTICS ───────────────────────────────────────────────────
+  section('7. SEMANTICS');
+  (['SUCCESS', 'WARNING', 'DANGER', 'INFO'] as const).forEach((role) => {
+    const s = LiminalColorEngine.SEMANTICS[role];
+    const key = role.toLowerCase();
+    v(key, s.solid.replace(/var\([^,]+,\s*/, '').replace(/\)$/, ''));
+    v(`${key}-text`, s.text);
+    v(`${key}-subtle`, s.subtle);
+    v(`${key}-border`, s.border);
+    v(`${key}-on`, s.onSolid);
+  });
+
+  // ── 8. BRAND ───────────────────────────────────────────────────────
+  section('8. BRAND');
+  const brand = LiminalColorEngine.BRAND_PRIMARY;
+  v('brand', brand.hex.replace(/var\([^,]+,\s*/, '').replace(/\)$/, ''));
+  v('brand-on', brand.onColor.replace(/var\([^,]+,\s*/, '').replace(/\)$/, ''));
+  v('brand-hover', brand.hover);
+  v('brand-active', brand.active);
+  v('brand-subtle', BRAND_ALPHA.subtle);
+
+  // ── 9. EXTENDED SPECTRUM ───────────────────────────────────────────
+  section('9. EXTENDED SPECTRUM (12 hues)');
+  LiminalColorEngine.EXTENDED_SPECTRUM.forEach((h) => v(`hue-${h.hue}`, h.hex, h.label));
+
+  // ── 10. SPACING ────────────────────────────────────────────────────
+  section('10. SPACING (atom 4)');
+  Object.entries(LiminalLayoutEngine.SPACING).forEach(([k, val]) => v(`space-${k}`, `${val}px`));
+
+  // ── 11. RADIUS ─────────────────────────────────────────────────────
+  section('11. RADIUS');
+  (['chip', 'control', 'card', 'panel', 'container', 'full'] as const).forEach((role) =>
+    v(`radius-${role}`, `${LiminalLayoutEngine.RADIUS[role]}px`),
+  );
+
+  // ── 12. TYPE ───────────────────────────────────────────────────────
+  section('12. TYPE (modular 1.2)');
+  Object.entries(LiminalLayoutEngine.TYPOGRAPHY).forEach(([level, t]) => {
+    v(`fs-${level}`, `${t.fs}px`);
+    v(`lh-${level}`, `${t.lh}px`);
+    v(`weight-${level}`, t.weight);
+  });
+
+  // ── 13. MOTION ─────────────────────────────────────────────────────
+  section('13. MOTION');
+  Object.entries(LiminalMotionEngine.DURATION).forEach(([k, val]) => v(`duration-${k}`, `${val}ms`));
+  Object.entries(LiminalMotionEngine.EASING).forEach(([k, val]) => v(`ease-${k}`, val));
+
+  // ── 14. LAYER ──────────────────────────────────────────────────────
+  section('14. LAYER');
+  Object.entries(Z_INDEX).forEach(([k, val]) => v(`z-${k}`, val));
+
+  return `:root {\n${lines.join('\n')}\n}\n`;
+}
+
+/** The same block, but scoped to `.dark` — the system is dark-only today. */
+export function generateDarkScope(): string {
+  const root = generateCssVars();
+  return root.replace(/^:root \{/, '.dark {');
+}
+
+export const CSS_VARS_START = '/* @liminal-generated:start */';
+export const CSS_VARS_END = '/* @liminal-generated:end */';
