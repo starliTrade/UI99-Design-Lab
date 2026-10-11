@@ -27,7 +27,6 @@ export function TableHead({
   className = '',
   style: customStyle = {},
 }: TableHeadProps) {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
   const reducedMotion = useReducedMotion();
 
   const SPACING = LiminalLayoutEngine.SPACING;

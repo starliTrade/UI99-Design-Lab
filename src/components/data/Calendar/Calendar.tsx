@@ -234,31 +234,26 @@ interface DayCellProps {
 
 function DayCell({ date, selected, today, onClick, reducedMotion }: DayCellProps) {
   const host = useHostSurface();
-  const [isHovered, setIsHovered] = useState(false);
+  // Hover is CSS's job now. A selected cell keeps its raised surface; an
+  // unselected one lifts to the control surface on hover.
+  const idleBg = selected ? resolveSurface({ role: 'control', state: 'hover', on: host }).background : 'transparent';
+  const hoverBg = resolveSurface({ role: 'control', on: host }).background;
 
-  let bg = 'transparent';
-  if (selected) {
-    bg = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
-  } else if (isHovered) {
-    bg = resolveSurface({ role: 'control', on: host }).background;
-  }
-
-  const cellStyle: CSSProperties = {
+  const cellStyle = {
+    '--liminal-surface-idle': idleBg,
+    '--liminal-surface-hover': hoverBg,
+    '--liminal-surface-active': hoverBg,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     height: '36px',
     borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
-    background: bg,
     color: selected ? getTextStyle('primary', 4).color : today ? resolveBorder({ role: 'control', kind: 'edge', on: host }) : getTextStyle('primary', 1).color,
     fontWeight: selected || today ? 600 : 400,
     fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
     cursor: 'pointer',
     border: today && !selected ? `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}` : '1px solid transparent',
-    transition: reducedMotion
-      ? 'none'
-      : `${LiminalMotionEngine.getTransition('background', 'fast')}, ${LiminalMotionEngine.getTransition('color', 'fast')}`,
-  };
+  } as CSSProperties;
 
   return (
     <button
@@ -267,9 +262,8 @@ function DayCell({ date, selected, today, onClick, reducedMotion }: DayCellProps
       aria-label={date.toDateString()}
       aria-selected={selected}
       role="gridcell"
+      data-liminal-surface=""
       style={cellStyle}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {date.getDate()}
     </button>
