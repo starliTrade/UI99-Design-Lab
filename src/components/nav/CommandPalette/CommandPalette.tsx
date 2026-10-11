@@ -12,6 +12,7 @@ import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { LiminalPortal } from '../../../engine/liminal-portal';
 import { useFocusTrap, useEscapeKey, useScrollLock, useRovingTabIndex, useReducedMotion } from '../../../engine/liminal-hooks';
 import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { mistCssVars } from '../../../engine/liminal-mist';
 import { Input } from '../../inputs/Input';
 
 export interface CommandPaletteItem {
@@ -84,7 +85,8 @@ export function CommandPalette({
 
   if (!isOpen) return null;
 
-  const mist = LiminalColorEngine.getMistStyle(LiminalColorEngine.BRAND_PRIMARY.hex, 'quiet');
+  // The palette is a modal-class surface: it diffuses more than a menu.
+  const mistVars = mistCssVars('modal');
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
@@ -108,10 +110,6 @@ export function CommandPalette({
     width: '100%',
     maxWidth: '480px',
     maxHeight: '80vh',
-    background: mist.background,
-    backdropFilter: mist.backdropFilter,
-    WebkitBackdropFilter: mist.WebkitBackdropFilter,
-    boxShadow: `${SHADOWS[4]}, ${mist.boxShadow}`,
     borderRadius: `${RADIUS.container}px`,
     display: 'flex',
     flexDirection: 'column',
@@ -161,11 +159,11 @@ export function CommandPalette({
           aria-modal="true"
           aria-label="Command Palette"
           className={className}
+          data-liminal-mist=""
           style={panelStyle}
           onKeyDown={handleKeyDown}
         >
           {/* Mist ring layer */}
-          <div style={mist.ringLayer as CSSProperties} />
 
           <div style={headerStyle}>
             <Input

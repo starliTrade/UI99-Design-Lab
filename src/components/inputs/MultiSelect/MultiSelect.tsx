@@ -19,6 +19,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { LiminalPortal } from '../../../engine/liminal-portal';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { mistCssVars } from '../../../engine/liminal-mist';
 import { Badge } from '../../atoms/Badge';
 
 export interface MultiSelectOption {
@@ -373,7 +374,7 @@ export function MultiSelect({
   };
 
   // MIST Quiet floating dropdown styling
-  const mist = LiminalColorEngine.getMistStyle(LiminalColorEngine.BRAND_PRIMARY.hex, 'quiet');
+  const mistVars = mistCssVars('menu');
 
   const panelStyle: CSSProperties = {
     position: 'fixed',
@@ -381,11 +382,8 @@ export function MultiSelect({
     left: `${coords.left}px`,
     width: `${coords.width}px`,
     transform: coords.showAbove ? 'translateY(-100%)' : 'none',
+    ...mistVars,
     zIndex: Z_INDEX.floating,
-    background: mist.background,
-    backdropFilter: mist.backdropFilter,
-    WebkitBackdropFilter: mist.WebkitBackdropFilter,
-    boxShadow: `${SHADOWS[3]}, ${mist.boxShadow}`,
     borderRadius: `${RADIUS.control}px`,
     padding: `${SPACING[1]}px`,
     boxSizing: 'border-box',
@@ -618,14 +616,13 @@ export function MultiSelect({
             ref={panelRef}
             role="listbox"
             aria-label={label ?? placeholder}
+            data-liminal-mist=""
             style={panelStyle}
             onMouseDown={(e) => {
               // Prevent input from immediately blurring
               e.preventDefault();
             }}
           >
-            {/* Mist ring layer */}
-            <div style={mist.ringLayer as CSSProperties} />
 
             {filteredOptions.length > 0 ? (
               filteredOptions.map((opt, index) => {

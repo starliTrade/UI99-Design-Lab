@@ -9,6 +9,7 @@ import { useFloating } from '../../../engine/liminal-floating';
 import { getMistStyle } from '../../../engine/liminal-color-engine';
 import { SHADOWS } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
+import { mistCssVars } from '../../../engine/liminal-mist';
 
 export interface DatePickerProps {
   mode?: 'single' | 'range';
@@ -98,13 +99,13 @@ export function DatePicker({
             ref={floatingRef as React.RefObject<HTMLDivElement>}
             role="dialog"
             aria-modal="true"
+            data-liminal-mist=""
             style={{
               position: 'fixed',
               top: `${position.y}px`,
               left: `${position.x}px`,
               zIndex: 1000,
-              ...getMistStyle('quiet'),
-              boxShadow: SHADOWS[3],
+              ...mistCssVars('popover'),
               borderRadius: `${LiminalLayoutEngine.RADIUS.card}px`,
               boxSizing: 'border-box',
             }}
