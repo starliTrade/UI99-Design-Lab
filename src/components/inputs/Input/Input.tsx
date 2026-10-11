@@ -8,6 +8,7 @@ import {
   LiminalState,
 } from '../../../engine/spec-engine';
 import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
@@ -153,9 +154,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   // The interaction states are CSS's job now (:hover, :focus-within). Only the
   // validation states stay in JavaScript, because they depend on props rather
   // than on what the pointer or the keyboard is doing.
-  const idleSurface = resolveSurface({ role: 'control' }).background;
-  const hoverSurface = resolveSurface({ role: 'control', state: 'hover' }).background;
-  const focusSurface = resolveSurface({ role: 'control', state: 'focus' }).background;
+  const host = useHostSurface();
+  const idleSurface = resolveSurface({ role: 'control', on: host }).background;
+  const hoverSurface = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
+  const focusSurface = resolveSurface({ role: 'control', state: 'focus', on: host }).background;
 
   const ringColor = error
     ? SEMANTICS.DANGER.solid
@@ -164,7 +166,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     : LiminalColorEngine.BRAND_PRIMARY.hex;
 
   let background = idleSurface;
-  let border = `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}`;
+  let border = `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}`;
 
   if (!disabled) {
     if (error) {

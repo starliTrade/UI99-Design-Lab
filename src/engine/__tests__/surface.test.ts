@@ -243,3 +243,52 @@ describe('surface decision engine — the border rule', () => {
     }
   });
 });
+
+describe('surface decision engine — controls are relative to their host', () => {
+  const HOSTS: SurfaceRole[] = ['canvas', 'chrome', 'work', 'panel', 'menu', 'popover', 'modal'];
+
+  it('places a control one step above whatever hosts it', () => {
+    for (const host of HOSTS) {
+      const control = resolveSurface({ role: 'control', on: host });
+      const hostSurface = resolveSurface({ role: host });
+      const step = oklchLightness(control.background) - oklchLightness(hostSurface.background);
+      const quanta = step / PERCEPTUAL_QUANTUM;
+      expect(
+        quanta,
+        `control on ${host} sits at ${quanta.toFixed(2)}q`,
+      ).toBeGreaterThanOrEqual(1.0);
+      expect(
+        quanta,
+        `control on ${host} sits at ${quanta.toFixed(2)}q`,
+      ).toBeLessThanOrEqual(1.5);
+    }
+  });
+
+  it('never sinks a control below its host', () => {
+    // The bug this replaces: a control pinned to an absolute level sat 3.29q
+    // BELOW a modal, i.e. sunken into the surface it was supposed to sit on.
+    for (const host of HOSTS) {
+      const control = resolveSurface({ role: 'control', on: host });
+      const hostSurface = resolveSurface({ role: host });
+      expect(
+        oklchLightness(control.background),
+        `control on ${host} must not be darker than its host`,
+      ).toBeGreaterThan(oklchLightness(hostSurface.background));
+    }
+  });
+
+  it('keeps the relationship identical at every depth', () => {
+    const quanta = HOSTS.map((host) => {
+      const c = resolveSurface({ role: 'control', on: host });
+      const h = resolveSurface({ role: host });
+      return (oklchLightness(c.background) - oklchLightness(h.background)) / PERCEPTUAL_QUANTUM;
+    });
+    const spread = Math.max(...quanta) - Math.min(...quanta);
+    expect(spread, `the lift varies by ${spread.toFixed(2)}q across depths`).toBeLessThanOrEqual(0.2);
+  });
+
+  it('clamps at the ceiling rather than running off the ladder', () => {
+    const control = resolveSurface({ role: 'control', on: 'toast' });
+    expect(control.level).toBeLessThanOrEqual(LADDER.length - 1);
+  });
+});
