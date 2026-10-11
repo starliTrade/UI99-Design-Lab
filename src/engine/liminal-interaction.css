@@ -50,6 +50,30 @@
   color: var(--liminal-hover-color);
 }
 
+/* ── Luminance response ───────────────────────────────────────────────────
+ * The Mist surface does not change colour on hover — it changes BRIGHTNESS.
+ * That is a different kind of feedback: the surface stays the same material and
+ * simply catches more light. Opted into with data-liminal-mist.
+ */
+[data-liminal-mist]:not([data-liminal-disabled]) {
+  transition: filter var(--liminal-duration-normal, 220ms)
+    var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+[data-liminal-mist]:hover:not([data-liminal-disabled]) {
+  filter: brightness(var(--liminal-mist-hover, 1.08));
+}
+
+[data-liminal-mist]:active:not([data-liminal-disabled]) {
+  filter: brightness(var(--liminal-mist-active, 0.92));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-liminal-mist] {
+    transition: none;
+  }
+}
+
 /* A child that only appears on hover — a sort affordance, a row action.
  * The parent opts in; the child carries .liminal-reveal. */
 [data-liminal-hover-reveal] .liminal-reveal {

@@ -33,9 +33,6 @@ export function Mist({
   style = {},
   'aria-label': ariaLabel,
 }: MistProps) {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-  const [isActive, setIsActive] = useState<boolean>(false);
-  const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const SPACING = LiminalLayoutEngine.SPACING;
@@ -48,17 +45,9 @@ export function Mist({
   const { r, g, b } = LiminalColorEngine.hexToRgb(light);
   const H = `${r}, ${g}, ${b}`;
 
-  // Interactive dynamic effects for hero tier
+  // The hover/press response is a BRIGHTNESS change, not a colour change: the
+  // surface keeps its material and catches more light. The browser applies it now.
   const activeBoxShadow = mist.boxShadow;
-  let activeFilter = 'none';
-
-  if (tier === 'hero' && !disabled) {
-    if (isActive) {
-      activeFilter = 'brightness(0.92)';
-    } else if (isHovered) {
-      activeFilter = 'brightness(1.08)';
-    }
-  }
 
   const baseStyle: CSSProperties = {
     position: 'relative',
@@ -66,12 +55,10 @@ export function Mist({
     borderRadius: `${finalRadius}px`,
     background: mist.background,
     boxShadow: activeBoxShadow,
-    filter: activeFilter,
     color: getTextStyle('primary', 2).color,
     fontSize: `${TYPOGRAPHY[3].fs}px`,
     lineHeight: TYPOGRAPHY[3].lh,
     fontWeight: tier === 'hero' ? 600 : 500,
-    ...getFocusRing(isFocused),
     cursor: disabled ? 'not-allowed' : as === 'button' || onClick ? 'pointer' : 'default',
     opacity: disabled ? 0.45 : 1,
     transition: `${LiminalMotionEngine.getTransition('filter', 'normal')}, ${LiminalMotionEngine.getTransition('box-shadow', 'normal')}, ${LiminalMotionEngine.getTransition('transform', 'fast')}, ${LiminalMotionEngine.getTransition('outline', 'fast')}`,
@@ -94,19 +81,9 @@ export function Mist({
       type={as === 'button' ? type : undefined}
       disabled={as === 'button' ? disabled : undefined}
       onClick={disabled ? undefined : onClick}
-      onMouseEnter={() => !disabled && setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setIsActive(false);
-      }}
-      onMouseDown={() => !disabled && setIsActive(true)}
-      onMouseUp={() => setIsActive(false)}
-      onFocus={(e: FocusEvent<HTMLElement>) => {
-        if (!disabled && (e.target as HTMLElement).matches(':focus-visible')) {
-          setIsFocused(true);
-        }
-      }}
-      onBlur={() => setIsFocused(false)}
+      data-liminal-mist=""
+      data-liminal-focusable=""
+      data-liminal-disabled={disabled ? "" : undefined}
       className={className}
       style={baseStyle}
       aria-label={ariaLabel}
