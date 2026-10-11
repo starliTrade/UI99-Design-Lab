@@ -22,6 +22,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon, ICON_SIZES } from '../../../engine/liminal-icon-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
 import { Slot } from '../../../engine/liminal-slot';
+import { resolveSurface } from '../../../engine/liminal-surface';
 import {
   useDropdownMenuContext,
   RadioGroupContext,
@@ -85,7 +86,11 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
         background = LiminalColorEngine.SEMANTICS.DANGER.subtle;
         textColor = LiminalColorEngine.SEMANTICS.DANGER.text;
       } else {
-        background = isFocused ? getLadderColor(3) : getLadderColor(2.5);
+        // The item sits ON the menu surface: idle is transparent, focus lifts it
+        // by a half-step above the menu — never an absolute ladder level.
+        background = isFocused
+          ? resolveSurface({ role: 'menu', state: 'hover' }).background
+          : 'transparent';
         textColor = getTextStyle('primary', 3).color;
       }
     }

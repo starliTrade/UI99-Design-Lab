@@ -12,6 +12,7 @@ import { LiminalComponentEngine } from '../../../engine/liminal-component-engine
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveSurface } from '../../../engine/liminal-surface';
 
 export interface SelectOption {
   value: string;
@@ -371,7 +372,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
                   value={opt.value}
                   disabled={opt.disabled}
                   style={{
-                    background: getLadderColor(4),
+                    // A native <option> is drawn by the OS; this is the menu surface.
+                    background: resolveSurface({ role: 'menu' }).background,
                     color: opt.disabled ? getTextStyle('quaternary', 4).color : getTextStyle('primary', 4).color,
                   }}
                 >

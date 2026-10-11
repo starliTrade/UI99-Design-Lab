@@ -1,0 +1,245 @@
+/**
+ * LIMINAL · SURFACE DECISION ENGINE
+ * «کدام عنصر، کجا، چقدر — و کجا هیچ‌چیز.»
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS EXISTS
+ *
+ * Before this module, every component decided its own depth, rim and shadow by
+ * calling getLadderColor(4) or hardcoding a rim tier. The audit found the
+ * result: the toolbar sat at S2 while the nav directly beneath it sat at S1,
+ * with no structural reason — two pieces of chrome, two different depths. There
+ * was no rule, so there could be no consistency, and no test could catch it.
+ *
+ * This module is the rule. A component declares WHAT it is (a role) and what is
+ * happening to it (a state); the engine decides the treatment. Nothing else
+ * chooses a ladder level.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE MODEL
+ *
+ *   level = ROLE_LEVEL[role] + depth + STATE_SHIFT[state]
+ *
+ *   role   — what the element is in the hierarchy (fixed, one source)
+ *   depth  — how deeply it is nested inside another surface (0 by default)
+ *   state  — what is happening to it right now (shifts by a half-step)
+ *
+ * Then, from the role alone:
+ *
+ *   rim    — the directional specular edge that lifts the top of a surface
+ *   shadow — only for elements that float above the flow
+ *
+ * The rules are asserted in __tests__/surface.test.ts. If a rule is not
+ * asserted there, it is not a rule — it is a habit.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+import type { CSSProperties } from 'react';
+import { LADDER, getLadderColor, FOCUS_RING_COLOR, PERCEPTUAL_QUANTUM } from './liminal-ladder';
+import { oklchLightness } from './liminal-color-math';
+import { getDirectionalRim, SHADOWS, type DirectionalRimResult } from './spec-engine';
+import { LiminalMotionEngine } from './liminal-motion-engine';
+
+/** What an element is in the hierarchy. */
+export type SurfaceRole =
+  | 'canvas' // the page itself
+  | 'chrome' // nav, toolbar, tab bars — the frame around the work
+  | 'work' // the work surface: panels, cards, the main content plane
+  | 'panel' // a surface nested inside the work surface
+  | 'control' // an interactive control that sits on a surface
+  | 'menu' // a dropdown, tooltip or command list
+  | 'popover' // a larger floating panel
+  | 'modal' // a dialog or sheet that takes over the view
+  | 'toast'; // the highest floating anchor
+
+/** What is happening to the element right now. */
+export type SurfaceState = 'idle' | 'hover' | 'focus' | 'active' | 'disabled';
+
+/**
+ * ROLE → LADDER LEVEL. The single place a depth is decided.
+ *
+ * The ordering is the hierarchy itself: canvas at the bottom, toast at the top.
+ * Each role is one step above the last, so the hierarchy is legible as a
+ * sequence rather than a set of arbitrary numbers.
+ */
+export const ROLE_LEVEL: Record<SurfaceRole, number> = {
+  canvas: 0,
+  chrome: 1,
+  work: 2,
+  panel: 3,
+  control: 4,
+  menu: 5,
+  popover: 6,
+  modal: 7,
+  toast: 8,
+};
+
+/**
+ * RIM TIER PER ROLE.
+ *
+ * The rim is the directional light on the top edge. It exists to separate a
+ * surface from its parent, so it scales with how far the element sits above the
+ * canvas:
+ *   0 — no rim (the canvas itself, and anything disabled)
+ *   1 — a quiet edge (chrome, the work surface)
+ *   2 — a defined edge (panels, controls, menus)
+ *   3 — a lifted edge (everything that floats high: popover, modal, toast)
+ */
+export const ROLE_RIM: Record<SurfaceRole, 0 | 1 | 2 | 3> = {
+  canvas: 0,
+  chrome: 1,
+  work: 1,
+  panel: 2,
+  control: 2,
+  menu: 2,
+  popover: 3,
+  modal: 3,
+  toast: 3,
+};
+
+/**
+ * SHADOW ELEVATION PER ROLE.
+ *
+ * A shadow means "this floats above the flow". Nothing that sits *in* the flow
+ * gets one — that is the whole point of the rule. `null` means no shadow.
+ *
+ *   E1 — a dropdown or sticky header
+ *   E2 — a featured card or popover
+ *   E3 — a modal or sheet
+ *   E4 — a toast, the highest anchor
+ */
+export const ROLE_SHADOW: Record<SurfaceRole, 1 | 2 | 3 | 4 | null> = {
+  canvas: null,
+  chrome: null, // chrome is part of the frame, not floating above it
+  work: null,
+  panel: null,
+  control: null,
+  menu: 1,
+  popover: 2,
+  modal: 3,
+  toast: 4,
+};
+
+/** Roles that float above the flow, and therefore may cast a shadow. */
+export const FLOATING_ROLES: readonly SurfaceRole[] = ['menu', 'popover', 'modal', 'toast'];
+
+/**
+ * STATE SHIFT, in ladder steps.
+ *
+ * A state change is deliberately a HALF step (~0.6q), which is below the
+ * perceptual quantum: a hover should be *felt*, not *seen*. If it were a full
+ * step it would compete with the hierarchy itself.
+ */
+export const STATE_SHIFT: Record<SurfaceState, number> = {
+  idle: 0,
+  hover: 0.5,
+  focus: 0.5,
+  active: -0.5,
+  disabled: 0,
+};
+
+export interface SurfaceRequest {
+  role: SurfaceRole;
+  state?: SurfaceState;
+  /** How deeply nested inside another surface. Each level adds one step. */
+  depth?: number;
+  /** Override the shadow elevation for a role that floats. */
+  elevation?: 1 | 2 | 3 | 4;
+}
+
+export interface SurfaceResolution {
+  /** The resolved ladder level (may be fractional). */
+  level: number;
+  /** The resolved background colour. */
+  background: string;
+  /** The rim tier actually applied. */
+  rim: 0 | 1 | 2 | 3;
+  /** The rim's resolved top/side/bottom colours, when a rim applies. */
+  rimColors: DirectionalRimResult | null;
+  /** The shadow string, or 'none'. */
+  shadow: string;
+  /** The focus ring, or 'none'. */
+  outline: string;
+  /** Whether the element is interactive at all. */
+  interactive: boolean;
+  /** The full style object, ready to spread onto an element. */
+  style: CSSProperties;
+}
+
+const MAX_LEVEL = LADDER.length - 1;
+
+/**
+ * Resolve the complete treatment for a surface.
+ *
+ * This is the only function a component should call to decide its depth, rim
+ * and shadow. Everything else is a rule that lives here.
+ */
+export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
+  const { role, state = 'idle', depth = 0, elevation } = request;
+
+  const base = ROLE_LEVEL[role];
+  const shift = STATE_SHIFT[state];
+
+  // ── level: role + nesting + state, clamped to the ladder ────────────────
+  // A disabled element drops to its parent's level: it is present but inert.
+  const level = state === 'disabled'
+    ? Math.max(0, base - 1)
+    : Math.max(0, Math.min(MAX_LEVEL, base + depth + shift));
+
+  // ── rim: from the role, suppressed when disabled ────────────────────────
+  const rim: 0 | 1 | 2 | 3 = state === 'disabled' ? 0 : ROLE_RIM[role];
+  const concave = state === 'active';
+  const rimColors = rim === 0 ? null : getDirectionalRim(Math.round(level), rim, concave);
+
+  // ── shadow: only for roles that float ───────────────────────────────────
+  const shadowTier = elevation ?? ROLE_SHADOW[role];
+  const shadow = shadowTier ? SHADOWS[shadowTier] : 'none';
+
+  // ── focus ring: visible on keyboard focus, never on pointer focus ───────
+  const outline = state === 'focus' ? `2px solid ${FOCUS_RING_COLOR}` : 'none';
+
+  const interactive = role !== 'canvas' && role !== 'work' && role !== 'panel';
+
+  const style: CSSProperties = {
+    background: rimColors ? rimColors.cssBackground : getLadderColor(Math.round(level)),
+    border: rimColors ? '1px solid transparent' : 'none',
+    boxShadow: shadow,
+    outline,
+    outlineOffset: outline === 'none' ? undefined : '2px',
+    opacity: state === 'disabled' ? 0.25 : 1,
+    cursor: state === 'disabled' ? 'not-allowed' : interactive ? 'pointer' : 'default',
+    transform: concave ? 'translateY(0.5px)' : undefined,
+    transition: LiminalMotionEngine.TRANSITION.normal,
+    boxSizing: 'border-box',
+  };
+
+  return {
+    level,
+    background: getLadderColor(Math.round(level)),
+    rim,
+    rimColors,
+    shadow,
+    outline,
+    interactive,
+    style,
+  };
+}
+
+/**
+ * The depth a role sits at relative to the canvas, in ladder steps.
+ * Useful for asserting the hierarchy in tests and for documentation.
+ */
+export function roleDepthInSteps(role: SurfaceRole): number {
+  return ROLE_LEVEL[role];
+}
+
+/**
+ * The depth a role sits at relative to the canvas, in perceptual quanta.
+ * This is the number that matters: it says how many thresholds of separation
+ * the user actually perceives. The work surface, for example, sits at ~2.5q.
+ */
+export function roleDepthInQuanta(role: SurfaceRole): number {
+  const canvasL = oklchLightness(LADDER[0]);
+  const roleL = oklchLightness(LADDER[ROLE_LEVEL[role]]);
+  return (roleL - canvasL) / PERCEPTUAL_QUANTUM;
+}
