@@ -1,6 +1,6 @@
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { getLiminalStyle, getDirectionalRim, getLadderColor, getTextStyle } from '../../../engine/spec-engine';
+import { getLiminalStyle, getDirectionalRim, getLadderColor, getTextStyle, SURFACE_TINT } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { Divider } from '../Divider';
 
@@ -183,7 +183,7 @@ export function Card({
             justifyContent: 'space-between',
             fontSize: '12px',
             borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-            backgroundColor: 'rgba(255, 255, 255, 0.01)',
+            backgroundColor: SURFACE_TINT.faint,
           }}
         >
           {footer}

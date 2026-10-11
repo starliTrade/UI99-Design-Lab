@@ -71,6 +71,10 @@ export class LiminalColorEngine {
     hex: 'var(--liminal-brand, #E9ECF2)',
     name: 'Soft White',
     onColor: 'var(--liminal-brand-on, #060709)',
+    /** Lifted for hover — the brand is near-white, so hover goes lighter, not darker. */
+    hover: '#F5F7FA',
+    /** Pressed. */
+    active: '#DDE1E8',
     description: 'Monochrome identity. LOCKED. Swap-able to any extended hue if rebranded.',
   };
 

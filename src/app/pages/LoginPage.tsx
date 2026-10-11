@@ -13,8 +13,7 @@ import { NavItem } from '../../components/nav/NavItem';
 import {
   getLadderColor,
   getTextStyle,
-  getDirectionalRim,
-} from '../../engine/spec-engine';
+  getDirectionalRim, BRAND_ALPHA } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { Lock, Shield, ArrowRight, Stack, Key } from '@phosphor-icons/react';
@@ -56,7 +55,7 @@ export function LoginPage() {
                   width: '28px',
                   height: '28px',
                   borderRadius: `${RADIUS.chip}px`,
-                  background: 'rgba(233, 236, 242, 0.08)',
+                  background: BRAND_ALPHA.subtle,
                   border: '1px solid rgba(233, 236, 242, 0.16)',
                   display: 'inline-flex',
                   alignItems: 'center',

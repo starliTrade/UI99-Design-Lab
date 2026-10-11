@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { CSSProperties, ReactNode, MouseEvent, FocusEvent } from 'react';
 import { LiminalColorEngine, MistTier } from '../../../engine/liminal-color-engine';
+import { getTextStyle } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { getFocusRing } from '../../../engine/spec-engine';
@@ -66,7 +67,7 @@ export function Mist({
     background: mist.background,
     boxShadow: activeBoxShadow,
     filter: activeFilter,
-    color: 'rgba(255, 255, 255, 0.90)',
+    color: getTextStyle('primary', 2).color,
     fontSize: `${TYPOGRAPHY[3].fs}px`,
     lineHeight: TYPOGRAPHY[3].lh,
     fontWeight: tier === 'hero' ? 600 : 500,

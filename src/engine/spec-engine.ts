@@ -64,6 +64,47 @@ export const SHADOWS = {
   4: '0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)',
 } as const;
 
+/**
+ * SURFACE TINTS — white laid over a surface to lift it.
+ *
+ * These replaced six ad-hoc alphas (0.01, 0.03, 0.04, 0.06, 0.08, 0.20) that
+ * had been invented locally in components. A tint is not a text level: it is a
+ * *fill*, so it does not belong in the text hierarchy and must not be used for
+ * type (its contrast is far below any text floor).
+ *
+ * Four steps, each with one job. If a fifth is needed, the need is the bug.
+ */
+export const SURFACE_TINT = {
+  /** Barely-there: inset wells, nested card fills. */
+  faint: 'rgba(255, 255, 255, 0.01)',
+  /** Subtle: hover on ghost/outline controls, quiet chips, hairlines. */
+  subtle: 'rgba(255, 255, 255, 0.03)',
+  /** Medium: badges, active outline controls, compact action hover. */
+  medium: 'rgba(255, 255, 255, 0.06)',
+  /** Strong: small affordances only — drawer handles, dots, separators. */
+  strong: 'rgba(255, 255, 255, 0.20)',
+  /** Solid: control parts that must stay legible — toggle knobs, slider thumbs. */
+  solid: 'rgba(255, 255, 255, 0.40)',
+} as const;
+
+/**
+ * VEILS — a surface laid over content to push it back.
+ *
+ * Veils are built from the sub-canvas wells, never from grey: the backdrop must
+ * read as *depth*, not as a colour.
+ */
+export const VEIL = {
+  /** Behind modals, sheets and the command palette. S-1 Penumbra at 0.60. */
+  backdrop: 'rgba(3, 4, 6, 0.60)',
+  /** Sticky header floating over scrolling content. S0 Canvas at 0.85. */
+  canvas: 'rgba(6, 7, 9, 0.85)',
+} as const;
+
+/** Brand laid over a surface — for quiet brand-tinted fills. */
+export const BRAND_ALPHA = {
+  subtle: 'rgba(233, 236, 242, 0.08)',
+} as const;
+
 export const Z_INDEX = {
   dropdown: 1000,
   modal: 2000,

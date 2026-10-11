@@ -5,8 +5,7 @@ import {
   getLiminalStyle,
   getDirectionalRim,
   getTextStyle,
-  LiminalState,
-} from '../../../engine/spec-engine';
+  LiminalState, getLadderColor } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
@@ -372,8 +371,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
                   value={opt.value}
                   disabled={opt.disabled}
                   style={{
-                    background: '#0d1017',
-                    color: opt.disabled ? '#555e70' : '#eef0f3',
+                    background: getLadderColor(4),
+                    color: opt.disabled ? getTextStyle('quaternary', 4).color : getTextStyle('primary', 4).color,
                   }}
                 >
                   {opt.label}

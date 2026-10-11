@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
-import { getTextStyle, SHADOWS } from '../../../engine/spec-engine';
+import { getTextStyle, SHADOWS, SURFACE_TINT } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -181,7 +181,7 @@ export function Toast({
             onMouseEnter={() => setActionHovered(true)}
             onMouseLeave={() => setActionHovered(false)}
             style={{
-              background: actionHovered ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+              background: actionHovered ? SURFACE_TINT.medium : 'transparent',
               border: 'none',
               padding: '4px 8px',
               borderRadius: `${RADIUS[6]}px`,

@@ -1,3 +1,4 @@
+import { SURFACE_TINT } from '../../../engine/spec-engine';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
@@ -37,9 +38,9 @@ export function Badge({
 
   if (hue !== undefined) {
     const ext = LiminalColorEngine.EXTENDED_SPECTRUM.find((x) => x.hue === hue);
-    background = 'rgba(255, 255, 255, 0.06)';
+    background = SURFACE_TINT.medium;
     border = '1px solid rgba(255, 255, 255, 0.12)';
-    color = ext?.hex ?? '#8CC3F2';
+    color = ext?.hex ?? LiminalColorEngine.SEMANTICS.INFO.text;
   } else {
     const semanticKey = effectiveSemantic.toUpperCase() as 'SUCCESS' | 'WARNING' | 'DANGER' | 'INFO';
     const role = LiminalColorEngine.SEMANTICS[semanticKey] ?? LiminalColorEngine.SEMANTICS.INFO;

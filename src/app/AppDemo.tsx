@@ -103,7 +103,7 @@ export function AppDemo() {
         borderRadius: `${RADIUS.container}px`,
         overflow: 'hidden',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        background: '#060709',
+        background: getLadderColor(0),
         boxSizing: 'border-box',
       }}
     >
