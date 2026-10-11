@@ -6,15 +6,25 @@ import {
   getLiminalStyle,
   TEXT_HIERARCHY,
 } from '../spec-engine';
-import { PERCEPTUAL_QUANTUM } from '../liminal-ladder';
+import {
+  PERCEPTUAL_QUANTUM,
+  CANVAS_L,
+  LADDER_STEP,
+  LADDER_CHROMA,
+  LADDER_HUE,
+  LADDER_SIZE,
+} from '../liminal-ladder';
 import { LiminalColorEngine } from '../liminal-color-engine';
 import { LiminalLayoutEngine } from '../liminal-layout-engine';
 import { LiminalComponentEngine } from '../liminal-component-engine';
 import {
+  rgbToOklch,
+  hexToRgb,
   contrastRatioHex,
   whiteAlphaContrastOn,
   oklchLightness,
   lightnessStep,
+  oklchToHex,
 } from '../liminal-color-math';
 
 /**
@@ -59,6 +69,37 @@ function outlineColor(style: Record<string, unknown>): string | null {
 describe('LIMINAL contract — surface ladder', () => {
   it('has nine surface steps', () => {
     expect(LADDER).toHaveLength(9);
+    expect(LADDER).toHaveLength(LADDER_SIZE);
+  });
+
+  // ── The ladder is GENERATED, not hand-picked ────────────────────────────
+  it('is reproduced exactly by the formula L(n) = CANVAS_L + n × STEP', () => {
+    LADDER.forEach((hex, n) => {
+      const generated = oklchToHex({
+        L: CANVAS_L + n * LADDER_STEP,
+        C: LADDER_CHROMA,
+        h: LADDER_HUE,
+      });
+      expect(generated, `S${n}: formula gives ${generated}, ladder has ${hex}`).toBe(hex);
+    });
+  });
+
+  it('holds chroma near-constant across the ladder', () => {
+    // Chroma is what the eye reads as "tinted vs neutral", so it is the
+    // property worth asserting. A ladder whose chroma swings is several
+    // colours pretending to be one.
+    const chromas = LADDER.map((hex) => rgbToOklch(hexToRgb(hex)).C);
+    const ratio = Math.max(...chromas) / Math.min(...chromas);
+    expect(ratio, `chroma varies ${ratio.toFixed(2)}×`).toBeLessThanOrEqual(1.6);
+  });
+
+  it('keeps the ladder essentially neutral at this darkness', () => {
+    // At L ≈ 0.13 the reachable chroma is tiny, and the *realised* hue angle is
+    // quantisation noise: one unit in the blue channel moves it ~13°. The
+    // formula's input hue is constant (asserted above); what matters visually
+    // is that the tint stays faint enough for that noise to be invisible.
+    const chromas = LADDER.map((hex) => rgbToOklch(hexToRgb(hex)).C);
+    expect(Math.max(...chromas), 'the ladder must stay near-neutral').toBeLessThanOrEqual(0.01);
   });
 
   it('is perceptually monotonic (each step is lighter than the last)', () => {
