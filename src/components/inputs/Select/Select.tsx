@@ -6,13 +6,13 @@ import {
   getDirectionalRim,
   getTextStyle,
   LiminalState, getLadderColor } from '../../../engine/spec-engine';
+import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
-import { resolveSurface } from '../../../engine/liminal-surface';
 
 export interface SelectOption {
   value: string;
@@ -86,9 +86,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   }: SelectProps,
   forwardedRef
 ) {
-  const [internalState, setInternalState] = useState<LiminalState>('idle');
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
-  const [isHovered, setIsHovered] = useState<boolean>(false);
   const [internalValue, setInternalValue] = useState<string>(
     value ?? defaultValue ?? ''
   );
@@ -124,31 +121,21 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   const isRTL = rtl || dir === 'rtl';
   const effectiveCaretPos = caretPosition ?? (isRTL ? 'left' : 'right');
 
-  const currentState: LiminalState = disabled ? 'disabled' : internalState;
 
-  // Resolve base interactive style from engine (matching Input.tsx)
-  const limStyle = getLiminalStyle({
-    surfaceLevel,
-    interactive: true,
-    isInput: true,
-    state: currentState,
-  });
+  // The interaction states are CSS's job now (:hover, :focus-within). Only the
+  // validation states stay in JavaScript — they depend on props.
+  const idleSurface = resolveSurface({ role: 'control' }).background;
+  const hoverSurface = resolveSurface({ role: 'control', state: 'hover' }).background;
+  const focusSurface = resolveSurface({ role: 'control', state: 'focus' }).background;
 
-  // Focus ring via engine
   const ringColor = error
     ? SEMANTICS.DANGER.solid
     : success
     ? SEMANTICS.SUCCESS.solid
     : LiminalColorEngine.BRAND_PRIMARY.hex;
 
-  const focusRing = LiminalComponentEngine.getFocusRing(
-    currentState === 'focus' && isKeyboardFocused,
-    ringColor
-  );
-
-  // Background and border resolution
-  let background = limStyle.style.background;
-  let border = limStyle.style.border;
+  let background = idleSurface;
+  let border = `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}`;
 
   if (!disabled) {
     if (error) {
@@ -168,7 +155,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
 
   // Flex container style (matching Input.tsx):
   // display: flex, alignItems: center, gap: SPACING[2] (8px), padding: SPACING[3] (12px)
-  const containerStyle: CSSProperties = {
+  const containerStyle = {
+    '--liminal-surface-idle': background,
+    '--liminal-surface-hover': disabled || error || success ? background : hoverSurface,
+    '--liminal-surface-focus': disabled || error || success ? background : focusSurface,
+    '--liminal-border-focus': ringColor,
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
@@ -180,13 +171,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     transition: reducedMotion ? 'none' : LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
-    ...focusRing,
-    opacity: disabled ? 0.5 : limStyle.style.opacity,
+    opacity: disabled ? 0.5 : 1,
     cursor: disabled ? 'not-allowed' : 'pointer',
-    boxShadow: limStyle.style.boxShadow,
     position: 'relative',
     direction: isRTL ? 'rtl' : 'ltr',
-  };
+  } as CSSProperties;
 
   // Internal <select> element style:
   // appearance: none, flex: 1, border: none, background: transparent, padding: 0
@@ -253,27 +242,16 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLSelectElement>) => {
-    if (e.key === 'Tab') {
-      setIsKeyboardFocused(true);
-    }
-  };
-
   const handleFocus = (e: FocusEvent<HTMLSelectElement>) => {
-    if (!disabled) {
-      setInternalState('focus');
-      onFocus?.(e);
-    }
+    onFocus?.(e);
   };
 
   const handleBlur = (e: FocusEvent<HTMLSelectElement>) => {
-    setInternalState('idle');
-    setIsKeyboardFocused(false);
     onBlur?.(e);
   };
 
   // Caret icon color logic: getTextStyle('tertiary', surfaceLevel), hover: getTextStyle('secondary', surfaceLevel)
-  const isCaretActiveHover = isHovered || internalState === 'hover';
+  const isCaretActiveHover = false; // the caret is driven by CSS now
   const caretColor = isCaretActiveHover
     ? getTextStyle('secondary', surfaceLevel).color
     : getTextStyle('tertiary', surfaceLevel).color;
@@ -315,18 +293,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
       )}
 
       <div
+        data-liminal-focus-within=""
+        data-liminal-disabled={disabled ? "" : undefined}
         style={containerStyle}
-        onMouseEnter={() => {
-          if (!disabled) {
-            setIsHovered(true);
-            if (internalState !== 'focus') setInternalState('hover');
-          }
-        }}
-        onMouseLeave={() => {
-          setIsHovered(false);
-          if (internalState !== 'focus') setInternalState('idle');
-        }}
-        onMouseDown={() => setIsKeyboardFocused(false)}
       >
         {/* If prefix is provided */}
         {prefix && (
@@ -356,7 +325,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
           onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
           style={selectElementStyle}
         >
           {placeholder && (

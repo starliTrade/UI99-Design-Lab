@@ -10,6 +10,7 @@ import {
   Z_INDEX,
   LiminalState,
 } from '../../../engine/spec-engine';
+import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
@@ -17,7 +18,6 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { LiminalPortal } from '../../../engine/liminal-portal';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
-import { resolveSurface } from '../../../engine/liminal-surface';
 import { Badge } from '../../atoms/Badge';
 
 export interface MultiSelectOption {
@@ -88,8 +88,6 @@ export function MultiSelect({
   const [query, setQuery] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
-  const [internalState, setInternalState] = useState<LiminalState>('idle');
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
 
   const [coords, setCoords] = useState<{
     top: number;
@@ -299,14 +297,11 @@ export function MultiSelect({
   };
 
   // State & Style resolution
-  const currentState: LiminalState = disabled ? 'disabled' : internalState;
 
-  const limStyle = getLiminalStyle({
-    surfaceLevel,
-    interactive: true,
-    isInput: true,
-    state: currentState,
-  });
+  // The interaction states are CSS's job now (:hover, :focus-within).
+  const idleSurface = resolveSurface({ role: 'control' }).background;
+  const hoverSurface = resolveSurface({ role: 'control', state: 'hover' }).background;
+  const focusSurface = resolveSurface({ role: 'control', state: 'focus' }).background;
 
   const ringColor = error
     ? SEMANTICS.DANGER.solid
@@ -314,13 +309,9 @@ export function MultiSelect({
     ? SEMANTICS.SUCCESS.solid
     : LiminalColorEngine.BRAND_PRIMARY.hex;
 
-  const focusRing = LiminalComponentEngine.getFocusRing(
-    currentState === 'focus' && isKeyboardFocused,
-    ringColor
-  );
 
-  let background = limStyle.style.background;
-  let border = limStyle.style.border;
+  let background = idleSurface;
+  let border = `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}`;
 
   if (!disabled) {
     if (error) {
@@ -352,10 +343,8 @@ export function MultiSelect({
     transition: reducedMotion ? 'none' : LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
-    ...focusRing,
-    opacity: disabled ? 0.5 : limStyle.style.opacity,
+    opacity: disabled ? 0.5 : 1,
     cursor: disabled ? 'not-allowed' : 'text',
-    boxShadow: limStyle.style.boxShadow,
     position: 'relative',
   };
 
@@ -441,11 +430,8 @@ export function MultiSelect({
             }
           }
         }}
-        onMouseEnter={() => !disabled && internalState !== 'focus' && setInternalState('hover')}
-        onMouseLeave={() => !disabled && internalState !== 'focus' && setInternalState('idle')}
-        onMouseDown={() => {
-          setIsKeyboardFocused(false);
-        }}
+        data-liminal-focus-within=""
+        data-liminal-disabled={disabled ? "" : undefined}
       >
         {prefix && (
           <span
@@ -536,14 +522,9 @@ export function MultiSelect({
           onKeyDown={handleKeyDown}
           onFocus={() => {
             if (!disabled) {
-              setInternalState('focus');
               setIsOpen(true);
               updatePosition();
             }
-          }}
-          onBlur={() => {
-            setInternalState('idle');
-            setIsKeyboardFocused(false);
           }}
           style={{
             flex: 1,
