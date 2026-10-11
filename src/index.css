@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  /* Tonal Ladder */
+  /* Tonal Ladder — S0 anchor L=0.128, target ΔL=0.0127.
+     Source of truth: src/engine/spec-engine.ts (LADDER). Keep in sync. */
   --liminal-s0: #060709;
-  --liminal-s1: #08090C;
-  --liminal-s2: #0A0B0F;
-  --liminal-s3: #0D0E12;
-  --liminal-s4: #101115;
+  --liminal-s1: #08090b;
+  --liminal-s2: #0a0b10;
+  --liminal-s3: #0d0e11;
+  --liminal-s4: #101114;
   --liminal-s5: #131418;
 
   /* Semantics */
@@ -19,10 +20,12 @@
   --liminal-brand: #E9ECF2;
   --liminal-brand-on: #060709;
 
-  /* Typography Alphas (for dynamic compensation) */
+  /* Typography Alphas (for dynamic compensation)
+     Floors are WCAG-driven: tertiary ≥ 4.5:1, quaternary ≥ 3:1 on every surface. */
   --liminal-text-primary: rgba(255, 255, 255, 0.88);
   --liminal-text-secondary: rgba(255, 255, 255, 0.62);
-  --liminal-text-tertiary: rgba(255, 255, 255, 0.45);
+  --liminal-text-tertiary: rgba(255, 255, 255, 0.46);
+  --liminal-text-quaternary: rgba(255, 255, 255, 0.35);
 
   /* Radius */
   --liminal-radius-chip: 6px;
@@ -34,10 +37,10 @@
 .dark {
   /* مقادیر پیش‌فرض منطبق بر سیستم، ساختار آماده برای گسترش */
   --liminal-s0: #060709;
-  --liminal-s1: #08090C;
-  --liminal-s2: #0A0B0F;
-  --liminal-s3: #0D0E12;
-  --liminal-s4: #101115;
+  --liminal-s1: #08090b;
+  --liminal-s2: #0a0b10;
+  --liminal-s3: #0d0e11;
+  --liminal-s4: #101114;
   --liminal-s5: #131418;
   --liminal-brand: #E9ECF2;
   --liminal-brand-on: #060709;
@@ -92,10 +95,10 @@
 
 @keyframes liminal-skeleton-pulse {
   0%, 100% {
-    background-color: #0A0B0F;
+    background-color: #0a0b10; /* S2 */
   }
   50% {
-    background-color: #0B0C10;
+    background-color: #0b0d11; /* S2.5 */
   }
 }
 

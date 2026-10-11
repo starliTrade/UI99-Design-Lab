@@ -3,13 +3,6 @@
  * The definitive design-system color contract.
  */
 
-export interface NeutralStep {
-  level: string;
-  name: string;
-  hex: string;
-  oklch: string;
-}
-
 export interface SemanticRole {
   subtle: string;
   border: string;
@@ -19,26 +12,9 @@ export interface SemanticRole {
 }
 
 export class LiminalColorEngine {
-  /**
-   * @deprecated
-   * Canonical surface source = LADDER in spec-engine.ts (#060709..#131418).
-   * Text = TEXT_HIERARCHY (white with alpha).
-   * Border = directional rim (not flat grey).
-   * Retained for backward-compatibility only.
-   */
-  static readonly NEUTRALS: Record<string, NeutralStep> = {
-    L0: { level: 'L0', name: 'base', hex: '#060709', oklch: 'oklch(0.16 0.01 260)' },
-    L1: { level: 'L1', name: 'surface', hex: '#0B0C0F', oklch: 'oklch(0.19 0.01 260)' },
-    L2: { level: 'L2', name: 'raised', hex: '#121317', oklch: 'oklch(0.22 0.01 260)' },
-    L3: { level: 'L3', name: 'overlay', hex: '#1A1B20', oklch: 'oklch(0.26 0.01 260)' },
-    L4: { level: 'L4', name: 'border-subtle', hex: '#24252B', oklch: 'oklch(0.30 0.01 260)' },
-    L5: { level: 'L5', name: 'border', hex: '#33343B', oklch: 'oklch(0.36 0.01 260)' },
-    L6: { level: 'L6', name: 'text-muted', hex: '#8A8F98', oklch: 'oklch(0.55 0.01 260)' },
-    L7: { level: 'L7', name: 'text', hex: '#DDE1E8', oklch: 'oklch(0.75 0.01 260)' },
-    L8: { level: 'L8', name: 'text-strong', hex: '#F5F7FA', oklch: 'oklch(0.90 0.01 260)' },
-  };
-
   // 2. SEMANTIC SET (4 roles each: subtle / border / text / solid)
+  // INVARIANT: subtle and border must share the hue of `solid` for the same role.
+  // Enforced by src/engine/__tests__/tokens.test.ts (hue-consistency test).
   static readonly SEMANTICS: Record<'SUCCESS' | 'WARNING' | 'DANGER' | 'INFO', SemanticRole & { hue: number }> = {
     SUCCESS: {
       hue: 155,
@@ -58,16 +34,16 @@ export class LiminalColorEngine {
     },
     DANGER: {
       hue: 15,
-      subtle: 'rgba(229, 99, 122, 0.10)',
-      border: 'rgba(229, 99, 122, 0.22)',
+      subtle: 'rgba(226, 85, 85, 0.10)',
+      border: 'rgba(226, 85, 85, 0.22)',
       text: '#F091A2',
       solid: 'var(--liminal-danger, #E25555)',
       onSolid: '#1A060A',
     },
     INFO: {
       hue: 230,
-      subtle: 'rgba(90, 167, 232, 0.10)',
-      border: 'rgba(90, 167, 232, 0.22)',
+      subtle: 'rgba(79, 143, 234, 0.10)',
+      border: 'rgba(79, 143, 234, 0.22)',
       text: '#8CC3F2',
       solid: 'var(--liminal-info, #4F8FEA)',
       onSolid: '#04101A',
@@ -100,17 +76,20 @@ export class LiminalColorEngine {
 
   /**
    * Helper function to retrieve ladder colors referencing CSS Variables
+   *
+   * The fallbacks mirror LADDER in spec-engine.ts (the single source of truth).
+   * If you change the ladder, change it there first, then here and in index.css.
    */
   static getLadderColor(level: number): string {
     const colors = [
       'var(--liminal-s0, #060709)',
-      'var(--liminal-s1, #08090C)',
-      'var(--liminal-s2, #0A0B0F)',
-      'var(--liminal-s3, #0D0E12)',
-      'var(--liminal-s4, #101115)',
+      'var(--liminal-s1, #08090b)',
+      'var(--liminal-s2, #0a0b10)',
+      'var(--liminal-s3, #0d0e11)',
+      'var(--liminal-s4, #101114)',
       'var(--liminal-s5, #131418)',
     ];
-    return colors[Math.min(Math.max(Math.round(level), 0), 5)] || 'var(--liminal-s2, #0A0B0F)';
+    return colors[Math.min(Math.max(Math.round(level), 0), 5)] || 'var(--liminal-s2, #0a0b10)';
   }
 
   // 5. RAMP FORMULA

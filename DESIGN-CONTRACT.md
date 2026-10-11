@@ -1,20 +1,24 @@
 # LIMINAL v1.0 — MASTER DESIGN CONTRACT
 > «هر لایه روی آستانه‌ی ادراک — نه کمتر، نه بیشتر.»
-> Pure mathematical Dark UI engine grounded in psychophysical limen $\Delta L = 0.015$.
+> Pure mathematical Dark UI engine grounded in psychophysical limen $\Delta L = 0.0127$.
 
 ---
 
 ## 1. RIM & SURFACES (سطوح و لبه‌های نورانی)
 
 ### 1.1 Tonal Ladder (نردبان رنگی پایه)
-مبتنی بر مدل رنگی OKLCH با نقطه مرجع بوم $L_0 = 0.128$ و گام ادراکی $\Delta L = 0.015$:
+مبتنی بر مدل رنگی OKLCH با نقطه مرجع بوم $L_0 = 0.128$ و گام ادراکی هدف $\Delta L = 0.0127$.
+
+> **چرا ۰.۰۱۲۷ و نه ۰.۰۱۵؟** عدد ۰.۰۱۵ یک فرض بود که هرگز در هگزها وجود نداشت. میانگین گام‌های نردبان دستیِ اصلی ۰.۰۱۲۷ بود — یعنی عددی که طراحی از قبل در خود داشت. ۰.۰۱۵ سطح اول را به‌طور قابل‌اندازه‌گیری از بوم دور می‌کرد و از «آستانه‌ی ادراک» فاصله می‌گرفت. شاهد تصمیم: `design-lab/ladder-compare.html`.
+
+> **نردبان از ریاضی تولید می‌شود، نه دستی انتخاب.** کوانتیزاسیون هگز ۸بیتی اجازه‌ی رسیدن به $\Delta L$ دقیق نمی‌دهد، پس دنباله طوری انتخاب شده که بیشترین انحراف از هدف کمینه شود. گام‌های محقق‌شده در بازه‌ی $[0.011, 0.015]$ می‌مانند و در `src/engine/__tests__/tokens.test.ts` تست می‌شوند.
 
 - **S0 (Canvas):** `#060709` ($L \approx 0.128$) — بستر مادر و مرجع مطلق تاریکی
-- **S1 (Container):** `#08090C` ($L \approx 0.143$) — کانتینرها، کارت‌های اصلی، نوارهای بیرونی
-- **S2 (Panel / Control Base):** `#0A0B0F` ($L \approx 0.158$) — پنل‌های تو در تو، پیش‌فرض کنترل‌ها
-- **S3 (Raised / Active Control):** `#0D0E12` ($L \approx 0.173$) — کنترل‌های برجسته، اینپوت‌های فعال
-- **S4 (Elevated / Popover):** `#101115` ($L \approx 0.188$) — منوهای بازشونده، پاپ‌اور، تولتیپ
-- **S5 (Overlay / Ceiling):** `#131418` ($L \approx 0.203$) — مدال‌ها، دراورهای شیت، سقف تاریکی مجاز
+- **S1 (Container):** `#08090b` ($L \approx 0.140$) — کانتینرها، کارت‌های اصلی، نوارهای بیرونی
+- **S2 (Panel / Control Base):** `#0a0b10` ($L \approx 0.151$) — پنل‌های تو در تو، پیش‌فرض کنترل‌ها
+- **S3 (Raised / Active Control):** `#0d0e11` ($L \approx 0.164$) — کنترل‌های برجسته، اینپوت‌های فعال
+- **S4 (Elevated / Popover):** `#101114` ($L \approx 0.178$) — منوهای بازشونده، پاپ‌اور، تولتیپ
+- **S5 (Overlay / Ceiling):** `#131418` ($L \approx 0.192$) — مدال‌ها، دراورهای شیت، سقف تاریکی مجاز
 
 #### سطوح زیر-بوم (Sub-Canvas Wells)
 - **S-1 (Penumbra Ambient):** `#030406` ($L \approx 0.113$)
@@ -23,9 +27,9 @@
 ### 1.2 Directional Specular Rim (لبه بازتابی زاویه‌دار)
 شیب خطی ۱۸۰ درجه با توزیع نور فیزیکی: Top (۱۰۰٪) > Side (۵۵٪) > Bottom (پایین‌ترین سطح نردبان):
 - **Rim 0:** بدون لبه (برای عناصر غیرفعال `disabled`)
-- **Rim 1 (Container / S1):** Top `#0B0C10` | Side `#0A0B0E` | Bottom `#0A0B0F`
-- **Rim 2 (Panel / S2):** Top `#0D0E12` | Side `#0B0C10` | Bottom `#0A0B0F`
-- **Rim 3 (Ceiling / S3+):** Top `#0E0F13` | Side `#0D0E12` | Bottom `#0B0C10`
+- **Rim 1 (Container / S1):** Top `#090a0e` | Side `#090a0e` | Bottom `#08090b`
+- **Rim 2 (Panel / S2):** Top `#0d0e11` | Side `#0b0d11` | Bottom `#0a0b10`
+- **Rim 3 (Ceiling / S3+):** Top `#111216` | Side `#101114` | Bottom `#0e0f12`
 - **Concave Inversion (Active State):** معکوس شدن جهت شیب نور به ۱۸۰ درجه معکوس هنگام فشرده شدن دکمه (نمایش فرورفتگی فیزیکی با جابجایی عمودی `translateY(0.5px)`).
 
 ---
@@ -86,10 +90,9 @@
 - **Primary:** `rgba(255, 255, 255, 0.88)`
 - **Secondary:** `rgba(255, 255, 255, 0.62)`
 - **Tertiary (Surface-compensated):**
-  - S0: `0.40` | S1: `0.40` | S2: `0.43` | S3: `0.45` | S4: `0.48` | S5: `0.50`
+  - S0: `0.46` | S1: `0.46` | S2: `0.46` | S3: `0.47` | S4: `0.48` | S5: `0.49`
 - **Quaternary (Non-critical only):**
-  - S0: `0.25` | S1: `0.25` | S2: `0.27` | S3: `0.29` | S4: `0.31` | S5: `0.33`
-
+  - S0: `0.35` | S1: `0.35` | S2: `0.36` | S3: `0.37` | S4: `0.38` | S5: `0.39`
 ---
 
 ## 5. SEMANTICS & EXTENDED SPECTRUM (رنگ‌های معنایی و طیف)
@@ -158,7 +161,7 @@ Hue 15 (Ruby `#E86575`), 45 (Amber `#E09540`), 75 (Gold `#C8B030`), 105 (Lime `#
 
 ### 8.3 ترانزیشن‌های آماده و پالس اسکلت
 - `micro`, `fast`, `hover`, `normal`, `slow`, `enter`, `spring`, `exit`, `containerEnter`, `containerExit`, `dramatic`
-- **Skeleton Pulse قفل‌شده:** `liminal-skeleton-pulse 1.6s ease-in-out infinite` بین رنگ‌های `#0A0B0F` و `#0B0C10`.
+- **Skeleton Pulse قفل‌شده:** `liminal-skeleton-pulse 1.6s ease-in-out infinite` بین رنگ‌های `#0a0b10` و `#0b0d11`.
 
 ---
 

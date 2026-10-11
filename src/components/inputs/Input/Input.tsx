@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useId } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent, MouseEvent } from 'react';
 import { Eye, EyeSlash, X } from '@phosphor-icons/react';
 import {
@@ -442,8 +442,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     ? SEMANTICS.WARNING.text
     : getTextStyle('tertiary', surfaceLevel).color;
 
-  const helperId = id && (error || success || helperText) ? `${id}-helper` : undefined;
-  const countId = id && shouldRenderCount ? `${id}-count` : undefined;
+  // A visible label must be programmatically associated with its control.
+  // Without a generated id, `htmlFor` is undefined and screen readers announce
+  // the field with no name (axe rule "label", impact: critical).
+  const generatedId = useId();
+  const fieldId = id ?? generatedId;
+
+  const helperId = error || success || helperText ? `${fieldId}-helper` : undefined;
+  const countId = shouldRenderCount ? `${fieldId}-count` : undefined;
   const ariaDescribedBy = [helperId, countId].filter(Boolean).join(' ') || undefined;
 
   return (
@@ -458,7 +464,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       }}
     >
       {label && (
-        <label htmlFor={id} style={labelStyle}>
+        <label htmlFor={fieldId} style={labelStyle}>
           {label}
         </label>
       )}
@@ -476,7 +482,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
         <input
           ref={setInputRef}
           type={effectiveType}
-          id={id}
+          id={fieldId}
           name={name}
           value={value}
           defaultValue={defaultValue}

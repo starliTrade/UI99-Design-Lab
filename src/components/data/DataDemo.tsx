@@ -82,8 +82,8 @@ export function DataDemo() {
   };
 
   const sortedUsers = [...users].sort((a, b) => {
-    let valA = (a as any)[sortColumn] || '';
-    let valB = (b as any)[sortColumn] || '';
+    const valA = (a as any)[sortColumn] || '';
+    const valB = (b as any)[sortColumn] || '';
     if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
     if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
     return 0;
