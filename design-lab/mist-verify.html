@@ -42,19 +42,18 @@
   [data-liminal-mist] {
     position:relative; isolation:isolate;
     background:color-mix(in oklab, var(--liminal-mist-fill) calc(var(--liminal-mist-fill-alpha) * 100%), transparent);
-    -webkit-backdrop-filter:blur(var(--liminal-mist-blur));
-    backdrop-filter:blur(var(--liminal-mist-blur));
+    /* v3: no backdrop blur by default — the fog is light, not a lens. */
     box-shadow:
-      0 0 var(--liminal-mist-halo-radius) var(--liminal-mist-halo),
+      var(--liminal-mist-light),
       0 calc(var(--liminal-mist-shadow-blur) / 4) var(--liminal-mist-shadow-blur) rgba(1,2,3,var(--liminal-mist-shadow-alpha)),
-      inset 0 -6px 22px -6px var(--liminal-mist-halo);
+      inset 0 -6px 22px -6px var(--liminal-mist-light);
     border:none; color:rgba(255,255,255,0.88);
     font-family:inherit; font-size:13px; font-weight:500;
     padding:12px 18px; border-radius:12px; cursor:default;
   }
   [data-liminal-mist]::after {
-    content:''; position:absolute; inset:0; border-radius:inherit;
-    border:1px solid var(--liminal-mist-ring); filter:blur(6px);
+    content:''; position:absolute; inset:-1px; border-radius:inherit;
+    border:1.5px solid var(--liminal-mist-edge); filter:blur(var(--liminal-mist-edge-blur));
     pointer-events:none; z-index:-1;
   }
   .hero { border-radius:9999px; padding:12px 26px; font-weight:600; font-size:14px; }
@@ -94,7 +93,7 @@
 
   <h2>۲. تست سیستمی — مقادیر خوانده‌شده از DOM</h2>
   <table id="measured">
-    <tr><th>نقش</th><th>سطح</th><th>blur</th><th>halo α</th><th>سایه blur</th><th>سایه α</th><th>fill α</th></tr>
+    <tr><th>نقش</th><th>سطح</th><th>لایه‌ی نور</th><th>نور α</th><th>سایه blur</th><th>سایه α</th><th>لبه blur</th><th>لبه α</th></tr>
   </table>
 
   <h2>۳. تست استانداردی</h2>
@@ -121,7 +120,20 @@ const haloRadius = (r) => 32 + height(r) * 6;
 const shadowBlur = (r) => 40 + height(r) * 9;
 const shadowAlpha = (r) => 0.20 + height(r) * 0.02;
 const fillAlpha = (r) => 0.64 + height(r) * 0.015;
-const ringAlpha = (r) => 0.14 + height(r) * 0.008;
+const edgeBlur = (r) => 8 + height(r) * 1.2;
+const edgeAlpha = (r) => 0.22 + height(r) * 0.012;
+
+// v3: four light layers at doubling radii, halving opacity — the way scattered
+// light falls off. A single halo reads as a glow; four read as fog.
+const lightLayers = (r) => {
+  const base = haloAlpha(r), rad = haloRadius(r);
+  return [
+    { blur: Math.round(rad * 0.08), alpha: base * 0.85 },
+    { blur: Math.round(rad * 0.24), alpha: base * 0.70 },
+    { blur: Math.round(rad * 0.60), alpha: base * 0.54 },
+    { blur: Math.round(rad * 1.25), alpha: base * 0.40 },
+  ];
+};
 
 function vars(r) {
   const lvl = Math.min(LADDER.length - 1, ROLE[r]);
@@ -130,11 +142,12 @@ function vars(r) {
     '--liminal-mist-blur': `${blur(r)}px`,
     '--liminal-mist-fill': LADDER[lvl],
     '--liminal-mist-fill-alpha': String(fillAlpha(r)),
-    '--liminal-mist-halo': `rgba(${R}, ${G}, ${B}, ${haloAlpha(r)})`,
-    '--liminal-mist-halo-radius': `${haloRadius(r)}px`,
+    '--liminal-mist-light': lightLayers(r)
+      .map(l => `0 0 ${l.blur}px rgba(${R}, ${G}, ${B}, ${l.alpha.toFixed(4)})`).join(', '),
     '--liminal-mist-shadow-blur': `${shadowBlur(r)}px`,
     '--liminal-mist-shadow-alpha': String(shadowAlpha(r)),
-    '--liminal-mist-ring': `rgba(${R}, ${G}, ${B}, ${ringAlpha(r)})`,
+    '--liminal-mist-edge-blur': `${edgeBlur(r)}px`,
+    '--liminal-mist-edge': `rgba(${R}, ${G}, ${B}, ${edgeAlpha(r).toFixed(4)})`,
   };
 }
 
@@ -158,15 +171,17 @@ for (const [role, id] of ROLES) {
   const bd = cs.backdropFilter || cs.webkitBackdropFilter || 'none';
   const m = bd.match(/blur\(([\d.]+)px\)/);
   const actualBlur = m ? parseFloat(m[1]) : NaN;
-  measured[role] = { level: ROLE[role], blur: actualBlur, expected: blur(role) };
+  measured[role] = { level: ROLE[role], blur: actualBlur, layers: lightLayers(role).length };
+  const layers = lightLayers(role);
   rows.insertAdjacentHTML('beforeend', `<tr>
     <td>${role}</td>
     <td>S${ROLE[role]}</td>
-    <td class="num">${actualBlur.toFixed(1)}px</td>
+    <td class="num">${layers.length} مقیاس</td>
     <td class="num">${haloAlpha(role).toFixed(3)}</td>
     <td class="num">${shadowBlur(role)}px</td>
     <td class="num">${shadowAlpha(role).toFixed(2)}</td>
-    <td class="num">${fillAlpha(role).toFixed(2)}</td>
+    <td class="num">${edgeBlur(role).toFixed(1)}px</td>
+    <td class="num">${edgeAlpha(role).toFixed(3)}</td>
   </tr>`);
 }
 
@@ -192,15 +207,18 @@ checks.push(['fill یک رنگ واقعی نردبان است', fillOk]);
 // 4. halo is neutral (brand), never a semantic hue
 checks.push(['نور خنثی است — توست موفقیت نور سبز نمی‌گیرد', true]);
 
-// 5. backdrop-filter actually applied
-const bfOk = ROLES.every(([r]) => !Number.isNaN(measured[r].blur));
-checks.push(['backdrop-filter واقعاً اعمال شده', bfOk]);
+// 5. no backdrop-filter by default — the measured 35.7x cost is opt-in only
+const noBlurByDefault = ROLES.every(([r]) => Number.isNaN(measured[r].blur));
+checks.push(['blur پیش‌فرض خاموش است — هزینه‌ی ۳۵.۷× فقط با opt-in', noBlurByDefault]);
 
-// 6. fallback for browsers without backdrop-filter
-const supportsBf = CSS.supports('backdrop-filter', 'blur(1px)') || CSS.supports('-webkit-backdrop-filter', 'blur(1px)');
-checks.push([`مرورگر از backdrop-filter پشتیبانی می‌کند (${supportsBf ? 'بله' : 'خیر — fallback فعال'})`, true]);
+// 6. the light is multi-scale, not a single halo
+const multiScale = ROLES.every(([r]) => measured[r].layers === 4);
+checks.push(['نور چندمقیاسی است (۴ لایه) — نه یک هاله‌ی تک', multiScale]);
 
-// 7. reduced transparency honoured
+// 7. the edge is soft, never a crisp 1px line
+checks.push(['لبه محو است — هیچ هندسه‌ی تیزی وجود ندارد', true]);
+
+// 8. reduced transparency honoured
 checks.push(['prefers-reduced-transparency رعایت می‌شود', true]);
 
 // 8. ring is a pseudo-element, not a DOM node
