@@ -15,7 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "verify": "bun run typecheck && bun run lint && bun run test && bun run build"
+    "verify": "bun run typecheck && bun run lint && bun run test && bun run build",
+    "audit:tokens": "node scripts/token-audit.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",

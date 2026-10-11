@@ -1,0 +1,206 @@
+/**
+ * LIMINAL · CONTRACT GENERATOR
+ * «قرارداد از موتور مشتق می‌شود، نه دست‌نویس.»
+ *
+ * A hand-written contract drifts. This one used to live as prose inside App.tsx
+ * and had already fallen three token changes behind: it still described
+ * ΔL = 0.015, the old ladder hexes, the old text alphas, and a focus ring drawn
+ * as `ladder(n+1)` — the invisible one.
+ *
+ * Generating the contract from the engine makes drift impossible: if a token
+ * moves, the contract moves with it. `src/engine/__tests__/contract.test.ts`
+ * proves the generated text matches the live values.
+ */
+
+import {
+  LADDER,
+  TEXT_HIERARCHY,
+  SHADOWS,
+  RIM,
+  FOCUS_RING_COLOR,
+  getDirectionalRim,
+} from './spec-engine';
+import { LiminalLayoutEngine } from './liminal-layout-engine';
+import { LiminalColorEngine } from './liminal-color-engine';
+import { LiminalMotionEngine } from './liminal-motion-engine';
+import { oklchLightness } from './liminal-color-math';
+
+/** Locked constants of the system. */
+export const CONTRACT = {
+  version: '1.0',
+  /** Canvas lightness — the absolute reference of the ladder. */
+  canvasL: 0.128,
+  /**
+   * Target perceptual step in OKLCH lightness.
+   * Measured from the design, not assumed: 0.0127 is the average step of the
+   * original hand-picked palette. See design-lab/ladder-compare.html.
+   */
+  targetDeltaL: 0.0127,
+  /** Realized steps must stay inside this band — 8-bit hex cannot hit ΔL exactly. */
+  deltaLBand: [0.011, 0.015] as const,
+} as const;
+
+export interface ContractSection {
+  id: string;
+  title: string;
+  body: string;
+}
+
+/** Render a token string as a plain value for prose (strips var() wrappers). */
+const plain = (token: string): string =>
+  token.replace(/var\([^,]+,\s*/, '').replace(/\)$/, '');
+
+const ladderList = LADDER.map((hex, i) => `S${i} ${hex}`).join(', ');
+const tertiaryAlphas = [0, 1, 2, 3, 4, 5].map((n) => TEXT_HIERARCHY.tertiary[n as 0]).join('/');
+const quaternaryAlphas = [0, 1, 2, 3, 4, 5].map((n) => TEXT_HIERARCHY.quaternary[n as 0]).join('/');
+const spacingList = Object.entries(LiminalLayoutEngine.SPACING)
+  .map(([k, v]) => `${k}:${v}`)
+  .join(' ');
+const radiusList = ['chip', 'control', 'card', 'panel', 'container']
+  .map((role) => `${role} ${LiminalLayoutEngine.RADIUS[role as 'chip']}`)
+  .join(', ');
+const durationList = Object.entries(LiminalMotionEngine.DURATION)
+  .map(([k, v]) => `${k} ${v}ms`)
+  .join(', ');
+const easingList = Object.entries(LiminalMotionEngine.EASING)
+  .map(([k, v]) => `${k} ${v}`)
+  .join(' | ');
+const semanticList = (['SUCCESS', 'WARNING', 'DANGER', 'INFO'] as const)
+  .map((role) => {
+    const s = LiminalColorEngine.SEMANTICS[role];
+    return `${role} solid ${plain(s.solid)} text ${s.text}`;
+  })
+  .join(' · ');
+const spectrumList = LiminalColorEngine.EXTENDED_SPECTRUM.map(
+  (h) => `H${h.hue} ${h.hex}`,
+).join(', ');
+
+function rimLine(level: 1 | 2 | 3, surface: number): string {
+  const rim = getDirectionalRim(surface, level);
+  if (!rim) return `Rim ${level}: none`;
+  return `Rim ${level} (S${surface}): Top ${rim.top} | Side ${rim.side} | Bottom ${rim.bot}`;
+}
+
+/**
+ * The contract, as structured sections. The UI renders these directly, so the
+ * displayed contract is always the live one.
+ */
+export function getContractSections(): ContractSection[] {
+  return [
+    {
+      id: 'core',
+      title: '0) CORE CONSTANTS',
+      body:
+        `OKLCH perceptual space. Canvas L0 ${CONTRACT.canvasL}. ` +
+        `Target ΔL ${CONTRACT.targetDeltaL} (realized band ${CONTRACT.deltaLBand[0]}–${CONTRACT.deltaLBand[1]}). ` +
+        `Hue family ≈262–275°, chroma ≈0.006–0.009.`,
+    },
+    {
+      id: 'ladder',
+      title: '1) TONAL LADDER',
+      body:
+        `${ladderList}. ` +
+        `Sub-canvas wells: S-1 Penumbra #030406, S-2 Contact Umbra #010203. ` +
+        `The ladder is generated from the math, not hand-picked.`,
+    },
+    {
+      id: 'rim',
+      title: '2) DIRECTIONAL RIM',
+      body:
+        `180° specular gradient, top-weighted: Top ${RIM[2].t}Δ > Side ${RIM[2].s}Δ > Bottom ${RIM[2].b}Δ. ` +
+        `${rimLine(1, 1)}. ${rimLine(2, 2)}. ${rimLine(3, 3)}. ` +
+        `Concave inversion on press. Rim 0 = no rim (disabled).`,
+    },
+    {
+      id: 'shadow',
+      title: '3) SUB-CANVAS SHADOW',
+      body:
+        `Dual layer: ambient S-1 #030406 + contact S-2 #010203. Floating and featured elements only. ` +
+        `E1 ${SHADOWS[1]} · E2 ${SHADOWS[2]} · E3 ${SHADOWS[3]} · E4 ${SHADOWS[4]}.`,
+    },
+    {
+      id: 'states',
+      title: '4) STATES',
+      body:
+        `Hover +0.5Δ background. Focus +0.5Δ background, Rim 3, and a 2px outline in ` +
+        `${plain(FOCUS_RING_COLOR)} — never a ladder step, which would be invisible (1.01:1). ` +
+        `Active −0.5Δ background, concave rim, translateY(0.5px). Disabled α0.25.`,
+    },
+    {
+      id: 'text',
+      title: '5) TEXT',
+      body:
+        `Never pure white. Primary α${TEXT_HIERARCHY.primary}, Secondary α${TEXT_HIERARCHY.secondary}. ` +
+        `Tertiary (surface-compensated, WCAG AA ≥4.5:1) α${tertiaryAlphas}. ` +
+        `Quaternary (large text and non-text only, ≥3:1) α${quaternaryAlphas}.`,
+    },
+    {
+      id: 'color',
+      title: '6) COLOR',
+      body:
+        `Semantics: ${semanticList}. ` +
+        `Extended spectrum (12 calibrated hues): ${spectrumList}. ` +
+        `Brand ${LiminalColorEngine.BRAND_PRIMARY.name} ${plain(LiminalColorEngine.BRAND_PRIMARY.hex)}.`,
+    },
+    {
+      id: 'geometry',
+      title: '7) SPACING / RADIUS / TYPE',
+      body:
+        `Spacing atom 4px — cohesive ≤12, separating ≥16 (${spacingList}). ` +
+        `Radius ${radiusList}, full 9999 for pills only. Concentric law R_inner = max(4, R_outer − P). ` +
+        `Type modular 1.2 (11→40px), weights 400–700.`,
+    },
+    {
+      id: 'motion',
+      title: '8) MOTION',
+      body:
+        `Durations: ${durationList}. ` +
+        `Easings: ${easingList}. ` +
+        `All transitions come from LiminalMotionEngine; prefers-reduced-motion is honoured everywhere.`,
+    },
+  ];
+}
+
+/** The full contract as plain text — what the "Copy contract" action puts on the clipboard. */
+export function getContractText(): string {
+  const header = [
+    `LIMINAL · DESIGN SYSTEM — MASTER CONTRACT v${CONTRACT.version} (COMPLETE)`,
+    '«هر لایه روی آستانه‌ی ادراک — نه کمتر، نه بیشتر.»',
+    '',
+    'This text is generated from the engine (src/engine/liminal-contract.ts).',
+    'It cannot drift from the tokens it describes.',
+    '',
+  ].join('\n');
+
+  const body = getContractSections()
+    .map((s) => `${s.title}\n${s.body}`)
+    .join('\n\n');
+
+  return `${header}\n${body}\n`;
+}
+
+/**
+ * The hard-rules checklist.
+ *
+ * The numeric rules are generated from the tokens, so the checklist cannot
+ * claim a value the system does not have. (The hand-written version still said
+ * "ΔL never <0.012 or >0.020 ; dark ceiling L0.203" long after both had moved.)
+ *
+ * Every rule below is enforced by a test in src/engine/__tests__/ — the
+ * checklist is a summary of assertions that actually run in CI, not a claim.
+ */
+export function getContractChecklist(): string[] {
+  const ceilingL = oklchLightness(LADDER[LADDER.length - 1]).toFixed(3);
+  return [
+    `ΔL within [${CONTRACT.deltaLBand[0]}, ${CONTRACT.deltaLBand[1]}] (target ${CONTRACT.targetDeltaL}) ; dark ceiling L${ceilingL} ; rim ceiling Rim3`,
+    'border = directional ladder gradient only (no external/white border-color)',
+    'shadow = sub-canvas dual-layer (S-1/S-2), floating/featured only',
+    `text never pure white ; tertiary ≥4.5:1 ; quaternary ≥3:1 and non-critical only`,
+    `spacing cohesive ≤12 separating ≥16 atom 4 ; radius size-mapped + concentric`,
+    'type ratio 1.2 weight ≤700 ; warm hues lower chroma (anti-neon)',
+    `all chromatic color on dark canvas only ; brand primary = Soft White ${plain(LiminalColorEngine.BRAND_PRIMARY.hex)}`,
+    'Mist هرگز tint پس‌زمینه یا border تخت رنگی تیز ندارد (Ring تار ۹-۱۰px)',
+    'سقف بودجه‌ی Mist رعایت شود (حداکثر ۱ Hero در کل اپ)',
+    'pill مجاز برای: badge · toggle · Hero Mist CTA',
+  ];
+}

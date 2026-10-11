@@ -70,7 +70,7 @@ export function Progress({
     width: '100%',
     height: `${trackHeight}px`,
     borderRadius: `${trackHeight / 2}px`,
-    background: getLadderColor(3), // Surface 3 #0D0E12
+    background: getLadderColor(3), // Surface 3 #0d0e11
     overflow: 'hidden',
     position: 'relative',
     boxSizing: 'border-box',

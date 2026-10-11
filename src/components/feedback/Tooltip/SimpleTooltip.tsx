@@ -30,7 +30,7 @@ export interface SimpleTooltipProps {
  * - Viewport boundary clamping (shift) to prevent offscreen overflow
  * - Rendered in <body> via LiminalPortal (zero z-index/overflow stacking context issues)
  * - Accessible: keyboard focus, Escape dismiss, click outside dismiss, role="tooltip"
- * - Optical specs: Surface 4 (#101115), Rim 2 Directional Specular, Elevation E2 Shadow
+ * - Optical specs: Surface 4 (#101114), Rim 2 Directional Specular, Elevation E2 Shadow
  */
 export function SimpleTooltip({
   content,
@@ -75,7 +75,7 @@ export function SimpleTooltip({
 
   // Surface 4 with Rim 2 and Sub-Canvas Shadow
   const rim = getDirectionalRim(4, 2, false);
-  const arrowColor = getLadderColor(4); // Surface 4 (#101115)
+  const arrowColor = getLadderColor(4); // Surface 4 (#101114)
   const controlRadius = LiminalLayoutEngine.RADIUS.control; // 10px
 
   // Dynamic arrow alignment based on actual resolved placement

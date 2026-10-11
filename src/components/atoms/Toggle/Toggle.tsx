@@ -1,6 +1,6 @@
 import React from 'react';
 import type { CSSProperties, KeyboardEvent } from 'react';
-import { getDirectionalRim } from '../../../engine/spec-engine';
+import { getDirectionalRim, getLadderColor } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -61,7 +61,7 @@ export function Toggle({
       ? brand.hex
       : offRim
       ? offRim.cssBackground
-      : '#0D0E12',
+      : getLadderColor(3),
     outline: 'none',
     padding: 0,
     ...customStyle,
