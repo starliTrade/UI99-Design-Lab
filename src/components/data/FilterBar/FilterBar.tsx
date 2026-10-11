@@ -105,13 +105,14 @@ interface RemoveFilterButtonProps {
 }
 
 function RemoveFilterButton({ label, onClick, reducedMotion }: RemoveFilterButtonProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
+  // The hover state is CSS's job now — no setState, no re-render on mouse move.
   const style: CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: isHovered ? resolveSurface({ role: 'control', state: 'hover' }).background : 'transparent',
+    '--liminal-surface-idle': 'transparent',
+    '--liminal-surface-hover': resolveSurface({ role: 'control', state: 'hover' }).background,
+    '--liminal-surface-active': resolveSurface({ role: 'control', state: 'active' }).background,
     border: 'none',
     borderRadius: '50%',
     width: `${LiminalLayoutEngine.SPACING[4]}px`,
@@ -120,7 +121,7 @@ function RemoveFilterButton({ label, onClick, reducedMotion }: RemoveFilterButto
     cursor: 'pointer',
     color: 'inherit',
     transition: reducedMotion ? 'none' : LiminalMotionEngine.getTransition('background', 'fast'),
-  };
+  } as CSSProperties;
 
   return (
     <button
@@ -131,9 +132,8 @@ function RemoveFilterButton({ label, onClick, reducedMotion }: RemoveFilterButto
         e.stopPropagation();
         onClick();
       }}
+      data-liminal-surface=""
       style={style}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <LiminalIcon icon={X} size="xs" weight="bold" />
     </button>

@@ -33,8 +33,6 @@ export function NavItem({
   className = '',
   style: customStyle = {},
 }: NavItemProps) {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
 
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const SPACING = LiminalLayoutEngine.SPACING;
@@ -49,12 +47,13 @@ export function NavItem({
   if (active) {
     bg = activeRim ? activeRim.cssBackground : resolveSurface({ role: 'chrome', state: 'hover' }).background;
     color = getTextStyle('primary', 2).color;
-  } else if (isHovered && !disabled) {
-    bg = resolveSurface({ role: 'chrome' }).background;
-    color = getTextStyle('secondary', 2).color;
   }
 
-  const navItemStyle: CSSProperties = {
+  const navItemStyle = {
+    // Hover and focus are the browser's job now — no setState, no re-render.
+    '--liminal-surface-idle': 'transparent',
+    '--liminal-surface-hover': resolveSurface({ role: 'chrome' }).background,
+    '--liminal-surface-active': resolveSurface({ role: 'chrome', state: 'active' }).background,
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
@@ -73,18 +72,11 @@ export function NavItem({
     opacity: disabled ? 0.35 : 1,
     cursor: disabled ? 'not-allowed' : 'pointer',
     transition: LiminalMotionEngine.TRANSITION.hover,
-    ...getFocusRing(isKeyboardFocused),
     userSelect: 'none',
     width: '100%',
     textAlign: 'left',
     ...customStyle,
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLElement>) => {
-    if (e.key === 'Tab') {
-      setIsKeyboardFocused(true);
-    }
-  };
+  } as CSSProperties;
 
   const renderIcon = () => {
     if (!icon) return null;
@@ -101,11 +93,8 @@ export function NavItem({
         className={className}
         style={navItemStyle}
         onClick={onClick}
-        onKeyDown={handleKeyDown}
-        onMouseDown={() => setIsKeyboardFocused(false)}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onBlur={() => setIsKeyboardFocused(false)}
+        data-liminal-surface=""
+        data-liminal-disabled={disabled ? "" : undefined}
         aria-current={active ? 'page' : undefined}
       >
         {renderIcon()}
@@ -121,11 +110,8 @@ export function NavItem({
       className={className}
       style={navItemStyle}
       onClick={disabled ? undefined : onClick}
-      onKeyDown={handleKeyDown}
-      onMouseDown={() => setIsKeyboardFocused(false)}
-      onMouseEnter={() => !disabled && setIsHovered(true)}
-      onMouseLeave={() => !disabled && setIsHovered(false)}
-      onBlur={() => setIsKeyboardFocused(false)}
+      data-liminal-surface=""
+      data-liminal-disabled={disabled ? "" : undefined}
       aria-current={active ? 'page' : undefined}
     >
       {renderIcon()}
