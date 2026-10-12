@@ -6,7 +6,6 @@ import { Calendar } from './Calendar';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { LiminalPortal } from '../../../engine/liminal-portal';
 import { useFloating } from '../../../engine/liminal-floating';
-import { getMistStyle } from '../../../engine/liminal-color-engine';
 import { SHADOWS } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { mistCssVars } from '../../../engine/liminal-mist';
