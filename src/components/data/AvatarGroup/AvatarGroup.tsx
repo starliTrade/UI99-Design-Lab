@@ -2,6 +2,7 @@ import React, { Children, cloneElement, isValidElement } from 'react';
 import type { CSSProperties, ReactNode, ReactElement } from 'react';
 import { getLadderColor, getTextStyle } from '../../../engine/spec-engine';
 import { resolveSurface } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export interface AvatarGroupProps {
   children: ReactNode;
@@ -18,6 +19,7 @@ export function AvatarGroup({
   className = '',
   style: customStyle = {},
 }: AvatarGroupProps) {
+  const host = useHostSurface();
   const allChildren = Children.toArray(children).filter(isValidElement) as ReactElement[];
   const total = allChildren.length;
 
@@ -47,7 +49,7 @@ export function AvatarGroup({
     width: `${px}px`,
     height: `${px}px`,
     borderRadius: '50%',
-    background: resolveSurface({ role: 'control' }).background,
+    background: resolveSurface({ role: 'control', on: host }).background,
     color: getTextStyle('secondary', 3).color,
     border: `2px solid ${canvasBorderColor}`,
     display: 'inline-flex',

@@ -8,6 +8,7 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { resolveSurface } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export interface ProgressProps {
   value: number;
@@ -36,6 +37,7 @@ export function Progress({
   className = '',
   style: customStyle = {},
 }: ProgressProps) {
+  const host = useHostSurface();
   const SPACING = LiminalLayoutEngine.SPACING;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
   const BRAND = LiminalColorEngine.BRAND_PRIMARY;
@@ -71,7 +73,7 @@ export function Progress({
     width: '100%',
     height: `${trackHeight}px`,
     borderRadius: `${trackHeight / 2}px`,
-    background: resolveSurface({ role: 'control' }).background,
+    background: resolveSurface({ role: 'control', on: host }).background,
     overflow: 'hidden',
     position: 'relative',
     boxSizing: 'border-box',

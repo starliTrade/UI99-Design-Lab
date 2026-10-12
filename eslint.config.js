@@ -57,8 +57,22 @@ export default tseslint.config(
     // declaration-property-value-disallowed-list, MUI's theme lint). Without it
     // a token layer is advisory: the audit found 92 hardcoded hexes and a
     // hand-written copy of the contract that had drifted three changes behind.
-    files: ['src/components/**/*.{ts,tsx}', 'src/app/**/*.{ts,tsx}'],
-    ignores: ['src/components/**/*Demo.tsx', 'src/components/KitShowcase.tsx'],
+    // The ban applies to CONSUMERS of the tokens, not to the engine that
+    // defines them: liminal-ladder.ts, spec-engine.ts and liminal-color-engine.ts
+    // are where the hexes are supposed to live. Tests assert them. So the globs
+    // name component and app code — and `src/App.tsx` explicitly, because it is
+    // the demo shell and the old globs (`src/components/**`, `src/app/**`)
+    // missed it entirely. "0 violations" was true of the files the rule looked
+    // at and false of the repo.
+    files: ['src/App.tsx', 'src/components/**/*.{ts,tsx}', 'src/app/**/*.{ts,tsx}'],
+    // Demos are excluded deliberately: they exist to show every component at
+    // once, and they are not shipped. The exclusion is named here rather than
+    // implied by a glob that happens to miss them.
+    ignores: [
+      'src/components/**/*Demo.tsx',
+      'src/components/KitShowcase.tsx',
+      'src/app/AppDemo.tsx',
+    ],
     rules: {
       'no-restricted-syntax': [
         'error',

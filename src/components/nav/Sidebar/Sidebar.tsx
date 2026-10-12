@@ -99,6 +99,17 @@ export function Sidebar({
   return (
     <aside className={`liminal-sidebar ${className}`} style={sidebarStyle}>
       {children}
+      <style>{`
+        /* A sidebar that fills the width cannot also be sticky beside content —
+           below the shell breakpoint it stacks instead. The same width as the
+           shell, because it is the same event. */
+        @media (width < ${LiminalLayoutEngine.BREAKPOINTS.shellSidebar}px) {
+          .liminal-sidebar {
+            width: 100% !important;
+            position: static !important;
+          }
+        }
+      `}</style>
     </aside>
   );
 }

@@ -205,12 +205,19 @@ export function FormLayout({
       {children}
 
       <style>{`
+        /* The form is the container; rows answer to the form's width, which is
+           the width that actually constrains them. */
+        .liminal-form-layout {
+          container-type: inline-size;
+          container-name: liminal-form;
+        }
         .liminal-form-section + .liminal-form-section {
           margin-top: 32px !important;
           padding-top: 32px !important;
           border-top: 1px solid ${rimSideColor} !important;
         }
-        @media (max-width: 600px) {
+        /* Strictly below the row's floor — at formRow two fields still fit. */
+        @container liminal-form (width < ${LiminalLayoutEngine.BREAKPOINTS.formRow}px) {
           .liminal-form-row {
             grid-template-columns: 1fr !important;
           }

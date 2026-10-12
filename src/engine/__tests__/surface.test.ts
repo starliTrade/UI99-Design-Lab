@@ -13,6 +13,7 @@ import {
 } from '../liminal-surface';
 import { LADDER, HALF, PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR } from '../liminal-ladder';
 import { contrastRatioHex, oklchLightness } from '../liminal-color-math';
+import { getLiminalStyle } from '../spec-engine';
 
 const ROLES = Object.keys(ROLE_LEVEL) as SurfaceRole[];
 const STATES: SurfaceState[] = ['idle', 'hover', 'focus', 'active', 'disabled'];
@@ -241,5 +242,105 @@ describe('surface decision engine — the border rule', () => {
       const hairline = resolveBorder({ role: role as SurfaceRole });
       expect(hairline, `${role} hairline equals its surface`).not.toBe(surface.background);
     }
+  });
+});
+
+describe('surface decision engine — controls are relative to their host', () => {
+  const HOSTS: SurfaceRole[] = ['canvas', 'chrome', 'work', 'panel', 'menu', 'popover', 'modal'];
+
+  it('places a control one step above whatever hosts it', () => {
+    for (const host of HOSTS) {
+      const control = resolveSurface({ role: 'control', on: host });
+      const hostSurface = resolveSurface({ role: host });
+      const step = oklchLightness(control.background) - oklchLightness(hostSurface.background);
+      const quanta = step / PERCEPTUAL_QUANTUM;
+      expect(
+        quanta,
+        `control on ${host} sits at ${quanta.toFixed(2)}q`,
+      ).toBeGreaterThanOrEqual(1.0);
+      expect(
+        quanta,
+        `control on ${host} sits at ${quanta.toFixed(2)}q`,
+      ).toBeLessThanOrEqual(1.5);
+    }
+  });
+
+  it('never sinks a control below its host', () => {
+    // The bug this replaces: a control pinned to an absolute level sat 3.29q
+    // BELOW a modal, i.e. sunken into the surface it was supposed to sit on.
+    for (const host of HOSTS) {
+      const control = resolveSurface({ role: 'control', on: host });
+      const hostSurface = resolveSurface({ role: host });
+      expect(
+        oklchLightness(control.background),
+        `control on ${host} must not be darker than its host`,
+      ).toBeGreaterThan(oklchLightness(hostSurface.background));
+    }
+  });
+
+  it('keeps the relationship identical at every depth', () => {
+    const quanta = HOSTS.map((host) => {
+      const c = resolveSurface({ role: 'control', on: host });
+      const h = resolveSurface({ role: host });
+      return (oklchLightness(c.background) - oklchLightness(h.background)) / PERCEPTUAL_QUANTUM;
+    });
+    const spread = Math.max(...quanta) - Math.min(...quanta);
+    expect(spread, `the lift varies by ${spread.toFixed(2)}q across depths`).toBeLessThanOrEqual(0.2);
+  });
+
+  it('clamps at the ceiling rather than running off the ladder', () => {
+    const control = resolveSurface({ role: 'control', on: 'toast' });
+    expect(control.level).toBeLessThanOrEqual(LADDER.length - 1);
+  });
+});
+
+/**
+ * There are two depth engines in this repo, and until now they disagreed.
+ *
+ * `liminal-surface.resolveSurface` derived its ceiling from the ladder:
+ * `const MAX_LEVEL = LADDER.length - 1` (8). `spec-engine.getLiminalStyle`
+ * wrote `Math.min(5, ...)` in four places — a hard-coded 5 that predates the
+ * ladder growing to nine steps. So anything at S6, S7 or S8 was silently
+ * flattened onto the work surface, and the two engines gave different answers
+ * for the same depth.
+ *
+ * A hard-coded ceiling is the same class of defect as a hard-coded breakpoint:
+ * a number that used to be right, left behind when the thing it described
+ * changed underneath it.
+ */
+describe('the two depth engines agree on the ladder', () => {
+  it('getLiminalStyle can reach the ladder ceiling', () => {
+    const top = getLiminalStyle({ surfaceLevel: LADDER.length - 1, isContainer: true });
+    expect(top.n).toBe(LADDER.length - 1);
+    expect(top.bg).toBe(LADDER[LADDER.length - 1]);
+  });
+
+  it('getLiminalStyle distinguishes every ladder step', () => {
+    const seen = new Set<string>();
+    for (let n = 0; n < LADDER.length; n++) {
+      seen.add(getLiminalStyle({ surfaceLevel: n, isContainer: true }).bg);
+    }
+    expect(seen.size).toBe(LADDER.length);
+  });
+
+  it('a hover step below the ceiling still moves', () => {
+    // Before the fix this was 5 -> 5: the level had already been flattened, so
+    // the hover had nowhere to go. At the ceiling itself a clamp is correct —
+    // there is no room above the top of the ladder, and this engine has no
+    // inversion rule (resolveBorder has one; getLiminalStyle does not).
+    const top = LADDER.length - 2;
+    const idle = getLiminalStyle({ surfaceLevel: top, isContainer: true });
+    const hover = getLiminalStyle({ surfaceLevel: top, isContainer: true, state: 'hover' });
+    expect(idle.n).toBe(top);
+    expect(hover.n).toBeGreaterThan(idle.n);
+  });
+
+  it('clamps at the ceiling rather than running off the ladder', () => {
+    const hover = getLiminalStyle({
+      surfaceLevel: LADDER.length - 1,
+      isContainer: true,
+      state: 'hover',
+    });
+    expect(hover.n).toBe(LADDER.length - 1);
   });
 });

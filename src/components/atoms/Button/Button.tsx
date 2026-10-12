@@ -24,6 +24,7 @@ import {
 } from '../../../engine/liminal-variants';
 import { Slot } from '../../../engine/liminal-slot';
 import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
@@ -47,37 +48,31 @@ export const buttonVariants = createVariants({
   },
   variants: {
     variant: {
+      // NOTE: no `background` here. The CSS interaction layer owns the surface,
+      // and an inline background would outrank it. The three state values are
+      // supplied as custom properties instead (see step 4 below).
       primary: {
-        background: LiminalColorEngine.BRAND_PRIMARY.hex,
         color: LiminalColorEngine.BRAND_PRIMARY.onColor,
         border: 'none',
       },
       secondary: {
-        ...LiminalComponentEngine.resolveInteractiveSurface({
-          surfaceLevel: 2,
-          state: 'idle',
-          isKeyboardFocused: false,
-          rimTier: 2,
-        }),
         color: getTextStyle('primary', 2).color,
       },
       ghost: {
-        background: 'transparent',
         border: 'none',
         color: getTextStyle('primary', 2).color,
       },
       danger: {
-        background: LiminalColorEngine.SEMANTICS.DANGER.solid,
-        color: getTextStyle('primary', 2).color,
+        color: LiminalColorEngine.SEMANTICS.DANGER.text,
         border: 'none',
       },
       outline: {
-        background: 'transparent',
+        // The host-anchored border is resolved at runtime (step 4); this is the
+        // static fallback for the variant definition itself.
         border: `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}`,
         color: getTextStyle('primary', 2).color,
       },
       link: {
-        background: 'transparent',
         border: 'none',
         textDecoration: 'underline',
         color: getTextStyle('primary', 2).color,
@@ -170,6 +165,7 @@ export const Button = createLiminalComponent<ButtonProps>(
     },
   },
   (props) => {
+    const host = useHostSurface();
     const {
       asChild = false,
       variant = 'secondary',
@@ -284,116 +280,68 @@ export const Button = createLiminalComponent<ButtonProps>(
     // 3. Variant Base Resolution via buttonVariants
     const variantBase = buttonVariants({ variant, size });
 
-    // 4. Dynamic Interactive Surface Resolution
-    let computedStyle: CSSProperties = {};
+    // 4. Interactive surface resolution — CSS-driven, not state-driven.
+    //
+    // The three state backgrounds are computed ONCE and handed to the CSS
+    // interaction layer as custom properties. The browser then applies hover and
+    // press without React re-rendering: measured 4x cheaper than the JS state
+    // machine this replaces (design-lab/state-benchmark.html).
+    let idleBg = 'transparent';
+    let hoverBg = 'transparent';
+    let activeBg = 'transparent';
+    let staticStyle: CSSProperties = {};
+
+    const control = (state: 'idle' | 'hover' | 'active') =>
+      resolveSurface({ role: 'control', state, on: host }).background;
 
     if (variant === 'primary') {
       const brand = LiminalColorEngine.BRAND_PRIMARY;
-      const stateStyle = LiminalColorEngine.getStateStyle({
-        baseL: 0.90,
-        baseColor: brand.hex,
-        state: currentState,
-      });
-
-      const bg = currentState === 'hover' ? LiminalColorEngine.BRAND_PRIMARY.hover : currentState === 'active' ? LiminalColorEngine.BRAND_PRIMARY.active : brand.hex;
-      const outline = currentState === 'focus' && isKeyboardFocused ? stateStyle.outline : 'none';
-
-      computedStyle = {
-        background: bg,
-        color: brand.onColor,
-        border: 'none',
-        outline,
-        outlineOffset: '2px',
-        opacity: stateStyle.opacity,
-        transform: currentState === 'active' ? 'translateY(0.5px)' : 'none',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-      };
+      idleBg = brand.hex;
+      hoverBg = brand.hover;
+      activeBg = brand.active;
+      staticStyle = { color: brand.onColor, border: 'none' };
     } else if (variant === 'secondary') {
-      computedStyle = LiminalComponentEngine.resolveInteractiveSurface({
-        surfaceLevel: 2,
-        state: currentState,
-        isKeyboardFocused,
-        rimTier: 2,
-      });
-      computedStyle = {
-        ...computedStyle,
-        color: getTextStyle('primary', 2).color,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-      };
+      idleBg = control('idle');
+      hoverBg = control('hover');
+      activeBg = control('active');
+      staticStyle = { color: getTextStyle('primary', 2).color };
     } else if (variant === 'ghost') {
-      let ghostBg = 'transparent';
-      if (currentState === 'hover') {
-        ghostBg = resolveSurface({ role: 'control', state: 'hover' }).background;
-      } else if (currentState === 'active') {
-        ghostBg = resolveSurface({ role: 'control', state: 'active' }).background;
-      }
-
-      computedStyle = LiminalComponentEngine.resolveInteractiveSurface({
-        surfaceLevel: 2,
-        state: currentState,
-        isKeyboardFocused,
-        rimTier: 2,
-      });
-      computedStyle = {
-        ...computedStyle,
-        background: ghostBg,
-        border: 'none',
-        color: getTextStyle('primary', 2).color,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-      };
+      idleBg = 'transparent';
+      hoverBg = control('hover');
+      activeBg = control('active');
+      staticStyle = { color: getTextStyle('primary', 2).color, border: 'none' };
     } else if (variant === 'danger') {
-      computedStyle = LiminalComponentEngine.resolveInteractiveSurface({
-        surfaceLevel: 2,
-        state: currentState,
-        isKeyboardFocused,
-        rimTier: 2,
-      });
-      computedStyle = {
-        ...computedStyle,
-        color: LiminalColorEngine.SEMANTICS.DANGER.text,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-      };
+      idleBg = control('idle');
+      hoverBg = control('hover');
+      activeBg = control('active');
+      staticStyle = { color: LiminalColorEngine.SEMANTICS.DANGER.text };
     } else if (variant === 'outline') {
-      let outlineBg = 'transparent';
-      let outlineBorder = `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}`;
-      if (currentState === 'hover') {
-        outlineBg = SURFACE_TINT.subtle;
-        outlineBorder = `1px solid ${resolveBorder({ role: 'control', kind: 'edge', state: 'hover' })}`;
-      } else if (currentState === 'active') {
-        outlineBg = SURFACE_TINT.medium;
-        outlineBorder = `1px solid ${resolveBorder({ role: 'control', kind: 'edge', state: 'active' })}`;
-      }
-
-      const focusRing = LiminalComponentEngine.getFocusRing(currentState === 'focus' && isKeyboardFocused);
-
-      computedStyle = {
-        background: outlineBg,
-        border: outlineBorder,
-        ...focusRing,
+      idleBg = 'transparent';
+      hoverBg = SURFACE_TINT.subtle;
+      activeBg = SURFACE_TINT.medium;
+      staticStyle = {
+        border: `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}`,
         color: getTextStyle('primary', 2).color,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        transform: currentState === 'active' ? 'translateY(0.5px)' : 'none',
       };
     } else if (variant === 'link') {
-      const focusRing = LiminalComponentEngine.getFocusRing(currentState === 'focus' && isKeyboardFocused);
-
-      computedStyle = {
-        background: 'transparent',
+      staticStyle = {
         border: 'none',
-        ...focusRing,
         textDecoration: 'underline',
         textUnderlineOffset: '4px',
-        color: currentState === 'hover'
-          ? getTextStyle('primary', 1).color
-          : getTextStyle('primary', 2).color,
-        cursor: disabled ? 'not-allowed' : 'pointer',
+        color: getTextStyle('primary', 2).color,
       };
     }
 
     // 5. Composite Final Style
-    const finalStyle: CSSProperties = {
+    // CSS custom properties are not part of React's CSSProperties type, so the
+    // object is widened once here rather than casting at every use site.
+    const finalStyle = {
       ...variantBase,
-      ...computedStyle,
+      ...staticStyle,
+      // The interaction layer reads these; React never recomputes them on hover.
+      '--liminal-surface-idle': idleBg,
+      '--liminal-surface-hover': hoverBg,
+      '--liminal-surface-active': activeBg,
       display: fullWidth ? 'flex' : (isIconOnly ? 'inline-flex' : variantBase.display),
       width: isIconOnly
         ? `${iconOnlyDimensions[size]}px`
@@ -411,7 +359,7 @@ export const Button = createLiminalComponent<ButtonProps>(
         : LiminalMotionEngine.TRANSITION.normal,
       padding: isIconOnly ? 0 : (variantBase.padding || sizeStyles[size].padding),
       ...customStyle,
-    };
+    } as CSSProperties;
 
     // Loading overrides
     if (isLoading) {
@@ -591,6 +539,8 @@ export const Button = createLiminalComponent<ButtonProps>(
       return (
         <Slot
           ref={ref as any}
+          data-liminal-surface=""
+          data-liminal-disabled={disabled ? "" : undefined}
           className={className}
           style={finalStyle}
           aria-busy={isLoading ? 'true' : undefined}
@@ -600,7 +550,6 @@ export const Button = createLiminalComponent<ButtonProps>(
           href={disabled || isLoading ? undefined : (href || undefined)}
           target={target}
           rel={effectiveRel}
-          {...(handlers as any)}
           {...ariaProps}
           {...(restProps as any)}
         >
@@ -614,6 +563,8 @@ export const Button = createLiminalComponent<ButtonProps>(
       return (
         <a
           ref={ref as any}
+          data-liminal-surface=""
+          data-liminal-disabled={disabled ? "" : undefined}
           href={disabled || isLoading ? undefined : href}
           target={target}
           rel={effectiveRel}
@@ -624,7 +575,6 @@ export const Button = createLiminalComponent<ButtonProps>(
           onClick={handleClick}
           className={className}
           style={finalStyle}
-          {...(handlers as any)}
           {...ariaProps}
           {...(restProps as any)}
         >
@@ -638,12 +588,13 @@ export const Button = createLiminalComponent<ButtonProps>(
         ref={ref as any}
         type={type}
         disabled={disabled}
+        data-liminal-surface=""
+        data-liminal-disabled={disabled ? "" : undefined}
         aria-busy={isLoading ? 'true' : undefined}
         aria-label={resolvedAriaLabel}
         onClick={handleClick}
         className={className}
         style={finalStyle}
-        {...handlers}
         {...ariaProps}
         {...restProps}
       >

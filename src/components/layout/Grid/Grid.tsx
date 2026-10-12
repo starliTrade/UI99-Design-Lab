@@ -71,19 +71,33 @@ export function Grid({
     ...customStyle,
   };
 
+  const BP = LiminalLayoutEngine.BREAKPOINTS;
+
   return (
     <div className={`liminal-grid ${className}`} style={gridStyle}>
       {children}
       <style>{`
+        /* The grid answers to its own width, not the viewport's. A grid placed
+           in a 220px sidebar must collapse its spans even on a 1440px screen —
+           a media query cannot see that, a container query can. */
+        .liminal-grid {
+          container-type: inline-size;
+          container-name: liminal-grid;
+        }
         .liminal-grid-col {
           grid-column: var(--col-desktop) !important;
         }
-        @media (max-width: 1099px) {
+        /* Strictly below gridWide — NOT a max-width. The breakpoint is the
+           width at which twelve cells still fit, so twelve columns must survive
+           AT that width and collapse one pixel below it. A max-width query
+           would collapse at the floor itself: off by one, and the derivation
+           would no longer describe what the code does. */
+        @container liminal-grid (width < ${BP.gridWide}px) {
           .liminal-grid-col {
             grid-column: var(--col-md) !important;
           }
         }
-        @media (max-width: 699px) {
+        @container liminal-grid (width < ${BP.gridMid}px) {
           .liminal-grid-col {
             grid-column: var(--col-sm) !important;
           }

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
 import { getTextStyle, SHADOWS, SURFACE_TINT } from '../../../engine/spec-engine';
+import { mistCssVars } from '../../../engine/liminal-mist';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -84,9 +85,11 @@ export function Toast({
 
   if (!isToastOpen || typeof document === 'undefined') return null;
 
-  // LIMINAL MIST: tier 'quiet' + ringLayer + composite with deep gravity anchor SHADOWS[4]
-  const mist = LiminalColorEngine.getMistStyle(solidColor, 'quiet');
-  const compositeBoxShadow = `${mist.boxShadow}, ${SHADOWS[4]}`;
+  // A toast floats at the top of the ladder, so it diffuses more, casts a larger
+  // shadow and catches more light than any other surface. All of that follows
+  // from role='toast' — nothing here is hand-tuned. The halo is neutral: a
+  // success toast does not get green light.
+  const mistVars = mistCssVars('toast');
 
   const defaultIcons: Record<'success' | 'warning' | 'danger' | 'info', ReactNode> = {
     success: <LiminalIcon icon={CheckCircle} size="sm" weight="light" color={solidColor} />,
@@ -112,10 +115,9 @@ export function Toast({
   };
 
   const toastStyle: CSSProperties = {
+    ...mistVars,
     position: 'relative',
     overflow: 'visible',
-    background: mist.background,
-    boxShadow: compositeBoxShadow,
     borderRadius: `${RADIUS[12]}px`, // 12px
     padding: `${SPACING[3]}px ${SPACING[4]}px`, // 12px 16px
     display: 'flex',
@@ -133,6 +135,8 @@ export function Toast({
   return createPortal(
     <div style={containerStyle} className="liminal-toast-portal">
       <div
+        data-liminal-mist=""
+
         role="status"
         aria-live="polite"
         className={className}
@@ -141,7 +145,6 @@ export function Toast({
         onMouseLeave={startTimer}
       >
         {/* ─── RING LAYER (separate blurred 1px border element) ─── */}
-        <span aria-hidden="true" style={mist.ringLayer} />
 
         {/* Signal indicator */}
         <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>

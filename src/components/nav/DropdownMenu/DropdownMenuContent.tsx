@@ -24,6 +24,7 @@ import {
 } from '../../../engine/liminal-hooks';
 import { Slot } from '../../../engine/liminal-slot';
 import { resolveBorder } from '../../../engine/liminal-surface';
+import { mistCssVars } from '../../../engine/liminal-mist';
 import { useDropdownMenuContext } from './DropdownMenu';
 
 export interface DropdownMenuContentProps extends HTMLAttributes<HTMLDivElement> {
@@ -108,7 +109,7 @@ export const DropdownMenuContent = forwardRef<HTMLDivElement, DropdownMenuConten
 
     const SPACING = LiminalLayoutEngine.SPACING;
     const RADIUS = LiminalLayoutEngine.RADIUS;
-    const mist = LiminalColorEngine.getMistStyle(LiminalColorEngine.BRAND_PRIMARY.hex, 'quiet');
+    const mistVars = mistCssVars('menu');
     const rim = getDirectionalRim(2, 1, false);
 
     const basePanelStyle: CSSProperties = {
@@ -117,10 +118,6 @@ export const DropdownMenuContent = forwardRef<HTMLDivElement, DropdownMenuConten
       top: `${position.y}px`,
       zIndex: Z_INDEX.dropdown,
       minWidth: `${minWidth}px`,
-      background: rim ? rim.cssBackground : mist.background,
-      backdropFilter: mist.backdropFilter,
-      WebkitBackdropFilter: mist.WebkitBackdropFilter,
-      boxShadow: `${SHADOWS[2]}, ${mist.boxShadow}`,
       borderRadius: `${RADIUS.control}px`,
       padding: `${SPACING[1]}px`,
       border: rim ? '1px solid transparent' : `1px solid ${resolveBorder({ role: 'menu', kind: 'hairline' })}`,
@@ -148,7 +145,8 @@ export const DropdownMenuContent = forwardRef<HTMLDivElement, DropdownMenuConten
       'aria-orientation': 'vertical' as const,
       tabIndex: -1,
       className,
-      style: basePanelStyle,
+      'data-liminal-mist': '',
+      style: { ...mistVars, ...basePanelStyle },
       onKeyDown: handleRovingKeyDown,
       ...props,
     };
@@ -167,7 +165,6 @@ export const DropdownMenuContent = forwardRef<HTMLDivElement, DropdownMenuConten
       <LiminalPortal>
         <div ref={combinedRef} {...contentProps}>
           {/* Mist halo layer */}
-          {mist.ringLayer && <div style={mist.ringLayer as CSSProperties} />}
           {children}
         </div>
       </LiminalPortal>

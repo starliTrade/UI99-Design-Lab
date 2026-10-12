@@ -64,7 +64,7 @@ export function AppShell({
           <aside
             className="liminal-shell-sidebar"
             style={{
-              width: '220px',
+              width: `${LiminalLayoutEngine.SIDEBAR_W}px`,
               flexShrink: 0,
               alignSelf: 'flex-start',
               position: 'sticky',
@@ -119,14 +119,20 @@ export function AppShell({
       )}
 
       <style>{`
-        @media (max-width: 800px) {
+        /* One breakpoint, one event. The sidebar and the nav that replaces it
+           are the same transition, so they share the same width — the old pair
+           (800 / 640) left a band where there was neither.
+
+           The two rules are complements, and both are strict: at shellSidebar
+           the sidebar still fits, so it survives at that exact width. */
+        @media (width < ${LiminalLayoutEngine.BREAKPOINTS.shellSidebar}px) {
           .liminal-shell-body { flex-direction: column !important; padding: 16px !important; }
           .liminal-shell-body.liminal-has-mobile-nav {
             padding-bottom: calc(80px + env(safe-area-inset-bottom)) !important;
           }
           .liminal-shell-sidebar { display: none !important; }
         }
-        @media (min-width: 640px) {
+        @media (width >= ${LiminalLayoutEngine.BREAKPOINTS.shellSidebar}px) {
           .liminal-shell-mobile-nav {
             display: none !important;
           }

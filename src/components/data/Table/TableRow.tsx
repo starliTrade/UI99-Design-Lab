@@ -21,7 +21,6 @@ export function TableRow({
   className = '',
   style: customStyle = {},
 }: TableRowProps) {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
   const reducedMotion = useReducedMotion();
 
   // A row separator: a seam inside the work surface.
@@ -31,11 +30,12 @@ export function TableRow({
   let rowBg = 'transparent';
   if (isSelected) {
     rowBg = selectedRim ? selectedRim.cssBackground : resolveSurface({ role: 'work', state: 'hover' }).background;
-  } else if (isHovered) {
-    rowBg = resolveSurface({ role: 'work', state: 'hover' }).background;
   }
 
   const rowStyle: CSSProperties = {
+    '--liminal-surface-idle': rowBg,
+    '--liminal-surface-hover': resolveSurface({ role: 'work', state: 'hover' }).background,
+    '--liminal-surface-active': resolveSurface({ role: 'work', state: 'hover' }).background,
     background: rowBg,
     cursor: onClick ? 'pointer' : 'default',
     transition: reducedMotion ? 'none' : LiminalMotionEngine.getTransition('background', 'fast'),
@@ -43,7 +43,7 @@ export function TableRow({
     borderBottom: `1px solid ${rimSideColor}`,
     userSelect: 'none',
     ...customStyle,
-  };
+  } as CSSProperties;
 
   return (
     <tr
@@ -52,8 +52,7 @@ export function TableRow({
       className={className}
       style={rowStyle}
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      data-liminal-surface=""
     >
       {children}
     </tr>

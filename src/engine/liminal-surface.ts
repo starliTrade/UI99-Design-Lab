@@ -145,7 +145,27 @@ export interface SurfaceRequest {
   depth?: number;
   /** Override the shadow elevation for a role that floats. */
   elevation?: 1 | 2 | 3 | 4;
+  /**
+   * The surface this element sits ON.
+   *
+   * This is what makes a control behave correctly anywhere. Without it, a
+   * control is pinned to its own absolute level: measured, an input on the
+   * canvas sat 4.75q above it (a jarring jump) while the same input on a modal
+   * sat 3.29q BELOW it (sunken into its own host). Neither was a rule — both
+   * were accidents of using absolute levels for a relative relationship.
+   *
+   * With `on`, the control is placed one step above whatever hosts it, so the
+   * relationship is the same at every depth.
+   */
+  on?: SurfaceRole;
 }
+
+/**
+ * How far a control sits above the surface that hosts it, in ladder steps.
+ * One step (~1.1q) — above the perceptual quantum, so the control reads as a
+ * distinct object, but not so far that it looks detached from its host.
+ */
+export const CONTROL_LIFT = 1;
 
 export interface SurfaceResolution {
   /** The resolved ladder level (may be fractional). */
@@ -180,11 +200,19 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
   const base = ROLE_LEVEL[role];
   const shift = STATE_SHIFT[state];
 
-  // ── level: role + nesting + state, clamped to the ladder ────────────────
+  // ── level: host + lift when a host is given, otherwise the role's own ───
+  // A control is defined by its RELATIONSHIP to what hosts it, not by an
+  // absolute level. Without `on`, the role's fixed level is used, which is
+  // correct for structural surfaces (chrome, work, panel) that define the
+  // hierarchy rather than sit inside it.
+  const anchored = request.on !== undefined
+    ? ROLE_LEVEL[request.on] + CONTROL_LIFT
+    : base;
+
   // A disabled element drops to its parent's level: it is present but inert.
   const level = state === 'disabled'
-    ? Math.max(0, base - 1)
-    : Math.max(0, Math.min(MAX_LEVEL, base + depth + shift));
+    ? Math.max(0, anchored - 1)
+    : Math.max(0, Math.min(MAX_LEVEL, anchored + depth + shift));
 
   // ── rim: from the role, suppressed when disabled ────────────────────────
   const rim: 0 | 1 | 2 | 3 = state === 'disabled' ? 0 : ROLE_RIM[role];
@@ -264,9 +292,12 @@ export function resolveBorder(request: {
   role: SurfaceRole;
   kind?: BorderKind;
   state?: SurfaceState;
+  /** The surface this border sits on — see SurfaceRequest.on. */
+  on?: SurfaceRole;
 }): string {
   const { role, kind = 'hairline', state = 'idle' } = request;
-  const base = ROLE_LEVEL[role] + STATE_SHIFT[state];
+  const anchored = request.on !== undefined ? ROLE_LEVEL[request.on] + CONTROL_LIFT : ROLE_LEVEL[role];
+  const base = anchored + STATE_SHIFT[state];
   const offset = kind === 'hairline' ? 0.5 : 1;
   const above = base + offset;
   // At the ceiling there is no room above, so the border inverts and goes below.

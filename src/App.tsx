@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { getLiminalStyle, getTextStyle, getLadderColor, LADDER, LiminalState } from './engine/spec-engine';
+import { getLiminalStyle, getTextStyle, LADDER, LiminalState } from './engine/spec-engine';
+import { resolveBorder, resolveSurface } from './engine/liminal-surface';
 import { CONTRACT, getContractSections, getContractText, getContractChecklist } from './engine/liminal-contract';
 import { LiminalColorEngine } from './engine/liminal-color-engine';
 import { LiminalLayoutEngine } from './engine/liminal-layout-engine';
@@ -37,6 +38,29 @@ import {
   Radio,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from './engine/liminal-icon-engine';
+
+/**
+ * Three demo-only literals with NO engine equivalent.
+ *
+ * `#38BDF8`, `#60a5fa` and `#555D6E` are Tailwind palette values used for the
+ * demo shell's own chrome. They are not tokens: the engine has no "muted icon"
+ * or "demo accent" role, and inventing one is a design decision, not a cleanup.
+ *
+ * They are named here, once, so they are visible and countable rather than
+ * scattered through the file — and so the one exception to the token ban is
+ * explicit rather than achieved by a glob that quietly misses this file.
+ */
+/**
+ * The extended spectrum is an array, so reaching into it by index would be the
+ * same defect as `getLadderColor(7)` — a magic number standing in for a name.
+ * The entries carry labels, so look them up by label.
+ */
+const spectrumColor = (label: string): string =>
+  LiminalColorEngine.EXTENDED_SPECTRUM.find((c) => c.label === label)?.hex ?? 'currentColor';
+
+/* eslint-disable no-restricted-syntax -- demo-only literals, see the comment above */
+const DEMO_ONLY = { sky: '#38BDF8', blue: '#60a5fa', muted: '#555D6E' } as const;
+/* eslint-enable no-restricted-syntax */
 
 export function App() {
   const [copied, setCopied] = useState<boolean>(false);
@@ -314,7 +338,7 @@ export function App() {
               title="Copy Liminal Contract"
             >
               {copied ? (
-                <LiminalIcon icon={Check} size="xs" weight="light" color="#34C08B" />
+                <LiminalIcon icon={Check} size="xs" weight="light" color={LiminalColorEngine.SEMANTICS.SUCCESS.solid} />
               ) : (
                 <LiminalIcon icon={Copy} size="xs" weight="light" />
               )}
@@ -413,7 +437,7 @@ export function App() {
               <div
                 className="flex items-center justify-between pb-3"
                 style={{
-                  borderBottom: `1px solid ${getLadderColor(2.5)}`,
+                  borderBottom: `1px solid ${resolveBorder({ role: 'work', kind: 'hairline' })}`,
                 }}
               >
                 <div className="flex items-center gap-2">
@@ -424,7 +448,7 @@ export function App() {
                       borderRadius: `${RADIUS.control}px`,
                     }}
                   >
-                    <LiminalIcon icon={Cpu} size="sm" weight="light" color="#6EE0B4" />
+                    <LiminalIcon icon={Cpu} size="sm" weight="light" color={LiminalColorEngine.SEMANTICS.SUCCESS.text} />
                   </div>
                   <div>
                     <div
@@ -488,7 +512,7 @@ export function App() {
                           className="px-2 py-1 text-[9px] uppercase tracking-wider"
                           style={{
                             color: getTextStyle('quaternary', 4).color,
-                            borderBottom: `1px solid ${getLadderColor(2.5)}`,
+                            borderBottom: `1px solid ${resolveBorder({ role: 'work', kind: 'hairline' })}`,
                           }}
                         >
                           S4 · E1 Shadow
@@ -499,15 +523,21 @@ export function App() {
                             triggerToast();
                           }}
                           className="w-full text-left px-2 py-1.5 rounded-lg transition-all cursor-pointer"
-                          style={{
-                            color: getTextStyle('secondary', 4).color,
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = getLadderColor(4.5);
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                          }}
+                          data-liminal-surface=""
+                          style={
+                            {
+                              color: getTextStyle('secondary', 4).color,
+                              '--liminal-surface-idle': 'transparent',
+                              '--liminal-surface-hover': resolveSurface({
+                                role: 'control',
+                                state: 'hover',
+                              }).background,
+                              '--liminal-surface-active': resolveSurface({
+                                role: 'control',
+                                state: 'active',
+                              }).background,
+                            } as React.CSSProperties
+                          }
                         >
                           Trigger E4 Toast
                         </button>
@@ -517,15 +547,21 @@ export function App() {
                             setBottomDrawerOpen(true);
                           }}
                           className="w-full text-left px-2 py-1.5 rounded-lg transition-all cursor-pointer"
-                          style={{
-                            color: getTextStyle('secondary', 4).color,
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = getLadderColor(4.5);
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                          }}
+                          data-liminal-surface=""
+                          style={
+                            {
+                              color: getTextStyle('secondary', 4).color,
+                              '--liminal-surface-idle': 'transparent',
+                              '--liminal-surface-hover': resolveSurface({
+                                role: 'control',
+                                state: 'hover',
+                              }).background,
+                              '--liminal-surface-active': resolveSurface({
+                                role: 'control',
+                                state: 'active',
+                              }).background,
+                            } as React.CSSProperties
+                          }
                         >
                           Open Bottom Drawer
                         </button>
@@ -565,7 +601,7 @@ export function App() {
                     borderRadius: `${RADIUS.control}px`,
                   }}
                 >
-                  <LiminalIcon icon={MagnifyingGlass} size="sm" weight="light" color="#555D6E" className="shrink-0" />
+                  <LiminalIcon icon={MagnifyingGlass} size="sm" weight="light" color={DEMO_ONLY.muted} className="shrink-0" />
                   <input
                     type="text"
                     defaultValue="cluster.eu-west.liminal"
@@ -639,7 +675,7 @@ export function App() {
                 >
                   <div className="flex items-center justify-between text-[10px]">
                     <span style={{ color: getTextStyle('tertiary', 2).color }}>LATENCY</span>
-                    <LiminalIcon icon={Radio} size="xs" weight="light" color="#34C08B" />
+                    <LiminalIcon icon={Radio} size="xs" weight="light" color={LiminalColorEngine.SEMANTICS.SUCCESS.solid} />
                   </div>
                   <div
                     style={{
@@ -662,7 +698,7 @@ export function App() {
                 >
                   <div className="flex items-center justify-between text-[10px]">
                     <span style={{ color: getTextStyle('tertiary', 2).color }}>UPTIME</span>
-                    <LiminalIcon icon={WifiHigh} size="xs" weight="light" color="#6FA8EC" />
+                    <LiminalIcon icon={WifiHigh} size="xs" weight="light" color={spectrumColor('Sapphire')} />
                   </div>
                   <div
                     style={{
@@ -853,10 +889,10 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
+                style={{ borderBottom: `1px solid ${resolveBorder({ role: 'work', kind: 'hairline' })}` }}
               >
                 <div className="flex items-center gap-2">
-                  <LiminalIcon icon={Pulse} size="sm" weight="light" color="#34C08B" />
+                  <LiminalIcon icon={Pulse} size="sm" weight="light" color={LiminalColorEngine.SEMANTICS.SUCCESS.solid} />
                   <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     LIMINAL STATES v1.0 [APPROVED]
                   </span>
@@ -942,7 +978,7 @@ export function App() {
                     onMouseEnter={() => setInteractiveState('hover')}
                     onMouseLeave={() => setInteractiveState('idle')}
                   >
-                    <LiminalIcon icon={Cursor} size="xs" weight="light" color="#38BDF8" />
+                    <LiminalIcon icon={Cursor} size="xs" weight="light" color={DEMO_ONLY.sky} />
                     <span>TOUCH &amp; HOLD FOR ACTIVE CONCAVE</span>
                   </button>
                 </div>
@@ -959,10 +995,10 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
+                style={{ borderBottom: `1px solid ${resolveBorder({ role: 'work', kind: 'hairline' })}` }}
               >
                 <div className="flex items-center gap-2">
-                  <LiminalIcon icon={Record} size="sm" weight="light" color="#60a5fa" />
+                  <LiminalIcon icon={Record} size="sm" weight="light" color={DEMO_ONLY.blue} />
                   <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     CONCENTRIC HARMONY LAB
                   </span>
@@ -1048,7 +1084,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
+                style={{ borderBottom: `1px solid ${resolveBorder({ role: 'work', kind: 'hairline' })}` }}
               >
                 <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                   SEMANTIC CONTRACT (4 ROLES)
@@ -1127,7 +1163,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
+                style={{ borderBottom: `1px solid ${resolveBorder({ role: 'work', kind: 'hairline' })}` }}
               >
                 <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                   EXTENDED SPECTRUM (12 HUES)
@@ -1176,7 +1212,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
+                style={{ borderBottom: `1px solid ${resolveBorder({ role: 'work', kind: 'hairline' })}` }}
               >
                 <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                   TYPOGRAPHY SCALE (RATIO 1.2)
@@ -1235,7 +1271,7 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
+                style={{ borderBottom: `1px solid ${resolveBorder({ role: 'work', kind: 'hairline' })}` }}
               >
                 <div className="flex items-center gap-2">
                   <LiminalIcon
@@ -1266,7 +1302,7 @@ export function App() {
                     className="p-2.5 flex items-start gap-2 rounded-lg"
                     style={{ ...panelStyle.style, borderRadius: `${RADIUS.control}px` }}
                   >
-                    <LiminalIcon icon={Check} size="xs" weight="light" color="#34C08B" className="shrink-0 mt-0.5" />
+                    <LiminalIcon icon={Check} size="xs" weight="light" color={LiminalColorEngine.SEMANTICS.SUCCESS.solid} className="shrink-0 mt-0.5" />
                     <span style={{ color: getTextStyle('primary', 2).color }}>{rule}</span>
                   </div>
                 ))}
@@ -1283,10 +1319,10 @@ export function App() {
             >
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
+                style={{ borderBottom: `1px solid ${resolveBorder({ role: 'work', kind: 'hairline' })}` }}
               >
                 <div className="flex items-center gap-2">
-                  <LiminalIcon icon={Terminal} size="sm" weight="light" color="#8B9CF0" />
+                  <LiminalIcon icon={Terminal} size="sm" weight="light" color={spectrumColor('Indigo')} />
                   <span className="font-bold" style={{ color: getTextStyle('primary', 1).color }}>
                     MASTER CONTRACT v1.0 (VERBATIM TEXT)
                   </span>
@@ -1344,7 +1380,7 @@ export function App() {
             }}
           >
             <div className="flex items-center gap-2">
-              <LiminalIcon icon={CheckCircle} size="sm" weight="light" color="#34C08B" />
+              <LiminalIcon icon={CheckCircle} size="sm" weight="light" color={LiminalColorEngine.SEMANTICS.SUCCESS.solid} />
               <div>
                 <div
                   className="text-xs font-bold"
@@ -1391,10 +1427,10 @@ export function App() {
 
               <div
                 className="flex items-center justify-between pb-2"
-                style={{ borderBottom: `1px solid ${getLadderColor(2.5)}` }}
+                style={{ borderBottom: `1px solid ${resolveBorder({ role: 'work', kind: 'hairline' })}` }}
               >
                 <div className="flex items-center gap-2">
-                  <LiminalIcon icon={Shield} size="sm" weight="light" color="#34C08B" />
+                  <LiminalIcon icon={Shield} size="sm" weight="light" color={LiminalColorEngine.SEMANTICS.SUCCESS.solid} />
                   <span
                     className="font-bold"
                     style={{ color: getTextStyle('primary', 5).color }}

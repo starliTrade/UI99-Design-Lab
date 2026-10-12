@@ -10,6 +10,8 @@ import {
   Z_INDEX,
   LiminalState,
 } from '../../../engine/spec-engine';
+import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
@@ -17,7 +19,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { LiminalPortal } from '../../../engine/liminal-portal';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
-import { resolveSurface } from '../../../engine/liminal-surface';
+import { mistCssVars } from '../../../engine/liminal-mist';
 import { Badge } from '../../atoms/Badge';
 
 export interface MultiSelectOption {
@@ -88,8 +90,6 @@ export function MultiSelect({
   const [query, setQuery] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
-  const [internalState, setInternalState] = useState<LiminalState>('idle');
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
 
   const [coords, setCoords] = useState<{
     top: number;
@@ -299,14 +299,12 @@ export function MultiSelect({
   };
 
   // State & Style resolution
-  const currentState: LiminalState = disabled ? 'disabled' : internalState;
 
-  const limStyle = getLiminalStyle({
-    surfaceLevel,
-    interactive: true,
-    isInput: true,
-    state: currentState,
-  });
+  // The interaction states are CSS's job now (:hover, :focus-within).
+  const host = useHostSurface();
+  const idleSurface = resolveSurface({ role: 'control', on: host }).background;
+  const hoverSurface = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
+  const focusSurface = resolveSurface({ role: 'control', state: 'focus', on: host }).background;
 
   const ringColor = error
     ? SEMANTICS.DANGER.solid
@@ -314,13 +312,9 @@ export function MultiSelect({
     ? SEMANTICS.SUCCESS.solid
     : LiminalColorEngine.BRAND_PRIMARY.hex;
 
-  const focusRing = LiminalComponentEngine.getFocusRing(
-    currentState === 'focus' && isKeyboardFocused,
-    ringColor
-  );
 
-  let background = limStyle.style.background;
-  let border = limStyle.style.border;
+  let background = idleSurface;
+  let border = `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}`;
 
   if (!disabled) {
     if (error) {
@@ -352,10 +346,8 @@ export function MultiSelect({
     transition: reducedMotion ? 'none' : LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
-    ...focusRing,
-    opacity: disabled ? 0.5 : limStyle.style.opacity,
+    opacity: disabled ? 0.5 : 1,
     cursor: disabled ? 'not-allowed' : 'text',
-    boxShadow: limStyle.style.boxShadow,
     position: 'relative',
   };
 
@@ -382,7 +374,7 @@ export function MultiSelect({
   };
 
   // MIST Quiet floating dropdown styling
-  const mist = LiminalColorEngine.getMistStyle(LiminalColorEngine.BRAND_PRIMARY.hex, 'quiet');
+  const mistVars = mistCssVars('menu');
 
   const panelStyle: CSSProperties = {
     position: 'fixed',
@@ -390,11 +382,8 @@ export function MultiSelect({
     left: `${coords.left}px`,
     width: `${coords.width}px`,
     transform: coords.showAbove ? 'translateY(-100%)' : 'none',
+    ...mistVars,
     zIndex: Z_INDEX.floating,
-    background: mist.background,
-    backdropFilter: mist.backdropFilter,
-    WebkitBackdropFilter: mist.WebkitBackdropFilter,
-    boxShadow: `${SHADOWS[3]}, ${mist.boxShadow}`,
     borderRadius: `${RADIUS.control}px`,
     padding: `${SPACING[1]}px`,
     boxSizing: 'border-box',
@@ -441,11 +430,8 @@ export function MultiSelect({
             }
           }
         }}
-        onMouseEnter={() => !disabled && internalState !== 'focus' && setInternalState('hover')}
-        onMouseLeave={() => !disabled && internalState !== 'focus' && setInternalState('idle')}
-        onMouseDown={() => {
-          setIsKeyboardFocused(false);
-        }}
+        data-liminal-focus-within=""
+        data-liminal-disabled={disabled ? "" : undefined}
       >
         {prefix && (
           <span
@@ -536,14 +522,9 @@ export function MultiSelect({
           onKeyDown={handleKeyDown}
           onFocus={() => {
             if (!disabled) {
-              setInternalState('focus');
               setIsOpen(true);
               updatePosition();
             }
-          }}
-          onBlur={() => {
-            setInternalState('idle');
-            setIsKeyboardFocused(false);
           }}
           style={{
             flex: 1,
@@ -635,14 +616,13 @@ export function MultiSelect({
             ref={panelRef}
             role="listbox"
             aria-label={label ?? placeholder}
+            data-liminal-mist=""
             style={panelStyle}
             onMouseDown={(e) => {
               // Prevent input from immediately blurring
               e.preventDefault();
             }}
           >
-            {/* Mist ring layer */}
-            <div style={mist.ringLayer as CSSProperties} />
 
             {filteredOptions.length > 0 ? (
               filteredOptions.map((opt, index) => {

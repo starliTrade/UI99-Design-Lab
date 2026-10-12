@@ -9,6 +9,7 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { resolveSurface } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export interface ActiveFilter {
   id: string;
@@ -33,6 +34,7 @@ export function FilterBar({
   className = '',
   style: customStyle = {},
 }: FilterBarProps) {
+  const host = useHostSurface();
   const reducedMotion = useReducedMotion();
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
@@ -105,13 +107,15 @@ interface RemoveFilterButtonProps {
 }
 
 function RemoveFilterButton({ label, onClick, reducedMotion }: RemoveFilterButtonProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
+  const host = useHostSurface();
+  // The hover state is CSS's job now — no setState, no re-render on mouse move.
   const style: CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: isHovered ? resolveSurface({ role: 'control', state: 'hover' }).background : 'transparent',
+    '--liminal-surface-idle': 'transparent',
+    '--liminal-surface-hover': resolveSurface({ role: 'control', state: 'hover', on: host }).background,
+    '--liminal-surface-active': resolveSurface({ role: 'control', state: 'active', on: host }).background,
     border: 'none',
     borderRadius: '50%',
     width: `${LiminalLayoutEngine.SPACING[4]}px`,
@@ -120,7 +124,7 @@ function RemoveFilterButton({ label, onClick, reducedMotion }: RemoveFilterButto
     cursor: 'pointer',
     color: 'inherit',
     transition: reducedMotion ? 'none' : LiminalMotionEngine.getTransition('background', 'fast'),
-  };
+  } as CSSProperties;
 
   return (
     <button
@@ -131,9 +135,8 @@ function RemoveFilterButton({ label, onClick, reducedMotion }: RemoveFilterButto
         e.stopPropagation();
         onClick();
       }}
+      data-liminal-surface=""
       style={style}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <LiminalIcon icon={X} size="xs" weight="bold" />
     </button>

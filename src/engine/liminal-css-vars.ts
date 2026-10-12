@@ -70,8 +70,15 @@ export function generateCssVars(): string {
 
   // ── 6. TEXT ────────────────────────────────────────────────────────
   section('6. TEXT (never pure white)');
-  v('text-primary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.primary})`);
-  v('text-secondary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.secondary})`);
+  // TEXT_HIERARCHY holds one alpha PER SURFACE — the alpha a role needs depends
+  // on what it sits on. A CSS custom property can only carry one value, so it
+  // carries the S0 alpha: the largest of the nine, and therefore the one that
+  // is safe on every surface. Per-surface values come from getTextStyle().
+  //
+  // Do NOT interpolate the array itself. `${array}` comma-joins, which shipped
+  // an rgba() with eleven arguments for two years of commits.
+  v('text-primary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.primary[0]})`, 'S0 alpha — safe on every surface');
+  v('text-secondary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.secondary[0]})`, 'S0 alpha — safe on every surface');
   v('text-tertiary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.tertiary[0]})`, 'S0 floor; AA ≥4.5:1');
   v('text-quaternary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.quaternary[0]})`, '≥3:1, non-text only');
 
@@ -111,10 +118,16 @@ export function generateCssVars(): string {
   );
 
   // ── 12. TYPE ───────────────────────────────────────────────────────
-  section('12. TYPE (modular 1.2)');
+  // The ratio is the design; the base is the reading condition. Every level is
+  // derived from `--liminal-type-base`, so nothing here is hand-picked.
+  section('12. TYPE (modular 1.2, fluid base)');
+  v('type-ratio', LiminalLayoutEngine.TYPE_RATIO, 'fixed — this is the design');
+  v('type-base', LiminalLayoutEngine.TYPE_BASE_CSS, 'fluid 14→16.5px; rem-based for WCAG 1.4.4');
   Object.entries(LiminalLayoutEngine.TYPOGRAPHY).forEach(([level, t]) => {
-    v(`fs-${level}`, `${t.fs}px`);
-    v(`lh-${level}`, `${t.lh}px`);
+    v(`fs-${level}`, LiminalLayoutEngine.getTypeSizeCss(Number(level)));
+    // `lh` is a unitless multiplier, not a length. Publishing it as `px` would
+    // collapse every line box to ~1.6px.
+    v(`lh-${level}`, t.lh, 'unitless multiplier');
     v(`weight-${level}`, t.weight);
   });
 

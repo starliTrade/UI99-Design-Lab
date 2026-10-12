@@ -1,3 +1,5 @@
+@import "./engine/liminal-mist.css";
+@import "./engine/liminal-interaction.css";
 /* @liminal-generated:start */
 /* Generated from src/engine/liminal-css-vars.ts — do not edit by hand.
    Regenerate with `bun run gen:css`. A test asserts this block matches. */
@@ -46,10 +48,10 @@
   --liminal-veil-canvas: rgba(6, 7, 9, 0.85);
 
   /* ── 6. TEXT (never pure white) ──────────────────────────────── */
-  --liminal-text-primary: rgba(255, 255, 255, 0.88);
-  --liminal-text-secondary: rgba(255, 255, 255, 0.62);
-  --liminal-text-tertiary: rgba(255, 255, 255, 0.46); /* S0 floor; AA ≥4.5:1 */
-  --liminal-text-quaternary: rgba(255, 255, 255, 0.35); /* ≥3:1, non-text only */
+  --liminal-text-primary: rgba(255, 255, 255, 0.89); /* S0 alpha — safe on every surface */
+  --liminal-text-secondary: rgba(255, 255, 255, 0.79); /* S0 alpha — safe on every surface */
+  --liminal-text-tertiary: rgba(255, 255, 255, 0.79); /* S0 floor; AA ≥4.5:1 */
+  --liminal-text-quaternary: rgba(255, 255, 255, 0.448); /* ≥3:1, non-text only */
 
   /* ── 7. SEMANTICS ────────────────────────────────────────────── */
   --liminal-success: #34C08B;
@@ -113,30 +115,32 @@
   --liminal-radius-container: 24px;
   --liminal-radius-full: 9999px;
 
-  /* ── 12. TYPE (modular 1.2) ──────────────────────────────────── */
-  --liminal-fs-1: 11px;
-  --liminal-lh-1: 1.45px;
+  /* ── 12. TYPE (modular 1.2, fluid base) ──────────────────────── */
+  --liminal-type-ratio: 1.2; /* fixed — this is the design */
+  --liminal-type-base: clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem); /* fluid 14→16.5px; rem-based for WCAG 1.4.4 */
+  --liminal-fs-1: calc(var(--liminal-type-base) * 0.694444);
+  --liminal-lh-1: 1.45; /* unitless multiplier */
   --liminal-weight-1: 400;
-  --liminal-fs-2: 13px;
-  --liminal-lh-2: 1.5px;
+  --liminal-fs-2: calc(var(--liminal-type-base) * 0.833333);
+  --liminal-lh-2: 1.5; /* unitless multiplier */
   --liminal-weight-2: 500;
-  --liminal-fs-3: 16px;
-  --liminal-lh-3: 1.6px;
+  --liminal-fs-3: var(--liminal-type-base);
+  --liminal-lh-3: 1.6; /* unitless multiplier */
   --liminal-weight-3: 400;
-  --liminal-fs-4: 19px;
-  --liminal-lh-4: 1.35px;
+  --liminal-fs-4: calc(var(--liminal-type-base) * 1.200000);
+  --liminal-lh-4: 1.35; /* unitless multiplier */
   --liminal-weight-4: 600;
-  --liminal-fs-5: 23px;
-  --liminal-lh-5: 1.25px;
+  --liminal-fs-5: calc(var(--liminal-type-base) * 1.440000);
+  --liminal-lh-5: 1.25; /* unitless multiplier */
   --liminal-weight-5: 600;
-  --liminal-fs-6: 28px;
-  --liminal-lh-6: 1.2px;
+  --liminal-fs-6: calc(var(--liminal-type-base) * 1.728000);
+  --liminal-lh-6: 1.2; /* unitless multiplier */
   --liminal-weight-6: 600;
-  --liminal-fs-7: 33px;
-  --liminal-lh-7: 1.15px;
+  --liminal-fs-7: calc(var(--liminal-type-base) * 2.073600);
+  --liminal-lh-7: 1.15; /* unitless multiplier */
   --liminal-weight-7: 600;
-  --liminal-fs-8: 40px;
-  --liminal-lh-8: 1.1px;
+  --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
+  --liminal-lh-8: 1.1; /* unitless multiplier */
   --liminal-weight-8: 700;
 
   /* ── 13. MOTION ──────────────────────────────────────────────── */
@@ -205,10 +209,10 @@
   --liminal-veil-canvas: rgba(6, 7, 9, 0.85);
 
   /* ── 6. TEXT (never pure white) ──────────────────────────────── */
-  --liminal-text-primary: rgba(255, 255, 255, 0.88);
-  --liminal-text-secondary: rgba(255, 255, 255, 0.62);
-  --liminal-text-tertiary: rgba(255, 255, 255, 0.46); /* S0 floor; AA ≥4.5:1 */
-  --liminal-text-quaternary: rgba(255, 255, 255, 0.35); /* ≥3:1, non-text only */
+  --liminal-text-primary: rgba(255, 255, 255, 0.89); /* S0 alpha — safe on every surface */
+  --liminal-text-secondary: rgba(255, 255, 255, 0.79); /* S0 alpha — safe on every surface */
+  --liminal-text-tertiary: rgba(255, 255, 255, 0.79); /* S0 floor; AA ≥4.5:1 */
+  --liminal-text-quaternary: rgba(255, 255, 255, 0.448); /* ≥3:1, non-text only */
 
   /* ── 7. SEMANTICS ────────────────────────────────────────────── */
   --liminal-success: #34C08B;
@@ -272,30 +276,32 @@
   --liminal-radius-container: 24px;
   --liminal-radius-full: 9999px;
 
-  /* ── 12. TYPE (modular 1.2) ──────────────────────────────────── */
-  --liminal-fs-1: 11px;
-  --liminal-lh-1: 1.45px;
+  /* ── 12. TYPE (modular 1.2, fluid base) ──────────────────────── */
+  --liminal-type-ratio: 1.2; /* fixed — this is the design */
+  --liminal-type-base: clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem); /* fluid 14→16.5px; rem-based for WCAG 1.4.4 */
+  --liminal-fs-1: calc(var(--liminal-type-base) * 0.694444);
+  --liminal-lh-1: 1.45; /* unitless multiplier */
   --liminal-weight-1: 400;
-  --liminal-fs-2: 13px;
-  --liminal-lh-2: 1.5px;
+  --liminal-fs-2: calc(var(--liminal-type-base) * 0.833333);
+  --liminal-lh-2: 1.5; /* unitless multiplier */
   --liminal-weight-2: 500;
-  --liminal-fs-3: 16px;
-  --liminal-lh-3: 1.6px;
+  --liminal-fs-3: var(--liminal-type-base);
+  --liminal-lh-3: 1.6; /* unitless multiplier */
   --liminal-weight-3: 400;
-  --liminal-fs-4: 19px;
-  --liminal-lh-4: 1.35px;
+  --liminal-fs-4: calc(var(--liminal-type-base) * 1.200000);
+  --liminal-lh-4: 1.35; /* unitless multiplier */
   --liminal-weight-4: 600;
-  --liminal-fs-5: 23px;
-  --liminal-lh-5: 1.25px;
+  --liminal-fs-5: calc(var(--liminal-type-base) * 1.440000);
+  --liminal-lh-5: 1.25; /* unitless multiplier */
   --liminal-weight-5: 600;
-  --liminal-fs-6: 28px;
-  --liminal-lh-6: 1.2px;
+  --liminal-fs-6: calc(var(--liminal-type-base) * 1.728000);
+  --liminal-lh-6: 1.2; /* unitless multiplier */
   --liminal-weight-6: 600;
-  --liminal-fs-7: 33px;
-  --liminal-lh-7: 1.15px;
+  --liminal-fs-7: calc(var(--liminal-type-base) * 2.073600);
+  --liminal-lh-7: 1.15; /* unitless multiplier */
   --liminal-weight-7: 600;
-  --liminal-fs-8: 40px;
-  --liminal-lh-8: 1.1px;
+  --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
+  --liminal-lh-8: 1.1; /* unitless multiplier */
   --liminal-weight-8: 700;
 
   /* ── 13. MOTION ──────────────────────────────────────────────── */
@@ -364,12 +370,8 @@
   scrollbar-width: none;
 }
 
-@media (max-width: 768px) {
-  .liminal-sidebar {
-    width: 100% !important;
-    position: static !important;
-  }
-}
+/* The responsive sidebar rule now lives in Sidebar.tsx, where it can read the
+   derived breakpoint from the engine instead of hard-coding a number. */
 
 @keyframes liminal-skeleton-pulse {
   0%, 100% {

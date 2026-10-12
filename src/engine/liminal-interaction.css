@@ -1,0 +1,140 @@
+/**
+ * LIMINAL · INTERACTION LAYER
+ * «حالت‌ها را مرورگر مدیریت می‌کند، نه جاوااسکریپت.»
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS FILE EXISTS
+ *
+ * Until now every interaction was a JS state machine: a hover set React state,
+ * which re-rendered the component and rebuilt its whole style object. Measured
+ * on a 50-button page (design-lab/state-benchmark.html):
+ *
+ *     JS state:  100 style rewrites, 4.0x slower
+ *     CSS state:   0 style rewrites
+ *
+ * And that was 50 buttons. A real page has hundreds.
+ *
+ * The fix is not a rewrite of every component — it is a CSS layer that reads the
+ * SAME custom properties the engine already publishes. A component sets its role
+ * once; the browser handles hover, press and focus from then on.
+ *
+ * The state values come from the decision engine (resolveSurface), so the
+ * hierarchy rules still hold — they are simply expressed as CSS variables
+ * instead of recomputed in JavaScript on every mouse move.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/* ── The interactive surface ───────────────────────────────────────────────
+ * A component marks itself with data-liminal-surface and sets three variables:
+ *   --liminal-surface-idle    the resting background
+ *   --liminal-surface-hover   one half-step above
+ *   --liminal-surface-active  one half-step below, pressed
+ * The decision engine computes those; this layer only applies them.
+ */
+[data-liminal-surface] {
+  background: var(--liminal-surface-idle);
+  transition:
+    background var(--liminal-duration-fast, 150ms) var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    border-color var(--liminal-duration-fast, 150ms) var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    opacity var(--liminal-duration-fast, 150ms) var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+[data-liminal-surface]:hover:not([data-liminal-disabled]) {
+  background: var(--liminal-surface-hover);
+}
+
+/* Some components lift their TEXT on hover rather than their surface — a tab
+ * that brightens its label, for example. Opt in with data-liminal-hover-color
+ * so nothing changes colour by accident. */
+[data-liminal-hover-color]:hover:not([data-liminal-disabled]) {
+  color: var(--liminal-hover-color);
+}
+
+/* ── Luminance response ───────────────────────────────────────────────────
+ * The Mist surface does not change colour on hover — it changes BRIGHTNESS.
+ * That is a different kind of feedback: the surface stays the same material and
+ * simply catches more light. Opted into with data-liminal-mist.
+ */
+[data-liminal-mist]:not([data-liminal-disabled]) {
+  transition: filter var(--liminal-duration-normal, 220ms)
+    var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+[data-liminal-mist]:hover:not([data-liminal-disabled]) {
+  filter: brightness(var(--liminal-mist-hover, 1.08));
+}
+
+[data-liminal-mist]:active:not([data-liminal-disabled]) {
+  filter: brightness(var(--liminal-mist-active, 0.92));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-liminal-mist] {
+    transition: none;
+  }
+}
+
+/* A child that only appears on hover — a sort affordance, a row action.
+ * The parent opts in; the child carries .liminal-reveal. */
+[data-liminal-hover-reveal] .liminal-reveal {
+  opacity: var(--liminal-reveal-idle, 0);
+  transition: opacity var(--liminal-duration-fast, 150ms)
+    var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+[data-liminal-hover-reveal]:hover .liminal-reveal,
+[data-liminal-hover-reveal]:focus-within .liminal-reveal {
+  opacity: var(--liminal-reveal-hover, 1);
+}
+
+[data-liminal-surface]:active:not([data-liminal-disabled]) {
+  background: var(--liminal-surface-active);
+  transform: translateY(0.5px);
+}
+
+/* ── Focus within ─────────────────────────────────────────────────────────
+ * An input's surface is a wrapper around the real <input>, so the wrapper has
+ * to react when the control inside it takes focus. :focus-within is the
+ * browser's answer, and it is what replaces the JS focus tracking in the
+ * input components.
+ */
+[data-liminal-focus-within]:focus-within {
+  background: var(--liminal-surface-focus);
+  border-color: var(--liminal-border-focus, var(--liminal-brand, #E9ECF2));
+}
+
+[data-liminal-focus-within]:focus-within .liminal-focus-ring {
+  outline: 2px solid var(--liminal-brand, #E9ECF2);
+  outline-offset: 2px;
+}
+
+/* ── Focus ────────────────────────────────────────────────────────────────
+ * `:focus-visible` is the browser's own answer to "was this keyboard focus?".
+ * It replaces the hand-rolled Tab-key tracking, which could not see
+ * Shift+Tab, programmatic focus, or a screen reader moving the cursor.
+ */
+[data-liminal-surface]:focus-visible,
+[data-liminal-focusable]:focus-visible {
+  outline: 2px solid var(--liminal-brand, #E9ECF2);
+  outline-offset: 2px;
+}
+
+/* ── Disabled ─────────────────────────────────────────────────────────────
+ * Present but inert: no hover response, no pointer, reduced opacity.
+ */
+[data-liminal-disabled] {
+  opacity: 0.25;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────
+ * Honoured globally rather than per component, so nothing can forget.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [data-liminal-surface],
+  [data-liminal-surface]:active {
+    transition: none;
+    transform: none;
+  }
+}

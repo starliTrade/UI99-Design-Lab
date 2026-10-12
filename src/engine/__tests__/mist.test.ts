@@ -1,0 +1,213 @@
+import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { resolve, dirname } from 'node:path';
+import * as csstree from 'css-tree';
+import {
+  FLOATING_MIST_ROLES,
+  floatHeight,
+  mistBlur,
+  mistCssVars,
+  mistEdgeAlpha,
+  mistFillStops,
+  mistInnerLight,
+  mistShadowAlpha,
+  mistShadowBlur,
+} from '../liminal-mist';
+import { LADDER } from '../liminal-ladder';
+import type { SurfaceRole } from '../liminal-surface';
+
+const here = dirname(fileURLToPath(import.meta.url));
+const mistCss = readFileSync(resolve(here, '../liminal-mist.css'), 'utf8');
+
+const ROLES = [...FLOATING_MIST_ROLES].sort((a, b) => floatHeight(a) - floatHeight(b));
+const vars = (role: SurfaceRole) => mistCssVars(role);
+// Values arrive as CSS lengths (`6.5px`) and as bare numbers (`0.325`).
+const num = (s: string) => parseFloat(s);
+
+/**
+ * The mist engine has been rewritten five times and every one of its three
+ * stale-value bugs was caught by a human eye, not by a test — because it had no
+ * test. These assert the RULES the rewrites produced, not the formulas they
+ * ended up with: a test that restates `0.055 + h * 0.006` would pass just as
+ * happily if the rule behind it were wrong.
+ */
+describe('mist — the surface diffuses light, it does not emit it', () => {
+  it('never draws a symmetric halo in the stylesheet', () => {
+    // `0 0 Npx` is a glow: the surface appears to radiate. v4 shipped exactly
+    // that and read as neon. Every mist shadow must have a downward offset.
+    const blocks = [...mistCss.matchAll(/box-shadow:\s*([\s\S]*?);/g)].map((m) => m[1]);
+    expect(blocks.length).toBeGreaterThan(0);
+    for (const block of blocks) {
+      expect(block, `symmetric halo in: ${block.trim().slice(0, 60)}`).not.toMatch(
+        /(^|,)\s*0\s+0\s+(?:\d|var\()/m,
+      );
+    }
+  });
+
+  it('casts a dark shadow below, never a light one around', () => {
+    for (const role of ROLES) {
+      const v = vars(role);
+      expect(num(v['--liminal-mist-shadow-near'])).toBeGreaterThan(0);
+      expect(num(v['--liminal-mist-shadow-far'])).toBeGreaterThan(0);
+      expect(num(v['--liminal-mist-shadow-far-alpha'])).toBeGreaterThan(0);
+    }
+    // The shadow is near-black, not the brand: light is neutral and the shadow
+    // is the absence of it.
+    expect(mistCss).toMatch(/rgba\(1, 2, 3,/);
+  });
+
+  it('builds the fog as a vertical gradient, top lighter than bottom', () => {
+    for (const role of ROLES) {
+      const { top, bottom } = mistFillStops(role);
+      expect(LADDER, `${role} top is not a ladder step`).toContain(top);
+      expect(LADDER, `${role} bottom is not a ladder step`).toContain(bottom);
+      const steps = LADDER as readonly string[];
+      expect(steps.indexOf(top)).toBeGreaterThan(steps.indexOf(bottom));
+    }
+    expect(mistCss).toMatch(/linear-gradient\(\s*180deg/);
+  });
+
+  it('keeps the seam faint — a hairline, never a bright ring', () => {
+    for (const role of ROLES) {
+      const alpha = num(vars(role)['--liminal-mist-seam'].match(/,\s*([\d.]+)\)$/)![1]);
+      expect(alpha, `${role} seam is too loud`).toBeLessThan(0.12);
+    }
+  });
+});
+
+describe('mist — every value follows from the height', () => {
+  const published = (role: SurfaceRole) => vars(role);
+
+  it('rises monotonically with the role’s height', () => {
+    const rising = (xs: number[]) => xs.every((x, i) => i === 0 || x > xs[i - 1]);
+    const series = (f: (r: SurfaceRole) => number) => ROLES.map(f);
+
+    expect(rising(series(mistInnerLight))).toBe(true);
+    expect(rising(series(mistShadowBlur))).toBe(true);
+    expect(rising(series(mistShadowAlpha))).toBe(true);
+    expect(rising(series(mistEdgeAlpha))).toBe(true);
+    expect(rising(series(mistBlur))).toBe(true);
+  });
+
+  it('is linear in the height — a formula, not a per-role table', () => {
+    // The defect this replaces was a table of hand-tuned constants, where a
+    // toast at S8 and a menu at S5 got the same treatment. If any value were
+    // hand-tuned per role, it would leave the line.
+    // `tol` covers the values the engine rounds before publishing — the far
+    // shadow radius is emitted as whole pixels, so it can sit up to half a
+    // pixel off the line without having left the formula.
+    const linear = (f: (r: SurfaceRole) => number, tol = 1e-9) => {
+      const pts = ROLES.map((r) => [floatHeight(r), f(r)] as const);
+      const [h0, v0] = pts[0];
+      const [h1, v1] = pts[1];
+      const slope = (v1 - v0) / (h1 - h0);
+      return pts.every(([h, v]) => Math.abs(v - (v0 + slope * (h - h0))) <= tol);
+    };
+
+    expect(linear(mistInnerLight)).toBe(true);
+    expect(linear(mistShadowBlur)).toBe(true);
+    expect(linear(mistShadowAlpha)).toBe(true);
+    expect(linear(mistEdgeAlpha)).toBe(true);
+    expect(linear(mistBlur)).toBe(true);
+    // The far radius is published as whole pixels, so allow a pixel of
+    // rounding: 40 + h * 3.2 gives 56, 59.2, 62.4, 65.6 -> 56, 59, 62, 66, and
+    // a line fitted to rounded points cannot land within half a pixel of all
+    // of them.
+    expect(linear((r) => num(published(r)['--liminal-mist-shadow-far']), 1)).toBe(true);
+  });
+
+  it('records that the published far radius is NOT mistShadowBlur', () => {
+    // Writing these tests surfaced another pair of copies. `mistCssVars`
+    // publishes `40 + h * 3.2`; the exported `mistShadowBlur` is `40 + h * 9`.
+    // Nothing calls the helper, so the two never meet — but the helper reads as
+    // the shadow's definition and is not it. The published value is the one
+    // that was eye-tested, so it stays; this test exists so the divergence is
+    // visible in the suite instead of latent in the file. Fixing it is a
+    // separate decision, not a silent one.
+    const h = floatHeight('menu');
+    expect(num(vars('menu')['--liminal-mist-shadow-far'])).toBe(Math.round(40 + h * 3.2));
+    expect(mistShadowBlur('menu')).toBe(40 + h * 9);
+  });
+
+  it('gives a higher surface a larger shadow and more light', () => {
+    const low = ROLES[0];
+    const high = ROLES[ROLES.length - 1];
+    expect(mistShadowBlur(high)).toBeGreaterThan(mistShadowBlur(low));
+    expect(mistInnerLight(high)).toBeGreaterThan(mistInnerLight(low));
+    expect(floatHeight(high)).toBeGreaterThan(floatHeight(low));
+  });
+});
+
+describe('mist — a toast is not a menu', () => {
+  it('gives a toast a near-solid fill and no inner light', () => {
+    const toast = vars('toast');
+    expect(num(toast['--liminal-mist-fill-top-alpha'])).toBe(0.94);
+    expect(num(toast['--liminal-mist-fill-bottom-alpha'])).toBe(0.94);
+    // No light on the edge: a notification must not demand attention.
+    expect(toast['--liminal-mist-inner-light']).toBe('inset 0 0 0 rgba(0, 0, 0, 0)');
+  });
+
+  it('gives an interactive surface a gradient fill and a real hairline', () => {
+    const menu = vars('menu');
+    expect(num(menu['--liminal-mist-fill-top-alpha'])).toBeLessThan(0.94);
+    expect(num(menu['--liminal-mist-fill-top-alpha'])).toBeGreaterThan(
+      num(menu['--liminal-mist-fill-bottom-alpha']),
+    );
+    expect(menu['--liminal-mist-inner-light']).toMatch(/^inset 0 1px 0 rgba\(/);
+  });
+
+  it('gives a toast a fainter seam than a menu', () => {
+    const seam = (r: SurfaceRole) => num(vars(r)['--liminal-mist-seam'].match(/,\s*([\d.]+)\)$/)![1]);
+    expect(seam('toast')).toBeLessThan(seam('menu'));
+  });
+});
+
+describe('mist — it applies only to what floats', () => {
+  it('names exactly the four floating roles', () => {
+    expect([...FLOATING_MIST_ROLES].sort()).toEqual(['menu', 'modal', 'popover', 'toast']);
+  });
+
+  it('leaves backdrop blur off unless it is asked for', () => {
+    // The measured lesson: a uniform backdrop blur cost 35.7x and was invisible
+    // on these backgrounds. It must never be on by default.
+    const defaultBlock = mistCss.match(/\[data-liminal-mist\]\s*\{([\s\S]*?)\n\}/)![1];
+    expect(defaultBlock).not.toMatch(/backdrop-filter/);
+    expect(mistCss).toMatch(/\[data-liminal-mist='diffuse'\]/);
+  });
+});
+
+describe('mist — every published value is a real CSS value', () => {
+  // The same guard the token layer needed: a generator that interpolates a
+  // value of the wrong shape emits something that looks like CSS and is not.
+  const all = ROLES.flatMap((role) =>
+    Object.entries(mistCssVars(role)).map(([name, value]) => ({ role, name, value })),
+  );
+
+  it('publishes a complete set for every floating role', () => {
+    expect(all.length).toBe(ROLES.length * 11);
+  });
+
+  it('parses as a CSS value', () => {
+    const bad = all
+      .filter(({ value }) => {
+        try {
+          csstree.parse(value, { context: 'value' });
+          return false;
+        } catch {
+          return true;
+        }
+      })
+      .map(({ role, name, value }) => `${role} ${name}: ${value}`);
+    expect(bad).toEqual([]);
+  });
+
+  it('publishes a real colour wherever it claims one', () => {
+    const looksLikeColour = /^(#|rgba?\(|hsla?\(|oklch\(|oklab\()/i;
+    const bad = all
+      .filter(({ value }) => looksLikeColour.test(value))
+      .filter(({ value }) => csstree.lexer.matchProperty('color', value).error !== null)
+      .map(({ role, name, value }) => `${role} ${name}: ${value}`);
+    expect(bad).toEqual([]);
+  });
+});

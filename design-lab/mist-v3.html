@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · Mist v3 — بهترین حالت ممکن</title>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; background:#030406; color:rgba(255,255,255,0.88);
+         font-family:Inter,system-ui,sans-serif; font-size:14px; line-height:1.7; padding:32px 24px 110px; }
+  .wrap { max-width:1280px; margin:0 auto; }
+  h1 { font-size:23px; font-weight:600; letter-spacing:-0.02em; margin:0 0 6px; }
+  h2 { font-size:15px; font-weight:600; margin:30px 0 2px; }
+  .sub { color:rgba(255,255,255,0.46); margin:0 0 6px; }
+  .note { color:rgba(255,255,255,0.46); font-size:13px; margin:0 0 20px;
+          border-right:2px solid rgba(255,255,255,0.10); padding-right:12px; }
+  code { font-family:"JetBrains Mono",monospace; font-size:12px; color:rgba(255,255,255,0.62); }
+
+  .stage { position:relative; border-radius:16px; overflow:hidden; margin-bottom:10px; }
+  .bg-busy { background:repeating-linear-gradient(45deg,#0b0d0f 0 12px,#0f1114 12px 24px); }
+  .bg-busy::before { content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 20% 25%,rgba(233,236,242,0.18),transparent 40%),
+               radial-gradient(circle at 75% 70%,rgba(120,180,255,0.14),transparent 45%); }
+  .bg-dark { background:#0b0d0f; }
+  .bg-dark::before { content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg,#0d0f12 0%,#0b0d0f 60%,#090b0d 100%); }
+  .bg-photo { background:linear-gradient(135deg,#1a1410 0%,#2a1f18 25%,#0f1a24 60%,#0a0d12 100%); }
+  .bg-photo::before { content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 30% 40%,rgba(255,180,120,0.22),transparent 50%),
+               radial-gradient(circle at 70% 65%,rgba(90,150,255,0.20),transparent 55%); }
+  .txt { position:absolute; inset:0; padding:14px; font-family:"JetBrains Mono",monospace;
+         font-size:10.5px; line-height:1.45; color:rgba(255,255,255,0.26); white-space:pre-wrap; overflow:hidden; }
+  .row { position:relative; display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+         justify-content:center; padding:40px 16px; min-height:200px; }
+
+  /* ══════════════════════════════════════════════════════════════════
+     The six candidates, all at role=modal (S7). Shared base:
+     fill = ladder S7 (#131518) at 74% alpha, colour from the ladder.
+     ══════════════════════════════════════════════════════════════════ */
+  .m { position:relative; isolation:isolate; border:none; cursor:default;
+       font-family:inherit; font-size:13px; font-weight:500; color:rgba(255,255,255,0.88);
+       padding:11px 17px; border-radius:12px;
+       background:color-mix(in oklab,#131518 calc(0.74 * 100%),transparent); }
+
+  /* A — فعلی: blur یکنواخت + حاشیه‌ی ۱px تیز */
+  .mA { -webkit-backdrop-filter:blur(16.5px); backdrop-filter:blur(16.5px);
+        box-shadow:0 0 74px rgba(233,236,242,0.065),
+                   0 26px 103px rgba(1,2,3,0.34),
+                   inset 0 -6px 22px -6px rgba(233,236,242,0.065); }
+  .mA::after { content:''; position:absolute; inset:0; border-radius:inherit;
+               border:1px solid rgba(233,236,242,0.196); filter:blur(6px);
+               pointer-events:none; z-index:-1; }
+
+  /* B — بدون blur: fill + یک هاله + سایه */
+  .mB { box-shadow:0 0 74px rgba(233,236,242,0.065),
+                   0 26px 103px rgba(1,2,3,0.34),
+                   inset 0 -6px 22px -6px rgba(233,236,242,0.065); }
+  .mB::after { content:''; position:absolute; inset:0; border-radius:inherit;
+               border:1px solid rgba(233,236,242,0.196); filter:blur(6px);
+               pointer-events:none; z-index:-1; }
+
+  /* C — نور چندمقیاسی: نور در چند مقیاس، مثل پراکندگی واقعی مه */
+  .mC { box-shadow:0 0 6px rgba(233,236,242,0.055),
+                   0 0 18px rgba(233,236,242,0.045),
+                   0 0 44px rgba(233,236,242,0.035),
+                   0 0 92px rgba(233,236,242,0.026),
+                   0 26px 103px rgba(1,2,3,0.34),
+                   inset 0 -6px 22px -6px rgba(233,236,242,0.065); }
+  .mC::after { content:''; position:absolute; inset:0; border-radius:inherit;
+               border:1px solid rgba(233,236,242,0.196); filter:blur(6px);
+               pointer-events:none; z-index:-1; }
+
+  /* D — لبه‌ی محو: حاشیه‌ی ۱px → محوِ ۱۴px، بدون هندسه‌ی تیز */
+  .mD { box-shadow:0 0 74px rgba(233,236,242,0.065),
+                   0 26px 103px rgba(1,2,3,0.34),
+                   inset 0 -6px 22px -6px rgba(233,236,242,0.065); }
+  .mD::after { content:''; position:absolute; inset:-1px; border-radius:inherit;
+               border:1.5px solid rgba(233,236,242,0.30); filter:blur(14px);
+               pointer-events:none; z-index:-1; }
+
+  /* E — نور چندمقیاسی + لبه‌ی محو (بدون blur) */
+  .mE { box-shadow:0 0 6px rgba(233,236,242,0.055),
+                   0 0 18px rgba(233,236,242,0.045),
+                   0 0 44px rgba(233,236,242,0.035),
+                   0 0 92px rgba(233,236,242,0.026),
+                   0 26px 103px rgba(1,2,3,0.34),
+                   inset 0 -6px 22px -6px rgba(233,236,242,0.065); }
+  .mE::after { content:''; position:absolute; inset:-1px; border-radius:inherit;
+               border:1.5px solid rgba(233,236,242,0.30); filter:blur(14px);
+               pointer-events:none; z-index:-1; }
+
+  /* F — E + blur اختیاری (فقط وقتی پشت شلوغ است) */
+  .mF { -webkit-backdrop-filter:blur(16.5px); backdrop-filter:blur(16.5px);
+        box-shadow:0 0 6px rgba(233,236,242,0.055),
+                   0 0 18px rgba(233,236,242,0.045),
+                   0 0 44px rgba(233,236,242,0.035),
+                   0 0 92px rgba(233,236,242,0.026),
+                   0 26px 103px rgba(1,2,3,0.34),
+                   inset 0 -6px 22px -6px rgba(233,236,242,0.065); }
+  .mF::after { content:''; position:absolute; inset:-1px; border-radius:inherit;
+               border:1.5px solid rgba(233,236,242,0.30); filter:blur(14px);
+               pointer-events:none; z-index:-1; }
+
+  .legend { display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px;
+            color:rgba(255,255,255,0.55); margin:8px 0 0; }
+  table { width:100%; border-collapse:collapse; font-family:"JetBrains Mono",monospace;
+          font-size:12px; margin-top:12px; }
+  th,td { text-align:right; padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  th { color:rgba(255,255,255,0.40); font-weight:500; }
+  .num { color:#6EE0B4; } .warn { color:#E8C468; } .bad { color:#F091A2; }
+  .verdict { margin-top:18px; padding:18px; border-radius:14px;
+             border:1px solid rgba(255,255,255,0.10); background:#060709; }
+  .pick { display:inline-block; padding:2px 10px; border-radius:999px; font-size:12px;
+          background:rgba(110,224,180,0.14); color:#6EE0B4; margin-inline-start:6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Mist v3 — بهترین حالت ممکن برای LIMINAL</h1>
+  <p class="sub">شش نامزد، همه در نقش <code>modal</code> (S7)، روی سه پس‌زمینه‌ی متفاوت.</p>
+  <p class="note">
+    همه یک fill و یک ارتفاع دارند. تفاوت فقط در <b>چگونگی بیان مه</b> است:
+    لنز (blur) در برابر نور چندمقیاسی در برابر لبه‌ی محو.
+  </p>
+
+  <h2>۱. پس‌زمینه‌ی تیره‌ی واقعی — جایی که ۹۹٪ استفاده می‌شود</h2>
+  <div class="stage bg-dark">
+    <div class="txt" id="t1"></div>
+    <div class="row">
+      <button class="m mA">A فعلی</button>
+      <button class="m mB">B بدون blur</button>
+      <button class="m mC">C نور چندمقیاسی</button>
+      <button class="m mD">D لبه‌ی محو</button>
+      <button class="m mE">E نور + لبه</button>
+      <button class="m mF">F همه</button>
+    </div>
+  </div>
+
+  <h2>۲. پس‌زمینه‌ی شلوغ — جایی که blur معنا دارد</h2>
+  <div class="stage bg-busy">
+    <div class="txt" id="t2"></div>
+    <div class="row">
+      <button class="m mA">A فعلی</button>
+      <button class="m mB">B بدون blur</button>
+      <button class="m mC">C نور چندمقیاسی</button>
+      <button class="m mD">D لبه‌ی محو</button>
+      <button class="m mE">E نور + لبه</button>
+      <button class="m mF">F همه</button>
+    </div>
+  </div>
+
+  <h2>۳. روی تصویر/رنگ — سخت‌ترین حالت</h2>
+  <div class="stage bg-photo">
+    <div class="txt" id="t3"></div>
+    <div class="row">
+      <button class="m mA">A فعلی</button>
+      <button class="m mB">B بدون blur</button>
+      <button class="m mC">C نور چندمقیاسی</button>
+      <button class="m mD">D لبه‌ی محو</button>
+      <button class="m mE">E نور + لبه</button>
+      <button class="m mF">F همه</button>
+    </div>
+  </div>
+
+  <h2>۴. هزینه‌ی واقعی هر نامزد</h2>
+  <table id="perf">
+    <tr><th>نامزد</th><th>blur</th><th>لایه‌ی نور</th><th>لبه</th><th>هزینه‌ی ترکیب</th></tr>
+  </table>
+
+  <div class="verdict" id="verdict"></div>
+</div>
+
+<script>
+for (const id of ['t1','t2','t3']) {
+  document.getElementById(id).textContent =
+    Array.from({length:12},(_,i)=>`row ${String(i).padStart(2,'0')}  ·  ${'█▓▒░ '.repeat(10)}`).join('\n');
+}
+
+function bench(sel) {
+  const el = document.querySelector(sel);
+  const cs = getComputedStyle(el);
+  const bd = cs.backdropFilter || cs.webkitBackdropFilter || 'none';
+  const m = bd.match(/blur\(([\d.]+)px\)/);
+  const blurPx = m ? parseFloat(m[1]) : 0;
+  const shadows = cs.boxShadow.split(/,(?![^(]*\))/).length;
+  const t0 = performance.now();
+  for (let i = 0; i < 300; i++) {
+    el.style.transform = `translateZ(0) translateX(${(i % 2) * 0.01}px)`;
+    void el.offsetHeight;
+  }
+  return { blurPx, shadows, ms: performance.now() - t0 };
+}
+
+const CANDIDATES = [
+  ['A فعلی', '.mA', 'یکنواخت', '۱px تیز'],
+  ['B بدون blur', '.mB', 'تک', '۱px تیز'],
+  ['C نور چندمقیاسی', '.mC', '۴ مقیاس', '۱px تیز'],
+  ['D لبه‌ی محو', '.mD', 'تک', 'محو ۱۴px'],
+  ['E نور + لبه', '.mE', '۴ مقیاس', 'محو ۱۴px'],
+  ['F همه', '.mF', '۴ مقیاس', 'محو ۱۴px'],
+];
+const rows = document.getElementById('perf');
+const res = CANDIDATES.map(([label, sel, light, edge]) => ({ label, light, edge, ...bench(sel) }));
+const base = Math.min(...res.map(r => r.ms)) || 1;
+let best = res[0];
+for (const r of res) {
+  const ratio = r.ms / base;
+  rows.insertAdjacentHTML('beforeend', `<tr>
+    <td>${r.label}</td>
+    <td class="${r.blurPx ? 'warn' : 'num'}">${r.blurPx ? r.blurPx + 'px' : '—'}</td>
+    <td>${r.light}</td>
+    <td>${r.edge}</td>
+    <td class="${ratio > 3 ? 'bad' : 'num'}">${r.ms.toFixed(1)}ms (${ratio.toFixed(2)}×)</td>
+  </tr>`);
+  if (r.ms < best.ms) best = r;
+}
+
+document.getElementById('verdict').innerHTML = `
+  <p style="font-size:15px;font-weight:600">ارزان‌ترین: ${best.label} <span class="pick">${best.ms.toFixed(1)}ms</span></p>
+  <p style="color:rgba(255,255,255,0.62);font-size:13px;margin-top:10px">
+    حالا به سه بخش بالا نگاه کن. سؤال کلیدی: <b>روی پس‌زمینه‌ی تیره (بخش ۱)،
+    آیا A با B تفاوت قابل‌تشخیصی دارد؟</b> اگر نه، یعنی blur هزینه‌ای بی‌دلیل است.
+    و سؤال دوم: <b>لبه‌ی محو (D/E/F) در برابر لبه‌ی تیز (A/B/C) کدام نرم‌تر است؟</b>
+  </p>`;
+</script>
+</body>
+</html>

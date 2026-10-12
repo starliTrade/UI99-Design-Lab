@@ -19,6 +19,7 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useRovingTabIndex } from '../../../engine/liminal-hooks';
 import { resolveSurface } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 interface TabsContextType {
   activeValue: string;
@@ -58,9 +59,8 @@ export function Tab({
   className = '',
   style: customStyle = {},
 }: TabProps) {
+  const host = useHostSurface();
   const context = useContext(TabsContext);
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const RADIUS = LiminalLayoutEngine.RADIUS;
@@ -92,24 +92,16 @@ export function Tab({
   let shadow = 'none';
 
   if (isActive) {
-    bg = activeRim ? activeRim.cssBackground : resolveSurface({ role: 'control', state: 'active' }).background;
+    bg = activeRim ? activeRim.cssBackground : resolveSurface({ role: 'control', state: 'active', on: host }).background;
     color = getTextStyle('primary', 1).color;
     shadow = '0 1px 3px rgba(1, 2, 3, 0.22)'; // Micro E1 elevation per LIMINAL spec
-  } else if (isHovered && !disabled) {
-    color = getTextStyle('secondary', 1).color;
   }
-
-  // When tab becomes active in keyboard navigation mode
-  useEffect(() => {
-    if (!keyboardMode) return;
-    if (isActive) {
-      setIsKeyboardFocused(true);
-    }
-  }, [isActive, keyboardMode]);
 
   const SPACING = LiminalLayoutEngine.SPACING;
 
-  const tabStyle: CSSProperties = {
+  const tabStyle = {
+    // Hover brightens the label; the browser applies it, React does not re-render.
+    '--liminal-hover-color': getTextStyle('secondary', 1).color,
     padding: `${SPACING[2]}px ${SPACING[4]}px`,
     borderRadius: `${RADIUS[8]}px`, // 8px
     fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
@@ -123,7 +115,6 @@ export function Tab({
     opacity: disabled ? 0.35 : 1,
     cursor: disabled ? 'not-allowed' : 'pointer',
     transition: LiminalMotionEngine.TRANSITION.normal,
-    ...getFocusRing(isKeyboardFocused),
     userSelect: 'none',
     display: 'inline-flex',
     alignItems: 'center',
@@ -133,7 +124,7 @@ export function Tab({
     flexShrink: 0,
     boxSizing: 'border-box',
     ...customStyle,
-  };
+  } as CSSProperties;
 
   const setButtonNode = useCallback(
     (el: HTMLButtonElement | null) => {
@@ -144,10 +135,6 @@ export function Tab({
   );
 
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-    if (e.key === 'Tab') {
-      setIsKeyboardFocused(true);
-      setKeyboardMode(true);
-    }
     rovingProps.onKeyDown(e);
   };
 
@@ -164,16 +151,9 @@ export function Tab({
       style={tabStyle}
       onClick={() => !disabled && onChange(value)}
       onKeyDown={handleKeyDown}
-      onMouseDown={() => {
-        setIsKeyboardFocused(false);
-        setKeyboardMode(false);
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onFocus={() => {
-        if (keyboardMode) setIsKeyboardFocused(true);
-      }}
-      onBlur={() => setIsKeyboardFocused(false)}
+      data-liminal-hover-color=""
+      data-liminal-surface=""
+      data-liminal-disabled={disabled ? "" : undefined}
     >
       {children}
     </button>

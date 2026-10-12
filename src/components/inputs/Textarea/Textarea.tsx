@@ -6,6 +6,8 @@ import {
   getTextStyle,
   LiminalState,
 } from '../../../engine/spec-engine';
+import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
@@ -55,8 +57,6 @@ export function Textarea({
   className = '',
   style: customStyle = {},
 }: TextareaProps) {
-  const [internalState, setInternalState] = useState<LiminalState>('idle');
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
   const [internalVal, setInternalVal] = useState<string>(value ?? defaultValue ?? '');
 
   const localTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -77,30 +77,24 @@ export function Textarea({
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
   const surfaceLevel = 2;
 
-  const currentState: LiminalState = disabled ? 'disabled' : internalState;
 
   // Resolve base interactive style from engine
-  const limStyle = getLiminalStyle({
-    surfaceLevel,
-    interactive: true,
-    isInput: true,
-    state: currentState,
-  });
+  // The interaction states are CSS's job now (:hover, :focus-within). Only the
+  // validation states stay in JavaScript — they depend on props, not on what
+  // the pointer or the keyboard is doing.
+  const host = useHostSurface();
+  const idleSurface = resolveSurface({ role: 'control', on: host }).background;
+  const hoverSurface = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
+  const focusSurface = resolveSurface({ role: 'control', state: 'focus', on: host }).background;
 
-  // Focus ring via engine
   const ringColor = error
     ? SEMANTICS.DANGER.solid
     : success
     ? SEMANTICS.SUCCESS.solid
     : LiminalColorEngine.BRAND_PRIMARY.hex;
-  const focusRing = LiminalComponentEngine.getFocusRing(
-    currentState === 'focus' && isKeyboardFocused,
-    ringColor
-  );
 
-  // Background and border resolution based on error/success/states
-  let background = limStyle.style.background;
-  let border = limStyle.style.border;
+  let background = idleSurface;
+  let border = `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}`;
 
   if (!disabled) {
     if (error) {
@@ -118,7 +112,11 @@ export function Textarea({
     }
   }
 
-  const fieldWrapperStyle: CSSProperties = {
+  const fieldWrapperStyle = {
+    '--liminal-surface-idle': background,
+    '--liminal-surface-hover': disabled || error || success ? background : hoverSurface,
+    '--liminal-surface-focus': disabled || error || success ? background : focusSurface,
+    '--liminal-border-focus': ringColor,
     display: 'flex',
     flexDirection: 'column',
     padding: `${SPACING[3]}px`, // 12px
@@ -128,11 +126,9 @@ export function Textarea({
     transition: reducedMotion ? 'none' : LiminalMotionEngine.TRANSITION.slow,
     background,
     border,
-    ...focusRing,
-    opacity: disabled ? 0.5 : limStyle.style.opacity,
+    opacity: disabled ? 0.5 : 1,
     cursor: disabled ? 'not-allowed' : 'text',
-    boxShadow: limStyle.style.boxShadow,
-  };
+  } as CSSProperties;
 
   const textareaElementStyle: CSSProperties = {
     flex: 1,
@@ -169,12 +165,6 @@ export function Textarea({
       : success
       ? SEMANTICS.SUCCESS.text
       : getTextStyle('tertiary', surfaceLevel).color,
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Tab') {
-      setIsKeyboardFocused(true);
-    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -221,12 +211,9 @@ export function Textarea({
       )}
 
       <div
+        data-liminal-focus-within=""
+        data-liminal-disabled={disabled ? "" : undefined}
         style={fieldWrapperStyle}
-        onMouseEnter={() => !disabled && internalState !== 'focus' && setInternalState('hover')}
-        onMouseLeave={() => !disabled && internalState !== 'focus' && setInternalState('idle')}
-        onMouseDown={() => {
-          setIsKeyboardFocused(false);
-        }}
       >
         <textarea
           ref={localTextareaRef}
@@ -241,18 +228,8 @@ export function Textarea({
           maxLength={maxLength}
           aria-describedby={ariaDescribedBy}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          onFocus={(e) => {
-            if (!disabled) {
-              setInternalState('focus');
-            }
-            onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setInternalState('idle');
-            setIsKeyboardFocused(false);
-            onBlur?.(e);
-          }}
+          onFocus={onFocus}
+          onBlur={onBlur}
           style={textareaElementStyle}
         />
       </div>

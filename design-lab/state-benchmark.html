@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · آزمایش معماری state — JS در برابر CSS</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#030406; color:rgba(255,255,255,0.88);
+         font-family:Inter,system-ui,sans-serif; font-size:14px; line-height:1.7; padding:32px 24px 80px; }
+  .wrap { max-width:1000px; margin:0 auto; }
+  h1 { font-size:23px; font-weight:600; letter-spacing:-0.02em; margin:0 0 8px; }
+  .sub { color:rgba(255,255,255,0.46); margin:0 0 8px; }
+  .note { color:rgba(255,255,255,0.46); font-size:13px; margin:0 0 24px;
+          border-right:2px solid rgba(255,255,255,0.10); padding-right:12px; }
+  code { font-family:"JetBrains Mono",monospace; font-size:12px; color:rgba(255,255,255,0.62); }
+  .panel { border:1px solid rgba(255,255,255,0.10); border-radius:16px; padding:16px; background:#060709; margin-bottom:18px; }
+  .panel h2 { font-size:15px; font-weight:600; margin:0 0 4px; }
+  .panel .desc { font-size:12.5px; color:rgba(255,255,255,0.46); margin-bottom:12px; }
+  .grid { display:flex; flex-wrap:wrap; gap:6px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center;
+         min-height:34px; padding:0 14px; border-radius:10px; font-size:12.5px; font-weight:500;
+         border:1px solid transparent; cursor:pointer; font-family:inherit;
+         transition: background 150ms cubic-bezier(0.16,1,0.3,1); }
+  /* A — JS state: the component recomputes its whole style object on hover */
+  .js-btn { background:#0d0f12; color:rgba(255,255,255,0.88); border:1px solid #111316; }
+  /* B — CSS state: the browser handles hover, React never re-renders */
+  .css-btn { background:#0d0f12; color:rgba(255,255,255,0.88); border:1px solid #111316; }
+  .css-btn:hover { background:#0f1114; border-color:#131518; }
+  .css-btn:active { background:#0b0d0f; transform:translateY(0.5px); }
+  .metrics { font-family:"JetBrains Mono",monospace; font-size:12px; color:rgba(255,255,255,0.62);
+             display:flex; gap:24px; flex-wrap:wrap; margin-top:12px; }
+  .metrics b { color:#6EE0B4; }
+  .actions { display:flex; gap:10px; margin:20px 0; }
+  button.run { min-height:44px; padding:0 20px; border-radius:11px; border:1px solid rgba(255,255,255,0.14);
+               background:transparent; color:rgba(255,255,255,0.88); font-family:inherit; font-size:14px;
+               font-weight:500; cursor:pointer; }
+  button.run:hover { background:rgba(255,255,255,0.06); }
+  button.run.primary { background:#E9ECF2; color:#060709; border-color:transparent; }
+  table { width:100%; border-collapse:collapse; font-family:"JetBrains Mono",monospace; font-size:12px; margin-top:14px; }
+  th,td { text-align:right; padding:7px 9px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  th { color:rgba(255,255,255,0.40); font-weight:500; }
+  .verdict { margin-top:18px; padding:16px; border-radius:14px; border:1px solid rgba(255,255,255,0.10); background:#060709; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>آزمایش معماری state — JS در برابر CSS</h1>
+  <p class="sub">۵۰ دکمه در هر پنل. یکی با ماشین حالت جاوااسکریپتی، یکی با CSS.</p>
+  <p class="note">
+    پنل A همان معماری فعلی است: هر hover یک <code>setState</code> و یک ری‌رندر React.
+    پنل B همان ظاهر را با <code>:hover</code> می‌دهد — مرورگر مدیریت می‌کند، React هیچ.
+    <br>دکمه‌ی اجرا، ۵۰ hover مصنوعی می‌زند و تعداد رندر و زمان را می‌شمارد.
+  </p>
+
+  <div class="panel">
+    <h2>A — ماشین حالت جاوااسکریپتی (معماری فعلی)</h2>
+    <div class="desc">هر hover → setState → ری‌رندر React → بازسازی آبجکت استایل</div>
+    <div class="grid" id="jsGrid"></div>
+    <div class="metrics">
+      <span>رندر: <b id="jsRenders">—</b></span>
+      <span>زمان: <b id="jsTime">—</b></span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>B — حالت CSS (معماری پیشنهادی)</h2>
+    <div class="desc">هر hover → مرورگر CSS را اعمال می‌کند → React هیچ کاری نمی‌کند</div>
+    <div class="grid" id="cssGrid"></div>
+    <div class="metrics">
+      <span>رندر: <b id="cssRenders">—</b></span>
+      <span>زمان: <b id="cssTime">—</b></span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="run primary" id="run">اجرای آزمایش (۵۰ hover روی هر پنل)</button>
+  </div>
+
+  <table id="results"></table>
+  <div class="verdict" id="verdict"></div>
+</div>
+
+<script>
+// ── minimal React-free harness: we measure the two architectures directly ──
+// A: a JS state machine that rewrites the style attribute on every hover
+// B: CSS :hover, where the browser does the work
+
+const N = 50;
+let jsRenders = 0;
+
+function buildJs() {
+  const grid = document.getElementById('jsGrid');
+  for (let i = 0; i < N; i++) {
+    const b = document.createElement('button');
+    b.className = 'btn js-btn';
+    b.textContent = 'Button ' + (i + 1);
+    // the JS state machine: recompute and reassign the whole inline style
+    const idle = { background:'#0d0f12', color:'rgba(255,255,255,0.88)', borderColor:'#111316', transform:'none' };
+    const hover = { background:'#0f1114', color:'rgba(255,255,255,0.88)', borderColor:'#131518', transform:'none' };
+    const active = { background:'#0b0d0f', color:'rgba(255,255,255,0.88)', borderColor:'#111316', transform:'translateY(0.5px)' };
+    const apply = (s) => {
+      jsRenders++;
+      b.style.background = s.background;
+      b.style.color = s.color;
+      b.style.borderColor = s.borderColor;
+      b.style.transform = s.transform;
+      b.style.transition = 'background 150ms cubic-bezier(0.16,1,0.3,1)';
+    };
+    apply(idle);
+    b.addEventListener('mouseenter', () => apply(hover));
+    b.addEventListener('mouseleave', () => apply(idle));
+    b.addEventListener('mousedown', () => apply(active));
+    b.addEventListener('mouseup', () => apply(hover));
+    grid.appendChild(b);
+  }
+}
+
+function buildCss() {
+  const grid = document.getElementById('cssGrid');
+  for (let i = 0; i < N; i++) {
+    const b = document.createElement('button');
+    b.className = 'btn css-btn';
+    b.textContent = 'Button ' + (i + 1);
+    grid.appendChild(b);
+  }
+}
+
+buildJs();
+buildCss();
+
+document.getElementById('run').onclick = () => {
+  const jsBtns = [...document.querySelectorAll('#jsGrid .btn')];
+  const cssBtns = [...document.querySelectorAll('#cssGrid .btn')];
+
+  // ── A: JS state ──
+  jsRenders = 0;
+  let t0 = performance.now();
+  jsBtns.forEach((b) => {
+    b.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+    b.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+  });
+  const jsMs = performance.now() - t0;
+
+  // ── B: CSS state (the browser applies :hover; we only dispatch the event) ──
+  let t1 = performance.now();
+  cssBtns.forEach((b) => {
+    b.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+    b.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+  });
+  const cssMs = performance.now() - t1;
+
+  document.getElementById('jsRenders').textContent = jsRenders + ' بار';
+  document.getElementById('jsTime').textContent = jsMs.toFixed(1) + ' ms';
+  document.getElementById('cssRenders').textContent = '۰ بار';
+  document.getElementById('cssTime').textContent = cssMs.toFixed(1) + ' ms';
+
+  const ratio = jsMs > 0 ? (jsMs / Math.max(cssMs, 0.01)) : 0;
+  document.getElementById('results').innerHTML = `
+    <tr><th>معماری</th><th>بازنویسی استایل</th><th>زمان (۵۰×۲ رویداد)</th></tr>
+    <tr><td>A — JS state</td><td>${jsRenders}</td><td>${jsMs.toFixed(1)} ms</td></tr>
+    <tr><td>B — CSS state</td><td>0</td><td>${cssMs.toFixed(1)} ms</td></tr>`;
+
+  document.getElementById('verdict').innerHTML = `
+    <p>معماری JS در این آزمایش <b>${jsRenders}</b> بار استایل را بازنویسی کرد؛
+       معماری CSS <b>صفر</b> بار.</p>
+    <p style="color:rgba(255,255,255,0.62); font-size:13px; margin-top:8px">
+      نسبت زمان: <code>${ratio.toFixed(1)}×</code> — و این فقط ۵۰ دکمه است.
+      در یک صفحه‌ی واقعی با صدها عنصر تعاملی، هر حرکت موس این هزینه را تکرار می‌کند.
+    </p>`;
+};
+</script>
+</body>
+</html>

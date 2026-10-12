@@ -5,6 +5,7 @@ import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { resolveSurface } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export interface ToggleProps {
   checked?: boolean;
@@ -27,6 +28,7 @@ export function Toggle({
   style: customStyle = {},
   'aria-label': ariaLabel = 'Toggle switch',
 }: ToggleProps) {
+  const host = useHostSurface();
   const isChecked = checked ?? value ?? on ?? false;
   const brand = LiminalColorEngine.BRAND_PRIMARY;
   const offRim = getDirectionalRim(2, 2, false);
@@ -62,7 +64,7 @@ export function Toggle({
       ? brand.hex
       : offRim
       ? offRim.cssBackground
-      : resolveSurface({ role: 'control' }).background,
+      : resolveSurface({ role: 'control', on: host }).background,
     outline: 'none',
     padding: 0,
     ...customStyle,

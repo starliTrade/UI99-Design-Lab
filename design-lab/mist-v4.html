@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · Mist v4 — رینگ اسپکیولار و نورِ لبه</title>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; background:#030406; color:rgba(255,255,255,0.88);
+         font-family:Inter,system-ui,sans-serif; font-size:14px; line-height:1.7; padding:32px 24px 110px; }
+  .wrap { max-width:1280px; margin:0 auto; }
+  h1 { font-size:23px; font-weight:600; letter-spacing:-0.02em; margin:0 0 6px; }
+  h2 { font-size:15px; font-weight:600; margin:30px 0 2px; }
+  .sub { color:rgba(255,255,255,0.46); margin:0 0 6px; }
+  .note { color:rgba(255,255,255,0.46); font-size:13px; margin:0 0 20px;
+          border-right:2px solid rgba(255,255,255,0.10); padding-right:12px; }
+  code { font-family:"JetBrains Mono",monospace; font-size:12px; color:rgba(255,255,255,0.62); }
+
+  .stage { position:relative; border-radius:16px; overflow:hidden; margin-bottom:10px; }
+  .bg-dark { background:#0b0d0f; }
+  .bg-dark::before { content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg,#0d0f12 0%,#0b0d0f 60%,#090b0d 100%); }
+  .bg-busy { background:repeating-linear-gradient(45deg,#0b0d0f 0 12px,#0f1114 12px 24px); }
+  .bg-busy::before { content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 20% 25%,rgba(233,236,242,0.18),transparent 40%),
+               radial-gradient(circle at 75% 70%,rgba(120,180,255,0.14),transparent 45%); }
+  .txt { position:absolute; inset:0; padding:14px; font-family:"JetBrains Mono",monospace;
+         font-size:10.5px; line-height:1.45; color:rgba(255,255,255,0.26); white-space:pre-wrap; overflow:hidden; }
+  .row { position:relative; display:flex; gap:14px; flex-wrap:wrap; align-items:center;
+         justify-content:center; padding:44px 16px; min-height:210px; }
+
+  /* ══════════════════════════════════════════════════════════════════
+     All candidates at role=modal (S7). fill = ladder S7 at 74%.
+     The difference is HOW the light is placed.
+     ══════════════════════════════════════════════════════════════════ */
+  .m { position:relative; isolation:isolate; border:none; cursor:default;
+       font-family:inherit; font-size:13px; font-weight:500; color:rgba(255,255,255,0.88);
+       padding:12px 20px; border-radius:9999px;
+       background:color-mix(in oklab,#131518 calc(0.74 * 100%),transparent); }
+
+  /* v3 — what I built: 4 light halos + soft blurred edge. No specular ring. */
+  .mV3 { box-shadow:
+      0 0 4px rgba(233,236,242,0.047), 0 0 12px rgba(233,236,242,0.039),
+      0 0 30px rgba(233,236,242,0.030), 0 0 62px rgba(233,236,242,0.022),
+      0 26px 103px rgba(1,2,3,0.34),
+      inset 0 -6px 22px -6px rgba(233,236,242,0.065); }
+  .mV3::after { content:''; position:absolute; inset:-1px; border-radius:inherit;
+    border:1.5px solid rgba(233,236,242,0.30); filter:blur(16.4px);
+    pointer-events:none; z-index:-1; }
+
+  /* G — رینگ اسپکیولار تیز (تصویر ۱) + هاله‌ی نرم بیرونی */
+  .mG { box-shadow:
+      0 0 30px rgba(233,236,242,0.030), 0 0 62px rgba(233,236,242,0.022),
+      0 26px 103px rgba(1,2,3,0.34),
+      inset 0 1px 0 rgba(255,255,255,0.22),
+      inset 0 -1px 0 rgba(255,255,255,0.06); }
+  .mG::after { content:''; position:absolute; inset:0; border-radius:inherit;
+    border:1px solid rgba(255,255,255,0.20);
+    pointer-events:none; z-index:-1; }
+
+  /* H — نورِ لبه (تصویر ۲): نور روی محیط می‌نشیند، روشن‌ترین بالا و پایین */
+  .mH { box-shadow:
+      0 0 34px rgba(150,190,255,0.10),
+      0 26px 103px rgba(1,2,3,0.34),
+      inset 0 1px 1px rgba(255,255,255,0.30),
+      inset 0 -1px 1px rgba(255,255,255,0.16),
+      inset 0 0 14px rgba(150,190,255,0.10); }
+  .mH::after { content:''; position:absolute; inset:0; border-radius:inherit;
+    border:1px solid rgba(180,210,255,0.24);
+    pointer-events:none; z-index:-1; }
+
+  /* I — ترکیب: رینگ اسپکیولار + نورِ لبه + هاله‌ی نرم */
+  .mI { box-shadow:
+      0 0 6px rgba(233,236,242,0.055), 0 0 20px rgba(233,236,242,0.038),
+      0 0 48px rgba(233,236,242,0.028), 0 0 96px rgba(233,236,242,0.020),
+      0 26px 103px rgba(1,2,3,0.34),
+      inset 0 1px 1px rgba(255,255,255,0.28),
+      inset 0 -1px 1px rgba(255,255,255,0.10),
+      inset 0 0 18px rgba(233,236,242,0.055); }
+  .mI::after { content:''; position:absolute; inset:0; border-radius:inherit;
+    border:1px solid rgba(255,255,255,0.22);
+    pointer-events:none; z-index:-1; }
+
+  /* J — I + لایه‌ی نورِ گرادیانی روی لبه (نزدیک‌ترین به تصویر ۲) */
+  .mJ { box-shadow:
+      0 0 6px rgba(233,236,242,0.055), 0 0 20px rgba(233,236,242,0.038),
+      0 0 48px rgba(233,236,242,0.028),
+      0 26px 103px rgba(1,2,3,0.34),
+      inset 0 1px 1px rgba(255,255,255,0.30),
+      inset 0 -1px 1px rgba(255,255,255,0.12); }
+  .mJ::before { content:''; position:absolute; inset:0; border-radius:inherit;
+    padding:1px; pointer-events:none; z-index:-1;
+    background:linear-gradient(180deg,
+      rgba(233,236,242,0.55) 0%, rgba(233,236,242,0.10) 22%,
+      rgba(233,236,242,0.06) 50%, rgba(233,236,242,0.10) 78%,
+      rgba(233,236,242,0.42) 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude; }
+  .mJ::after { content:''; position:absolute; inset:0; border-radius:inherit;
+    border:1px solid rgba(255,255,255,0.16);
+    pointer-events:none; z-index:-2; }
+
+  table { width:100%; border-collapse:collapse; font-family:"JetBrains Mono",monospace;
+          font-size:12px; margin-top:12px; }
+  th,td { text-align:right; padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  th { color:rgba(255,255,255,0.40); font-weight:500; }
+  .num { color:#6EE0B4; } .warn { color:#E8C468; } .bad { color:#F091A2; }
+  .verdict { margin-top:18px; padding:18px; border-radius:14px;
+             border:1px solid rgba(255,255,255,0.10); background:#060709; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Mist v4 — رینگ اسپکیولار و نورِ لبه</h1>
+  <p class="sub">درس دو مرجع: <b>لبه‌ی روشن، خودِ شیشه است.</b> حذفش در v3 اشتباه بود.</p>
+  <p class="note">
+    v3 لبه‌ی تیز را با لبه‌ی محو جایگزین کرد. اما «هندسه‌ی تیز» یعنی خط مرزی سخت —
+    و یک هایلایت اسپکیولار هندسه نیست، <b>نور</b> است.
+    حالا پنج حالت را کنار هم ببین: کدام شیشه‌تر است؟
+  </p>
+
+  <h2>۱. پس‌زمینه‌ی تیره — ۹۹٪ استفاده</h2>
+  <div class="stage bg-dark">
+    <div class="txt" id="t1"></div>
+    <div class="row">
+      <button class="m mV3">v3 — لبه‌ی محو</button>
+      <button class="m mG">G — رینگ اسپکیولار</button>
+      <button class="m mH">H — نورِ لبه</button>
+      <button class="m mI">I — ترکیب</button>
+      <button class="m mJ">J — نورِ گرادیانی لبه</button>
+    </div>
+  </div>
+
+  <h2>۲. پس‌زمینه‌ی شلوغ</h2>
+  <div class="stage bg-busy">
+    <div class="txt" id="t2"></div>
+    <div class="row">
+      <button class="m mV3">v3 — لبه‌ی محو</button>
+      <button class="m mG">G — رینگ اسپکیولار</button>
+      <button class="m mH">H — نورِ لبه</button>
+      <button class="m mI">I — ترکیب</button>
+      <button class="m mJ">J — نورِ گرادیانی لبه</button>
+    </div>
+  </div>
+
+  <h2>۳. اندازه‌گیری</h2>
+  <table id="perf">
+    <tr><th>حالت</th><th>رینگ تیز</th><th>هایلایت inset</th><th>هاله</th><th>هزینه</th></tr>
+  </table>
+
+  <div class="verdict" id="verdict"></div>
+</div>
+
+<script>
+for (const id of ['t1','t2']) {
+  document.getElementById(id).textContent =
+    Array.from({length:12},(_,i)=>`row ${String(i).padStart(2,'0')}  ·  ${'█▓▒░ '.repeat(10)}`).join('\n');
+}
+function bench(sel) {
+  const el = document.querySelector(sel);
+  const t0 = performance.now();
+  for (let i = 0; i < 300; i++) {
+    el.style.transform = `translateZ(0) translateX(${(i % 2) * 0.01}px)`;
+    void el.offsetHeight;
+  }
+  return performance.now() - t0;
+}
+const CANDS = [
+  ['v3 — لبه‌ی محو', '.mV3', 'محو', 'ندارد', '۴ لایه'],
+  ['G — رینگ اسپکیولار', '.mG', 'تیز ۱px', 'دارد', '۲ لایه'],
+  ['H — نورِ لبه', '.mH', 'تیز ۱px', 'دارد (قوی)', '۱ لایه'],
+  ['I — ترکیب', '.mI', 'تیز ۱px', 'دارد', '۴ لایه'],
+  ['J — نورِ گرادیانی', '.mJ', 'گرادیانی', 'دارد', '۳ لایه'],
+];
+const rows = document.getElementById('perf');
+const res = CANDS.map(([l,s,r,ins,h]) => ({ l, r, ins, h, ms: bench(s) }));
+const base = Math.min(...res.map(r=>r.ms)) || 1;
+for (const r of res) {
+  const ratio = r.ms / base;
+  rows.insertAdjacentHTML('beforeend', `<tr>
+    <td>${r.l}</td><td>${r.r}</td><td>${r.ins}</td><td>${r.h}</td>
+    <td class="${ratio > 3 ? 'bad' : 'num'}">${r.ms.toFixed(1)}ms (${ratio.toFixed(2)}×)</td></tr>`);
+}
+const cheapest = res.reduce((a,b)=>a.ms<b.ms?a:b);
+document.getElementById('verdict').innerHTML = `
+  <p style="font-size:15px;font-weight:600">ارزان‌ترین: ${cheapest.l}</p>
+  <p style="color:rgba(255,255,255,0.62);font-size:13px;margin-top:10px">
+    سؤال کلیدی: <b>کدام یک شیشه‌تر به نظر می‌رسد؟</b>
+    v3 لبه‌ی محو دارد و هیچ رینگی ندارد — صاف‌تر ولی کم‌عمق‌تر.
+    G و H رینگ تیز دارند — همان چیزی که در دو مرجع دیدی.
+    J نور را روی لبه می‌نشاند، روشن‌ترین در بالا و پایین.
+  </p>`;
+</script>
+</body>
+</html>

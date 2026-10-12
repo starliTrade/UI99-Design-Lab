@@ -6,6 +6,7 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { CheckCircle, Warning, XCircle, Info, X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
+import { mistCssVars } from '../../../engine/liminal-mist';
 
 export interface AlertProps {
   semantic: 'success' | 'warning' | 'danger' | 'info';
@@ -45,7 +46,8 @@ export function Alert({
   const solidColor = semanticObj.solid;
 
   // LIMINAL MIST: quiet tier mist light (soft halos + caustic + whisper + separate ringLayer)
-  const mist = LiminalColorEngine.getMistStyle(solidColor, 'quiet');
+  // An alert sits above the page; its mist follows from the role.
+  const mistVars = mistCssVars('modal');
 
   // Default icons
   const defaultIcons: Record<'success' | 'warning' | 'danger' | 'info', ReactNode> = {
@@ -70,8 +72,6 @@ export function Alert({
     position: 'relative',
     overflow: 'visible',
     borderRadius: `${RADIUS.card}px`, // 16px
-    background: mist.background,
-    boxShadow: mist.boxShadow,
     padding: `${SPACING[4]}px ${SPACING[5]}px`, // 16px 24px
     display: 'flex',
     alignItems: 'flex-start',
@@ -120,10 +120,10 @@ export function Alert({
       role={role}
       aria-live={ariaLive}
       className={className}
+      data-liminal-mist=""
       style={containerStyle}
     >
       {/* ─── RING LAYER (separate blurred 1px border element) ─── */}
-      <span aria-hidden="true" style={mist.ringLayer} />
 
       {/* Icon: sharp signal */}
       <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, marginTop: '2px' }}>

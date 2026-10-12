@@ -11,6 +11,7 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export interface PaginationProps {
   currentPage: number;
@@ -72,6 +73,7 @@ export function Pagination({
   className = '',
   style: customStyle = {},
 }: PaginationProps) {
+  const host = useHostSurface();
   const reducedMotion = useReducedMotion();
   const SPACING = LiminalLayoutEngine.SPACING;
 
@@ -158,16 +160,16 @@ interface PageButtonProps {
 }
 
 function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const host = useHostSurface();
+  // Hover is CSS's job now — no setState, no re-render per mouse move.
+  const bg = isCurrent
+    ? resolveSurface({ role: 'control', on: host }).background
+    : 'transparent';
 
-  let bg = 'transparent';
-  if (isCurrent) {
-    bg = resolveSurface({ role: 'control' }).background;
-  } else if (isHovered) {
-    bg = resolveSurface({ role: 'control', state: 'hover' }).background;
-  }
-
-  const style: CSSProperties = {
+  const style = {
+    '--liminal-surface-idle': bg,
+    '--liminal-surface-hover': resolveSurface({ role: 'control', state: 'hover', on: host }).background,
+    '--liminal-surface-active': resolveSurface({ role: 'control', state: 'active', on: host }).background,
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -176,7 +178,7 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
     padding: '0 8px',
     borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
     background: bg,
-    border: isCurrent ? `1px solid ${resolveBorder({ role: 'control', kind: 'edge' })}` : '1px solid transparent',
+    border: isCurrent ? `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}` : '1px solid transparent',
     color: isCurrent ? getTextStyle('primary', 1).color : getTextStyle('secondary', 1).color,
     fontWeight: isCurrent ? 600 : 400,
     fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
@@ -185,7 +187,7 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
     transition: reducedMotion
       ? 'none'
       : `${LiminalMotionEngine.getTransition('background', 'fast')}, ${LiminalMotionEngine.getTransition('color', 'fast')}`,
-  };
+  } as CSSProperties;
 
     return (
     <button
@@ -194,8 +196,7 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
       aria-current={isCurrent ? 'page' : undefined}
       aria-label={`Page ${page}`}
       style={style}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      data-liminal-surface=""
     >
       {page}
     </button>

@@ -78,151 +78,23 @@ export class LiminalColorEngine {
     description: 'Monochrome identity. LOCKED. Swap-able to any extended hue if rebranded.',
   };
 
-  /**
-   * Helper function to retrieve ladder colors referencing CSS Variables
-   *
-   * The fallbacks mirror LADDER in spec-engine.ts (the single source of truth).
-   * If you change the ladder, change it there first, then here and in index.css.
-   */
-  static getLadderColor(level: number): string {
-    const colors = [
-      'var(--liminal-s0, #060709)',
-      'var(--liminal-s1, #08090b)',
-      'var(--liminal-s2, #0a0b10)',
-      'var(--liminal-s3, #0d0e11)',
-      'var(--liminal-s4, #101114)',
-      'var(--liminal-s5, #131418)',
-    ];
-    return colors[Math.min(Math.max(Math.round(level), 0), 5)] || 'var(--liminal-s2, #0a0b10)';
-  }
+  // ── REMOVED 2026-10-12: six stale bodies ───────────────────────────────
+  //
+  // getLadderColor held a SECOND ladder, with five wrong fallbacks out of six
+  // (#08090b for a real #07090b, #0a0b10 for a real #090b0d, ...) and a
+  // hard-coded 6-step ceiling while LADDER has nine. MIST_SPEC plus
+  // getMistStyle were a whole second mist system, still describing
+  // backdrop-blur halos and rgba(13,14,18) — a colour that is not a ladder
+  // value at all. getStateStyle re-derived the state rule that liminal-surface
+  // owns. getRamp/getHueFactor and the class hexToRgb had no callers.
+  //
+  // None had a consumer. All were exported, so they read as live API while
+  // describing a system that no longer exists — the mistCssVars() hazard: a
+  // stale body sitting beside the real one, passing every build.
+  //
+  // The live paths are: liminal-ladder (LADDER), liminal-surface
+  // (resolveSurface/resolveBorder/resolveInset), liminal-mist (mistCssVars),
+  // liminal-color-math (hexToRgb).
 
-  // 5. RAMP FORMULA
-  static getHueFactor(H: number): number {
-    if (H < 60) return 1.00;
-    if (H < 120) return 0.85;
-    if (H < 200) return 0.95;
-    if (H < 280) return 1.10;
-    return 1.00;
-  }
-
-  static getRamp(H: number) {
-    const factor = this.getHueFactor(H);
-    const cText = (0.13 * factor).toFixed(3);
-    const cSolid = (0.16 * factor).toFixed(3);
-    return {
-      hue: H,
-      hueFactor: factor,
-      baseOklch: `oklch(0.78 ${cText} ${H})`,
-      solidOklch: `oklch(0.70 ${cSolid} ${H})`,
-      onSolid: '#060709',
-    };
-  }
-
-  // 6. STATE FORMULA
-  static getStateStyle(params: {
-    baseL: number;
-    baseColor?: string;
-    state: 'idle' | 'hover' | 'focus' | 'active' | 'disabled';
-    isSolid?: boolean;
-    solidColor?: string;
-  }) {
-    let L = params.baseL;
-    let outline = 'none';
-    let opacity = 1.0;
-
-    if (params.state === 'hover') {
-      L += 0.05;
-    } else if (params.state === 'focus') {
-      // Focus ring: 2px solid ${baseColorAtAlpha0.45}
-      // Note: For neutral elements, ring comes from spec-engine (ladder(n+1)).
-      const ringColor = params.baseColor
-        ? (params.baseColor.startsWith('#')
-            ? `${params.baseColor}73`
-            : params.baseColor.startsWith('var(')
-            ? 'rgba(233, 236, 242, 0.45)'
-            : params.baseColor.replace(/[\d.]+\)$/g, '0.45)'))
-        : 'rgba(233, 236, 242, 0.45)';
-      outline = `2px solid ${ringColor}`;
-    } else if (params.state === 'active') {
-      L -= 0.05;
-    } else if (params.state === 'disabled') {
-      // Opacity 0.35 applies strictly to colored text/icon/semantic buttons.
-      // Note: For neutral surfaces/controls, disabled opacity is 0.25 (per spec-engine).
-      opacity = 0.35;
-    }
-
-    return {
-      L: Math.max(0, Math.min(1, L)),
-      outline,
-      opacity,
-    };
-  }
-
-  static hexToRgb(hex: string): { r: number; g: number; b: number } {
-    let cleanHex = hex;
-    if (cleanHex.startsWith('var(')) {
-      const match = cleanHex.match(/,\s*(#[A-Fa-f0-9]{6}|#[A-Fa-f0-9]{3})/);
-      cleanHex = match ? match[1] : '#E9ECF2';
-    }
-    const c = cleanHex.replace('#', '');
-    return {
-      r: parseInt(c.substring(0, 2), 16) || 233,
-      g: parseInt(c.substring(2, 4), 16) || 236,
-      b: parseInt(c.substring(4, 6), 16) || 242,
-    };
-  }
-
-  static readonly MIST_SPEC = {
-    hero: {
-      ring: 0.18, ringBlur: 9, backdropBlur: 16,
-      halo1: '0 0 44px', halo1a: 0.07,
-      halo2: '0 0 90px', halo2a: 0.04,
-      caustic: 0.06, whisper: 0.048, shade: 0.30,
-      fill: 'linear-gradient(180deg, rgba(13,14,18,0.66) 0%, rgba(10,11,15,0.48) 100%)',
-    },
-    quiet: {
-      ring: 0.16, ringBlur: 10, backdropBlur: 16,
-      halo1: '0 0 40px', halo1a: 0.06,
-      halo2: '0 0 84px', halo2a: 0.035,
-      caustic: 0.055, whisper: 0.044, shade: 0.28,
-      fill: 'linear-gradient(180deg, rgba(13,14,18,0.60) 0%, rgba(10,11,15,0.44) 100%)',
-    },
-  } as const;
-
-  /**
-   * LIMINAL MIST — light as fog, no crisp geometry.
-   * ring layer must be rendered as a separate absolutely-positioned
-   * element (border 1px + filter blur), because pseudo-elements
-   * cannot be set via inline styles.
-   */
-  static getMistStyle(hex: string, tier: MistTier = 'quiet') {
-    const { r, g, b } = this.hexToRgb(hex);
-    const S = this.MIST_SPEC[tier];
-    return {
-      background: S.fill,
-      backdropFilter: `blur(${S.backdropBlur}px)`,
-      WebkitBackdropFilter: `blur(${S.backdropBlur}px)`,
-      boxShadow: [
-        `${S.halo1} rgba(${r}, ${g}, ${b}, ${S.halo1a})`,
-        `${S.halo2} rgba(${r}, ${g}, ${b}, ${S.halo2a})`,
-        `inset 0 -6px 22px -6px rgba(${r}, ${g}, ${b}, ${S.caustic})`,
-        `inset 0 1px 14px rgba(${r}, ${g}, ${b}, ${S.whisper})`,
-        `inset 0 4px 14px -4px rgba(1, 2, 3, ${S.shade})`,
-      ].join(', '),
-      ringLayer: {
-        position: 'absolute', inset: 0,
-        borderRadius: 'inherit',
-        border: `1px solid rgba(${r}, ${g}, ${b}, ${S.ring})`,
-        filter: `blur(${S.ringBlur}px)`,
-        pointerEvents: 'none',
-      } as const,
-    };
-  }
-}
-
-export type MistTier = 'hero' | 'quiet';
-
-export function getMistStyle(tier: MistTier = 'quiet') {
-  return LiminalColorEngine.getMistStyle(LiminalColorEngine.BRAND_PRIMARY.hex, tier);
 }
 
