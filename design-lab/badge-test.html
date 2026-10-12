@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LIMINAL — تست چشمی بج</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#060709; color:rgba(233,236,242,0.92);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size:14px; line-height:1.75; }
+  .wrap { max-width:1100px; margin:0 auto; padding:40px 24px 96px; }
+  h1 { font-size:26px; margin:0 0 6px; font-weight:700; letter-spacing:-0.02em; }
+  h2 { font-size:16px; margin:0 0 8px; font-weight:600; }
+  .eyebrow { font-family:ui-monospace,monospace; font-size:11px; color:rgba(233,236,242,0.28); letter-spacing:.08em; text-transform:uppercase; }
+  .sub { color:rgba(233,236,242,0.55); margin:0 0 26px; }
+  .problem { border:1px solid rgba(233,236,242,0.10); border-radius:14px; padding:18px; margin:0 0 28px; background:rgba(233,236,242,0.012); }
+  .problem code { font-family:ui-monospace,monospace; font-size:12px; background:rgba(233,236,242,0.06); padding:1px 5px; border-radius:4px; }
+  .cand { border:1px solid rgba(233,236,242,0.10); border-radius:14px; padding:18px; margin:0 0 18px; background:rgba(233,236,242,0.012); }
+  .cand header { display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
+  .cid { font-family:ui-monospace,monospace; font-size:13px; font-weight:700; color:rgba(233,236,242,0.92);
+    border:1px solid rgba(233,236,242,0.10); border-radius:8px; padding:3px 10px; flex-shrink:0; }
+  .cand h3 { font-size:15px; margin:0 0 3px; font-weight:600; }
+  .why { margin:0; color:rgba(233,236,242,0.55); font-size:13px; }
+  .strip { border-radius:10px; padding:14px 16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:8px; }
+  .formula { font-family:ui-monospace,monospace; font-size:11.5px; color:rgba(233,236,242,0.28); margin:10px 0 0; direction:ltr; text-align:left; }
+  .dot { width:5px; height:5px; border-radius:999px; display:inline-block; flex-shrink:0; }
+  .bar { width:3px; height:11px; border-radius:2px; display:inline-block; flex-shrink:0; }
+  .zoom .badge { zoom:2.4; }
+  .zoom .strip { padding:26px 16px; gap:22px; }
+  .slabel { font-family:ui-monospace,monospace; font-size:10.5px; color:rgba(233,236,242,0.28); margin:0 0 5px; }
+  footer { color:rgba(233,236,242,0.28); font-size:12px; margin-top:32px; }
+  code { font-family:ui-monospace,monospace; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">LIMINAL · تست چشمی · بج</p>
+  <h1>بج چطور باید معنا را حمل کند؟</h1>
+  <p class="sub">هفت کاندید. هر کدام قابل‌دفاع، و هر کدام یک فرمول متفاوت را ایجاب می‌کند. اول با چشم انتخاب کن — بعد فرمول را از برنده استخراج می‌کنیم.</p>
+
+  <div class="problem">
+    <h2>مشکلی که اندازه گرفتیم</h2>
+    <p style="margin:0 0 8px">
+      بج امروز رنگ را <b>روی سطح</b> نمی‌نشاند. سطحش <code>SURFACE_TINT.medium</code> است —
+      یک overlay سفید، نه یک پله‌ی نردبان — و رنگ فقط در متن زندگی می‌کند.
+      پس بجِ «آبی» عملاً یک قرص خاکستری است با حروف آبی.
+    </p>
+    <p style="margin:0; color:rgba(233,236,242,0.55)">
+      و دو تا از چهار هیو معنایی <b>اصلاً روی طیف نیستند</b>:
+      SUCCESS روی ۱۵۵ (طیف: ۱۴۵ و ۱۷۵) و WARNING روی ۸۵ (طیف: ۷۵ و ۱۱۰).
+      یعنی یک پالت موازی ساخته شده.
+    </p>
+  </div>
+
+  <h2 style="margin-bottom:14px">کاندیدها — روی سطح کار (S2)</h2>
+  
+  <section class="cand">
+    <header>
+      <span class="cid">A</span>
+      <div>
+        <h3>امروز — سطح خنثی، رنگ فقط در متن</h3>
+        <p class="why">وضعیت فعلی. سطح یک overlay سفید است، نه یک پله‌ی نردبان. رنگ روی سطح نمی‌نشیند.</p>
+      </div>
+    </header>
+    <div class="strip" style="background:#090b0d">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(255, 255, 255, 0.06); border:1px solid rgba(255,255,255,0.12); color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(255, 255, 255, 0.06); border:1px solid rgba(255,255,255,0.12); color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(255, 255, 255, 0.06); border:1px solid rgba(255,255,255,0.12); color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(255, 255, 255, 0.06); border:1px solid rgba(255,255,255,0.12); color:#8CC3F2;">Info</span>
+    </div>
+    <div class="strip" style="background:#090b0d" dir="rtl">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(255, 255, 255, 0.06); border:1px solid rgba(255,255,255,0.12); color:#6EE0B4;">فعال</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(255, 255, 255, 0.06); border:1px solid rgba(255,255,255,0.12); color:#F2CE77;">هشدار</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(255, 255, 255, 0.06); border:1px solid rgba(255,255,255,0.12); color:#F091A2;">خطا</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(255, 255, 255, 0.06); border:1px solid rgba(255,255,255,0.12); color:#8CC3F2;">اطلاع</span>
+    </div>
+    <p class="formula">bg = SURFACE_TINT.medium (rgba(255,255,255,0.06)) · border = rgba(255,255,255,0.12) · color = SEMANTICS[x].text</p>
+  </section>
+  <section class="cand">
+    <header>
+      <span class="cid">B</span>
+      <div>
+        <h3>تینت معنایی</h3>
+        <p class="why">سطح از خود هیو رنگ می‌گیرد. متداول‌ترین راه در سیستم‌های دیگر — سؤال این است که آیا لیمینال است یا نه.</p>
+      </div>
+    </header>
+    <div class="strip" style="background:#090b0d">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(110, 224, 180, 0.14); border:1px solid rgba(110, 224, 180, 0.3); color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(242, 206, 119, 0.14); border:1px solid rgba(242, 206, 119, 0.3); color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(240, 145, 162, 0.14); border:1px solid rgba(240, 145, 162, 0.3); color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(140, 195, 242, 0.14); border:1px solid rgba(140, 195, 242, 0.3); color:#8CC3F2;">Info</span>
+    </div>
+    <div class="strip" style="background:#090b0d" dir="rtl">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(110, 224, 180, 0.14); border:1px solid rgba(110, 224, 180, 0.3); color:#6EE0B4;">فعال</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(242, 206, 119, 0.14); border:1px solid rgba(242, 206, 119, 0.3); color:#F2CE77;">هشدار</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(240, 145, 162, 0.14); border:1px solid rgba(240, 145, 162, 0.3); color:#F091A2;">خطا</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:rgba(140, 195, 242, 0.14); border:1px solid rgba(140, 195, 242, 0.3); color:#8CC3F2;">اطلاع</span>
+    </div>
+    <p class="formula">bg = hue @ 0.14 · border = hue @ 0.30 · color = SEMANTICS[x].text</p>
+  </section>
+  <section class="cand">
+    <header>
+      <span class="cid">C</span>
+      <div>
+        <h3>سطح از نردبان</h3>
+        <p class="why">سطح یک پله‌ی واقعی بالای میزبان است، نه overlay سفید. رنگ هنوز فقط در متن — ولی سطح دیگر تصادفی نیست.</p>
+      </div>
+    </header>
+    <div class="strip" style="background:#090b0d">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#8CC3F2;">Info</span>
+    </div>
+    <div class="strip" style="background:#090b0d" dir="rtl">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#6EE0B4;">فعال</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#F2CE77;">هشدار</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#F091A2;">خطا</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#8CC3F2;">اطلاع</span>
+    </div>
+    <p class="formula">bg = LADDER[host + 1] · border = hairline · color = SEMANTICS[x].text</p>
+  </section>
+  <section class="cand">
+    <header>
+      <span class="cid">D</span>
+      <div>
+        <h3>نشانگر لهجه</h3>
+        <p class="why">قاعده‌ی خودِ لیمینال برای توست: «معنا از نشانگر می‌آید، نه از سطح». متن خنثی می‌ماند.</p>
+      </div>
+    </header>
+    <div class="strip" style="background:#090b0d">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#6EE0B4"></i>Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#F2CE77"></i>Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#F091A2"></i>Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#8CC3F2"></i>Info</span>
+    </div>
+    <div class="strip" style="background:#090b0d" dir="rtl">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#6EE0B4"></i>فعال</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#F2CE77"></i>هشدار</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#F091A2"></i>خطا</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#8CC3F2"></i>اطلاع</span>
+    </div>
+    <p class="formula">bg = LADDER[host + 1] · border = hairline · color = neutral text · + یک نوار ۳px در لبه‌ی inline-start</p>
+  </section>
+  <section class="cand">
+    <header>
+      <span class="cid">E</span>
+      <div>
+        <h3>نقطه</h3>
+        <p class="why">آرام‌ترین گزینه. یک نقطه‌ی کوچک معنا را حمل می‌کند و بقیه خنثی می‌ماند.</p>
+      </div>
+    </header>
+    <div class="strip" style="background:#090b0d">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="dot" style="background:#6EE0B4"></i>Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="dot" style="background:#F2CE77"></i>Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="dot" style="background:#F091A2"></i>Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="dot" style="background:#8CC3F2"></i>Info</span>
+    </div>
+    <div class="strip" style="background:#090b0d" dir="rtl">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="dot" style="background:#6EE0B4"></i>فعال</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="dot" style="background:#F2CE77"></i>هشدار</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="dot" style="background:#F091A2"></i>خطا</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="dot" style="background:#8CC3F2"></i>اطلاع</span>
+    </div>
+    <p class="formula">bg = LADDER[host + 1] · border = hairline · color = neutral text · + یک نقطه‌ی ۵px</p>
+  </section>
+  <section class="cand">
+    <header>
+      <span class="cid">F</span>
+      <div>
+        <h3>لبه‌ی رنگی</h3>
+        <p class="why">رنگ روی «لبه» می‌نشیند، نه روی سطح. همان منطق میست: نور روی لبه، نه تابش از سطح.</p>
+      </div>
+    </header>
+    <div class="strip" style="background:#090b0d">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(110, 224, 180, 0.35); color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(242, 206, 119, 0.35); color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(240, 145, 162, 0.35); color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(140, 195, 242, 0.35); color:#8CC3F2;">Info</span>
+    </div>
+    <div class="strip" style="background:#090b0d" dir="rtl">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(110, 224, 180, 0.35); color:#6EE0B4;">فعال</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(242, 206, 119, 0.35); color:#F2CE77;">هشدار</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(240, 145, 162, 0.35); color:#F091A2;">خطا</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(140, 195, 242, 0.35); color:#8CC3F2;">اطلاع</span>
+    </div>
+    <p class="formula">bg = LADDER[host + 1] · border = hue @ 0.35 · color = SEMANTICS[x].text</p>
+  </section>
+  <section class="cand">
+    <header>
+      <span class="cid">G</span>
+      <div>
+        <h3>سطح نردبان، متمایل به هیو</h3>
+        <p class="why">سطح یک پله‌ی نردبان است که کمی به سمت هیو متمایل شده — نه overlay سفید، نه تینت خالص.</p>
+      </div>
+    </header>
+    <div class="strip" style="background:#090b0d">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:color-mix(in oklab, #0b0d0f 90%, #6EE0B4 10%);
+      border:1px solid rgba(110, 224, 180, 0.28); color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:color-mix(in oklab, #0b0d0f 90%, #F2CE77 10%);
+      border:1px solid rgba(242, 206, 119, 0.28); color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:color-mix(in oklab, #0b0d0f 90%, #F091A2 10%);
+      border:1px solid rgba(240, 145, 162, 0.28); color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:color-mix(in oklab, #0b0d0f 90%, #8CC3F2 10%);
+      border:1px solid rgba(140, 195, 242, 0.28); color:#8CC3F2;">Info</span>
+    </div>
+    <div class="strip" style="background:#090b0d" dir="rtl">
+      <span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:color-mix(in oklab, #0b0d0f 90%, #6EE0B4 10%);
+      border:1px solid rgba(110, 224, 180, 0.28); color:#6EE0B4;">فعال</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:color-mix(in oklab, #0b0d0f 90%, #F2CE77 10%);
+      border:1px solid rgba(242, 206, 119, 0.28); color:#F2CE77;">هشدار</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:color-mix(in oklab, #0b0d0f 90%, #F091A2 10%);
+      border:1px solid rgba(240, 145, 162, 0.28); color:#F091A2;">خطا</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:color-mix(in oklab, #0b0d0f 90%, #8CC3F2 10%);
+      border:1px solid rgba(140, 195, 242, 0.28); color:#8CC3F2;">اطلاع</span>
+    </div>
+    <p class="formula">bg = color-mix(LADDER[host + 1] 90%, hue 10%) · border = hue @ 0.28 · color = SEMANTICS[x].text</p>
+  </section>
+
+  <h2 style="margin:32px 0 14px">بزرگ‌نمایی ۲.۶× — سه کاندیدِ نزدیک‌تر</h2>
+  <div class="cand zoom">
+    <div class="strip" style="background:#090b0d"><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#8CC3F2;">Info</span></div><div class="strip" style="background:#090b0d"><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#6EE0B4"></i>Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#F2CE77"></i>Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#F091A2"></i>Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:rgba(233,236,242,0.92);"><i class="bar" style="background:#8CC3F2"></i>Info</span></div><div class="strip" style="background:#090b0d"><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(110, 224, 180, 0.35); color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(242, 206, 119, 0.35); color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(240, 145, 162, 0.35); color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(140, 195, 242, 0.35); color:#8CC3F2;">Info</span></div>
+  </div>
+
+  <h2 style="margin:32px 0 14px">همان کاندیدها روی سطح‌های دیگر</h2>
+  <p class="sub" style="margin-bottom:14px">بج باید روی هر سه سطح کار کند — وگرنه یک پله‌ی نردبان اشتباه است.</p>
+  <div class="cand">
+      <header><span class="cid">C</span><div><h3>سطح از نردبان</h3></div></header>
+      <p class="slabel">canvas · S0</p>
+      <div class="strip" style="background:#060709"><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#07090b; border:1px solid #080a0c; color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#07090b; border:1px solid #080a0c; color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#07090b; border:1px solid #080a0c; color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#07090b; border:1px solid #080a0c; color:#8CC3F2;">Info</span></div>
+      <p class="slabel">work · S2</p>
+      <div class="strip" style="background:#090b0d"><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid #0c0e10; color:#8CC3F2;">Info</span></div>
+      <p class="slabel">menu · S5</p>
+      <div class="strip" style="background:#0f1114"><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#111316; border:1px solid #121417; color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#111316; border:1px solid #121417; color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#111316; border:1px solid #121417; color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#111316; border:1px solid #121417; color:#8CC3F2;">Info</span></div>
+    </div><div class="cand">
+      <header><span class="cid">F</span><div><h3>لبه‌ی رنگی</h3></div></header>
+      <p class="slabel">canvas · S0</p>
+      <div class="strip" style="background:#060709"><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#07090b; border:1px solid rgba(110, 224, 180, 0.35); color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#07090b; border:1px solid rgba(242, 206, 119, 0.35); color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#07090b; border:1px solid rgba(240, 145, 162, 0.35); color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#07090b; border:1px solid rgba(140, 195, 242, 0.35); color:#8CC3F2;">Info</span></div>
+      <p class="slabel">work · S2</p>
+      <div class="strip" style="background:#090b0d"><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(110, 224, 180, 0.35); color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(242, 206, 119, 0.35); color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(240, 145, 162, 0.35); color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#0b0d0f; border:1px solid rgba(140, 195, 242, 0.35); color:#8CC3F2;">Info</span></div>
+      <p class="slabel">menu · S5</p>
+      <div class="strip" style="background:#0f1114"><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#111316; border:1px solid rgba(110, 224, 180, 0.35); color:#6EE0B4;">Active</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#111316; border:1px solid rgba(242, 206, 119, 0.35); color:#F2CE77;">Warning</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#111316; border:1px solid rgba(240, 145, 162, 0.35); color:#F091A2;">Error</span><span class="badge" style="
+  display:inline-flex; align-items:center; gap:6px;
+  border-radius:9999px;
+  font-size:11.11px;
+  letter-spacing:+0.04em;
+  font-weight:500;
+  padding:3px 10px; line-height:1.45; white-space:nowrap;
+background:#111316; border:1px solid rgba(140, 195, 242, 0.35); color:#8CC3F2;">Info</span></div>
+    </div>
+
+  <footer>
+    تولید‌شده توسط <code>scripts/gen-badge-test.ts</code> · بدون شبکه · بدون build ·
+    همه‌ی رنگ‌ها از <code>LiminalColorEngine</code> و <code>getLadderColor()</code>
+  </footer>
+</div>
+</body>
+</html>

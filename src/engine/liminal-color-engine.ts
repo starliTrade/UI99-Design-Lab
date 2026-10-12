@@ -4,6 +4,16 @@
  */
 
 export interface SemanticRole {
+  /**
+   * The character that carries the meaning when colour cannot.
+   *
+   * A coloured dot says "there is a state here" but not WHICH one; under
+   * protanopia, deuteranopia, tritanopia or total colour blindness the four
+   * semantics collapse into two or one. A shape survives all of them, which is
+   * why the meaning lives here and the colour only reinforces it
+   * (WCAG 2.2 · 1.4.1 Use of Colour).
+   */
+  glyph: string;
   subtle: string;
   border: string;
   text: string;
@@ -17,6 +27,7 @@ export class LiminalColorEngine {
   // Enforced by src/engine/__tests__/tokens.test.ts (hue-consistency test).
   static readonly SEMANTICS: Record<'SUCCESS' | 'WARNING' | 'DANGER' | 'INFO', SemanticRole & { hue: number }> = {
     SUCCESS: {
+      glyph: '✓',
       hue: 155,
       subtle: 'rgba(52, 192, 139, 0.10)',
       border: 'rgba(52, 192, 139, 0.22)',
@@ -25,6 +36,7 @@ export class LiminalColorEngine {
       onSolid: '#04140D',
     },
     WARNING: {
+      glyph: '!',
       hue: 85,
       subtle: 'rgba(233, 180, 76, 0.10)',
       border: 'rgba(233, 180, 76, 0.22)',
@@ -33,6 +45,7 @@ export class LiminalColorEngine {
       onSolid: '#1A1204',
     },
     DANGER: {
+      glyph: '×',
       hue: 15,
       subtle: 'rgba(226, 85, 85, 0.10)',
       border: 'rgba(226, 85, 85, 0.22)',
@@ -41,6 +54,7 @@ export class LiminalColorEngine {
       onSolid: '#1A060A',
     },
     INFO: {
+      glyph: 'i',
       hue: 230,
       subtle: 'rgba(79, 143, 234, 0.10)',
       border: 'rgba(79, 143, 234, 0.22)',

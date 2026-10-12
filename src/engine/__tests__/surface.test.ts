@@ -344,3 +344,28 @@ describe('the two depth engines agree on the ladder', () => {
     expect(hover.n).toBe(LADDER.length - 1);
   });
 });
+
+describe('the ceiling inversion also applies when the level came from a host', () => {
+  // `resolveBorder` clamps to the ceiling before deciding whether there is room
+  // above. Without that clamp a control anchored on the toast lands at 8 + 1 = 9,
+  // `above` is 9.5, and the inversion computes 9 - 0.5 = 8.5 — still above the
+  // ceiling, so the border came back as the surface colour and vanished.
+  const ceiling = LADDER[LADDER.length - 1];
+
+  it('a control anchored on the toast still gets a visible hairline', () => {
+    const rim = resolveBorder({ role: 'control', kind: 'hairline', on: 'toast' });
+    expect(rim).not.toBe(ceiling);
+    expect(contrastRatioHex(rim, ceiling)).toBeGreaterThan(1);
+  });
+
+  it('the inverted rim is DARKER than the surface, not lighter', () => {
+    const rim = resolveBorder({ role: 'control', kind: 'hairline', on: 'toast' });
+    const steps = LADDER as readonly string[];
+    expect(steps.indexOf(rim)).toBeLessThan(steps.indexOf(ceiling));
+  });
+
+  it('below the ceiling the rim is still a highlight, unchanged', () => {
+    expect(resolveBorder({ role: 'control', kind: 'hairline', on: 'work' })).toBe(HALF[3]);
+    expect(resolveBorder({ role: 'control', kind: 'hairline', on: 'menu' })).toBe(HALF[6]);
+  });
+});

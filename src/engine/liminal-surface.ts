@@ -297,7 +297,12 @@ export function resolveBorder(request: {
 }): string {
   const { role, kind = 'hairline', state = 'idle' } = request;
   const anchored = request.on !== undefined ? ROLE_LEVEL[request.on] + CONTROL_LIFT : ROLE_LEVEL[role];
-  const base = anchored + STATE_SHIFT[state];
+  // Clamp BEFORE deciding whether there is room above. Without this, a control
+  // anchored on the toast lands at 8 + 1 = 9, `above` is 9.5, the inversion
+  // computes 9 - 0.5 = 8.5 — which is STILL above the ceiling, so the border
+  // came back as the surface colour and vanished. The inversion has to start
+  // from the ceiling, not from a level that was never reachable.
+  const base = Math.min(MAX_LEVEL, anchored + STATE_SHIFT[state]);
   const offset = kind === 'hairline' ? 0.5 : 1;
   const above = base + offset;
   // At the ceiling there is no room above, so the border inverts and goes below.
