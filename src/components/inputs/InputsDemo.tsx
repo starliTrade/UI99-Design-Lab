@@ -13,6 +13,7 @@ import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { MagnifyingGlass, Envelope, Lock, User, CheckCircle, Globe, Cpu, HardDrives, ShieldCheck } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
+import { DirProvider } from '../../engine/liminal-direction';
 
 export function InputsDemo() {
   // Input states
@@ -281,14 +282,17 @@ export function InputsDemo() {
               onChange={setSelectVal}
             />
 
-            <Select
-              label="مسیر فعال کلاستر (Select RTL — آیکون CaretDown در سمت چپ)"
-              rtl
-              options={selectOptions}
-              value={selectRtlVal}
-              onChange={setSelectRtlVal}
-              helperText="چیدمان راست‌به‌چپ با قرارگیری آیکون CaretDown در سمت چپ"
-            />
+            {/* Direction comes from the document, not from a prop on the field.
+                This is the same component; only the surrounding direction differs. */}
+            <DirProvider dir="rtl">
+              <Select
+                label="مسیر فعال کلاستر (Select RTL — آیکون CaretDown در سمت چپ)"
+                options={selectOptions}
+                value={selectRtlVal}
+                onChange={setSelectRtlVal}
+                helperText="چیدمان راست‌به‌چپ با قرارگیری آیکون CaretDown در سمت چپ"
+              />
+            </DirProvider>
 
             <Select
               label="Backup Route (Error State)"

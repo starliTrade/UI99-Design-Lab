@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
 import React from 'react';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { DirProvider, useDirection, useIsRTL, pick, inlineStart, inlineEnd } from '../liminal-direction';
 import { Button } from '../../components/atoms/Button/Button';
@@ -93,6 +93,37 @@ describe('rtl — the components render the same tree in both directions', () =>
       expect(rtl).toBe(ltr);
     });
   }
+});
+
+describe('rtl — a component reads the direction from the document, not a prop', () => {
+  // Select used to carry its own `rtl` and `dir` props and derive everything
+  // from them. Two sources of direction is one too many: a field inside an RTL
+  // page whose prop said `ltr` would render its caret on the wrong side.
+  it('Select has no direction prop left', () => {
+    const src = readFileSync(resolve(process.cwd(), 'src/components/inputs/Select/Select.tsx'), 'utf8');
+    expect(src).not.toMatch(/^\s*rtl\?:\s*boolean/m);
+    expect(src).not.toMatch(/^\s*dir\?:\s*'rtl'/m);
+    expect(src).toContain('useDirection()');
+  });
+
+  it('and no component derives its own direction from a prop', () => {
+    const offenders: string[] = [];
+    const walk = (dir: string): string[] => {
+      const out: string[] = [];
+      for (const e of readdirSync(dir)) {
+        if (e === '__tests__' || e === 'node_modules') continue;
+        const full = resolve(dir, e);
+        if (statSync(full).isDirectory()) out.push(...walk(full));
+        else if (/\.tsx$/.test(e) && !/Demo\.tsx$/.test(e)) out.push(full);
+      }
+      return out;
+    };
+    for (const file of walk(resolve(process.cwd(), 'src/components'))) {
+      const text = readFileSync(file, 'utf8');
+      if (/isRTL\s*=/.test(text)) offenders.push(file.split('/').pop()!);
+    }
+    expect(offenders).toEqual([]);
+  });
 });
 
 describe('rtl — the CSS layer carries the language rules', () => {

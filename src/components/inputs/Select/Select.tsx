@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useId } from 'react';
+import { useDirection } from '../../../engine/liminal-direction';
 import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { CaretDown } from '@phosphor-icons/react';
 import {
@@ -44,9 +45,8 @@ export interface SelectProps {
   className?: string;
   style?: CSSProperties;
   children?: ReactNode;
-  rtl?: boolean;
-  dir?: 'rtl' | 'ltr';
-  caretPosition?: 'left' | 'right';
+  /** Which END of the field the caret sits at. `end` is the default. */
+  caretPosition?: 'start' | 'end';
 }
 
 /**
@@ -81,8 +81,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     className = '',
     style: customStyle = {},
     children,
-    rtl = false,
-    dir,
     caretPosition,
   }: SelectProps,
   forwardedRef
@@ -119,8 +117,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
   const surfaceLevel = 2;
 
-  const isRTL = rtl || dir === 'rtl';
-  const effectiveCaretPos = caretPosition ?? (isRTL ? 'left' : 'right');
+  // The direction comes from the document, not from a prop. `DirProvider` puts
+  // `dir` on the document element, so `direction` and `text-align` are inherited
+  // and the caret only needs to know which END of the field it sits at.
+  const dir = useDirection();
+  const caretAtEnd = (caretPosition ?? 'end') === 'end';
 
 
   // The interaction states are CSS's job now (:hover, :focus-within). Only the
@@ -183,7 +184,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     opacity: disabled ? 0.5 : 1,
     cursor: disabled ? 'not-allowed' : 'pointer',
     position: 'relative',
-    direction: isRTL ? 'rtl' : 'ltr',
   } as CSSProperties;
 
   // Internal <select> element style:
@@ -206,8 +206,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     padding: 0,
     margin: 0,
     cursor: disabled ? 'not-allowed' : 'pointer',
-    direction: isRTL ? 'rtl' : 'ltr',
-    textAlign: isRTL ? 'right' : 'left',
+    textAlign: 'start',
   };
 
   const labelStyle: CSSProperties = {
@@ -218,8 +217,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     color: getTextStyle('secondary', surfaceLevel).color,
     marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
-    direction: isRTL ? 'rtl' : 'ltr',
-    textAlign: isRTL ? 'right' : 'left',
+    textAlign: 'start',
   };
 
   const helperStyle: CSSProperties = {
@@ -232,8 +230,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
       ? SEMANTICS.SUCCESS.text
       : getTextStyle('tertiary', surfaceLevel).color,
     marginTop: `${SPACING[1]}px`, // 4px
-    direction: isRTL ? 'rtl' : 'ltr',
-    textAlign: isRTL ? 'right' : 'left',
+    textAlign: 'start',
   };
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -321,7 +318,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
         )}
 
         {/* If Caret is positioned on the LEFT (standard in RTL) */}
-        {effectiveCaretPos === 'left' && caretNode}
+        {!caretAtEnd && caretNode}
 
         {/* Native <select> with appearance: none */}
         <select
@@ -361,7 +358,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
         </select>
 
         {/* If Caret is positioned on the RIGHT (standard in LTR) */}
-        {effectiveCaretPos === 'right' && caretNode}
+        {caretAtEnd && caretNode}
 
         {/* If suffix is provided */}
         {suffix && (
