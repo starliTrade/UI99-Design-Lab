@@ -70,8 +70,15 @@ export function generateCssVars(): string {
 
   // ── 6. TEXT ────────────────────────────────────────────────────────
   section('6. TEXT (never pure white)');
-  v('text-primary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.primary})`);
-  v('text-secondary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.secondary})`);
+  // TEXT_HIERARCHY holds one alpha PER SURFACE — the alpha a role needs depends
+  // on what it sits on. A CSS custom property can only carry one value, so it
+  // carries the S0 alpha: the largest of the nine, and therefore the one that
+  // is safe on every surface. Per-surface values come from getTextStyle().
+  //
+  // Do NOT interpolate the array itself. `${array}` comma-joins, which shipped
+  // an rgba() with eleven arguments for two years of commits.
+  v('text-primary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.primary[0]})`, 'S0 alpha — safe on every surface');
+  v('text-secondary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.secondary[0]})`, 'S0 alpha — safe on every surface');
   v('text-tertiary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.tertiary[0]})`, 'S0 floor; AA ≥4.5:1');
   v('text-quaternary', `rgba(255, 255, 255, ${TEXT_HIERARCHY.quaternary[0]})`, '≥3:1, non-text only');
 

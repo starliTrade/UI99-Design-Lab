@@ -61,10 +61,22 @@ describe('CSS variable layer — generated, complete, in sync', () => {
     Object.entries(VEIL).forEach(([k, val]) => expect(css).toContain(`--liminal-veil-${k}: ${val};`));
   });
 
-  it('exposes the text hierarchy', () => {
-    expect(css).toContain(`--liminal-text-primary: rgba(255, 255, 255, ${TEXT_HIERARCHY.primary});`);
+  it('exposes the text hierarchy at the S0 alpha', () => {
+    // The variable carries the S0 alpha — the largest of the nine, so the one
+    // that is safe on every surface. The previous version of this test
+    // interpolated the whole array and so asserted an rgba() with eleven
+    // arguments: it locked the defect in instead of detecting it.
+    expect(css).toContain(
+      `--liminal-text-primary: rgba(255, 255, 255, ${TEXT_HIERARCHY.primary[0]});`,
+    );
+    expect(css).toContain(
+      `--liminal-text-secondary: rgba(255, 255, 255, ${TEXT_HIERARCHY.secondary[0]});`,
+    );
     expect(css).toContain(
       `--liminal-text-tertiary: rgba(255, 255, 255, ${TEXT_HIERARCHY.tertiary[0]});`,
+    );
+    expect(css).toContain(
+      `--liminal-text-quaternary: rgba(255, 255, 255, ${TEXT_HIERARCHY.quaternary[0]});`,
     );
   });
 
