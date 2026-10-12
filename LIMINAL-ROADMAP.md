@@ -71,10 +71,10 @@ LIMINAL = سیستم طراحیِ ریاضی‌محورِ dark-native
 - [x] تست خودکار دسترس‌پذیری با `axe-core` روی همه‌ی کامپوننت‌ها
 - [x] ESLint + Prettier + `typescript-eslint` + حذف `as any`های پنهان‌کننده‌ی باگ
 - [x] **CI (GitHub Actions):** typecheck + lint + test + build
-- [ ] بودجه‌ی باندل + `size-limit` در CI (فاز ۱)
+- [ ] بودجه‌ی باندل + `size-limit` در CI (فاز ۱) — **هنوز**
 - [x] PR template + issue templates + Conventional Commits
 - [ ] Branch protection روی `main` (تنظیم دستی در GitHub — کد نمی‌تواند این را انجام دهد)
-- [ ] `changesets` برای نسخه‌بندی خودکار
+- [ ] `changesets` برای نسخه‌بندی خودکار — **هنوز**
 - [x] **فیکس فوکوس‌رینگ نامرئی** (`getLiminalStyle` → ۱.۰۱:۱)
 - [x] **فیکس tertiary (۳.۷:۱) و quaternary (۲.۱:۱)** یا مستندسازی صریح انحراف
 - [x] حذف `express`؛ اصلاح سرو استاتیک (بدون expose روت ریپو)
@@ -108,9 +108,9 @@ LIMINAL = سیستم طراحیِ ریاضی‌محورِ dark-native
 
 - [ ] منبع توکن به فرمت **W3C Design Tokens (DTCG)**
 - [ ] پایپ‌لاین `Style Dictionary` → CSS vars + TS + Tailwind preset + Figma
-- [ ] **تکمیل لایه‌ی CSS Variables** (الان فقط نیمی از سیستم از var استفاده می‌کند)
-- [ ] **کنتراست به‌عنوان ورودی** (درس Leonardo): هر توکن متن با حداقل کنتراست هدف *تولید* شود، نه بازرسی پسینی
-- [ ] پشتیبانی APCA در کنار WCAG
+- [~] **تکمیل لایه‌ی CSS Variables** — ۲۷۳ متغیر منتشر می‌شود؛ کامپوننت‌ها هنوز همه از آن نمی‌خوانند
+- [x] **کنتراست به‌عنوان ورودی** — آلفاها از کف‌های کاربردِ اعلام‌شده *مشتق* می‌شوند
+- [x] پشتیبانی APCA در کنار WCAG — دو عدسی، و **سخت‌گیرتر برنده است**
 - [ ] API تم: تعویض هیوی برند، مقیاس چگالی، مقیاس موشن
 - [ ] سایت مستندات توکن با playground زنده + contrast checker
 - [ ] نسخه‌بندی توکن + راهنمای مهاجرت
@@ -124,8 +124,8 @@ LIMINAL = سیستم طراحیِ ریاضی‌محورِ dark-native
 **تخمین:** ۴–۸ هفته
 
 **۳.۱ معماری (پیش‌نیاز همه‌چیز)**
-- [ ] مهاجرت استایل state از `setState` جاوااسکریپتی به **CSS** (`data-state` + CSS vars) — صفر ری‌رندر در hover
-- [ ] استراتژی ریسپانسیو واقعی (media query / container query در CSS)
+- [x] مهاجرت استایل state از `setState` به **CSS** — **صفر حالت تعاملی JS در هیچ کامپوننتی**
+- [x] استراتژی ریسپانسیو — مقیاس نوع شناور (۱۴→۱۶.۵px)، ۸۹ فراخوانی وصل شد
 - [ ] memoization هدفمند + پروفایلینگ عملکرد
 - [ ] بازنویسی روی **Base UI / Radix primitives** با پوسته‌ی LIMINAL
 
@@ -153,17 +153,18 @@ LIMINAL = سیستم طراحیِ ریاضی‌محورِ dark-native
 **هدف:** بهترین سیستم طراحی فارسی/RTL جهان. بدون رقیب.
 **تخمین:** ۳–۴ هفته
 
-- [ ] **CSS Logical Properties** در همه‌جا (`inline-start/end` به‌جای `left/right`)
-- [ ] موتور positioning: جای‌گذاری‌های `start`/`end` + flip/shift آگاه به RTL
-- [ ] `DirProvider` / context سراسری RTL
-- [ ] **تایپوگرافی فارسی:** Vazirmatn، تنظیم line-height و letter-spacing مخصوص خط فارسی، اعداد فارسی
-- [ ] **تقویم جلالی** (روی `Intl` یا `date-fns-jalali`) + گزینه‌ی هجری
-- [ ] مدیریت **bidi** (متن ترکیبی فارسی/لاتین، اعداد، بلوک کد)
-- [ ] تست‌های RTL (Playwright با `dir=rtl` + snapshot)
-- [ ] مستندات فارسی (locale `fa`)
-- [ ] استراتژی font loading (subsetting، preload، کنترل FOUT)
+- [x] **CSS Logical Properties** در همه‌جا — ۳۹ ویژگی فیزیکی → صفر. نگهبان: `direction.test.tsx`
+- [x] موتور positioning: `inline-start`/`inline-end` + flip/shift آگاه به RTL — ۱۴ تست
+- [x] `DirProvider` سراسری — `dir` روی عنصر سند، جایی که portalها هم می‌بینند
+- [x] **تایپوگرافی فارسی:** کف line-height از متریک‌های خودِ Vazirmatn مشتق شد (`3200/2048 = 1.5625`). **۷ از ۸ سطح متن فارسی را می‌بریدند.** tracking صفر (خط پیوسته است). ارقام `U+06F0`
+- [x] **تقویم جلالی** — روی `Intl`، نه الگوریتم چرخه ۳۳ ساله (که در هر قرن چند سال غلط است). کامپوننت `Calendar` حالا شبکه‌ی جلالی واقعی می‌سازد
+- [x] مدیریت **bidi** — `isolate`، `plaintext`، و دو کلاس نام‌دار برای کد و عدد
+- [x] تست‌های RTL — ۲۱ تست jsdom + `scripts/verify-rtl.mjs` (۵ بررسی در مرورگر واقعی)
+- [x] مستندات فارسی — بخش «فارسی و RTL» در README
+- [x] استراتژی font loading — `swap` نه `block`، `unicode-range` دوتکه، و `scripts/fetch-font.mjs` برای self-host با **تطبیق متریک‌ها**
 
 **تعریف «انجام شد»:** کل دمو با `dir="rtl"` بدون هیچ شکستگی رندر می‌شود و تقویم جلالی کار می‌کند.
+> **وضعیت:** موتور و کتابخانه ✅ · **دمو به RTL سوئیچ نشده** (عمداً، جدا نگه داشته شد)
 
 ---
 
