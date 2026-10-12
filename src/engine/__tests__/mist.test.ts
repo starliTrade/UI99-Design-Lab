@@ -11,8 +11,10 @@ import {
   mistEdgeAlpha,
   mistFillStops,
   mistInnerLight,
-  mistShadowAlpha,
-  mistShadowBlur,
+  mistShadowFarAlpha,
+  mistShadowFarRadius,
+  mistShadowNearAlpha,
+  mistShadowNearRadius,
 } from '../liminal-mist';
 import { LADDER } from '../liminal-ladder';
 import type { SurfaceRole } from '../liminal-surface';
@@ -84,8 +86,8 @@ describe('mist — every value follows from the height', () => {
     const series = (f: (r: SurfaceRole) => number) => ROLES.map(f);
 
     expect(rising(series(mistInnerLight))).toBe(true);
-    expect(rising(series(mistShadowBlur))).toBe(true);
-    expect(rising(series(mistShadowAlpha))).toBe(true);
+    expect(rising(series(mistShadowFarRadius))).toBe(true);
+    expect(rising(series(mistShadowFarAlpha))).toBe(true);
     expect(rising(series(mistEdgeAlpha))).toBe(true);
     expect(rising(series(mistBlur))).toBe(true);
   });
@@ -106,8 +108,8 @@ describe('mist — every value follows from the height', () => {
     };
 
     expect(linear(mistInnerLight)).toBe(true);
-    expect(linear(mistShadowBlur)).toBe(true);
-    expect(linear(mistShadowAlpha)).toBe(true);
+    expect(linear(mistShadowFarRadius)).toBe(true);
+    expect(linear(mistShadowFarAlpha)).toBe(true);
     expect(linear(mistEdgeAlpha)).toBe(true);
     expect(linear(mistBlur)).toBe(true);
     // The far radius is published as whole pixels, so allow a pixel of
@@ -117,23 +119,22 @@ describe('mist — every value follows from the height', () => {
     expect(linear((r) => num(published(r)['--liminal-mist-shadow-far']), 1)).toBe(true);
   });
 
-  it('records that the published far radius is NOT mistShadowBlur', () => {
-    // Writing these tests surfaced another pair of copies. `mistCssVars`
-    // publishes `40 + h * 3.2`; the exported `mistShadowBlur` is `40 + h * 9`.
-    // Nothing calls the helper, so the two never meet — but the helper reads as
-    // the shadow's definition and is not it. The published value is the one
-    // that was eye-tested, so it stays; this test exists so the divergence is
-    // visible in the suite instead of latent in the file. Fixing it is a
-    // separate decision, not a silent one.
+  it('the published shadow IS the exported function — one formula, not two', () => {
+    // Writing these tests surfaced a pair of copies. `mistCssVars` published
+    // `40 + h * 3.2` while the exported `mistShadowBlur` said `40 + h * 9`, and
+    // nothing called the helper, so the two never met. The published value is
+    // the one that was eye-tested, so the helper was corrected to it and
+    // `mistCssVars` now reads the helper.
     const h = floatHeight('menu');
-    expect(num(vars('menu')['--liminal-mist-shadow-far'])).toBe(Math.round(40 + h * 3.2));
-    expect(mistShadowBlur('menu')).toBe(40 + h * 9);
+    expect(num(vars('menu')['--liminal-mist-shadow-far'])).toBe(Math.round(mistShadowFarRadius('menu')));
+    expect(mistShadowFarRadius('menu')).toBe(40 + h * 3.2);
+    expect(num(vars('menu')['--liminal-mist-shadow-near'])).toBeCloseTo(mistShadowNearRadius('menu'), 1);
   });
 
   it('gives a higher surface a larger shadow and more light', () => {
     const low = ROLES[0];
     const high = ROLES[ROLES.length - 1];
-    expect(mistShadowBlur(high)).toBeGreaterThan(mistShadowBlur(low));
+    expect(mistShadowFarRadius(high)).toBeGreaterThan(mistShadowFarRadius(low));
     expect(mistInnerLight(high)).toBeGreaterThan(mistInnerLight(low));
     expect(floatHeight(high)).toBeGreaterThan(floatHeight(low));
   });

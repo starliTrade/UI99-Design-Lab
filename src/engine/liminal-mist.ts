@@ -171,12 +171,20 @@ export function mistHaloRadius(role: SurfaceRole): number {
  * a menu — which is what the eye expects and what an absolute constant could
  * not express.
  */
-export function mistShadowBlur(role: SurfaceRole): number {
-  return 40 + floatHeight(role) * 9;
+export function mistShadowNearRadius(role: SurfaceRole): number {
+  return 4 + floatHeight(role) * 0.5;
 }
 
-export function mistShadowAlpha(role: SurfaceRole): number {
-  return 0.20 + floatHeight(role) * 0.02;
+export function mistShadowFarRadius(role: SurfaceRole): number {
+  return 40 + floatHeight(role) * 3.2;
+}
+
+export function mistShadowNearAlpha(role: SurfaceRole): number {
+  return 0.30 + floatHeight(role) * 0.005;
+}
+
+export function mistShadowFarAlpha(role: SurfaceRole): number {
+  return 0.42 + floatHeight(role) * 0.010;
 }
 
 /**
@@ -221,8 +229,11 @@ export interface MistSpec {
   blur: number;
   haloAlpha: number;
   haloRadius: number;
-  shadowBlur: number;
-  shadowAlpha: number;
+  /** The dark shadow below the surface: two layers, near and far. */
+  shadowNearRadius: number;
+  shadowFarRadius: number;
+  shadowNearAlpha: number;
+  shadowFarAlpha: number;
   fillColor: string;
   fillAlpha: number;
   ringAlpha: number;
@@ -247,8 +258,10 @@ export function resolveMist(role: SurfaceRole, options: MistOptions = {}): MistS
     blur: mistBlur(role),
     haloAlpha: mistHaloAlpha(role),
     haloRadius: mistHaloRadius(role),
-    shadowBlur: mistShadowBlur(role),
-    shadowAlpha: mistShadowAlpha(role),
+    shadowNearRadius: mistShadowNearRadius(role),
+    shadowFarRadius: mistShadowFarRadius(role),
+    shadowNearAlpha: mistShadowNearAlpha(role),
+    shadowFarAlpha: mistShadowFarAlpha(role),
     fillColor: fill.color,
     fillAlpha: fill.alpha,
     ringAlpha: mistRingAlpha(role),
@@ -291,10 +304,10 @@ export function mistCssVars(role: SurfaceRole, options: MistOptions = {}): Recor
       ? 'inset 0 0 0 rgba(0, 0, 0, 0)'
       : `inset 0 1px 0 rgba(${r}, ${g}, ${b}, ${mistInnerLight(role).toFixed(4)})`,
     // The dark shadow that expresses the height. No light shadow.
-    '--liminal-mist-shadow-near': `${(4 + h * 0.5).toFixed(1)}px`,
-    '--liminal-mist-shadow-far': `${(40 + h * 3.2).toFixed(0)}px`,
-    '--liminal-mist-shadow-near-alpha': String(0.30 + h * 0.005),
-    '--liminal-mist-shadow-far-alpha': String(0.42 + h * 0.010),
+    '--liminal-mist-shadow-near': `${mistShadowNearRadius(role).toFixed(1)}px`,
+    '--liminal-mist-shadow-far': `${mistShadowFarRadius(role).toFixed(0)}px`,
+    '--liminal-mist-shadow-near-alpha': String(mistShadowNearAlpha(role)),
+    '--liminal-mist-shadow-far-alpha': String(mistShadowFarAlpha(role)),
     // The seam: a faint hairline where the fog meets the page.
     '--liminal-mist-seam': `rgba(${r}, ${g}, ${b}, ${(isToast ? 0.075 : 0.07 + h * 0.004).toFixed(4)})`,
     // Opt-in diffusion only.
