@@ -1,8 +1,14 @@
 name: CI
 
+# Every branch, not just main.
+#
+# The filter used to be `branches: [main]` plus `pull_request`. Phase 2 was
+# built on a branch that was pushed directly and never opened as a PR, so
+# twenty-one commits — including a token that shipped as an rgba() with eleven
+# arguments — went through no CI at all. A branch filter that only covers main
+# verifies the work after it has already landed.
 on:
   push:
-    branches: [main]
   pull_request:
 
 concurrency:
