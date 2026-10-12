@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
 import { getTextStyle, SHADOWS, SURFACE_TINT } from '../../../engine/spec-engine';
@@ -44,8 +44,6 @@ export function Toast({
 }: ToastProps) {
   const isToastOpen = open ?? isOpen ?? false;
   const reduced = useReducedMotion();
-  const [closeHovered, setCloseHovered] = useState<boolean>(false);
-  const [actionHovered, setActionHovered] = useState<boolean>(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const SPACING = LiminalLayoutEngine.SPACING;
@@ -181,10 +179,12 @@ export function Toast({
           <button
             type="button"
             onClick={action.onClick}
-            onMouseEnter={() => setActionHovered(true)}
-            onMouseLeave={() => setActionHovered(false)}
+            data-liminal-surface=""
             style={{
-              background: actionHovered ? SURFACE_TINT.medium : 'transparent',
+              // The action's surface is the layer's, not state's.
+              '--liminal-surface-idle': 'transparent',
+              '--liminal-surface-hover': SURFACE_TINT.medium,
+              '--liminal-surface-active': SURFACE_TINT.medium,
               border: 'none',
               padding: '4px 8px',
               borderRadius: `${RADIUS[6]}px`,
@@ -195,7 +195,7 @@ export function Toast({
               transition: LiminalMotionEngine.getTransition('background', 'fast'),
               flexShrink: 0,
               userSelect: 'none',
-            }}
+            } as CSSProperties}
           >
             {action.label}
           </button>
@@ -206,23 +206,22 @@ export function Toast({
           type="button"
           aria-label="Dismiss toast"
           onClick={onClose}
-          onMouseEnter={() => setCloseHovered(true)}
-          onMouseLeave={() => setCloseHovered(false)}
+          data-liminal-hover-color=""
           style={{
             background: 'transparent',
             border: 'none',
             padding: '2px',
             cursor: 'pointer',
-            color: closeHovered
-              ? getTextStyle('secondary', 4).color
-              : getTextStyle('tertiary', 4).color,
+            '--liminal-color-idle': getTextStyle('tertiary', 4).color,
+            // primary, not secondary — see the note in Alert.
+            '--liminal-hover-color': getTextStyle('primary', 4).color,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: `${RADIUS[4]}px`,
             transition: LiminalMotionEngine.getTransition('color', 'fast'),
             flexShrink: 0,
-          }}
+          } as CSSProperties}
         >
           <LiminalIcon icon={X} size="xs" weight="light" />
         </button>

@@ -46,6 +46,14 @@
 /* Some components lift their TEXT on hover rather than their surface — a tab
  * that brightens its label, for example. Opt in with data-liminal-hover-color
  * so nothing changes colour by accident. */
+/* The idle half has to live here too. A component that opts in and then sets
+ * `color` inline cancels the hover rule — an inline style beats a CSS rule — so
+ * the pattern did nothing in all four components that used it. The layer owns
+ * `color` for anything that opts in. */
+[data-liminal-hover-color] {
+  color: var(--liminal-color-idle, currentColor);
+}
+
 [data-liminal-hover-color]:hover:not([data-liminal-disabled]) {
   color: var(--liminal-hover-color);
 }

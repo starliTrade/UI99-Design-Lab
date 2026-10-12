@@ -22,10 +22,11 @@ export interface BreadcrumbProps {
 function BreadcrumbLink({ item }: { item: BreadcrumbItem }) {
 
   const style = {
-    // The resting colour here; the hover colour is a CSS variable the browser
-    // applies, so moving across the trail no longer re-renders React.
-    color: getTextStyle('tertiary', 1).color,
-    '--liminal-hover-color': getTextStyle('secondary', 1).color,
+    // Both halves are the layer's now: an inline `color` cancelled the hover
+    // rule, so this never brightened. And `secondary` equals `tertiary` (both
+    // derive to alpha 0.790), so the hover target is `primary`.
+    '--liminal-color-idle': getTextStyle('tertiary', 1).color,
+    '--liminal-hover-color': getTextStyle('primary', 1).color,
     textDecoration: 'none',
     transition: LiminalMotionEngine.getTransition('color', 'fast'),
     cursor: 'pointer',

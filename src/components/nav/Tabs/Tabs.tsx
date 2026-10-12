@@ -102,7 +102,9 @@ export function Tab({
 
   const tabStyle = {
     // Hover brightens the label; the browser applies it, React does not re-render.
-    '--liminal-hover-color': getTextStyle('secondary', 1).color,
+    // The layer owns `color`; see the base rule. Secondary equals tertiary
+    // (both alpha 0.790), so the hover target is primary.
+    '--liminal-hover-color': getTextStyle('primary', 1).color,
     padding: `${SPACING[2]}px ${SPACING[4]}px`,
     borderRadius: `${RADIUS[8]}px`, // 8px
     fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
@@ -111,7 +113,7 @@ export function Tab({
     fontWeight: 500,
     border: '1px solid transparent',
     background: bg,
-    color,
+    '--liminal-color-idle': color,
     boxShadow: shadow,
     opacity: disabled ? 0.35 : 1,
     cursor: disabled ? 'not-allowed' : 'pointer',

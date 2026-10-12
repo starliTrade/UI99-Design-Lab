@@ -32,7 +32,6 @@ export function Alert({
   style: customStyle = {},
 }: AlertProps) {
   const [closed, setClosed] = useState<boolean>(false);
-  const [closeHovered, setCloseHovered] = useState<boolean>(false);
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
@@ -103,9 +102,12 @@ export function Alert({
     border: 'none',
     padding: '4px',
     cursor: 'pointer',
-    color: closeHovered
-      ? getTextStyle('secondary', 1).color
-      : getTextStyle('tertiary', 1).color,
+    // The layer owns `color` — see data-liminal-hover-color below. Setting it
+    // here would cancel the hover rule, which is exactly what had happened.
+    '--liminal-color-idle': getTextStyle('tertiary', 1).color,
+    // primary, not secondary: secondary and tertiary derive to the SAME alpha
+    // (0.790), so a secondary hover was a no-op — the icon never brightened.
+    '--liminal-hover-color': getTextStyle('primary', 1).color,
     borderRadius: `${RADIUS[6]}px`, // 6px
     display: 'inline-flex',
     alignItems: 'center',
@@ -113,7 +115,7 @@ export function Alert({
     transition: LiminalMotionEngine.getTransition('color', 'fast'),
     marginLeft: 'auto',
     flexShrink: 0,
-  };
+  } as CSSProperties;
 
   return (
     <div
@@ -155,8 +157,7 @@ export function Alert({
           type="button"
           aria-label="Dismiss alert"
           onClick={handleDismiss}
-          onMouseEnter={() => setCloseHovered(true)}
-          onMouseLeave={() => setCloseHovered(false)}
+          data-liminal-hover-color=""
           style={closeBtnStyle}
         >
           <LiminalIcon icon={X} size="sm" weight="light" />
