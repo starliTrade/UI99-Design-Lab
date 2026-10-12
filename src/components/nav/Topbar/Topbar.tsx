@@ -60,7 +60,7 @@ export function Topbar({
             display: 'flex',
             alignItems: 'center',
             gap: `${SPACING[3]}px`, // 12px
-            marginRight: 'auto',
+            marginInlineEnd: 'auto',
           }}
         >
           {children}
@@ -73,7 +73,7 @@ export function Topbar({
             display: 'flex',
             alignItems: 'center',
             gap: `${SPACING[3]}px`,
-            marginLeft: children ? undefined : 'auto',
+            marginInlineStart: children ? undefined : 'auto',
             flexShrink: 0,
           }}
         >

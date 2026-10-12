@@ -75,7 +75,7 @@ export function NavItem({
     transition: LiminalMotionEngine.TRANSITION.hover,
     userSelect: 'none',
     width: '100%',
-    textAlign: 'left',
+    textAlign: 'start',
     ...customStyle,
   } as CSSProperties;
 

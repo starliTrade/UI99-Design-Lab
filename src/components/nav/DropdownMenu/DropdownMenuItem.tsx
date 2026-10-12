@@ -107,7 +107,7 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
       userSelect: 'none',
       width: '100%',
       boxSizing: 'border-box',
-      textAlign: 'left',
+      textAlign: 'start',
       textDecoration: 'none',
         ...customStyle,
     };
@@ -243,7 +243,7 @@ export const DropdownMenuCheckboxItem = forwardRef<HTMLElement, DropdownMenuChec
       userSelect: 'none',
       width: '100%',
       boxSizing: 'border-box',
-      textAlign: 'left',
+      textAlign: 'start',
         ...customStyle,
     };
 
@@ -380,7 +380,7 @@ export const DropdownMenuRadioItem = forwardRef<HTMLElement, DropdownMenuRadioIt
       userSelect: 'none',
       width: '100%',
       boxSizing: 'border-box',
-      textAlign: 'left',
+      textAlign: 'start',
         ...customStyle,
     };
 
@@ -569,7 +569,7 @@ export function DropdownMenuShortcut({
     padding: `${SPACING[1]}px ${SPACING[2]}px`,
     borderRadius: `${RADIUS.chip}px`,
     border: `1px solid ${resolveBorder({ role: 'menu', kind: 'edge' })}`,
-    marginLeft: 'auto',
+    marginInlineStart: 'auto',
     letterSpacing: '0.05em',
     lineHeight: 1,
     flexShrink: 0,

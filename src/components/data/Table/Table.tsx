@@ -73,7 +73,7 @@ export function Table({
     width: '100%',
     borderCollapse: 'separate',
     borderSpacing: 0,
-    textAlign: 'right',
+    textAlign: 'end',
     fontFamily: 'inherit',
     boxSizing: 'border-box',
   };

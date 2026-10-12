@@ -82,7 +82,10 @@ export function Toggle({
     // In compliance with LIMINAL Master Spec:
     // checked=true: knob right 23px, background #060709
     // checked=false: knob right 3px, background rgba(255,255,255,.4)
-    right: isChecked ? '23px' : '3px',
+    // The knob travels along the INLINE axis: it starts at the beginning and
+    // moves toward the end. A physical `right` would leave it travelling
+    // backwards in RTL.
+    insetInlineEnd: isChecked ? '23px' : '3px',
     background: isChecked ? brand.onColor : SURFACE_TINT.solid,
     boxShadow: SHADOWS[1],
   };

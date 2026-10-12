@@ -90,7 +90,7 @@ export function Stat({
     fontWeight: 600,
     color: getTextStyle('primary', 1).color,
     direction: 'ltr',
-    textAlign: 'right',
+    textAlign: 'end',
     margin: 0,
     fontVariantNumeric: 'tabular-nums',
   };

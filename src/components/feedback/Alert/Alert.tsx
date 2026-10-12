@@ -113,7 +113,7 @@ export function Alert({
     alignItems: 'center',
     justifyContent: 'center',
     transition: LiminalMotionEngine.getTransition('color', 'fast'),
-    marginLeft: 'auto',
+    marginInlineStart: 'auto',
     flexShrink: 0,
   } as CSSProperties;
 

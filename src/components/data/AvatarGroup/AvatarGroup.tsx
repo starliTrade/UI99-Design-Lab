@@ -61,7 +61,7 @@ export function AvatarGroup({
     flexShrink: 0,
     userSelect: 'none',
     boxSizing: 'border-box',
-    marginRight: 0,
+    marginInlineEnd: 0,
   };
 
   return (
@@ -75,7 +75,7 @@ export function AvatarGroup({
           size,
           style: {
             border: `2px solid ${canvasBorderColor}`,
-            marginRight: isLastInVisible ? 0 : `${overlap}px`,
+            marginInlineEnd: isLastInVisible ? 0 : `${overlap}px`,
             ...childElement.props?.style,
           },
         });
