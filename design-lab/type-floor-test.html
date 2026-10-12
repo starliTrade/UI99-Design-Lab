@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LIMINAL — انتهای کوچک مقیاس نوع</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#060709; color:rgba(255, 255, 255, 0.89);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; font-size:14px; line-height:1.75; }
+  .wrap { max-width:1120px; margin:0 auto; padding:40px 24px 96px; }
+  h1 { font-size:25px; margin:0 0 6px; font-weight:700; letter-spacing:-0.02em; }
+  h2 { font-size:16px; margin:30px 0 10px; font-weight:600; }
+  h3 { font-size:15px; margin:0 0 3px; font-weight:600; }
+  .eyebrow { font-family:ui-monospace,monospace; font-size:11px; color:rgba(255, 255, 255, 0.44); letter-spacing:.08em; text-transform:uppercase; }
+  .sub { color:rgba(255, 255, 255, 0.79); margin:0 0 10px; }
+  .cand { border:1px solid rgba(233,236,242,0.10); border-radius:14px; padding:18px; margin:0 0 18px; background:rgba(233,236,242,0.012); }
+  .cand header { display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
+  .cid { font-family:ui-monospace,monospace; font-size:12px; font-weight:700; border:1px solid rgba(233,236,242,0.10); border-radius:8px; padding:3px 10px; flex-shrink:0; }
+  .why { margin:0; color:rgba(255, 255, 255, 0.79); font-size:13px; }
+  .grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; }
+  @media (max-width:900px){ .grid { grid-template-columns:repeat(2, 1fr); } }
+  .col { border:1px solid rgba(233,236,242,0.10); border-radius:10px; padding:12px; background:#090b0d; }
+  .vw { font-family:ui-monospace,monospace; font-size:11px; color:rgba(255, 255, 255, 0.44); margin:0 0 10px; }
+  .sample { margin:0; }
+  .num { font-family:ui-monospace,monospace; font-size:10px; color:rgba(255, 255, 255, 0.44); margin:2px 0 12px; }
+  footer { color:rgba(255, 255, 255, 0.44); font-size:12px; margin-top:32px; }
+  code { font-family:ui-monospace,monospace; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">LIMINAL · تست چشمی · مقیاس نوع</p>
+  <h1>انتهای کوچک مقیاس — ۹.۷۲px در ۳۲۰px خوانده میشود؟</h1>
+  <p class="sub">
+    سیستم میگوید <b>نسبت، طرح است؛ پایه، شرط خواندن.</b> پس ۹.۷۲px روی گوشیِ نزدیک، باید مثل ۱۱.۱۱px روی مانیتور خوانده شود.
+    این یک سؤال تجربی است، پس اینجاست — در اندازهی واقعی، کنار دو راه تغییرش.
+  </p>
+  <p class="sub" style="margin-bottom:22px">
+    <b>کف روی سطح</b> نسبت ۱.۲ را میشکند — یعنی طرح را نقض میکند تا یک عدد را درست کند.
+    <b>کف روی پایه</b> نسبت را دستنخورده نگه میدارد و همهچیز را با هم حرکت میدهد.
+  </p>
+  
+  <section class="cand">
+    <header><span class="cid">حالا</span>
+      <div><h3>امروز — بدون کف</h3><p class="why">پایه ۱۴→۱۶.۵. سطح ۱ = پایه ÷ ۱.۴۴. در ۳۲۰px میشود ۹.۷۲px.</p></div></header>
+    <div class="grid">
+      
+        <div class="col">
+          <p class="vw">320px · پایه 14.00px</p>
+          
+            <div class="sample" style="font-size:9.722px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 9.72px · meta · caption</p>
+            <div class="sample" style="font-size:11.667px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 11.67px · label · tertiary</p>
+            <div class="sample" style="font-size:14.000px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 14.00px · body · secondary</p>
+        </div>
+        <div class="col">
+          <p class="vw">390px · پایه 14.16px</p>
+          
+            <div class="sample" style="font-size:9.831px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 9.83px · meta · caption</p>
+            <div class="sample" style="font-size:11.797px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 11.80px · label · tertiary</p>
+            <div class="sample" style="font-size:14.156px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 14.16px · body · secondary</p>
+        </div>
+        <div class="col">
+          <p class="vw">768px · پایه 15.00px</p>
+          
+            <div class="sample" style="font-size:10.417px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 10.42px · meta · caption</p>
+            <div class="sample" style="font-size:12.500px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 12.50px · label · tertiary</p>
+            <div class="sample" style="font-size:15.000px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 15.00px · body · secondary</p>
+        </div>
+        <div class="col">
+          <p class="vw">1440px · پایه 16.50px</p>
+          
+            <div class="sample" style="font-size:11.458px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 11.46px · meta · caption</p>
+            <div class="sample" style="font-size:13.750px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 13.75px · label · tertiary</p>
+            <div class="sample" style="font-size:16.500px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 16.50px · body · secondary</p>
+        </div>
+    </div>
+  </section>
+  <section class="cand">
+    <header><span class="cid">الف</span>
+      <div><h3>کف روی پایه — ۱۵px</h3><p class="why">پایه هرگز زیر ۱۵px نمیرود. نسبت ۱.۲ دستنخورده. سطح ۱ در ۳۲۰px میشود ۱۰.۴۲px.</p></div></header>
+    <div class="grid">
+      
+        <div class="col">
+          <p class="vw">320px · پایه 15.00px</p>
+          
+            <div class="sample" style="font-size:10.417px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 10.42px · meta · caption</p>
+            <div class="sample" style="font-size:12.500px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 12.50px · label · tertiary</p>
+            <div class="sample" style="font-size:15.000px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 15.00px · body · secondary</p>
+        </div>
+        <div class="col">
+          <p class="vw">390px · پایه 15.00px</p>
+          
+            <div class="sample" style="font-size:10.417px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 10.42px · meta · caption</p>
+            <div class="sample" style="font-size:12.500px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 12.50px · label · tertiary</p>
+            <div class="sample" style="font-size:15.000px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 15.00px · body · secondary</p>
+        </div>
+        <div class="col">
+          <p class="vw">768px · پایه 15.00px</p>
+          
+            <div class="sample" style="font-size:10.417px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 10.42px · meta · caption</p>
+            <div class="sample" style="font-size:12.500px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 12.50px · label · tertiary</p>
+            <div class="sample" style="font-size:15.000px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 15.00px · body · secondary</p>
+        </div>
+        <div class="col">
+          <p class="vw">1440px · پایه 16.50px</p>
+          
+            <div class="sample" style="font-size:11.458px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 11.46px · meta · caption</p>
+            <div class="sample" style="font-size:13.750px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 13.75px · label · tertiary</p>
+            <div class="sample" style="font-size:16.500px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 16.50px · body · secondary</p>
+        </div>
+    </div>
+  </section>
+  <section class="cand">
+    <header><span class="cid">ب</span>
+      <div><h3>کف روی پایه — ۱۶px</h3><p class="why">پایه هرگز زیر ۱۶px نمیرود. سطح ۱ در ۳۲۰px میشود ۱۱.۱۱px — همان مرجع دسکتاپ.</p></div></header>
+    <div class="grid">
+      
+        <div class="col">
+          <p class="vw">320px · پایه 16.00px</p>
+          
+            <div class="sample" style="font-size:11.111px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 11.11px · meta · caption</p>
+            <div class="sample" style="font-size:13.333px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 13.33px · label · tertiary</p>
+            <div class="sample" style="font-size:16.000px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 16.00px · body · secondary</p>
+        </div>
+        <div class="col">
+          <p class="vw">390px · پایه 16.00px</p>
+          
+            <div class="sample" style="font-size:11.111px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 11.11px · meta · caption</p>
+            <div class="sample" style="font-size:13.333px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 13.33px · label · tertiary</p>
+            <div class="sample" style="font-size:16.000px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 16.00px · body · secondary</p>
+        </div>
+        <div class="col">
+          <p class="vw">768px · پایه 16.00px</p>
+          
+            <div class="sample" style="font-size:11.111px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 11.11px · meta · caption</p>
+            <div class="sample" style="font-size:13.333px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 13.33px · label · tertiary</p>
+            <div class="sample" style="font-size:16.000px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 16.00px · body · secondary</p>
+        </div>
+        <div class="col">
+          <p class="vw">1440px · پایه 16.50px</p>
+          
+            <div class="sample" style="font-size:11.458px; line-height:1.45; letter-spacing:+0.04em; font-weight:400; color:rgba(255, 255, 255, 0.79)">
+              Meta caption 11px class
+            </div>
+            <p class="num">سطح 1 · 11.46px · meta · caption</p>
+            <div class="sample" style="font-size:13.750px; line-height:1.5; letter-spacing:+0.01em; font-weight:500; color:rgba(255, 255, 255, 0.89)">
+              Label text
+            </div>
+            <p class="num">سطح 2 · 13.75px · label · tertiary</p>
+            <div class="sample" style="font-size:16.500px; line-height:1.6; letter-spacing:0; font-weight:400; color:rgba(255, 255, 255, 0.89)">
+              Body copy reads like this
+            </div>
+            <p class="num">سطح 3 · 16.50px · body · secondary</p>
+        </div>
+    </div>
+  </section>
+  <footer>
+    تولید‌شده توسط <code>scripts/gen-type-floor-test.ts</code> · بدون شبکه ·
+    نسبت، پایه و وزن‌ها از <code>LiminalLayoutEngine</code>
+  </footer>
+</div>
+</body>
+</html>

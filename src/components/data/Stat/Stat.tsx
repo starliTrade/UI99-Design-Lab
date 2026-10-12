@@ -134,7 +134,7 @@ export function Stat({
         {resolvedTrend && (
           <span
             style={{
-              fontSize: '10px',
+              fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
               fontFamily: 'monospace',
               padding: '2px 8px',
               borderRadius: `${RADIUS.full}px`,

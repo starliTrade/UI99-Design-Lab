@@ -173,7 +173,7 @@ export function SimpleTooltip({
               borderRadius: `${controlRadius}px`,
               padding: '6px 12px',
               maxWidth: '260px',
-              fontSize: '12px',
+              fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
               lineHeight: 1.4,
               color: getTextStyle('primary', 4).color,
               pointerEvents: 'none',

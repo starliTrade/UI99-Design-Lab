@@ -189,7 +189,7 @@ export function Toast({
               padding: '4px 8px',
               borderRadius: `${RADIUS[6]}px`,
               color: semanticObj.text,
-              fontSize: '12px',
+              fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
               fontWeight: 500,
               cursor: 'pointer',
               transition: LiminalMotionEngine.getTransition('background', 'fast'),

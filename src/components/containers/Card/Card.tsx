@@ -186,7 +186,7 @@ export function Card({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            fontSize: '12px',
+            fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
             borderTop: `1px solid ${dividerRim}`,
             backgroundColor: SURFACE_TINT.faint,
           }}

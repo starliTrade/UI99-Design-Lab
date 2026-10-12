@@ -102,7 +102,7 @@ export function Progress({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            fontSize: '12px',
+            fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
             lineHeight: 1.4,
           }}
         >

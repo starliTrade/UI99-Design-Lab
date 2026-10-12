@@ -41,7 +41,7 @@ export function Footer({
   };
 
   const leftStyle: CSSProperties = {
-    fontSize: '12px',
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
     lineHeight: 1.5,
     color: getTextStyle('quaternary', 1).color,
     display: 'flex',
@@ -50,7 +50,7 @@ export function Footer({
   };
 
   const linksContainerStyle: CSSProperties = {
-    fontSize: '12px',
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
     lineHeight: 1.5,
     display: 'flex',
     alignItems: 'center',
