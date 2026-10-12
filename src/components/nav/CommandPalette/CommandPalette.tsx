@@ -183,7 +183,7 @@ export function CommandPalette({
                   padding: `${SPACING[4]}px`,
                   textAlign: 'center',
                   color: getTextStyle('tertiary', 1).color,
-                  fontSize: `${TYPOGRAPHY[2].fs}px`,
+                  fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                 }}
               >
                 No commands found
@@ -193,7 +193,7 @@ export function CommandPalette({
                 <div key={group.title} style={{ display: 'flex', flexDirection: 'column', gap: `${SPACING[1]}px` }}>
                   <div
                     style={{
-                      fontSize: `${TYPOGRAPHY[1].fs}px`,
+                      fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
                       fontWeight: 600,
                       textTransform: 'uppercase',
                       color: getTextStyle('tertiary', 1).color,
@@ -229,7 +229,7 @@ export function CommandPalette({
                             cursor: 'pointer',
                             background: isActive ? resolveSurface({ role: 'menu', state: 'hover' }).background : 'transparent',
                             color: isActive ? getTextStyle('primary', 3).color : getTextStyle('primary', 1).color,
-                            fontSize: `${TYPOGRAPHY[2].fs}px`,
+                            fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                             fontWeight: isActive ? 500 : 400,
                             transition: reducedMotion
                               ? 'none'
@@ -246,7 +246,7 @@ export function CommandPalette({
                           {item.shortcut && (
                             <span
                               style={{
-                                fontSize: `${TYPOGRAPHY[1].fs}px`,
+                                fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
                                 fontFamily: 'monospace',
                                 color: getTextStyle('tertiary', 1).color,
                                 background: resolveSurface({ role: 'menu' }).background,

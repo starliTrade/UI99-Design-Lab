@@ -56,7 +56,7 @@ export function LoadingPage() {
               </span>
               <span
                 style={{
-                  fontSize: `${TYPOGRAPHY[2].fs}px`,
+                  fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                   fontWeight: 600,
                   color: getTextStyle('primary', 1).color,
                 }}

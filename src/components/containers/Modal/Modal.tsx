@@ -118,7 +118,7 @@ export function Modal({
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[5].fs}px`, // 23px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(5), // 23px
     lineHeight: TYPOGRAPHY[5].lh,
     letterSpacing: TYPOGRAPHY[5].ls,
     fontWeight: 600,
@@ -162,7 +162,7 @@ export function Modal({
               {description && (
                 <div
                   style={{
-                    fontSize: `${TYPOGRAPHY[2].fs}px`,
+                    fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                     color: getTextStyle('tertiary', 3).color,
                     marginTop: '4px',
                   }}
@@ -203,7 +203,7 @@ export function Modal({
           style={{
             flex: 1,
             color: getTextStyle('secondary', 3).color,
-            fontSize: `${TYPOGRAPHY[3].fs}px`,
+            fontSize: LiminalLayoutEngine.getTypeSizeCss(3),
             lineHeight: 1.6,
           }}
         >

@@ -72,7 +72,7 @@ export function LoginPage() {
               </span>
               <span
                 style={{
-                  fontSize: `${TYPOGRAPHY[2].fs}px`,
+                  fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                   fontWeight: 600,
                   color: getTextStyle('primary', 1).color,
                 }}
@@ -164,7 +164,7 @@ export function LoginPage() {
 
                 <h1
                   style={{
-                    fontSize: `${TYPOGRAPHY[5].fs}px`,
+                    fontSize: LiminalLayoutEngine.getTypeSizeCss(5),
                     fontWeight: 600,
                     color: getTextStyle('primary', 1).color,
                     margin: 0,
@@ -174,7 +174,7 @@ export function LoginPage() {
                 </h1>
                 <p
                   style={{
-                    fontSize: `${TYPOGRAPHY[2].fs}px`,
+                    fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                     color: getTextStyle('secondary', 1).color,
                     marginTop: '4px',
                     margin: 0,

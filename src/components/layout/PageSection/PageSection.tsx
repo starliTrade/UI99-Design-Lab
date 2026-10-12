@@ -39,7 +39,7 @@ export function PageSection({
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[5].fs}px`, // 23px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(5), // 23px
     lineHeight: TYPOGRAPHY[5].lh,
     letterSpacing: TYPOGRAPHY[5].ls,
     fontWeight: 600,
@@ -48,7 +48,7 @@ export function PageSection({
   };
 
   const subtitleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: TYPOGRAPHY[2].lh,
     color: getTextStyle('tertiary', 1).color,
     margin: 0,

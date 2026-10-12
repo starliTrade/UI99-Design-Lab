@@ -92,7 +92,7 @@ export function Badge({
     border: `1px solid ${rim}`,
     color: labelColor, // neutral: the glyph carries the meaning
     borderRadius: `${LiminalLayoutEngine.RADIUS.full}px`, // the one place "loud" is allowed
-    fontSize: `${TYPOGRAPHY[1].fs}px`,
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
     letterSpacing: TYPOGRAPHY[1].ls,
     fontWeight: TYPOGRAPHY[2].weight,
     padding: `${SPACING[1]}px ${SPACING[3]}px`, // 4px 12px

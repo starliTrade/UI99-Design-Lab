@@ -63,7 +63,7 @@ export function Checkbox({
 
   const labelStyle: CSSProperties = {
     color: getTextStyle('secondary', 2).color,
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     fontWeight: 400,
     lineHeight: TYPOGRAPHY[2].lh,
     userSelect: 'none',

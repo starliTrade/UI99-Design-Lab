@@ -352,7 +352,7 @@ export function MultiSelect({
   };
 
   const labelStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[2].fs}px`,
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
@@ -362,7 +362,7 @@ export function MultiSelect({
   };
 
   const helperStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[1].fs}px`,
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
     lineHeight: TYPOGRAPHY[1].lh,
     letterSpacing: TYPOGRAPHY[1].ls,
     color: error
@@ -462,7 +462,7 @@ export function MultiSelect({
                 alignItems: 'center',
                 gap: `${SPACING[1]}px`,
                 padding: '2px 8px',
-                fontSize: `${TYPOGRAPHY[1].fs}px`,
+                fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
                 cursor: disabled ? 'not-allowed' : 'default',
               }}
             >
@@ -533,7 +533,7 @@ export function MultiSelect({
             background: 'transparent',
             outline: 'none',
             color: getTextStyle('primary', surfaceLevel).color,
-            fontSize: `${TYPOGRAPHY[3].fs}px`, // 16px
+            fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
             lineHeight: TYPOGRAPHY[3].lh,
             fontFamily: 'inherit',
             padding: 0,
@@ -662,7 +662,7 @@ export function MultiSelect({
                       opacity: opt.disabled ? 0.35 : 1,
                       background: optBg,
                       color: optColor,
-                      fontSize: `${TYPOGRAPHY[2].fs}px`,
+                      fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                       fontWeight: isSelected ? TYPOGRAPHY[2].weight : 400,
                       userSelect: 'none',
                       transition: reducedMotion
@@ -716,7 +716,7 @@ export function MultiSelect({
                 style={{
                   padding: `${SPACING[3]}px ${SPACING[4]}px`,
                   textAlign: 'center',
-                  fontSize: `${TYPOGRAPHY[2].fs}px`,
+                  fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                   color: getTextStyle('tertiary', 3).color,
                   userSelect: 'none',
                   position: 'relative',

@@ -125,7 +125,7 @@ export function Card({
   };
 
   const headerTitleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[4].fs}px`, // 19px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(4), // 19px
     lineHeight: TYPOGRAPHY[4].lh,
     letterSpacing: TYPOGRAPHY[4].ls,
     fontWeight: 600,
@@ -157,7 +157,7 @@ export function Card({
               <div
                 style={{
                   ...getTextStyle('tertiary', surfaceLevel),
-                  fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[1].fs}px`,
+                  fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
                   marginTop: '2px',
                 }}
               >

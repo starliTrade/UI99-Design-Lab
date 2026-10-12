@@ -28,7 +28,7 @@ export function TableCell({
 
   const tdStyle: CSSProperties = {
     padding: `${SPACING[3]}px ${SPACING[4]}px`,
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: TYPOGRAPHY[2].lh,
     color: isPrimary
       ? getTextStyle('primary', 1).color

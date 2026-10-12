@@ -182,7 +182,7 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
     border: isCurrent ? `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}` : '1px solid transparent',
     color: isCurrent ? getTextStyle('primary', 1).color : getTextStyle('secondary', 1).color,
     fontWeight: isCurrent ? 600 : 400,
-    fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
     cursor: 'pointer',
     outline: 'none',
     transition: reducedMotion

@@ -136,7 +136,7 @@ export function Sheet({
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[4].fs}px`, // 19px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(4), // 19px
     lineHeight: TYPOGRAPHY[4].lh,
     letterSpacing: TYPOGRAPHY[4].ls,
     fontWeight: 600,
@@ -195,7 +195,7 @@ export function Sheet({
               {subtitle && (
                 <div
                   style={{
-                    fontSize: `${TYPOGRAPHY[2].fs}px`,
+                    fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                     color: getTextStyle('tertiary', 2).color,
                     marginTop: '2px',
                   }}
@@ -236,7 +236,7 @@ export function Sheet({
           style={{
             flex: 1,
             color: getTextStyle('secondary', 2).color,
-            fontSize: `${TYPOGRAPHY[3].fs}px`,
+            fontSize: LiminalLayoutEngine.getTypeSizeCss(3),
             lineHeight: 1.6,
           }}
         >

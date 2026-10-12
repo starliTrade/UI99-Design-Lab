@@ -57,7 +57,7 @@ export function Mist({
     padding: tier === 'hero' ? `${SPACING[3]}px ${SPACING[5]}px` : `${SPACING[2]}px ${SPACING[4]}px`,
     borderRadius: `${finalRadius}px`,
     color: getTextStyle('primary', 2).color,
-    fontSize: `${TYPOGRAPHY[3].fs}px`,
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(3),
     lineHeight: TYPOGRAPHY[3].lh,
     fontWeight: tier === 'hero' ? 600 : 500,
     cursor: disabled ? 'not-allowed' : as === 'button' || onClick ? 'pointer' : 'default',

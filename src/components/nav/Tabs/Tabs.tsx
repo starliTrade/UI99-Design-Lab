@@ -115,7 +115,7 @@ export function Tab({
     '--liminal-surface-active': bg,
     padding: `${SPACING[2]}px ${SPACING[4]}px`,
     borderRadius: `${RADIUS[8]}px`, // 8px
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: TYPOGRAPHY[2].lh,
     fontFamily: 'inherit',
     fontWeight: 500,

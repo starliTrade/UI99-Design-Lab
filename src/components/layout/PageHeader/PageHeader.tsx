@@ -49,7 +49,7 @@ export function PageHeader({
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[7].fs}px`, // 33px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(7), // 33px
     lineHeight: TYPOGRAPHY[7].lh,
     letterSpacing: TYPOGRAPHY[7].ls,
     fontWeight: 700,
@@ -58,7 +58,7 @@ export function PageHeader({
   };
 
   const subtitleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[3].fs}px`, // 16px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
     lineHeight: TYPOGRAPHY[3].lh,
     letterSpacing: TYPOGRAPHY[3].ls,
     color: getTextStyle('secondary', 1).color,

@@ -210,7 +210,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     border: 'none',
     outline: 'none',
     color: getTextStyle('primary', surfaceLevel).color,
-    fontSize: `${TYPOGRAPHY[3].fs}px`, // 16px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
     lineHeight: TYPOGRAPHY[3].lh,
     fontFamily: 'inherit',
     width: '100%',
@@ -219,7 +219,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   };
 
   const labelStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
@@ -229,7 +229,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   };
 
   const helperStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(1), // 11px
     lineHeight: TYPOGRAPHY[1].lh,
     letterSpacing: TYPOGRAPHY[1].ls,
     color: error
@@ -379,7 +379,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       return (
         <span
           style={{
-            fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+            fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
             lineHeight: TYPOGRAPHY[2].lh,
             color: tertiaryColor,
             userSelect: 'none',
@@ -526,7 +526,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
             <div
               id={countId}
               style={{
-                fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+                fontSize: LiminalLayoutEngine.getTypeSizeCss(1), // 11px
                 lineHeight: TYPOGRAPHY[1].lh,
                 letterSpacing: TYPOGRAPHY[1].ls,
                 color: countColor,

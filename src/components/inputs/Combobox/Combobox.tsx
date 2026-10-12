@@ -438,7 +438,7 @@ export function Combobox({
                       opacity: opt.disabled ? 0.35 : 1,
                       background: optBg,
                       color: optColor,
-                      fontSize: `${TYPOGRAPHY[2].fs}px`,
+                      fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                       fontWeight: isSelected ? TYPOGRAPHY[2].weight : 400,
                       userSelect: 'none',
                       transition: reducedMotion
@@ -492,7 +492,7 @@ export function Combobox({
                 style={{
                   padding: `${SPACING[3]}px ${SPACING[4]}px`,
                   textAlign: 'center',
-                  fontSize: `${TYPOGRAPHY[2].fs}px`,
+                  fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                   color: getTextStyle('tertiary', 3).color,
                   userSelect: 'none',
                   position: 'relative',

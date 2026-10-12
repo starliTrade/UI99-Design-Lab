@@ -54,7 +54,7 @@ export function ErrorPage({
   };
 
   const codeStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[8].fs}px`, // 40px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(8), // 40px
     fontWeight: 700,
     letterSpacing: '-0.03em',
     lineHeight: 1,
@@ -64,7 +64,7 @@ export function ErrorPage({
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[6].fs}px`, // 28px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(6), // 28px
     lineHeight: TYPOGRAPHY[6].lh,
     letterSpacing: TYPOGRAPHY[6].ls,
     fontWeight: 600,
@@ -73,7 +73,7 @@ export function ErrorPage({
   };
 
   const descStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: 1.7,
     color: getTextStyle('secondary', 1).color,
     maxWidth: '400px',

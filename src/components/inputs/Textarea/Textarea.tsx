@@ -137,7 +137,7 @@ export function Textarea({
     outline: 'none',
     boxShadow: 'none',
     color: getTextStyle('primary', surfaceLevel).color,
-    fontSize: `${TYPOGRAPHY[3].fs}px`, // 16px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
     lineHeight: 1.6,
     fontFamily: 'inherit',
     width: '100%',
@@ -147,7 +147,7 @@ export function Textarea({
   };
 
   const labelStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
@@ -157,7 +157,7 @@ export function Textarea({
   };
 
   const helperStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(1), // 11px
     lineHeight: TYPOGRAPHY[1].lh,
     letterSpacing: TYPOGRAPHY[1].ls,
     color: error
@@ -257,7 +257,7 @@ export function Textarea({
             <div
               id={countId}
               style={{
-                fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+                fontSize: LiminalLayoutEngine.getTypeSizeCss(1), // 11px
                 lineHeight: TYPOGRAPHY[1].lh,
                 letterSpacing: TYPOGRAPHY[1].ls,
                 color: countColor,

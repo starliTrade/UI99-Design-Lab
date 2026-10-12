@@ -61,7 +61,7 @@ export function EmptyState({
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[5].fs}px`, // 23px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(5), // 23px
     lineHeight: TYPOGRAPHY[5].lh,
     fontWeight: 600,
     color: getTextStyle('primary', 1).color,
@@ -69,7 +69,7 @@ export function EmptyState({
   };
 
   const descStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: 1.7,
     color: getTextStyle('secondary', 1).color,
     maxWidth: '360px',

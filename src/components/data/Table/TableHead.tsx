@@ -39,7 +39,7 @@ export function TableHead({
   const thStyle: CSSProperties = {
     width,
     padding: `${SPACING[3]}px ${SPACING[4]}px`,
-    fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(1), // 11px
     lineHeight: TYPOGRAPHY[1].lh,
     letterSpacing: '+0.06em',
     textTransform: 'uppercase',

@@ -137,7 +137,7 @@ export function Table({
                 style={{
                   width: col.width,
                   padding: `${SPACING}px ${LiminalLayoutEngine.SPACING[4]}px`,
-                  fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[1].fs}px`,
+                  fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
                   letterSpacing: '+0.06em',
                   textTransform: 'uppercase',
                   fontWeight: 500,

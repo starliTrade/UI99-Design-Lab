@@ -51,7 +51,7 @@ export function FormSection({
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
   const titleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[3].fs}px`, // 16px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
     lineHeight: TYPOGRAPHY[3].lh,
     letterSpacing: TYPOGRAPHY[3].ls,
     fontWeight: 600,
@@ -103,7 +103,7 @@ export function FormField({
     >
       <label
         style={{
-          fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
+          fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
           fontWeight: 500,
           color: getTextStyle('tertiary', 1).color,
           userSelect: 'none',
@@ -115,13 +115,13 @@ export function FormField({
       {children}
 
       {hint && !error && (
-        <span style={{ fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[1].fs}px`, color: getTextStyle('quaternary', 1).color }}>
+        <span style={{ fontSize: LiminalLayoutEngine.getTypeSizeCss(1), color: getTextStyle('quaternary', 1).color }}>
           {hint}
         </span>
       )}
 
       {error && (
-        <span style={{ fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[1].fs}px`, color: SEMANTICS.DANGER.text, fontWeight: 500 }}>
+        <span style={{ fontSize: LiminalLayoutEngine.getTypeSizeCss(1), color: SEMANTICS.DANGER.text, fontWeight: 500 }}>
           {error}
         </span>
       )}

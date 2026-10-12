@@ -40,7 +40,7 @@ export function SidebarSection({
     >
       <div
         style={{
-          fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+          fontSize: LiminalLayoutEngine.getTypeSizeCss(1), // 11px
           lineHeight: TYPOGRAPHY[1].lh,
           letterSpacing: '+0.08em',
           textTransform: 'uppercase',

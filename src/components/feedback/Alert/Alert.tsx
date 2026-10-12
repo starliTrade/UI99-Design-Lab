@@ -82,7 +82,7 @@ export function Alert({
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: TYPOGRAPHY[2].lh,
     fontWeight: 600,
     color: getTextStyle('primary', 1).color,
@@ -91,7 +91,7 @@ export function Alert({
   };
 
   const messageStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: 1.6,
     color: getTextStyle('secondary', 1).color,
     margin: 0,

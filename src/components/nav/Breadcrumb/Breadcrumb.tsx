@@ -84,7 +84,7 @@ export function Breadcrumb({
     listStyle: 'none',
     margin: 0,
     padding: 0,
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: TYPOGRAPHY[2].lh,
     fontFamily: 'inherit',
   };

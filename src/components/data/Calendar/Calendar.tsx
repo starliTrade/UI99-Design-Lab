@@ -148,7 +148,7 @@ export function Calendar({
   };
 
   const titleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[3].fs}px`,
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(3),
     fontWeight: 600,
     color: getTextStyle('primary', 1).color,
   };
@@ -158,7 +158,7 @@ export function Calendar({
     gridTemplateColumns: 'repeat(7, 1fr)',
     textAlign: 'center',
     marginBottom: `${SPACING[2]}px`,
-    fontSize: `${TYPOGRAPHY[1].fs}px`,
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
     fontWeight: 500,
     color: getTextStyle('tertiary', 1).color,
   };
@@ -250,7 +250,7 @@ function DayCell({ date, selected, today, onClick, reducedMotion }: DayCellProps
     borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
     color: selected ? getTextStyle('primary', 4).color : today ? resolveBorder({ role: 'control', kind: 'edge', on: host }) : getTextStyle('primary', 1).color,
     fontWeight: selected || today ? 600 : 400,
-    fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
     cursor: 'pointer',
     border: today && !selected ? `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}` : '1px solid transparent',
   } as CSSProperties;

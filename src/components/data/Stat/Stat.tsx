@@ -71,7 +71,7 @@ export function Stat({
   };
 
   const labelStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(1), // 11px
     lineHeight: TYPOGRAPHY[1].lh,
     letterSpacing: '+0.04em',
     fontWeight: 400,
@@ -84,7 +84,7 @@ export function Stat({
   };
 
   const valueStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[6].fs}px`, // 28px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(6), // 28px
     lineHeight: TYPOGRAPHY[6].lh,
     letterSpacing: '-0.015em',
     fontWeight: 600,
@@ -96,7 +96,7 @@ export function Stat({
   };
 
   const subtitleStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[1].fs}px`, // 11px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(1), // 11px
     lineHeight: TYPOGRAPHY[1].lh,
     color: getTextStyle('quaternary', 1).color,
     margin: 0,

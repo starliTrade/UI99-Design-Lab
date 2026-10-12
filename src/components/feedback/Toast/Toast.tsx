@@ -153,7 +153,7 @@ export function Toast({
         <div
           style={{
             flex: 1,
-            fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+            fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
             lineHeight: TYPOGRAPHY[2].lh,
             color: getTextStyle('primary', 4).color,
             margin: 0,
@@ -164,7 +164,7 @@ export function Toast({
             <div className="flex flex-col">
               {title && <span className="font-semibold text-white/90">{title}</span>}
               {description && (
-                <span style={{ color: getTextStyle('secondary', 4).color, fontSize: `${TYPOGRAPHY[1].fs}px`, marginTop: '2px' }}>
+                <span style={{ color: getTextStyle('secondary', 4).color, fontSize: LiminalLayoutEngine.getTypeSizeCss(1), marginTop: '2px' }}>
                   {description}
                 </span>
               )}

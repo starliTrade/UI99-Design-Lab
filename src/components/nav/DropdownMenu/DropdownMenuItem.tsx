@@ -94,7 +94,7 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
       gap: `${SPACING[2]}px`,
       padding: `${SPACING[2]}px ${SPACING[3]}px`,
       borderRadius: `${RADIUS.chip}px`,
-      fontSize: `${TYPOGRAPHY[2].fs}px`,
+      fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
       fontWeight: 500,
       lineHeight: TYPOGRAPHY[2].lh,
       color: textColor,
@@ -230,7 +230,7 @@ export const DropdownMenuCheckboxItem = forwardRef<HTMLElement, DropdownMenuChec
       gap: `${SPACING[2]}px`,
       padding: `${SPACING[2]}px ${SPACING[3]}px`,
       borderRadius: `${RADIUS.chip}px`,
-      fontSize: `${TYPOGRAPHY[2].fs}px`,
+      fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
       fontWeight: 500,
       lineHeight: TYPOGRAPHY[2].lh,
       color: textColor,
@@ -367,7 +367,7 @@ export const DropdownMenuRadioItem = forwardRef<HTMLElement, DropdownMenuRadioIt
       gap: `${SPACING[2]}px`,
       padding: `${SPACING[2]}px ${SPACING[3]}px`,
       borderRadius: `${RADIUS.chip}px`,
-      fontSize: `${TYPOGRAPHY[2].fs}px`,
+      fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
       fontWeight: 500,
       lineHeight: TYPOGRAPHY[2].lh,
       color: textColor,
@@ -510,7 +510,7 @@ export const DropdownMenuLabel = forwardRef<HTMLDivElement, DropdownMenuLabelPro
 
     const labelStyle: CSSProperties = {
       padding: `${SPACING[1]}px ${SPACING[3]}px`,
-      fontSize: `${TYPOGRAPHY[1].fs}px`,
+      fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
       fontWeight: 600,
       textTransform: 'uppercase',
       color: getTextStyle('tertiary', 1).color,
@@ -562,7 +562,7 @@ export function DropdownMenuShortcut({
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
   const shortcutStyle: CSSProperties = {
-    fontSize: `${TYPOGRAPHY[1].fs}px`,
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
     fontFamily: 'monospace',
     color: getTextStyle('tertiary', 1).color,
     background: resolveSurface({ role: 'menu' }).background,

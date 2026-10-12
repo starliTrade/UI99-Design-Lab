@@ -81,21 +81,21 @@ export const buttonVariants = createVariants({
     size: {
       sm: {
         padding: '6px 12px',
-        fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[1].fs}px`,
+        fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
         minHeight: '32px',
         borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
         lineHeight: 1.4,
       },
       md: {
         padding: '10px 18px',
-        fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
+        fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
         minHeight: '44px',
         borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
         lineHeight: 1.5,
       },
       lg: {
         padding: `${LiminalLayoutEngine.SPACING[3]}px ${LiminalLayoutEngine.SPACING[5]}px`,
-        fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[3].fs}px`,
+        fontSize: LiminalLayoutEngine.getTypeSizeCss(3),
         minHeight: '52px',
         borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
         lineHeight: 1.5,
@@ -231,25 +231,25 @@ export const Button = createLiminalComponent<ButtonProps>(
     const sizeStyles: Record<ButtonSize, CSSProperties> = {
       sm: {
         padding: '6px 12px',
-        fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[1].fs}px`,
+        fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
         minHeight: '32px',
         lineHeight: 1.4,
       },
       md: {
         padding: '10px 18px',
-        fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
+        fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
         minHeight: '44px', // mobile touch target compliant
         lineHeight: 1.5,
       },
       lg: {
         padding: `${LiminalLayoutEngine.SPACING[3]}px ${LiminalLayoutEngine.SPACING[5]}px`,
-        fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[3].fs}px`,
+        fontSize: LiminalLayoutEngine.getTypeSizeCss(3),
         minHeight: '52px',
         lineHeight: 1.5,
       },
       icon: {
         padding: 0,
-        fontSize: `${LiminalLayoutEngine.TYPOGRAPHY[2].fs}px`,
+        fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
         minHeight: '44px',
         lineHeight: 1,
       },
