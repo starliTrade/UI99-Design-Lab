@@ -138,4 +138,55 @@ export class LiminalLayoutEngine {
       fontWeight: t.weight,
     };
   }
+
+  // == 4. BREAKPOINTS ==
+  //
+  // A breakpoint is not a device. It is the width at which a layout stops
+  // fitting — so each one is derived from the content's own minimum widths,
+  // and each can be checked: at the breakpoint the layout sits exactly on its
+  // floor; one pixel narrower, something is squeezed below what it needs.
+  //
+  // The six numbers this replaces (600 / 640 / 699 / 768 / 800 / 1099) were
+  // device categories wearing numeric costumes. Two of them disagreed about
+  // the same event: the sidebar was hidden at 800px but the nav that replaces
+  // it appeared at 640px — so between 640 and 800 there was neither.
+
+  /**
+   * The narrowest a text column may be and still read as a column.
+   * 45 characters is the floor of a comfortable measure (Bringhurst: 45–75);
+   * at the 16px body size an Inter character advances ~0.5em, so 45 × 8px.
+   */
+  static readonly MEASURE_MIN = 360;
+
+  /** The narrowest a grid cell may be and still hold a control or a label. */
+  static readonly CELL_MIN = 64;
+
+  /** The narrowest a form field may be and still show a value (~20 chars). */
+  static readonly FIELD_MIN = 200;
+
+  /** Sidebar width. */
+  static readonly SIDEBAR_W = 220;
+
+  /**
+   * Every breakpoint, derived. Nothing here is chosen.
+   *
+   * `gridWide` — twelve cells at their floor, plus the eleven gaps between.
+   * `gridMid`  — six cells at their floor, plus the five gaps between.
+   * `formRow`  — two fields side by side, plus the gap between.
+   * `shellSidebar` — sidebar + gap + one readable column + body padding.
+   *
+   * The mobile nav appears at `shellSidebar`, not at its own number: it exists
+   * *because* the sidebar is gone, so it is the same event and must be the
+   * same width.
+   */
+  static readonly BREAKPOINTS = (() => {
+    const s = LiminalLayoutEngine.SPACING;
+    return {
+      gridWide: 12 * LiminalLayoutEngine.CELL_MIN + 11 * s[4], // 944
+      gridMid: 6 * LiminalLayoutEngine.CELL_MIN + 5 * s[4], // 464
+      formRow: 2 * LiminalLayoutEngine.FIELD_MIN + s[5], // 424
+      shellSidebar:
+        LiminalLayoutEngine.SIDEBAR_W + s[5] + LiminalLayoutEngine.MEASURE_MIN + 2 * s[5], // 652
+    } as const;
+  })();
 }

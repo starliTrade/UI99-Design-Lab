@@ -370,12 +370,8 @@
   scrollbar-width: none;
 }
 
-@media (max-width: 768px) {
-  .liminal-sidebar {
-    width: 100% !important;
-    position: static !important;
-  }
-}
+/* The responsive sidebar rule now lives in Sidebar.tsx, where it can read the
+   derived breakpoint from the engine instead of hard-coding a number. */
 
 @keyframes liminal-skeleton-pulse {
   0%, 100% {
