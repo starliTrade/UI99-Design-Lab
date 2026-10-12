@@ -1,13 +1,59 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import type { Direction } from './liminal-direction';
 
+/**
+ * Where a floating element sits relative to its trigger.
+ *
+ * `top` / `bottom` / `left` / `right` are PHYSICAL sides: `left` is the left of
+ * the screen in every direction.
+ *
+ * `inline-start` / `inline-end` are the same two sides named by the inline
+ * axis: `inline-start` is left in LTR and right in RTL. A dropdown that opens
+ * beside its trigger on the side the text begins should ask for
+ * `inline-start`, not `left`.
+ *
+ * The `-start` / `-end` suffix means different axes depending on the side, and
+ * that is the established convention (Radix, Floating UI):
+ *
+ *   `bottom-start`  aligns along the INLINE axis — the two start edges meet,
+ *                   which is the left edges in LTR and the right edges in RTL.
+ *   `left-start`    aligns along the BLOCK axis — the two top edges meet, in
+ *                   every direction, because the block axis does not mirror.
+ */
 export type Placement =
   | 'top' | 'top-start' | 'top-end'
   | 'bottom' | 'bottom-start' | 'bottom-end'
   | 'left' | 'left-start' | 'left-end'
-  | 'right' | 'right-start' | 'right-end';
+  | 'right' | 'right-start' | 'right-end'
+  | 'inline-start' | 'inline-start-start' | 'inline-start-end'
+  | 'inline-end' | 'inline-end-start' | 'inline-end-end';
+
+/** The physical sides an inline placement resolves to. */
+const INLINE_START: Record<Direction, 'left' | 'right'> = { ltr: 'left', rtl: 'right' };
+const INLINE_END: Record<Direction, 'left' | 'right'> = { ltr: 'right', rtl: 'left' };
+
+/** Resolve an inline placement to the physical one for this direction. */
+function physicalPlacement(placement: Placement, dir: Direction): Placement {
+  if (placement.startsWith('inline-start')) {
+    return placement.replace('inline-start', INLINE_START[dir]) as Placement;
+  }
+  if (placement.startsWith('inline-end')) {
+    return placement.replace('inline-end', INLINE_END[dir]) as Placement;
+  }
+  return placement;
+}
 
 export interface PositionOptions {
   placement?: Placement;
+  /**
+   * The base direction. Defaults to `ltr`.
+   *
+   * It changes two things and nothing else: `-start`/`-end` on a `top` or
+   * `bottom` placement align along the inline axis, and `inline-start` /
+   * `inline-end` resolve to a physical side. A physical placement is physical
+   * in every direction — that is what makes it physical.
+   */
+  dir?: Direction;
   offset?: { x?: number; y?: number };
   flip?: boolean;
   shift?: boolean;
@@ -29,7 +75,8 @@ export class LiminalPositioningEngine {
     options: PositionOptions = {}
   ): PositionResult {
     const {
-      placement = 'bottom',
+      placement: requested = 'bottom',
+      dir = 'ltr',
       offset = { x: 0, y: 8 },
       flip = true,
       shift = true,
@@ -40,6 +87,11 @@ export class LiminalPositioningEngine {
       width: typeof window !== 'undefined' ? window.innerWidth : 1920,
       height: typeof window !== 'undefined' ? window.innerHeight : 1080,
     };
+
+    // An inline placement becomes a physical one here, once, so every branch
+    // below works in physical coordinates and there is only one place that
+    // knows about direction.
+    const placement = physicalPlacement(requested, dir);
 
     let x = 0;
     let y = 0;
@@ -55,11 +107,12 @@ export class LiminalPositioningEngine {
         y = triggerRect.top - floatingRect.height - offsetY;
         break;
       case 'top-start':
-        x = triggerRect.left;
+        // The two START edges meet: left edges in LTR, right edges in RTL.
+        x = dir === 'rtl' ? triggerRect.right - floatingRect.width : triggerRect.left;
         y = triggerRect.top - floatingRect.height - offsetY;
         break;
       case 'top-end':
-        x = triggerRect.right - floatingRect.width;
+        x = dir === 'rtl' ? triggerRect.left : triggerRect.right - floatingRect.width;
         y = triggerRect.top - floatingRect.height - offsetY;
         break;
       case 'bottom':
@@ -67,11 +120,11 @@ export class LiminalPositioningEngine {
         y = triggerRect.bottom + offsetY;
         break;
       case 'bottom-start':
-        x = triggerRect.left;
+        x = dir === 'rtl' ? triggerRect.right - floatingRect.width : triggerRect.left;
         y = triggerRect.bottom + offsetY;
         break;
       case 'bottom-end':
-        x = triggerRect.right - floatingRect.width;
+        x = dir === 'rtl' ? triggerRect.left : triggerRect.right - floatingRect.width;
         y = triggerRect.bottom + offsetY;
         break;
       case 'left':
