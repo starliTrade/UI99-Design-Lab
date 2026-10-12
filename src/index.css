@@ -143,6 +143,11 @@
   --liminal-lh-8: 1.1; /* unitless multiplier */
   --liminal-weight-8: 700;
 
+  /* ── 12b. FONTS ──────────────────────────────────────────────── */
+  --liminal-font-en: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --liminal-font-fa: Vazirmatn, "Vazirmatn RD", "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif;
+  --liminal-line-height-fa-floor: 1.5625; /* from Vazirmatn metrics */
+
   /* ── 13. MOTION ──────────────────────────────────────────────── */
   --liminal-duration-instant: 100ms;
   --liminal-duration-fast: 150ms;
@@ -303,6 +308,11 @@
   --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
   --liminal-lh-8: 1.1; /* unitless multiplier */
   --liminal-weight-8: 700;
+
+  /* ── 12b. FONTS ──────────────────────────────────────────────── */
+  --liminal-font-en: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --liminal-font-fa: Vazirmatn, "Vazirmatn RD", "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif;
+  --liminal-line-height-fa-floor: 1.5625; /* from Vazirmatn metrics */
 
   /* ── 13. MOTION ──────────────────────────────────────────────── */
   --liminal-duration-instant: 100ms;

@@ -13,6 +13,7 @@
  */
 
 import { LADDER, HALF, WELLS } from './liminal-ladder';
+import { PERSIAN_FONT_STACK, PERSIAN_LINE_HEIGHT_FLOOR } from './liminal-persian';
 import {
   RIM,
   SHADOWS,
@@ -132,6 +133,15 @@ export function generateCssVars(): string {
   });
 
   // ── 13. MOTION ─────────────────────────────────────────────────────
+  // ── 12b. FONTS ─────────────────────────────────────────────────────
+  // The Latin stack is the consumer's choice. The Persian stack is not: the
+  // line-height floor in liminal-persian.ts is derived from Vazirmatn's own
+  // metrics, so a different Persian face would need the floor re-derived.
+  section('12b. FONTS');
+  v('font-en', 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif');
+  v('font-fa', PERSIAN_FONT_STACK);
+  v('line-height-fa-floor', String(PERSIAN_LINE_HEIGHT_FLOOR), 'from Vazirmatn metrics');
+
   section('13. MOTION');
   Object.entries(LiminalMotionEngine.DURATION).forEach(([k, val]) => v(`duration-${k}`, `${val}ms`));
   Object.entries(LiminalMotionEngine.EASING).forEach(([k, val]) => v(`ease-${k}`, val));
