@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { CSSProperties, KeyboardEvent, ChangeEvent } from 'react';
 import {
   getDirectionalRim,
   getTextStyle,
   getLadderColor,
-  getFocusRing,
   LADDER,
 } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
@@ -34,7 +33,6 @@ export function Radio({
   className = '',
   style: customStyle = {},
 }: RadioProps) {
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
 
   const SPACING = LiminalLayoutEngine.SPACING;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
@@ -62,7 +60,6 @@ export function Radio({
       : offRim
       ? '1px solid transparent'
       : `1px solid ${LADDER[3]}`,
-    ...getFocusRing(isKeyboardFocused),
   };
 
   const dotStyle: CSSProperties = {
@@ -84,10 +81,6 @@ export function Radio({
 
   const handleKeyDown = (e: KeyboardEvent<HTMLLabelElement>) => {
     if (disabled) return;
-    if (e.key === 'Tab') {
-      setIsKeyboardFocused(true);
-      return;
-    }
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
       onChange();
@@ -105,8 +98,7 @@ export function Radio({
       htmlFor={id}
       tabIndex={disabled ? -1 : 0}
       onKeyDown={handleKeyDown}
-      onMouseDown={() => setIsKeyboardFocused(false)}
-      onBlur={() => setIsKeyboardFocused(false)}
+      data-liminal-focusable=""
       className={className}
       style={{
         display: 'inline-flex',
@@ -116,7 +108,9 @@ export function Radio({
         opacity: disabled ? 0.5 : 1,
         userSelect: 'none',
         boxSizing: 'border-box',
-        outline: 'none',
+        // NO `outline: none` here. An inline style beats a CSS rule, so it
+        // would silently cancel the layer's :focus-visible ring — which is
+        // exactly what the eye test caught. The layer owns focus now.
         ...customStyle,
       }}
     >

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { CSSProperties, KeyboardEvent, ChangeEvent } from 'react';
 import {
   getDirectionalRim,
@@ -7,7 +7,6 @@ import {
 } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
-import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 
 export interface CheckboxProps {
@@ -33,16 +32,12 @@ export function Checkbox({
   className = '',
   style: customStyle = {},
 }: CheckboxProps) {
-  const [isKeyboardFocused, setIsKeyboardFocused] = useState<boolean>(false);
-
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
   const offRim = getDirectionalRim(2, 2, false);
-
-  const focusRing = LiminalComponentEngine.getFocusRing(isKeyboardFocused);
 
   const boxStyle: CSSProperties = {
     width: '20px',
@@ -64,7 +59,6 @@ export function Checkbox({
       : offRim
       ? '1px solid transparent'
       : `1px solid ${LADDER[3]}`,
-    ...focusRing,
   };
 
   const labelStyle: CSSProperties = {
@@ -77,10 +71,6 @@ export function Checkbox({
 
   const handleKeyDown = (e: KeyboardEvent<HTMLLabelElement>) => {
     if (disabled) return;
-    if (e.key === 'Tab') {
-      setIsKeyboardFocused(true);
-      return;
-    }
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
       onChange(!checked);
@@ -98,8 +88,11 @@ export function Checkbox({
       htmlFor={id}
       tabIndex={disabled ? -1 : 0}
       onKeyDown={handleKeyDown}
-      onMouseDown={() => setIsKeyboardFocused(false)}
-      onBlur={() => setIsKeyboardFocused(false)}
+      // The browser knows whether focus came from a keyboard. Hand-rolled Tab
+      // tracking could not see Shift+Tab, programmatic focus, or a screen
+      // reader moving the cursor — and it was a second copy of what
+      // :focus-visible already does correctly.
+      data-liminal-focusable=""
       className={className}
       style={{
         display: 'inline-flex',
@@ -109,7 +102,9 @@ export function Checkbox({
         opacity: disabled ? 0.5 : 1,
         userSelect: 'none',
         boxSizing: 'border-box',
-        outline: 'none',
+        // NO `outline: none` here. An inline style beats a CSS rule, so it
+        // would silently cancel the layer's :focus-visible ring — which is
+        // exactly what the eye test caught. The layer owns focus now.
         ...customStyle,
       }}
     >
