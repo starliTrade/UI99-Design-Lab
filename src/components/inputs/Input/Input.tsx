@@ -99,8 +99,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   forwardedRef
 ) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [isToggleHovered, setIsToggleHovered] = useState<boolean>(false);
-  const [isClearHovered, setIsClearHovered] = useState<boolean>(false);
   const [internalVal, setInternalVal] = useState<string>(value ?? defaultValue ?? '');
 
   const localInputRef = useRef<HTMLInputElement>(null);
@@ -253,9 +251,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   };
 
   // Toggle Password Action (WS-1)
-  const toggleIconColor = isToggleHovered
-    ? getTextStyle('secondary', surfaceLevel).color
-    : getTextStyle('tertiary', surfaceLevel).color;
+  //
+  // The layer owns `color` for these icons — see data-liminal-hover-color on
+  // the button. Setting it here would cancel the hover rule, which is what had
+  // happened in every other user of the pattern. The target is `primary`:
+  // `secondary` derives to the same alpha as `tertiary` (both 0.790), so a
+  // secondary hover would not have changed anything even once the rule worked.
+  const toggleIconIdle = getTextStyle('tertiary', surfaceLevel).color;
+  const toggleIconHover = getTextStyle('primary', surfaceLevel).color;
 
   const toggleButtonStyle: CSSProperties = {
     display: 'inline-flex',
@@ -268,12 +271,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     padding: 0,
     margin: 0,
     cursor: disabled ? 'not-allowed' : 'pointer',
-    color: toggleIconColor,
+    '--liminal-color-idle': toggleIconIdle,
+    '--liminal-hover-color': toggleIconHover,
     flexShrink: 0,
     transition: reducedMotion
       ? 'none'
       : LiminalMotionEngine.getTransition('color', 'fast'),
-  };
+  } as CSSProperties;
 
   const handleToggleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -290,8 +294,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       aria-label="Toggle password visibility"
       disabled={disabled}
       onClick={handleToggleClick}
-      onMouseEnter={() => setIsToggleHovered(true)}
-      onMouseLeave={() => setIsToggleHovered(false)}
+      data-liminal-hover-color=""
       style={toggleButtonStyle}
     >
       <LiminalIcon
@@ -302,10 +305,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     </button>
   ) : null;
 
-  // Clear Action (WS-4)
-  const clearIconColor = isClearHovered
-    ? getTextStyle('secondary', surfaceLevel).color
-    : getTextStyle('tertiary', surfaceLevel).color;
+  // Clear Action (WS-4) — same treatment as the toggle above.
+  const clearIconIdle = getTextStyle('tertiary', surfaceLevel).color;
+  const clearIconHover = getTextStyle('primary', surfaceLevel).color;
 
   const clearButtonStyle: CSSProperties = {
     display: 'inline-flex',
@@ -318,12 +320,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     padding: 0,
     margin: 0,
     cursor: disabled ? 'not-allowed' : 'pointer',
-    color: clearIconColor,
+    '--liminal-color-idle': clearIconIdle,
+    '--liminal-hover-color': clearIconHover,
     flexShrink: 0,
     transition: reducedMotion
       ? 'none'
       : LiminalMotionEngine.getTransition('color', 'fast'),
-  };
+  } as CSSProperties;
 
   const handleClearClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -354,8 +357,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       aria-label="Clear input"
       disabled={disabled}
       onClick={handleClearClick}
-      onMouseEnter={() => setIsClearHovered(true)}
-      onMouseLeave={() => setIsClearHovered(false)}
+      data-liminal-hover-color=""
       style={clearButtonStyle}
     >
       <LiminalIcon
