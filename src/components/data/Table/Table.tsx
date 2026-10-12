@@ -1,8 +1,8 @@
+import { TableRow } from './TableRow';
 import React from 'react';
 import type { CSSProperties, ReactNode, MouseEvent } from 'react';
 import {
   getLiminalStyle,
-  getDirectionalRim,
   getLadderColor,
   getTextStyle,
 } from '../../../engine/spec-engine';
@@ -56,7 +56,6 @@ export function Table({
 
   // A row separator: a seam inside the work surface.
   const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
-  const selectedRim = getDirectionalRim(2, 1, false);
 
   const containerStyle: CSSProperties = {
     width: '100%',
@@ -103,9 +102,11 @@ export function Table({
     onSelectRow?.(index, !isCurrentlySelected);
   };
 
-  const SPACING = 12;
-  const TYPOGRAPHY_FS = 13;
-  const TYPOGRAPHY_LH = 1.5;
+  // The legacy path's last hand-picked numbers. SPACING[3] is 12 and level 2 is
+  // 13px at the reference base, so nothing moves — but they are derived now.
+  const SPACING = LiminalLayoutEngine.SPACING[3];
+  const TYPOGRAPHY_FS = LiminalLayoutEngine.TYPOGRAPHY[2].fs;
+  const TYPOGRAPHY_LH = LiminalLayoutEngine.TYPOGRAPHY[2].lh;
 
   return (
     <div className={className} style={containerStyle}>
@@ -158,35 +159,15 @@ export function Table({
           {data?.map((row, index) => {
             const isSelected = selectedRows.includes(index);
 
-            // The row's own background. A selected row keeps its selection on
-            // hover, so the hover value equals the idle value for it.
-            const rowBg = isSelected
-              ? selectedRim
-                ? selectedRim.cssBackground
-                : resolveSurface({ role: 'work', state: 'hover' }).background
-              : 'transparent';
-
             return (
-              <tr
+              // ONE row implementation. This path used to render its own <tr>
+              // with its own hand-picked SPACING and TYPOGRAPHY_FS, so the
+              // library shipped two different rows: this one and TableRow.
+              // The data-driven API is kept, but the row is TableRow's.
+              <TableRow
                 key={keyExtractor ? keyExtractor(row) : (row.id || index)}
-                role="row"
-                aria-selected={isSelected}
+                isSelected={isSelected}
                 onClick={() => onRowClick?.(row, index)}
-                // Hover is the browser's job. Tracking the hovered index in
-                // state re-rendered EVERY row on every mouse move across the
-                // table — with fifty rows, fifty renders per hover.
-                data-liminal-surface=""
-                style={
-                  {
-                    '--liminal-surface-idle': rowBg,
-                    '--liminal-surface-hover': isSelected ? rowBg : rimSideColor,
-                    // A row is not a button: pressing it should not flash.
-                    '--liminal-surface-active': isSelected ? rowBg : rimSideColor,
-                    cursor: onRowClick ? 'pointer' : 'default',
-                    transition: LiminalMotionEngine.getTransition('background', 'fast'),
-                    userSelect: 'none',
-                  } as CSSProperties
-                }
               >
                 {selectable && (
                   <td
@@ -214,7 +195,7 @@ export function Table({
                       key={col.key}
                       style={{
                         padding: `${SPACING}px 16px`,
-                        fontSize: `${TYPOGRAPHY_FS}px`,
+                        fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                         lineHeight: TYPOGRAPHY_LH,
                         color: isPrimaryCol
                           ? getTextStyle('primary', 1).color
@@ -229,7 +210,7 @@ export function Table({
                     </td>
                   );
                 })}
-              </tr>
+              </TableRow>
             );
           })}
         </tbody>
