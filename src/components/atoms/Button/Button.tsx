@@ -6,7 +6,6 @@ import {
   type LiminalComponentProps,
 } from '../../../engine/liminal-component';
 import {
-  useLiminalInteraction,
   LiminalComponentEngine,
 } from '../../../engine/liminal-component-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -143,7 +142,7 @@ export interface ButtonProps
  * - Built with createLiminalComponent factory (forwardRef, asChild, data-liminal-component)
  * - Powered by createVariants / buttonVariants engine
  * - Composition API with Slot (asChild pattern)
- * - State machine via useLiminalInteraction (keyboard vs pointer focus isolation)
+ * - Interaction via the CSS layer: hover, press and :focus-visible, no JS state
  * - Optical surfaces via LiminalComponentEngine.resolveInteractiveSurface
  * - Locked transitions via LiminalMotionEngine
  * - Loading state with zero-layout-shift and Phosphor SpinnerGap
@@ -213,19 +212,16 @@ export const Button = createLiminalComponent<ButtonProps>(
     }
     const resolvedAriaLabel = effectiveAriaLabel || (isIconOnly ? 'button' : undefined);
 
-    // 1. Interaction DNA Hook
-    const { currentState, isKeyboardFocused, handlers, ariaProps } = useLiminalInteraction<HTMLElement>({
-      disabled,
-      forcedState,
-      onMouseEnter,
-      onMouseLeave,
-      onMouseDown,
-      onMouseUp,
-      onFocus,
-      onBlur,
-      onKeyDown,
-      onKeyUp,
-    });
+    // 1. Interaction
+    //
+    // This used to call `useLiminalInteraction` and keep only `ariaProps` from
+    // it. `currentState`, `isKeyboardFocused` and `handlers` were destructured
+    // and never used, so the state machine never ran while two useState, a
+    // useMemo and six useCallbacks were built and thrown away on every render.
+    //
+    // And `ariaProps` itself — `aria-disabled` and `tabIndex` — was redundant:
+    // both elements already set them explicitly further down. So the hook
+    // contributed nothing at all. The layer owns interaction now.
 
     // 2. Size token resolution from LiminalLayoutEngine
     const sizeStyles: Record<ButtonSize, CSSProperties> = {
@@ -335,6 +331,16 @@ export const Button = createLiminalComponent<ButtonProps>(
     // 5. Composite Final Style
     // CSS custom properties are not part of React's CSSProperties type, so the
     // object is widened once here rather than casting at every use site.
+    // `forcedState` used to be inert — the hook computed it and Button threw the
+    // result away, so a showcase passing `forcedState="hover"` showed an idle
+    // button. It now freezes the surface at the requested state.
+    if (forcedState) {
+      const frozen = forcedState === 'hover' ? hoverBg : forcedState === 'active' ? activeBg : idleBg;
+      idleBg = frozen;
+      hoverBg = frozen;
+      activeBg = frozen;
+    }
+
     const finalStyle = {
       ...variantBase,
       ...staticStyle,
@@ -550,7 +556,6 @@ export const Button = createLiminalComponent<ButtonProps>(
           href={disabled || isLoading ? undefined : (href || undefined)}
           target={target}
           rel={effectiveRel}
-          {...ariaProps}
           {...(restProps as any)}
         >
           {renderSlotChild(children)}
@@ -575,7 +580,6 @@ export const Button = createLiminalComponent<ButtonProps>(
           onClick={handleClick}
           className={className}
           style={finalStyle}
-          {...ariaProps}
           {...(restProps as any)}
         >
           {renderContent()}
@@ -595,7 +599,6 @@ export const Button = createLiminalComponent<ButtonProps>(
         onClick={handleClick}
         className={className}
         style={finalStyle}
-        {...ariaProps}
         {...restProps}
       >
         {renderContent()}
