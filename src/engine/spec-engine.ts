@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { LADDER, HALF, getLadderColor, FOCUS_RING_COLOR } from './liminal-ladder';
+import { resolveTextAlpha, type TextRole } from './liminal-contrast';
 
 // Re-exported so existing imports keep working; the definitions live in
 // liminal-ladder.ts, which has no dependencies and therefore cannot create a cycle.
@@ -194,40 +195,37 @@ export function getLiminalStyle(el: LiminalStyleElement) {
   };
 }
 
-// 5) TEXT HIERARCHY (ΔL_text = 0.10, never pure white)
-// CONTRAST POLICY (enforced by src/engine/__tests__/tokens.test.ts):
-//   primary / secondary / tertiary → normal text → WCAG AA 4.5:1 minimum
-//   quaternary                     → large text & non-text only → 3:1 minimum
-// The tertiary floor is 0.46 because that is the smallest alpha that reaches
-// 4.5:1 on the darkest surface (S0 #060709). Quaternary is deliberately capped
-// below body-text use; it must never be applied to small text.
+// 5) TEXT HIERARCHY — DERIVED, NOT HAND-PICKED
+//
+// The alphas below are computed from the floors in liminal-contrast.ts, which
+// are themselves derived from each role's declared use. They are not chosen.
+//
+//   primary    Lc 90  — body-preferred
+//   secondary  Lc 75  — body-minimum
+//   tertiary   Lc 75  — body-minimum (same floor as secondary by design)
+//   quaternary Lc 30  — non-text marks only
+//
+// secondary and tertiary therefore share one alpha. Their hierarchy lives in
+// size and weight, not in colour. See DESIGN-CONTRACT.md §4.
+//
+// The table is recomputed per surface, because the floor is a property of the
+// surface the text sits on, not a global constant.
+const TEXT_SURFACES = LADDER;
+
+function deriveAlpha(role: TextRole, surface: string): number {
+  return resolveTextAlpha(role, surface);
+}
+
 export const TEXT_HIERARCHY = {
-  primary: 0.88,   // L ≈ 0.90
-  secondary: 0.62, // L ≈ 0.80
-  tertiary: {
-    0: 0.46,
-    1: 0.46,
-    2: 0.46,
-    3: 0.47,
-    4: 0.48,
-    5: 0.49,
-  },
-  quaternary: {
-    0: 0.35,
-    1: 0.35,
-    2: 0.36,
-    3: 0.37,
-    4: 0.38,
-    5: 0.39,
-  },
+  primary: TEXT_SURFACES.map((s) => deriveAlpha('primary', s)),
+  secondary: TEXT_SURFACES.map((s) => deriveAlpha('secondary', s)),
+  tertiary: TEXT_SURFACES.map((s) => deriveAlpha('tertiary', s)),
+  quaternary: TEXT_SURFACES.map((s) => deriveAlpha('quaternary', s)),
 } as const;
 
 export function getTextAlpha(level: TextLevel, surfaceN: number = 0): number {
-  const clampedN = Math.max(0, Math.min(5, Math.floor(surfaceN))) as 0 | 1 | 2 | 3 | 4 | 5;
-  if (level === 'primary') return TEXT_HIERARCHY.primary;
-  if (level === 'secondary') return TEXT_HIERARCHY.secondary;
-  if (level === 'tertiary') return TEXT_HIERARCHY.tertiary[clampedN];
-  return TEXT_HIERARCHY.quaternary[clampedN];
+  const n = Math.max(0, Math.min(TEXT_HIERARCHY.primary.length - 1, Math.floor(surfaceN)));
+  return TEXT_HIERARCHY[level][n];
 }
 
 export function getTextStyle(level: TextLevel, surfaceN: number = 0): CSSProperties {

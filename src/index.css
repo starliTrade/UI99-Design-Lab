@@ -48,10 +48,10 @@
   --liminal-veil-canvas: rgba(6, 7, 9, 0.85);
 
   /* ── 6. TEXT (never pure white) ──────────────────────────────── */
-  --liminal-text-primary: rgba(255, 255, 255, 0.88);
-  --liminal-text-secondary: rgba(255, 255, 255, 0.62);
-  --liminal-text-tertiary: rgba(255, 255, 255, 0.46); /* S0 floor; AA ≥4.5:1 */
-  --liminal-text-quaternary: rgba(255, 255, 255, 0.35); /* ≥3:1, non-text only */
+  --liminal-text-primary: rgba(255, 255, 255, 0.89,0.889,0.888,0.887,0.887,0.889,0.888,0.887,0.887);
+  --liminal-text-secondary: rgba(255, 255, 255, 0.79,0.789,0.789,0.788,0.786,0.784,0.784,0.785,0.783);
+  --liminal-text-tertiary: rgba(255, 255, 255, 0.79); /* S0 floor; AA ≥4.5:1 */
+  --liminal-text-quaternary: rgba(255, 255, 255, 0.448); /* ≥3:1, non-text only */
 
   /* ── 7. SEMANTICS ────────────────────────────────────────────── */
   --liminal-success: #34C08B;
@@ -207,10 +207,10 @@
   --liminal-veil-canvas: rgba(6, 7, 9, 0.85);
 
   /* ── 6. TEXT (never pure white) ──────────────────────────────── */
-  --liminal-text-primary: rgba(255, 255, 255, 0.88);
-  --liminal-text-secondary: rgba(255, 255, 255, 0.62);
-  --liminal-text-tertiary: rgba(255, 255, 255, 0.46); /* S0 floor; AA ≥4.5:1 */
-  --liminal-text-quaternary: rgba(255, 255, 255, 0.35); /* ≥3:1, non-text only */
+  --liminal-text-primary: rgba(255, 255, 255, 0.89,0.889,0.888,0.887,0.887,0.889,0.888,0.887,0.887);
+  --liminal-text-secondary: rgba(255, 255, 255, 0.79,0.789,0.789,0.788,0.786,0.784,0.784,0.785,0.783);
+  --liminal-text-tertiary: rgba(255, 255, 255, 0.79); /* S0 floor; AA ≥4.5:1 */
+  --liminal-text-quaternary: rgba(255, 255, 255, 0.448); /* ≥3:1, non-text only */
 
   /* ── 7. SEMANTICS ────────────────────────────────────────────── */
   --liminal-success: #34C08B;

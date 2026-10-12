@@ -6,6 +6,7 @@ import {
   getLiminalStyle,
   TEXT_HIERARCHY,
 } from '../spec-engine';
+import { TEXT_ROLE_SPEC, whiteAlphaApcaOn } from '../liminal-contrast';
 import {
   PERCEPTUAL_QUANTUM,
   CANVAS_L,
@@ -163,35 +164,52 @@ describe('LIMINAL contract — surface ladder', () => {
 });
 
 describe('LIMINAL contract — text hierarchy contrast', () => {
-  for (const [level, policy] of Object.entries(TEXT_CONTRAST_POLICY)) {
-    describe(`${level} (min ${policy.min}:1 — ${policy.rationale})`, () => {
+  // Every role declares a USE, and the use sets the floor. See TEXT_ROLE_SPEC.
+  for (const [level, spec] of Object.entries(TEXT_ROLE_SPEC)) {
+    describe(`${level} (${spec.use} — WCAG ${spec.wcag}:1 / APCA Lc ${spec.apca})`, () => {
       for (const surface of SURFACES) {
-        it(`passes on S${surface.index} (${surface.hex})`, () => {
-          const alpha = getTextAlpha(level as keyof typeof TEXT_CONTRAST_POLICY, surface.index);
-          const ratio = whiteAlphaContrastOn(surface.hex, alpha);
+        it(`meets both floors on S${surface.index} (${surface.hex})`, () => {
+          const alpha = getTextAlpha(level as keyof typeof TEXT_ROLE_SPEC, surface.index);
+          const wcag = whiteAlphaContrastOn(surface.hex, alpha);
+          const lc = whiteAlphaApcaOn(surface.hex, alpha);
           expect(
-            ratio,
-            `${level} at alpha ${alpha} on S${surface.index} = ${ratio.toFixed(2)}:1`,
-          ).toBeGreaterThanOrEqual(policy.min);
+            wcag,
+            `${level} WCAG on S${surface.index} = ${wcag.toFixed(2)}:1 (need ${spec.wcag})`,
+          ).toBeGreaterThanOrEqual(spec.wcag);
+          expect(
+            lc,
+            `${level} APCA on S${surface.index} = Lc ${lc.toFixed(1)} (need ${spec.apca})`,
+          ).toBeGreaterThanOrEqual(spec.apca);
         });
       }
     });
   }
 
   it('never uses pure white for typography', () => {
-    expect(TEXT_HIERARCHY.primary).toBeLessThan(1);
-    expect(TEXT_HIERARCHY.secondary).toBeLessThan(TEXT_HIERARCHY.primary);
+    for (const surface of SURFACES) {
+      expect(getTextAlpha('primary', surface.index)).toBeLessThan(1);
+    }
   });
 
-  it('keeps the hierarchy strictly ordered (primary > secondary > tertiary > quaternary)', () => {
+  it('keeps the hierarchy ordered: primary > secondary === tertiary > quaternary', () => {
     for (const surface of SURFACES) {
       const primary = getTextAlpha('primary', surface.index);
       const secondary = getTextAlpha('secondary', surface.index);
       const tertiary = getTextAlpha('tertiary', surface.index);
       const quaternary = getTextAlpha('quaternary', surface.index);
-      expect(primary).toBeGreaterThan(secondary);
-      expect(secondary).toBeGreaterThan(tertiary);
-      expect(tertiary).toBeGreaterThan(quaternary);
+      expect(primary, `primary > secondary on S${surface.index}`).toBeGreaterThan(secondary);
+      expect(tertiary, `secondary === tertiary on S${surface.index}`).toBe(secondary);
+      expect(tertiary, `tertiary > quaternary on S${surface.index}`).toBeGreaterThan(quaternary);
+    }
+  });
+
+  it('documents that secondary and tertiary share one alpha (size/weight carries the level)', () => {
+    // This is the deliberate consequence of option A: both are body text, so
+    // both take the body-minimum floor. Their distinction is typographic.
+    for (const surface of SURFACES) {
+      expect(getTextAlpha('secondary', surface.index)).toBe(
+        getTextAlpha('tertiary', surface.index),
+      );
     }
   });
 });

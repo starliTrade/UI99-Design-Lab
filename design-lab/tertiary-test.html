@@ -1,0 +1,73 @@
+<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LIMINAL · تست چشمی tertiary</title><style>
+body{margin:0;background:#060709;color:rgba(255,255,255,.88);
+font:14px/1.7 ui-sans-serif,system-ui,"Segoe UI",Tahoma,sans-serif;padding:28px 20px 70px}
+h1{font-size:20px;font-weight:600;margin:0 0 6px}
+.sub{color:rgba(255,255,255,.5);font-size:12.5px;margin:0 0 26px;max-width:80ch}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.col{border:1px solid rgba(255,255,255,.08);border-radius:10px;background:#07090b;overflow:hidden}
+.col.rec{border-color:rgba(255,255,255,.26)}
+.col h2{font-size:12.5px;font-weight:600;margin:0;padding:11px 13px;border-bottom:1px solid rgba(255,255,255,.08);
+display:flex;flex-direction:column;gap:3px}
+.col h2 small{font-weight:400;color:rgba(255,255,255,.42);font-size:11px}
+.body{padding:14px 13px}
+.row{padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.row:last-child{border-bottom:0}
+.row.hl{background:rgba(255,255,255,.028);margin:0 -13px;padding:11px 13px}
+.lbl{font-size:9.5px;font-family:ui-monospace,monospace;color:rgba(255,255,255,.3);margin-bottom:5px;letter-spacing:.03em}
+.m{font-size:9.5px;font-family:ui-monospace,monospace;color:rgba(255,255,255,.34);margin-top:5px}
+.m b{color:rgba(255,255,255,.7)}
+.foot{padding:10px 13px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;
+color:rgba(255,255,255,.5);font-family:ui-monospace,monospace;display:flex;flex-direction:column;gap:3px}
+.foot b{color:rgba(255,255,255,.8)}
+.warn{color:#e0b25e}
+</style></head><body>
+<h1>تست چشمی — کف کنتراست tertiary</h1>
+<p class="sub">هر سه ستون یکسان‌اند جز آلفای <b>tertiary</b>. متن‌ها با اندازه و وزن واقعی LIMINAL رندر شده‌اند
+(heading ۱۹px/۶۰۰ · body ۱۴px/۴۰۰ · caption ۱۲.۵px/۵۰۰ · mark ۱۱px/۵۰۰) روی سطح S0.
+زیر هر نمونه: آلفا، نسبت WCAG، و Lc. ستون «الف» کف صادقانه است؛ «ب» انحراف آگاهانه.</p>
+<div class="grid"><div class="col ">
+    <h2>وضعیت امروز<small>آلفای دستی</small></h2>
+    <div class="body"><div class="row"><div class="lbl">primary · 19px / 600</div>
+    <div style="font-size:19px;font-weight:600;line-height:1.35;color:rgba(255,255,255,0.89)">سطح تصمیم‌گیری</div>
+    <div class="m">α=0.890 · WCAG 15.8 · Lc 90</div></div><div class="row"><div class="lbl">secondary · 14px / 400</div>
+    <div style="font-size:14px;font-weight:400;line-height:1.7;color:rgba(255,255,255,0.79)">متن بدنه در این سلسله‌مراتب قرار می‌گیرد و باید راحت خوانده شود.</div>
+    <div class="m">α=0.790 · WCAG 12.4 · Lc 75</div></div><div class="row hl"><div class="lbl">tertiary · 12.5px / 500  ← متغیر</div>
+    <div style="font-size:12.5px;font-weight:500;line-height:1.6;color:rgba(255,255,255,0.46)">توضیح فرعی، برچسب ستون جدول، و کپشن تصویر.</div>
+    <div class="m">α=0.460 · WCAG 4.63 · <b>Lc 31.5</b></div></div><div class="row"><div class="lbl">quaternary · 11px / 500</div>
+    <div style="font-size:11px;font-weight:500;color:rgba(255,255,255,0.448)">METADATA · ۱۲ مورد</div>
+    <div class="m">α=0.448 · WCAG 4.4 · Lc 30</div></div></div>
+    <div class="foot">
+      <div>گستره سلسله‌مراتب: <b>0.442</b></div>
+      <div>فاصله secondary↔tertiary: <b>0.330</b></div>
+    </div></div><div class="col ">
+    <h2>ب · کف Lc ۶۰<small>انحراف آگاهانه ثبت‌شده در قرارداد</small></h2>
+    <div class="body"><div class="row"><div class="lbl">primary · 19px / 600</div>
+    <div style="font-size:19px;font-weight:600;line-height:1.35;color:rgba(255,255,255,0.89)">سطح تصمیم‌گیری</div>
+    <div class="m">α=0.890 · WCAG 15.8 · Lc 90</div></div><div class="row"><div class="lbl">secondary · 14px / 400</div>
+    <div style="font-size:14px;font-weight:400;line-height:1.7;color:rgba(255,255,255,0.79)">متن بدنه در این سلسله‌مراتب قرار می‌گیرد و باید راحت خوانده شود.</div>
+    <div class="m">α=0.790 · WCAG 12.4 · Lc 75</div></div><div class="row hl"><div class="lbl">tertiary · 12.5px / 500  ← متغیر</div>
+    <div style="font-size:12.5px;font-weight:500;line-height:1.6;color:rgba(255,255,255,0.685)">توضیح فرعی، برچسب ستون جدول، و کپشن تصویر.</div>
+    <div class="m">α=0.685 · WCAG 9.41 · <b>Lc 60.1</b></div></div><div class="row"><div class="lbl">quaternary · 11px / 500</div>
+    <div style="font-size:11px;font-weight:500;color:rgba(255,255,255,0.448)">METADATA · ۱۲ مورد</div>
+    <div class="m">α=0.448 · WCAG 4.4 · Lc 30</div></div></div>
+    <div class="foot">
+      <div>گستره سلسله‌مراتب: <b>0.442</b></div>
+      <div>فاصله secondary↔tertiary: <b>0.105</b></div>
+    </div></div><div class="col rec">
+    <h2>الف · کف Lc ۷۵<small>صادقانه‌ترین — هم‌کف با secondary</small></h2>
+    <div class="body"><div class="row"><div class="lbl">primary · 19px / 600</div>
+    <div style="font-size:19px;font-weight:600;line-height:1.35;color:rgba(255,255,255,0.89)">سطح تصمیم‌گیری</div>
+    <div class="m">α=0.890 · WCAG 15.8 · Lc 90</div></div><div class="row"><div class="lbl">secondary · 14px / 400</div>
+    <div style="font-size:14px;font-weight:400;line-height:1.7;color:rgba(255,255,255,0.79)">متن بدنه در این سلسله‌مراتب قرار می‌گیرد و باید راحت خوانده شود.</div>
+    <div class="m">α=0.790 · WCAG 12.4 · Lc 75</div></div><div class="row hl"><div class="lbl">tertiary · 12.5px / 500  ← متغیر</div>
+    <div style="font-size:12.5px;font-weight:500;line-height:1.6;color:rgba(255,255,255,0.79)">توضیح فرعی، برچسب ستون جدول، و کپشن تصویر.</div>
+    <div class="m">α=0.790 · WCAG 12.42 · <b>Lc 75.0</b></div></div><div class="row"><div class="lbl">quaternary · 11px / 500</div>
+    <div style="font-size:11px;font-weight:500;color:rgba(255,255,255,0.448)">METADATA · ۱۲ مورد</div>
+    <div class="m">α=0.448 · WCAG 4.4 · Lc 30</div></div></div>
+    <div class="foot">
+      <div>گستره سلسله‌مراتب: <b>0.442</b></div>
+      <div>فاصله secondary↔tertiary: <b>0.000</b> ← <span class="warn">یکسان</span></div>
+    </div></div></div>
+</body></html>
