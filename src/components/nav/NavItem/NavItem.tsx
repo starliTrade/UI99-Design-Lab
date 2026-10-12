@@ -51,9 +51,10 @@ export function NavItem({
 
   const navItemStyle = {
     // Hover and focus are the browser's job now — no setState, no re-render.
-    '--liminal-surface-idle': 'transparent',
-    '--liminal-surface-hover': resolveSurface({ role: 'chrome' }).background,
-    '--liminal-surface-active': resolveSurface({ role: 'chrome', state: 'active' }).background,
+    '--liminal-surface-idle': bg,
+    // An active item keeps its own look on hover; an inactive one lifts.
+    '--liminal-surface-hover': active ? bg : resolveSurface({ role: 'chrome' }).background,
+    '--liminal-surface-active': active ? bg : resolveSurface({ role: 'chrome', state: 'active' }).background,
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
@@ -66,7 +67,7 @@ export function NavItem({
     textDecoration: 'none',
     boxSizing: 'border-box',
     border: '1px solid transparent',
-    background: bg,
+    // NO `background` here — see the note above.
     color,
     boxShadow: 'none', // Strictly no shadow for nav items
     opacity: disabled ? 0.35 : 1,

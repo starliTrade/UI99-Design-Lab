@@ -105,6 +105,14 @@ export function Tab({
     // The layer owns `color`; see the base rule. Secondary equals tertiary
     // (both alpha 0.790), so the hover target is primary.
     '--liminal-hover-color': getTextStyle('primary', 1).color,
+    // The surface half of the opt-in. Without these the layer's base rule
+    // resolved to nothing and the inline `background` below was the only
+    // background — which also cancelled the hover.
+    '--liminal-surface-idle': bg,
+    '--liminal-surface-hover': isActive
+      ? bg
+      : resolveSurface({ role: 'control', state: 'hover', on: host }).background,
+    '--liminal-surface-active': bg,
     padding: `${SPACING[2]}px ${SPACING[4]}px`,
     borderRadius: `${RADIUS[8]}px`, // 8px
     fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
@@ -112,7 +120,6 @@ export function Tab({
     fontFamily: 'inherit',
     fontWeight: 500,
     border: '1px solid transparent',
-    background: bg,
     '--liminal-color-idle': color,
     boxShadow: shadow,
     opacity: disabled ? 0.35 : 1,

@@ -177,7 +177,8 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
     height: '32px',
     padding: '0 8px',
     borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
-    background: bg,
+    // NO `background` here — an inline style beats the layer's rule, so this
+    // line cancelled the hover it had just opted into. The var above carries it.
     border: isCurrent ? `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}` : '1px solid transparent',
     color: isCurrent ? getTextStyle('primary', 1).color : getTextStyle('secondary', 1).color,
     fontWeight: isCurrent ? 600 : 400,
