@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { getLiminalStyle, getTextStyle, LADDER, LiminalState } from './engine/spec-engine';
 import { resolveBorder, resolveSurface } from './engine/liminal-surface';
-import { LADDER_STEP, LADDER_HUE } from './engine/liminal-ladder';
+import { LADDER_STEP, LADDER_HUE, HALF } from './engine/liminal-ladder';
+import { SHADOWS } from './engine/spec-engine';
 import { CONTRACT, getContractSections, getContractText, getContractChecklist } from './engine/liminal-contract';
 import { LiminalColorEngine } from './engine/liminal-color-engine';
 import { LiminalLayoutEngine } from './engine/liminal-layout-engine';
@@ -60,7 +61,7 @@ const spectrumColor = (label: string): string =>
   LiminalColorEngine.EXTENDED_SPECTRUM.find((c) => c.label === label)?.hex ?? 'currentColor';
 
 /* eslint-disable no-restricted-syntax -- demo-only literals, see the comment above */
-const DEMO_ONLY = { sky: '#38BDF8', blue: '#60a5fa', muted: '#555D6E' } as const;
+const DEMO_ONLY = { sky: '#38BDF8', blue: '#60a5fa', muted: '#555D6E', code: '#A5B4FC' } as const;
 /* eslint-enable no-restricted-syntax */
 
 export function App() {
@@ -687,7 +688,7 @@ export function App() {
                   >
                     4.2 ms
                   </div>
-                  <div className="text-[9px] text-[#34C08B]">Zero jitter</div>
+                  <div className="text-[9px]" style={{ color: LiminalColorEngine.SEMANTICS.SUCCESS.solid }}>Zero jitter</div>
                 </div>
 
                 <div
@@ -730,7 +731,10 @@ export function App() {
                 }}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#E9B44C]">
+                  <div
+                    className="flex items-center gap-1.5 text-[10px] font-bold"
+                    style={{ color: LiminalColorEngine.SEMANTICS.WARNING.solid }}
+                  >
                     <LiminalIcon icon={Sparkle} size="xs" weight="light" />
                     <span>E2 SUB-CANVAS POPULAR ACTION</span>
                   </div>
@@ -908,8 +912,8 @@ export function App() {
               >
                 {(
                   [
-                    { id: 'idle', label: '1. Idle', desc: '#0a0b10 · Rim 2' },
-                    { id: 'hover', label: '2. Hover', desc: '+0.5Δ (#0b0d11) · Rim 2' },
+                    { id: 'idle', label: '1. Idle', desc: `${LADDER[2]} · Rim 2` },
+                    { id: 'hover', label: '2. Hover', desc: `+0.5Δ (${HALF[2]}) · Rim 2` },
                     { id: 'focus', label: '3. Focus', desc: '+0.5Δ · Rim 3 · 2px Ring' },
                     { id: 'active', label: '4. Active', desc: '−0.5Δ · CONCAVE Rim' },
                     { id: 'disabled', label: '5. Disabled', desc: 'Rim 0 · bg→cont · α.25' },
@@ -1037,7 +1041,8 @@ export function App() {
                     step="2"
                     value={concentricPadding}
                     onChange={(e) => setConcentricPadding(Number(e.target.value))}
-                    className="w-24 accent-[#60a5fa] cursor-pointer"
+                    className="w-24 cursor-pointer"
+                    style={{ accentColor: DEMO_ONLY.blue }}
                   />
                   <span
                     className="text-xs font-bold w-6"
@@ -1474,8 +1479,7 @@ export function App() {
                   >
                     Sub-Canvas E3 Anchor Shadow:
                   </div>
-                  <code className="text-[#A5B4FC]">
-                    0 8px 28px rgba(3,4,6,0.44), 0 3px 8px rgba(1,2,3,0.30)
+                  <code style={{ color: DEMO_ONLY.code }}>{SHADOWS[3]}
                   </code>
                 </div>
               </div>

@@ -95,7 +95,7 @@ export function Sheet({
     WebkitBackdropFilter: 'blur(3px)',
     zIndex: 100,
     boxSizing: 'border-box',
-    animation: reduced ? 'none' : 'liminalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+    animation: reduced ? 'none' : `liminalFadeIn 0.2s ${LiminalMotionEngine.EASING.out}`,
   };
 
   const isBottom = position === 'bottom';
@@ -119,7 +119,7 @@ export function Sheet({
           maxHeight: '80vh',
           borderRadius: `${RADIUS.panel}px ${RADIUS.panel}px 0 0`,
           padding: `${SPACING[5]}px`,
-          animation: reduced ? 'none' : 'liminalSheetSlideBottom 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+          animation: reduced ? 'none' : `liminalSheetSlideBottom 0.25s ${LiminalMotionEngine.EASING.out}`,
         }
       : {
           top: 0,
@@ -130,7 +130,7 @@ export function Sheet({
           maxHeight: '100vh',
           borderRadius: `${RADIUS.panel}px 0 0 ${RADIUS.panel}px`,
           padding: `${SPACING[5]}px`,
-          animation: reduced ? 'none' : 'liminalSheetSlideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+          animation: reduced ? 'none' : `liminalSheetSlideRight 0.25s ${LiminalMotionEngine.EASING.out}`,
         }),
     ...customStyle,
   };

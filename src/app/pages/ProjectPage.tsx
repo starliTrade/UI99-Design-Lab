@@ -36,6 +36,10 @@ import {
   ArrowLeft,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
+import { resolveBorder } from '../../engine/liminal-surface';
+
+/** A page-level boundary is a hairline on the panel role. */
+const pageRim = resolveBorder({ role: 'panel', kind: 'hairline' });
 
 export function ProjectPage({ id }: { id: string }) {
   const { navigate } = useNavigation();
@@ -102,7 +106,7 @@ export function ProjectPage({ id }: { id: string }) {
                   height: '28px',
                   borderRadius: `${RADIUS.chip}px`,
                   background: BRAND_ALPHA.subtle,
-                  border: '1px solid rgba(233, 236, 242, 0.16)',
+                  border: `1px solid ${pageRim}`,
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',

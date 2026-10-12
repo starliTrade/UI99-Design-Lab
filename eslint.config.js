@@ -77,16 +77,16 @@ export default tseslint.config(
       'no-restricted-syntax': [
         'error',
         {
-          selector: 'Literal[value=/^#[0-9a-fA-F]{3,8}$/]',
+          selector: 'Literal[value=/#[0-9a-fA-F]{3,8}\\b/]',
           message:
             'Raw hex colour. Use the engine: getLadderColor(), LiminalColorEngine, or getTextStyle().',
         },
         {
-          selector: 'Literal[value=/^rgba?\\(/]',
+          selector: 'Literal[value=/rgba?\\(/]',
           message: 'Raw rgb()/rgba() colour. Use the engine (LiminalColorEngine / getTextStyle).',
         },
         {
-          selector: 'Literal[value=/^cubic-bezier\\(/]',
+          selector: 'Literal[value=/cubic-bezier\\(/]',
           message: 'Raw easing curve. Use LiminalMotionEngine.EASING.',
         },
         {

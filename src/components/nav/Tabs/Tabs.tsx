@@ -14,6 +14,7 @@ import {
   getLadderColor,
   getTextStyle,
   getFocusRing,
+  SHADOWS,
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -94,7 +95,7 @@ export function Tab({
   if (isActive) {
     bg = activeRim ? activeRim.cssBackground : resolveSurface({ role: 'control', state: 'active', on: host }).background;
     color = getTextStyle('primary', 1).color;
-    shadow = '0 1px 3px rgba(1, 2, 3, 0.22)'; // Micro E1 elevation per LIMINAL spec
+    shadow = SHADOWS[1]; // Micro E1 elevation, from the engine
   }
 
   const SPACING = LiminalLayoutEngine.SPACING;

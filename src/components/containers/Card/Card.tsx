@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { getLiminalStyle, getDirectionalRim, getLadderColor, getTextStyle, SURFACE_TINT } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { resolveSurface } from '../../../engine/liminal-surface';
+import { resolveBorder } from '../../../engine/liminal-surface';
 import { Divider } from '../Divider';
 
 export interface CardProps {
@@ -32,6 +33,9 @@ export interface InsetWellProps {
  * Governed by Concentric Harmony: r_inner = max(4, r_outer - padding)
  * Uses Inverted Directional Rim (Concave: top darker shadow, bottom specular reflection)
  */
+/** A divider inside a card is a hairline on the panel role. */
+const dividerRim = resolveBorder({ role: 'panel', kind: 'hairline' });
+
 export function InsetWell({
   children,
   padding = 'sm',
@@ -138,7 +142,7 @@ export function Card({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+            borderBottom: `1px solid ${dividerRim}`,
           }}
         >
           <div>
@@ -183,7 +187,7 @@ export function Card({
             alignItems: 'center',
             justifyContent: 'space-between',
             fontSize: '12px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+            borderTop: `1px solid ${dividerRim}`,
             backgroundColor: SURFACE_TINT.faint,
           }}
         >

@@ -9,6 +9,10 @@ import { LiminalIcon } from '../../engine/liminal-icon-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { getTextStyle, BRAND_ALPHA } from '../../engine/spec-engine';
+import { resolveBorder } from '../../engine/liminal-surface';
+
+/** A page-level boundary is a hairline on the panel role. */
+const pageRim = resolveBorder({ role: 'panel', kind: 'hairline' });
 
 export function NotFoundPage() {
   const { navigate } = useNavigation();
@@ -30,7 +34,7 @@ export function NotFoundPage() {
                   height: '28px',
                   borderRadius: `${RADIUS.chip}px`,
                   background: BRAND_ALPHA.subtle,
-                  border: '1px solid rgba(233, 236, 242, 0.16)',
+                  border: `1px solid ${pageRim}`,
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',

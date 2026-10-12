@@ -3,6 +3,7 @@ import type { ReactNode, CSSProperties } from 'react';
 import { useFloating } from '../../../engine/liminal-floating';
 import { type Placement } from '../../../engine/liminal-positioning-engine';
 import { LiminalPortal } from '../../../engine/liminal-portal';
+import { resolveBorder } from '../../../engine/liminal-surface';
 import {
   getDirectionalRim,
   getLadderColor,
@@ -33,6 +34,10 @@ export interface SimpleTooltipProps {
  * - Accessible: keyboard focus, Escape dismiss, click outside dismiss, role="tooltip"
  * - Optical specs: Surface 4 (#101114), Rim 2 Directional Specular, Elevation E2 Shadow
  */
+/** The arrow's edges continue the tooltip's own boundary, so they take the
+ *  same derived hairline rather than four hand-tuned alphas. */
+const arrowRim = resolveBorder({ role: 'popover', kind: 'hairline' });
+
 export function SimpleTooltip({
   content,
   children,
@@ -101,8 +106,8 @@ export function SimpleTooltip({
         ...base,
         bottom: '-4px',
         left: position.arrowX ? `${position.arrowX - 4}px` : 'calc(50% - 4px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.06)',
+        borderBottom: `1px solid ${arrowRim}`,
+        borderRight: `1px solid ${arrowRim}`,
       };
     }
     if (isBottom) {
@@ -110,8 +115,8 @@ export function SimpleTooltip({
         ...base,
         top: '-4px',
         left: position.arrowX ? `${position.arrowX - 4}px` : 'calc(50% - 4px)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.12)',
-        borderLeft: '1px solid rgba(255, 255, 255, 0.12)',
+        borderTop: `1px solid ${arrowRim}`,
+        borderLeft: `1px solid ${arrowRim}`,
       };
     }
     if (isLeft) {
@@ -119,8 +124,8 @@ export function SimpleTooltip({
         ...base,
         right: '-4px',
         top: position.arrowY ? `${position.arrowY - 4}px` : 'calc(50% - 4px)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+        borderTop: `1px solid ${arrowRim}`,
+        borderRight: `1px solid ${arrowRim}`,
       };
     }
     if (isRight) {
@@ -128,8 +133,8 @@ export function SimpleTooltip({
         ...base,
         left: '-4px',
         top: position.arrowY ? `${position.arrowY - 4}px` : 'calc(50% - 4px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
+        borderBottom: `1px solid ${arrowRim}`,
+        borderLeft: `1px solid ${arrowRim}`,
       };
     }
 
@@ -178,8 +183,8 @@ export function SimpleTooltip({
               animation: reduced
                 ? 'none'
                 : position.placement.startsWith('top')
-                ? 'liminalTooltipFadeTop 0.15s cubic-bezier(0.16, 1, 0.3, 1)'
-                : 'liminalTooltipFadeBottom 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+                ? `liminalTooltipFadeTop 0.15s ${LiminalMotionEngine.EASING.out}`
+                : `liminalTooltipFadeBottom 0.15s ${LiminalMotionEngine.EASING.out}`,
               ...customStyle,
             }}
           >

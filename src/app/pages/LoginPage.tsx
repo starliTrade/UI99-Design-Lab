@@ -19,6 +19,10 @@ import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { Lock, Shield, ArrowRight, Stack, Key } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
 import { resolveInset } from '../../engine/liminal-surface';
+import { resolveBorder } from '../../engine/liminal-surface';
+
+/** A page-level boundary is a hairline on the panel role. */
+const pageRim = resolveBorder({ role: 'panel', kind: 'hairline' });
 
 export function LoginPage() {
   const { navigate } = useNavigation();
@@ -57,7 +61,7 @@ export function LoginPage() {
                   height: '28px',
                   borderRadius: `${RADIUS.chip}px`,
                   background: BRAND_ALPHA.subtle,
-                  border: '1px solid rgba(233, 236, 242, 0.16)',
+                  border: `1px solid ${pageRim}`,
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
