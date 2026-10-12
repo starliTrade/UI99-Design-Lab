@@ -167,3 +167,43 @@ describe('rtl — the constants the language rules rest on', () => {
     expect(JALALI_WEEK_START).toBe(6);
   });
 });
+
+describe('rtl — the font has a self-hosting path, and the metrics are the contract', () => {
+  const shipped = readFileSync(resolve(process.cwd(), 'src/engine/liminal-fonts.css'), 'utf8');
+  const selfHosted = readFileSync(resolve(process.cwd(), 'src/engine/liminal-fonts-selfhosted.css'), 'utf8');
+
+  it('the shipped sheet works out of the box, from a CDN', () => {
+    expect(shipped).toContain('cdn.jsdelivr.net');
+  });
+
+  it('the self-hosted sheet points at this origin instead', () => {
+    expect(selfHosted).toContain("url('/fonts/");
+    expect(selfHosted).not.toContain('cdn.jsdelivr.net');
+  });
+
+  it('both declare the same face, weight range and display strategy', () => {
+    for (const css of [shipped, selfHosted]) {
+      expect(css).toContain("font-family: 'Vazirmatn'");
+      expect(css).toContain('font-weight: 100 900');
+      expect(css).toContain('font-display: swap');
+    }
+  });
+
+  it('both apply the same three language rules', () => {
+    for (const css of [shipped, selfHosted]) {
+      const block = css.slice(css.indexOf(':lang(fa)'));
+      expect(block).toContain('font-family: var(--liminal-font-fa)');
+      expect(block).toContain('line-height: var(--liminal-line-height-fa-floor');
+      expect(block).toContain('letter-spacing: 0');
+    }
+  });
+
+  it('the self-hosted sheet records the metrics the floor came from', () => {
+    // If the face changes, the floor must be re-derived. The generated sheet
+    // carries the numbers so a reader can see what the floor rests on.
+    expect(selfHosted).toContain('unitsPerEm 2048');
+    expect(selfHosted).toContain('ascender 2100');
+    expect(selfHosted).toContain('descender -1100');
+    expect(selfHosted).toContain('natural line-height = 1.5625');
+  });
+});
