@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import * as csstree from 'css-tree';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { resolve, dirname } from 'node:path';
@@ -109,5 +110,58 @@ describe('CSS variable layer — generated, complete, in sync', () => {
     // The hand-written layer had 19 variables. Anything near that is a regression.
     const count = (css.match(/--liminal-/g) || []).length;
     expect(count, `only ${count} variable references found`).toBeGreaterThan(200);
+  });
+});
+
+/**
+ * The class of defect this guards, and why nothing else could.
+ *
+ * `TEXT_HIERARCHY.primary` is an ARRAY — one alpha per surface, because the
+ * alpha a role needs depends on what it sits on. The generator interpolated it
+ * whole: `${TEXT_HIERARCHY.primary}` comma-joins an array, so the emitted token
+ * was `rgba(255, 255, 255, 0.89,0.889,0.888,...)` — an rgba() with eleven
+ * arguments. Invalid CSS, shipped in the build.
+ *
+ * Nothing caught it. `css-vars.test.ts` asserted the SAME broken interpolation,
+ * so the test locked the defect in. And a value-level check is impossible for
+ * custom properties: by spec they accept any token stream, so a parser will
+ * happily accept `rgba(...)` with eleven arguments.
+ *
+ * So these tests stop asking "is the string what I wrote?" — which is
+ * self-fulfilling — and ask the only question that matters: does the value
+ * parse, and is it the kind of value it claims to be?
+ */
+describe('CSS variable layer — every emitted value is a real CSS value', () => {
+  const declarations = [...css.matchAll(/^\s*(--liminal-[a-z0-9-]+):\s*([^;]+);/gm)].map(
+    ([, name, value]) => ({ name, value: value.trim() }),
+  );
+
+  it('finds the emitted declarations', () => {
+    expect(declarations.length).toBeGreaterThan(100);
+  });
+
+  it('every value is a parseable CSS value', () => {
+    const bad = declarations
+      .filter(({ value }) => {
+        try {
+          csstree.parse(value, { context: 'value' });
+          return false;
+        } catch {
+          return true;
+        }
+      })
+      .map(({ name, value }) => `${name}: ${value}`);
+    expect(bad).toEqual([]);
+  });
+
+  it('every value that claims to be a colour really is one', () => {
+    // The lexer is the only thing here that knows `rgba()` takes four
+    // arguments. A generic parse does not.
+    const looksLikeColour = /^(#|rgba?\(|hsla?\(|oklch\(|oklab\(|color\()/i;
+    const bad = declarations
+      .filter(({ value }) => looksLikeColour.test(value))
+      .filter(({ value }) => csstree.lexer.matchProperty('color', value).error !== null)
+      .map(({ name, value }) => `${name}: ${value}`);
+    expect(bad).toEqual([]);
   });
 });
