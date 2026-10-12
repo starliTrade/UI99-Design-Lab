@@ -1,0 +1,39 @@
+/**
+ * LIMINAL · BIDI LAYER
+ *
+ * `dir` on the document sets the base direction. It does not fix the runs
+ * inside it, and those are where bidi actually breaks: a Latin word in a
+ * Persian sentence drags the punctuation after it, a number with separators
+ * reorders its own groups, and user content of unknown direction reorders the
+ * layout around it.
+ *
+ * These classes are the opt-ins. They are CSS rather than wrapper characters so
+ * the text stays copyable and searchable.
+ */
+
+/* An embedded run: its direction is decided inside and cannot affect neighbours.
+ * Use for a filename, a code identifier, a URL, a version number. */
+.liminal-bidi-isolate {
+  unicode-bidi: isolate;
+}
+
+/* A field the user types into: the direction follows what they type, not the
+ * page. Right for a search box, a name field, a comment. */
+.liminal-bidi-plaintext {
+  unicode-bidi: plaintext;
+}
+
+/* A code block inside Persian prose. It is always left-to-right, and it must
+ * not drag the sentence around it. */
+.liminal-bidi-code {
+  unicode-bidi: isolate;
+  direction: ltr;
+  text-align: left;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* A number with separators: isolated so its groups cannot reorder, and its
+ * digits keep their own order inside. */
+.liminal-bidi-number {
+  unicode-bidi: isolate;
+}
