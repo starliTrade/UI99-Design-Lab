@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { CSSProperties, ReactNode, MouseEvent } from 'react';
 import {
   getLiminalStyle,
@@ -47,7 +47,6 @@ export function Table({
   className = '',
   style: customStyle = {},
 }: TableProps) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const surfaceLevel = 2;
   const limStyle = getLiminalStyle({
@@ -158,14 +157,14 @@ export function Table({
         <tbody>
           {data?.map((row, index) => {
             const isSelected = selectedRows.includes(index);
-            const isHovered = hoveredIndex === index;
 
-            let rowBg = 'transparent';
-            if (isSelected) {
-              rowBg = selectedRim ? selectedRim.cssBackground : resolveSurface({ role: 'work', state: 'hover' }).background;
-            } else if (isHovered) {
-              rowBg = rimSideColor;
-            }
+            // The row's own background. A selected row keeps its selection on
+            // hover, so the hover value equals the idle value for it.
+            const rowBg = isSelected
+              ? selectedRim
+                ? selectedRim.cssBackground
+                : resolveSurface({ role: 'work', state: 'hover' }).background
+              : 'transparent';
 
             return (
               <tr
@@ -173,14 +172,21 @@ export function Table({
                 role="row"
                 aria-selected={isSelected}
                 onClick={() => onRowClick?.(row, index)}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                style={{
-                  background: rowBg,
-                  cursor: onRowClick ? 'pointer' : 'default',
-                  transition: LiminalMotionEngine.getTransition('background', 'fast'),
-                  userSelect: 'none',
-                }}
+                // Hover is the browser's job. Tracking the hovered index in
+                // state re-rendered EVERY row on every mouse move across the
+                // table — with fifty rows, fifty renders per hover.
+                data-liminal-surface=""
+                style={
+                  {
+                    '--liminal-surface-idle': rowBg,
+                    '--liminal-surface-hover': isSelected ? rowBg : rimSideColor,
+                    // A row is not a button: pressing it should not flash.
+                    '--liminal-surface-active': isSelected ? rowBg : rimSideColor,
+                    cursor: onRowClick ? 'pointer' : 'default',
+                    transition: LiminalMotionEngine.getTransition('background', 'fast'),
+                    userSelect: 'none',
+                  } as CSSProperties
+                }
               >
                 {selectable && (
                   <td

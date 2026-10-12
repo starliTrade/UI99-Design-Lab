@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { CSSProperties, ReactNode, MouseEvent } from 'react';
 import { getLadderColor, getDirectionalRim } from '../../../engine/spec-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -36,7 +36,10 @@ export function TableRow({
     '--liminal-surface-idle': rowBg,
     '--liminal-surface-hover': resolveSurface({ role: 'work', state: 'hover' }).background,
     '--liminal-surface-active': resolveSurface({ role: 'work', state: 'hover' }).background,
-    background: rowBg,
+    // NO `background` here. An inline style beats a CSS rule, so this line was
+    // silently cancelling the layer's :hover — the row has had no hover state
+    // since the Step 2.1 migration, and nothing caught it because the property
+    // was set, just by the wrong owner.
     cursor: onClick ? 'pointer' : 'default',
     transition: reducedMotion ? 'none' : LiminalMotionEngine.getTransition('background', 'fast'),
     boxSizing: 'border-box',
