@@ -58,7 +58,10 @@ export function ErrorPage({
     fontWeight: 700,
     letterSpacing: '-0.03em',
     lineHeight: 1,
-    color: getTextStyle('quaternary', 1).color, // Felt, not screaming
+    // Large text, so WCAG's floor is 3:1 and quaternary's 4.06 passes — but
+    // APCA's floor for large/bold is Lc 45 and quaternary is Lc 30. The stricter
+    // lens wins, as it does everywhere else in this system.
+    color: getTextStyle('tertiary', 1).color,
     margin: 0,
     userSelect: 'none',
   };

@@ -115,7 +115,7 @@ export function FormField({
       {children}
 
       {hint && !error && (
-        <span style={{ fontSize: LiminalLayoutEngine.getTypeSizeCss(1), color: getTextStyle('quaternary', 1).color }}>
+        <span style={{ fontSize: LiminalLayoutEngine.getTypeSizeCss(1), color: getTextStyle('tertiary', 1).color }}>
           {hint}
         </span>
       )}

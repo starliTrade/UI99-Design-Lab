@@ -157,7 +157,17 @@ export const TEXT_ROLE_SPEC = {
   primary: { use: 'body-preferred', wcag: 4.5, apca: 90 },
   secondary: { use: 'body-minimum', wcag: 4.5, apca: 75 },
   tertiary: { use: 'body-minimum', wcag: 4.5, apca: 75 },
-  quaternary: { use: 'non-text', wcag: 3.0, apca: 30 },
+  /**
+   * The floor for ANY text — APCA's lowest text band, and WCAG's large-text
+   * floor. It is NOT for read copy: measured on the darkest surface it gives
+   * 4.06:1, under the 4.5 that AA asks for normal text.
+   *
+   * Its legitimate uses are placeholders, disabled text (which WCAG 1.4.3
+   * exempts) and decorative separators. Nine components were using it for
+   * hints, labels and footers — read text — which is what the old `non-text`
+   * label invited.
+   */
+  quaternary: { use: 'text-minimum', wcag: 3.0, apca: 30 },
 } as const;
 
 export type TextRole = keyof typeof TEXT_ROLE_SPEC;

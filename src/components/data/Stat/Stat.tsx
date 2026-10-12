@@ -98,7 +98,8 @@ export function Stat({
   const subtitleStyle: CSSProperties = {
     fontSize: LiminalLayoutEngine.getTypeSizeCss(1), // 11px
     lineHeight: TYPOGRAPHY[1].lh,
-    color: getTextStyle('quaternary', 1).color,
+    // A subtitle is read. See Footer.
+    color: getTextStyle('tertiary', 1).color,
     margin: 0,
   };
 

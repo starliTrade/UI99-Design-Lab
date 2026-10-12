@@ -65,7 +65,9 @@ export function Toggle({
       : offRim
       ? offRim.cssBackground
       : resolveSurface({ role: 'control', on: host }).background,
-    outline: 'none',
+    // NO `outline: none` here. It cancelled the layer's :focus-visible ring, so
+    // the switch had NO visible focus at all — WCAG 2.4.7. The layer owns focus;
+    // `data-liminal-focusable` below opts in.
     padding: 0,
     ...customStyle,
   };
@@ -89,6 +91,7 @@ export function Toggle({
     <button
       type="button"
       role="switch"
+      data-liminal-focusable=""
       aria-checked={isChecked}
       aria-label={ariaLabel}
       disabled={disabled}

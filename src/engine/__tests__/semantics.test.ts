@@ -1,4 +1,7 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { getTextStyle } from '../spec-engine';
 import { LiminalColorEngine } from '../liminal-color-engine';
 import { LADDER } from '../liminal-ladder';
 import { hexToRgb, rgbToOklch, contrastRatioHex } from '../liminal-color-math';
@@ -105,3 +108,61 @@ describe('semantics — what is a convention and what is derived', () => {
     }
   });
 });
+
+describe('quaternary — the floor for ANY text, not for read copy', () => {
+  // It was declared `non-text`, which invited nine components to use it for
+  // hints, labels and footers. Measured on the darkest surface it gives 4.06:1
+  // — under the 4.5 AA asks for normal text.
+  const roles = LiminalColorEngine.SEMANTICS;
+
+  it('is below the AA floor for normal text, which is why it is not used as one', () => {
+    const c = getTextStyle('quaternary', 8).color as string;
+    const solid = composite(c, LADDER[LADDER.length - 1]);
+    const ratio = contrastRatioHex(solid, LADDER[LADDER.length - 1]);
+    expect(ratio).toBeLessThan(4.5);
+  });
+
+  it('every text role that IS read copy clears AA on every surface', () => {
+    for (const role of ['primary', 'secondary', 'tertiary'] as const) {
+      for (const surface of LADDER) {
+        const solid = composite(getTextStyle(role, 0).color as string, surface);
+        const ratio = contrastRatioHex(solid, surface);
+        expect(ratio, `${role} on ${surface}: ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(4.5);
+      }
+    }
+  });
+
+  it('no component uses quaternary for text it expects to be read', () => {
+    // The three that remain are a placeholder, a disabled option and a
+    // decorative separator — the places APCA's lowest text band applies.
+    const SRC = resolve(process.cwd(), 'src/components');
+    const allowed = ['Select.tsx', 'Breadcrumb.tsx'];
+    const offenders: string[] = [];
+    const walk = (dir: string): string[] => {
+      const out: string[] = [];
+      for (const e of readdirSync(dir)) {
+        if (e === '__tests__' || e === 'node_modules') continue;
+        const full = resolve(dir, e);
+        if (statSync(full).isDirectory()) out.push(...walk(full));
+        else if (/\.tsx$/.test(e) && !/Demo\.tsx$/.test(e)) out.push(full);
+      }
+      return out;
+    };
+    for (const file of walk(SRC)) {
+      const name = file.split('/').pop()!;
+      if (allowed.includes(name)) continue;
+      if (/getTextStyle\('quaternary'/.test(readFileSync(file, 'utf8'))) offenders.push(name);
+    }
+    expect(offenders).toEqual([]);
+  });
+});
+
+/** rgba over a hex, so a text token can be measured against a surface. */
+function composite(rgba: string, bg: string): string {
+  const m = rgba.match(/rgba?\(([^)]+)\)/);
+  if (!m) return rgba;
+  const p = m[1].split(',').map((s) => parseFloat(s));
+  const b = hexToRgb(bg);
+  const to = (v: number) => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0');
+  return `#${to(b.r * (1 - p[3]) + p[0] * p[3])}${to(b.g * (1 - p[3]) + p[1] * p[3])}${to(b.b * (1 - p[3]) + p[2] * p[3])}`;
+}

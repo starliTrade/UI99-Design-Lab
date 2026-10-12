@@ -45,7 +45,8 @@ export function SidebarSection({
           letterSpacing: '+0.08em',
           textTransform: 'uppercase',
           fontWeight: 400,
-          color: getTextStyle('quaternary', 1).color,
+          // A section label is read. See Footer.
+          color: getTextStyle('tertiary', 1).color,
           padding: `${SPACING[3]}px ${SPACING[3]}px ${SPACING[2]}px`,
           userSelect: 'none',
         }}

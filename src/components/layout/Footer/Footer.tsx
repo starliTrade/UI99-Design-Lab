@@ -43,7 +43,10 @@ export function Footer({
   const leftStyle: CSSProperties = {
     fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
     lineHeight: 1.5,
-    color: getTextStyle('quaternary', 1).color,
+    // Read text, not a placeholder: quaternary's floor is APCA Lc 30, which is
+    // the minimum for ANY text. A footer is read. WCAG measured 4.06:1 there,
+    // under the 4.5 AA asks for.
+    color: getTextStyle('tertiary', 1).color,
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`,
