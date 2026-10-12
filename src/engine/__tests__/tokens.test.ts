@@ -214,6 +214,70 @@ describe('LIMINAL contract — text hierarchy contrast', () => {
   });
 });
 
+describe('LIMINAL contract — type scale is derived, not hand-picked', () => {
+  const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+
+  it('every level is exactly ratio^(n − base) times the base', () => {
+    // The ratio is the design; if a level drifts from it, the scale stops
+    // reading as one family. This is what the old hand-written table broke:
+    // 11/13/16/19/23/28/33/40 are rounded, so the ratio wobbled.
+    for (const n of LEVELS) {
+      const expected = Math.pow(LiminalLayoutEngine.TYPE_RATIO, n - LiminalLayoutEngine.TYPE_BASE_LEVEL);
+      expect(LiminalLayoutEngine.typeScale(n)).toBeCloseTo(expected, 10);
+    }
+  });
+
+  it('level 3 is the base itself', () => {
+    expect(LiminalLayoutEngine.typeScale(LiminalLayoutEngine.TYPE_BASE_LEVEL)).toBe(1);
+  });
+
+  it('the scale is monotonic — each level is larger than the last', () => {
+    for (let n = 1; n < 8; n++) {
+      expect(LiminalLayoutEngine.typeScale(n + 1)).toBeGreaterThan(LiminalLayoutEngine.typeScale(n));
+    }
+  });
+
+  it('the reference scale matches the ratio exactly', () => {
+    // TYPOGRAPHY[n].fs is the scale resolved at the 16px reference base.
+    for (const n of LEVELS) {
+      const expected = LiminalLayoutEngine.TYPE_BASE_REF * LiminalLayoutEngine.typeScale(n);
+      expect(LiminalLayoutEngine.TYPOGRAPHY[n].fs).toBeCloseTo(expected, 2);
+    }
+  });
+
+  it('the fluid base is expressed in rem, so it honours the reader font size', () => {
+    // A px-only clamp ignores the browser's font-size setting — WCAG 2.2 · 1.4.4.
+    expect(LiminalLayoutEngine.TYPE_BASE_CSS).toMatch(/rem/);
+    expect(LiminalLayoutEngine.TYPE_BASE_CSS).toMatch(/^clamp\(/);
+    // No bare px length outside a comment: every length must be rem.
+    expect(LiminalLayoutEngine.TYPE_BASE_CSS).not.toMatch(/\d+px/);
+  });
+
+  it('every level resolves through the fluid base, not a literal size', () => {
+    for (const n of LEVELS) {
+      const css = LiminalLayoutEngine.getTypeSizeCss(n);
+      expect(css).toContain('--liminal-type-base');
+      expect(css).not.toMatch(/\d+px/);
+    }
+  });
+
+  it('line-height is a unitless multiplier, never a length', () => {
+    // Publishing `lh` as px collapses every line box to ~1.6px.
+    for (const n of LEVELS) {
+      const lh = LiminalLayoutEngine.TYPOGRAPHY[n].lh;
+      expect(typeof lh).toBe('number');
+      expect(lh).toBeGreaterThan(1);
+      expect(lh).toBeLessThan(2);
+    }
+  });
+
+  it('getTypeStyle derives font-size from the fluid base', () => {
+    const style = LiminalLayoutEngine.getTypeStyle(3);
+    expect(String(style.fontSize)).toContain('--liminal-type-base');
+    expect(String(style.fontSize)).not.toMatch(/\d+px/);
+  });
+});
+
 describe('LIMINAL contract — semantic roles', () => {
   const roles = ['SUCCESS', 'WARNING', 'DANGER', 'INFO'] as const;
 

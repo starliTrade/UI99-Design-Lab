@@ -111,10 +111,16 @@ export function generateCssVars(): string {
   );
 
   // ── 12. TYPE ───────────────────────────────────────────────────────
-  section('12. TYPE (modular 1.2)');
+  // The ratio is the design; the base is the reading condition. Every level is
+  // derived from `--liminal-type-base`, so nothing here is hand-picked.
+  section('12. TYPE (modular 1.2, fluid base)');
+  v('type-ratio', LiminalLayoutEngine.TYPE_RATIO, 'fixed — this is the design');
+  v('type-base', LiminalLayoutEngine.TYPE_BASE_CSS, 'fluid 14→16.5px; rem-based for WCAG 1.4.4');
   Object.entries(LiminalLayoutEngine.TYPOGRAPHY).forEach(([level, t]) => {
-    v(`fs-${level}`, `${t.fs}px`);
-    v(`lh-${level}`, `${t.lh}px`);
+    v(`fs-${level}`, LiminalLayoutEngine.getTypeSizeCss(Number(level)));
+    // `lh` is a unitless multiplier, not a length. Publishing it as `px` would
+    // collapse every line box to ~1.6px.
+    v(`lh-${level}`, t.lh, 'unitless multiplier');
     v(`weight-${level}`, t.weight);
   });
 
