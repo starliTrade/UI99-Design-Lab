@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import {
   getLadderColor,
@@ -16,6 +16,8 @@ export interface ProgressProps {
   size?: 'sm' | 'md' | 'lg';
   semantic?: 'success' | 'warning' | 'danger' | 'info';
   color?: string;
+  /** The progressbar's accessible name, when there is no visible label. */
+  ariaLabel?: string;
   showLabel?: boolean;
   showValue?: boolean;
   height?: number;
@@ -34,6 +36,7 @@ export function Progress({
   showValue,
   height,
   label,
+  ariaLabel,
   className = '',
   style: customStyle = {},
 }: ProgressProps) {
@@ -59,6 +62,10 @@ export function Progress({
     const key = semantic.toUpperCase() as 'SUCCESS' | 'WARNING' | 'DANGER' | 'INFO';
     fillColor = SEMANTICS[key]?.solid ?? BRAND.hex;
   }
+
+  // The progressbar's accessible name: the label element when there is one,
+  // otherwise an explicit aria-label the caller passes.
+  const labelId = `${useId()}-label`;
 
   const containerStyle: CSSProperties = {
     display: 'flex',
@@ -95,6 +102,11 @@ export function Progress({
       aria-valuenow={value}
       aria-valuemin={0}
       aria-valuemax={max}
+      // A progressbar must have an accessible name. The label was rendered as a
+      // sibling span, so a screen reader announced a percentage with no idea
+      // what it measured — axe calls that serious.
+      aria-labelledby={label ? labelId : undefined}
+      aria-label={label ? undefined : ariaLabel}
     >
       {(showLabel || label) && (
         <div
@@ -106,7 +118,7 @@ export function Progress({
             lineHeight: 1.4,
           }}
         >
-          <span style={{ color: getTextStyle('secondary', 1).color }}>
+          <span id={labelId} style={{ color: getTextStyle('secondary', 1).color }}>
             {label}
           </span>
           <span

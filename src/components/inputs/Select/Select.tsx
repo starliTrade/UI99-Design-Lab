@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useId } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { CaretDown } from '@phosphor-icons/react';
 import {
@@ -126,6 +126,13 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   // The interaction states are CSS's job now (:hover, :focus-within). Only the
   // validation states stay in JavaScript — they depend on props.
   const host = useHostSurface();
+  // The label associates through `htmlFor`, so an id is REQUIRED — and it was
+  // optional with no default, which meant `<label htmlFor={undefined}>` and a
+  // `<select id={undefined}>` and no accessible name at all. axe calls that
+  // critical. `useId` gives one when the caller does not.
+  const autoId = useId();
+  const fieldId = id ?? autoId;
+
   const idleSurface = resolveSurface({ role: 'control', on: host }).background;
   const hoverSurface = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
   const focusSurface = resolveSurface({ role: 'control', state: 'focus', on: host }).background;
@@ -289,7 +296,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
       }}
     >
       {label && (
-        <label htmlFor={id} style={labelStyle}>
+        <label htmlFor={fieldId} style={labelStyle}>
           {label}
         </label>
       )}
@@ -319,7 +326,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
         {/* Native <select> with appearance: none */}
         <select
           ref={setSelectRef}
-          id={id}
+          id={fieldId}
           name={name}
           value={effectiveValue}
           disabled={disabled}
