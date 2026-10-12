@@ -58,7 +58,35 @@ export function mistBlur(role: SurfaceRole): number {
 }
 
 /**
- * LIGHT LAYERS — the fog itself.
+ * FOG — the surface diffuses light, it does not emit it.
+ *
+ * The previous version used symmetric `0 0 Npx` shadows, which read as a NEON
+ * GLOW rather than as fog: the surface appeared to radiate. Real fog does not
+ * radiate. It is a mass that is slightly lighter than what is behind it, lit
+ * from above, with a soft edge and a dark shadow beneath.
+ *
+ * So the fog is a vertical gradient INSIDE the surface — brighter at the top
+ * where the light lands, settling darker at the bottom — plus a dark shadow
+ * below. Nothing radiates outward.
+ */
+export function mistFillStops(role: SurfaceRole): { top: string; bottom: string; topAlpha: number; bottomAlpha: number } {
+  const level = Math.min(LADDER.length - 1, ROLE_LEVEL[role]);
+  const lower = Math.max(0, level - 2);
+  return {
+    top: LADDER[level],
+    bottom: LADDER[lower],
+    topAlpha: 0.80 + floatHeight(role) * 0.008,
+    bottomAlpha: 0.70 + floatHeight(role) * 0.008,
+  };
+}
+
+/** The light that lands on the top edge — a single inset hairline, not a glow. */
+export function mistInnerLight(role: SurfaceRole): number {
+  return 0.055 + floatHeight(role) * 0.006;
+}
+
+/**
+ * LIGHT LAYERS — kept for the opt-in diffuse case only.
  *
  * Real fog scatters light at many scales at once: fine droplets scatter tightly,
  * larger ones broadly. A single box-shadow is one scale, which is why a
@@ -244,20 +272,32 @@ export function resolveMist(role: SurfaceRole, options: MistOptions = {}): MistS
 export function mistCssVars(role: SurfaceRole, options: MistOptions = {}): Record<string, string> {
   const m = resolveMist(role, options);
   const { r, g, b } = { r: 233, g: 236, b: 242 };
-  const light = m.light
-    .map((l) => `0 0 ${l.blur}px rgba(${r}, ${g}, ${b}, ${l.alpha.toFixed(4)})`)
-    .join(', ');
-  const edgeGradient = `linear-gradient(180deg, ${m.edgeStops
-    .map((st) => `rgba(${r}, ${g}, ${b}, ${st.alpha.toFixed(4)}) ${st.pos}%`)
-    .join(', ')})`;
+  const stops = mistFillStops(role);
+  const h = floatHeight(role);
+
+  // A toast is a NOTIFICATION, not an interactive surface. It must be legible
+  // first and must not demand attention: near-solid fill, no inner light, no
+  // ring. Its meaning is carried by a small accent mark, not by the surface.
+  const isToast = role === 'toast';
+
   return {
+    // The fog: a vertical gradient INSIDE the surface. Nothing radiates.
+    '--liminal-mist-fill-top': stops.top,
+    '--liminal-mist-fill-bottom': stops.bottom,
+    '--liminal-mist-fill-top-alpha': String(isToast ? 0.94 : stops.topAlpha),
+    '--liminal-mist-fill-bottom-alpha': String(isToast ? 0.94 : stops.bottomAlpha),
+    // The light that lands on the top edge - one hairline, never a halo.
+    '--liminal-mist-inner-light': isToast
+      ? 'inset 0 0 0 rgba(0, 0, 0, 0)'
+      : `inset 0 1px 0 rgba(${r}, ${g}, ${b}, ${mistInnerLight(role).toFixed(4)})`,
+    // The dark shadow that expresses the height. No light shadow.
+    '--liminal-mist-shadow-near': `${(4 + h * 0.5).toFixed(1)}px`,
+    '--liminal-mist-shadow-far': `${(40 + h * 3.2).toFixed(0)}px`,
+    '--liminal-mist-shadow-near-alpha': String(0.30 + h * 0.005),
+    '--liminal-mist-shadow-far-alpha': String(0.42 + h * 0.010),
+    // The seam: a faint hairline where the fog meets the page.
+    '--liminal-mist-seam': `rgba(${r}, ${g}, ${b}, ${(isToast ? 0.075 : 0.07 + h * 0.004).toFixed(4)})`,
+    // Opt-in diffusion only.
     '--liminal-mist-blur': `${m.blur}px`,
-    '--liminal-mist-fill': m.fillColor,
-    '--liminal-mist-fill-alpha': String(m.fillAlpha),
-    '--liminal-mist-light': light,
-    '--liminal-mist-shadow-blur': `${m.shadowBlur}px`,
-    '--liminal-mist-shadow-alpha': String(m.shadowAlpha),
-    '--liminal-mist-edge-glow': `${m.edgeGlow}px`,
-    '--liminal-mist-edge-gradient': edgeGradient,
   };
 }

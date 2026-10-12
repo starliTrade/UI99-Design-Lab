@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · مه واقعی در برابر درخشش</title>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; background:#030406; color:rgba(255,255,255,0.88);
+         font-family:Inter,system-ui,sans-serif; font-size:14px; line-height:1.7; padding:32px 24px 110px; }
+  .wrap { max-width:1240px; margin:0 auto; }
+  h1 { font-size:23px; font-weight:600; letter-spacing:-0.02em; margin:0 0 6px; }
+  h2 { font-size:15px; font-weight:600; margin:30px 0 2px; }
+  .sub { color:rgba(255,255,255,0.46); margin:0 0 6px; }
+  .note { color:rgba(255,255,255,0.46); font-size:13px; margin:0 0 20px;
+          border-right:2px solid rgba(255,255,255,0.10); padding-right:12px; }
+  code { font-family:"JetBrains Mono",monospace; font-size:12px; color:rgba(255,255,255,0.62); }
+
+  .stage { position:relative; border-radius:16px; overflow:hidden; margin-bottom:10px;
+           background:linear-gradient(180deg,#0d0f12 0%,#0b0d0f 60%,#090b0d 100%); }
+  .txt { position:absolute; inset:0; padding:14px; font-family:"JetBrains Mono",monospace;
+         font-size:10.5px; line-height:1.45; color:rgba(255,255,255,0.22); white-space:pre-wrap; overflow:hidden; }
+  .row { position:relative; display:flex; gap:18px; flex-wrap:wrap; align-items:center;
+         justify-content:center; padding:48px 20px; min-height:200px; }
+  .label { position:absolute; top:10px; right:14px; font-family:"JetBrains Mono",monospace;
+           font-size:11px; color:rgba(255,255,255,0.34); }
+
+  /* ══════════════════════════════════════════════════════════════════
+     All at role=modal (S7), fill = ladder S7 #131518.
+     ══════════════════════════════════════════════════════════════════ */
+  .m { position:relative; isolation:isolate; border:none; cursor:default;
+       font-family:inherit; font-size:13px; font-weight:500; color:rgba(255,255,255,0.88);
+       padding:12px 20px; border-radius:9999px; }
+
+  /* A — درخشش (نسخه‌ی قبلی من): نور ساطع، متقارن */
+  .mA { background:color-mix(in oklab,#131518 74%,transparent);
+        box-shadow:0 0 5px rgba(233,236,242,0.05), 0 0 16px rgba(233,236,242,0.043),
+                   0 0 38px rgba(233,236,242,0.03), 0 0 80px rgba(233,236,242,0.02),
+                   0 26px 103px rgba(1,2,3,0.34); }
+  .mA::before { content:''; position:absolute; inset:0; border-radius:inherit; padding:1px;
+    background:linear-gradient(180deg,rgba(233,236,242,0.39) 0%,rgba(233,236,242,0.07) 22%,
+      rgba(233,236,242,0.04) 50%,rgba(233,236,242,0.07) 78%,rgba(233,236,242,0.30) 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; z-index:-1; }
+
+  /* B — مه واقعی: نور از بالا، سایه‌ی تیره، درز محو. بدون تابش. */
+  .mB { background:linear-gradient(180deg,
+          color-mix(in oklab,#15171a 82%,transparent) 0%,
+          color-mix(in oklab,#0f1114 72%,transparent) 100%);
+        box-shadow:0 22px 60px rgba(1,2,3,0.46), 0 4px 14px rgba(1,2,3,0.30);
+        border:1px solid rgba(233,236,242,0.085); }
+
+  /* C — مه با درز محو: لبه‌ای که به بیرون محو می‌شود، نه خط و نه رینگ */
+  .mC { background:linear-gradient(180deg,
+          color-mix(in oklab,#15171a 80%,transparent) 0%,
+          color-mix(in oklab,#0f1114 70%,transparent) 100%);
+        box-shadow:0 22px 60px rgba(1,2,3,0.46), 0 4px 14px rgba(1,2,3,0.30); }
+  .mC::before { content:''; position:absolute; inset:-1px; border-radius:inherit; padding:1.5px;
+    background:linear-gradient(180deg,rgba(233,236,242,0.16) 0%,rgba(233,236,242,0.03) 45%,
+      rgba(233,236,242,0.05) 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; z-index:-1; }
+
+  /* D — مه با نور داخلی: روشن‌تر در بالا، مثل مه واقعی که بالا سبک‌تر است */
+  .mD { background:linear-gradient(180deg,
+          color-mix(in oklab,#17191c 84%,transparent) 0%,
+          color-mix(in oklab,#0d0f12 76%,transparent) 100%);
+        box-shadow:0 22px 60px rgba(1,2,3,0.48), 0 4px 14px rgba(1,2,3,0.32),
+                   inset 0 1px 0 rgba(233,236,242,0.10);
+        border:1px solid rgba(233,236,242,0.07); }
+
+  /* ── toast: کار متفاوت، رفتار متفاوت ── */
+  .t { position:relative; display:flex; align-items:center; gap:12px;
+       font-family:inherit; font-size:13px; font-weight:500; color:rgba(255,255,255,0.90);
+       padding:13px 16px; border-radius:12px; min-width:300px; }
+
+  /* T1 — همان نسخه‌ی درخشان (اشتباه برای toast) */
+  .tT1 { background:color-mix(in oklab,#131518 74%,transparent);
+         box-shadow:0 0 5px rgba(233,236,242,0.05), 0 0 16px rgba(233,236,242,0.043),
+                    0 0 38px rgba(233,236,242,0.03), 0 26px 103px rgba(1,2,3,0.34); }
+  .tT1::before { content:''; position:absolute; inset:0; border-radius:inherit; padding:1px;
+    background:linear-gradient(180deg,rgba(233,236,242,0.39) 0%,rgba(233,236,242,0.07) 22%,
+      rgba(233,236,242,0.04) 50%,rgba(233,236,242,0.30) 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; z-index:-1; }
+
+  /* T2 — toast آرام: سطح تقریباً جامد (خوانایی اول)، بدون تابش، معنا با نشان */
+  .tT2 { background:color-mix(in oklab,#15171a 94%,transparent);
+         box-shadow:0 18px 48px rgba(1,2,3,0.52), 0 3px 10px rgba(1,2,3,0.34);
+         border:1px solid rgba(233,236,242,0.075); }
+
+  /* T3 — toast با نشان رنگی: معنا را سطح حمل نمی‌کند، نشان حمل می‌کند */
+  .tT3 { background:color-mix(in oklab,#15171a 94%,transparent);
+         box-shadow:0 18px 48px rgba(1,2,3,0.52), 0 3px 10px rgba(1,2,3,0.34);
+         border:1px solid rgba(233,236,242,0.075); }
+  .tT3 .mark { width:3px; align-self:stretch; border-radius:2px; background:#6EE0B4; }
+  .tT3 .mark.danger { background:#F091A2; }
+
+  .ico { width:16px; height:16px; flex-shrink:0; }
+
+  table { width:100%; border-collapse:collapse; font-family:"JetBrains Mono",monospace;
+          font-size:12px; margin-top:12px; }
+  th,td { text-align:right; padding:8px 10px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  th { color:rgba(255,255,255,0.40); font-weight:500; }
+  .num { color:#6EE0B4; } .warn { color:#E8C468; } .bad { color:#F091A2; }
+  .verdict { margin-top:18px; padding:18px; border-radius:14px;
+             border:1px solid rgba(255,255,255,0.10); background:#060709; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>مه واقعی در برابر درخشش</h1>
+  <p class="sub">و <b>toast</b> در برابر <b>منو</b> — دو کار متفاوت، دو رفتار متفاوت.</p>
+  <p class="note">
+    A نسخه‌ی قبلی من است: سطح <b>نور ساطع می‌کند</b>. B و C و D <b>مه</b> هستند:
+    نور از بالا، سایه‌ی تیره، بدون تابش.
+  </p>
+
+  <h2>۱. سطح تعاملی (منو / دکمه) — چهار نامزد</h2>
+  <div class="stage">
+    <div class="label">role = modal · S7</div>
+    <div class="txt" id="t1"></div>
+    <div class="row">
+      <button class="m mA">A — درخشش</button>
+      <button class="m mB">B — مه</button>
+      <button class="m mC">C — مه + درز محو</button>
+      <button class="m mD">D — مه + نور داخلی</button>
+    </div>
+  </div>
+
+  <h2>۲. Toast — سه نامزد</h2>
+  <div class="stage">
+    <div class="label">role = toast · S8</div>
+    <div class="txt" id="t2"></div>
+    <div class="row" style="flex-direction:column; gap:14px; padding:44px 20px;">
+      <div class="t tT1">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#6EE0B4" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+        <span>T1 — نسخه‌ی درخشان (توجه‌طلب)</span>
+      </div>
+      <div class="t tT2">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#6EE0B4" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+        <span>T2 — toast آرام</span>
+      </div>
+      <div class="t tT3">
+        <span class="mark"></span>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#6EE0B4" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+        <span>T3 — toast با نشان رنگی</span>
+      </div>
+    </div>
+  </div>
+
+  <h2>۳. اندازه‌گیری — مقادیر خوانده‌شده از DOM</h2>
+  <table id="perf">
+    <tr><th>نامزد</th><th>سایه‌ی بیرونی</th><th>سایه‌ی تیره</th><th>تابش</th><th>هزینه</th></tr>
+  </table>
+
+  <div class="verdict" id="verdict"></div>
+</div>
+
+<script>
+for (const id of ['t1','t2']) {
+  document.getElementById(id).textContent =
+    Array.from({length:12},(_,i)=>`row ${String(i).padStart(2,'0')}  ·  ${'█▓▒░ '.repeat(10)}`).join('\n');
+}
+function bench(sel) {
+  const el = document.querySelector(sel);
+  const t0 = performance.now();
+  for (let i = 0; i < 300; i++) {
+    el.style.transform = `translateZ(0) translateX(${(i % 2) * 0.01}px)`;
+    void el.offsetHeight;
+  }
+  return performance.now() - t0;
+}
+function describe(sel) {
+  const cs = getComputedStyle(document.querySelector(sel));
+  const sh = cs.boxShadow;
+  const layers = sh === 'none' ? 0 : sh.split(/,(?![^(]*\))/).length;
+  const hasGlow = /rgba\(233, 236, 242/.test(sh);
+  const hasDark = /rgba\(1, 2, 3/.test(sh);
+  return { layers, hasGlow, hasDark };
+}
+const CANDS = [
+  ['A — درخشش', '.mA'], ['B — مه', '.mB'], ['C — مه + درز', '.mC'], ['D — مه + نور داخلی', '.mD'],
+  ['T1 — toast درخشان', '.tT1'], ['T2 — toast آرام', '.tT2'], ['T3 — toast + نشان', '.tT3'],
+];
+const rows = document.getElementById('perf');
+const res = CANDS.map(([l,s]) => ({ l, ...describe(s), ms: bench(s) }));
+const base = Math.min(...res.map(r=>r.ms)) || 1;
+for (const r of res) {
+  rows.insertAdjacentHTML('beforeend', `<tr>
+    <td>${r.l}</td>
+    <td>${r.layers}</td>
+    <td class="${r.hasDark ? 'num' : 'bad'}">${r.hasDark ? '✓' : '✗'}</td>
+    <td class="${r.hasGlow ? 'bad' : 'num'}">${r.hasGlow ? 'دارد' : 'ندارد'}</td>
+    <td class="num">${r.ms.toFixed(1)}ms (${(r.ms/base).toFixed(2)}×)</td></tr>`);
+}
+document.getElementById('verdict').innerHTML = `
+  <p style="font-size:15px;font-weight:600">سؤال کلیدی</p>
+  <p style="color:rgba(255,255,255,0.62);font-size:13px;margin-top:8px">
+    <b>۱.</b> کدام از A/B/C/D آرام‌تر و «مه‌آلودتر» است؟ (به نظر من B یا D)<br>
+    <b>۲.</b> کدام toast مناسب‌تر است؟ T1 توجه‌طلب است؛ T2 و T3 آرام‌اند.<br>
+    <b>۳.</b> نشان رنگی در T3 — آیا معنا را بهتر می‌رساند از سطح رنگی؟
+  </p>`;
+</script>
+</body>
+</html>
