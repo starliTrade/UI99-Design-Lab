@@ -130,8 +130,23 @@ export interface LiminalStyleElement {
   concave?: boolean;
 }
 
+/**
+ * The deepest surface the ladder allows.
+ *
+ * Derived, never written down. This was a literal `5` in three places — correct
+ * when the ladder had six steps, and silently wrong once it grew to nine.
+ * Anything at S6, S7 or S8 was clamped onto S5, so `getLiminalStyle` could only
+ * produce six distinct surfaces while `liminal-surface.resolveSurface` could
+ * produce nine. Two engines, two answers for the same depth.
+ *
+ * A hard-coded ceiling is the same defect class as a hard-coded breakpoint: a
+ * number that used to be right, left sitting where the thing it described has
+ * changed underneath it.
+ */
+const MAX_SURFACE_LEVEL = LADDER.length - 1;
+
 export function getLiminalStyle(el: LiminalStyleElement) {
-  const baseN = Math.max(0, Math.min(5, el.surfaceLevel));
+  const baseN = Math.max(0, Math.min(MAX_SURFACE_LEVEL, el.surfaceLevel));
   let n = baseN;
   const container = el.containerLevel ?? Math.max(0, baseN - 1);
   let rim: 0 | 1 | 2 | 3 = el.isContainer ? 1 : (el.interactive || el.isFeatured) ? 2 : 0;
@@ -146,10 +161,10 @@ export function getLiminalStyle(el: LiminalStyleElement) {
   const st = el.state ?? 'idle';
 
   if (st === 'hover') {
-    n = Math.min(5, n + 0.5);
+    n = Math.min(MAX_SURFACE_LEVEL, n + 0.5);
   }
   if (st === 'focus') {
-    n = Math.min(5, n + 0.5);
+    n = Math.min(MAX_SURFACE_LEVEL, n + 0.5);
     rim = 3;
     outline = `2px solid ${FOCUS_RING_COLOR}`;
     outlineOffset = '2px';

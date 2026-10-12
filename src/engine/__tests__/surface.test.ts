@@ -323,9 +323,24 @@ describe('the two depth engines agree on the ladder', () => {
     expect(seen.size).toBe(LADDER.length);
   });
 
-  it('a hover step at the ceiling still moves, rather than being clamped flat', () => {
-    const idle = getLiminalStyle({ surfaceLevel: LADDER.length - 1, isContainer: true });
-    const hover = getLiminalStyle({ surfaceLevel: LADDER.length - 1, isContainer: true, state: 'hover' });
+  it('a hover step below the ceiling still moves', () => {
+    // Before the fix this was 5 -> 5: the level had already been flattened, so
+    // the hover had nowhere to go. At the ceiling itself a clamp is correct —
+    // there is no room above the top of the ladder, and this engine has no
+    // inversion rule (resolveBorder has one; getLiminalStyle does not).
+    const top = LADDER.length - 2;
+    const idle = getLiminalStyle({ surfaceLevel: top, isContainer: true });
+    const hover = getLiminalStyle({ surfaceLevel: top, isContainer: true, state: 'hover' });
+    expect(idle.n).toBe(top);
     expect(hover.n).toBeGreaterThan(idle.n);
+  });
+
+  it('clamps at the ceiling rather than running off the ladder', () => {
+    const hover = getLiminalStyle({
+      surfaceLevel: LADDER.length - 1,
+      isContainer: true,
+      state: 'hover',
+    });
+    expect(hover.n).toBe(LADDER.length - 1);
   });
 });
