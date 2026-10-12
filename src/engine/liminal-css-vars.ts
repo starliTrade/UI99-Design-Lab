@@ -12,7 +12,7 @@
  * Run: bun run gen:css   (writes the block into src/index.css)
  */
 
-import { LADDER, HALF } from './liminal-ladder';
+import { LADDER, HALF, WELLS } from './liminal-ladder';
 import {
   RIM,
   SHADOWS,
@@ -43,8 +43,8 @@ export function generateCssVars(): string {
   // ── 1. TONAL LADDER ────────────────────────────────────────────────
   section('1. TONAL LADDER');
   LADDER.forEach((hex, i) => v(`s${i}`, hex, i === 0 ? 'canvas' : undefined));
-  v('s-minus-1', '#030406', 'penumbra');
-  v('s-minus-2', '#010203', 'contact umbra');
+  v('s-minus-1', WELLS.penumbra, 'penumbra');
+  v('s-minus-2', WELLS.umbra, 'contact umbra');
 
   // ── 2. DIRECTIONAL RIM ─────────────────────────────────────────────
   section('2. RIM');

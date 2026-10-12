@@ -10,12 +10,18 @@
 مبتنی بر مدل رنگی OKLCH با نقطه مرجع بوم $L_0 = 0.128$ و **کوانتوم ادراکی اندازه‌گیری‌شده** $q = 0.0083$.
 
 > **این عدد اندازه‌گیری شده است، نه فرض.** با روش روان‌فیزیک استاندارد (محرک‌های ثابت، ۸ سطح × ۶ تکرار + ۴ آزمایش تله‌ای، برازش منحنی روان‌سنجی) روی نمایشگر خودِ طراح، در سه نشست مستقل:
-> - $q = 0.0083$ — آستانه‌ی ادراکی (۵۰٪ تشخیص) · نشست‌ها: ۰.۰۰۸۳ / ۰.۰۰۷۹ / ۰.۰۰۸۹
-> - $r = 0.0112$ — مرز قابل‌اعتماد (۹۵٪ تشخیص) · $r/q = 1.35$
+<!-- gen:quantum -->
+- $q = 0.0083$ — آستانه‌ی ادراکی (۵۰٪ تشخیص)
+- $r = 0.0112$ — مرز قابل‌اعتماد (۹۵٪ تشخیص) · $r/q = 1.35$
+<!-- /gen:quantum -->
+
 > شاهد: `design-lab/threshold-test-precise.html`
 
 **فرمول تولید نردبان:**
-$$L(n) = 0.128 + n \times 0.009475 \quad | \quad C = 0.0069 \quad | \quad H = 258.4°$$
+<!-- gen:ladder-formula -->
+$L(n) = 0.128 + n \times 0.009475 \quad | \quad C = 0.0069 \quad | \quad H = 258.4°$
+<!-- /gen:ladder-formula -->
+
 
 > **نردبان تولید می‌شود، نه انتخاب.** hue و chroma **ثابت** هستند و فقط روشنایی تغییر می‌کند — این همان چیزی است که آن را «مقیاس» می‌کند نه «پالت». نردبان دستیِ قبلی ۱۴ درجه در hue می‌لرزید و chroma‌اش ۲.۳ برابر نوسان داشت. حالا هیچ‌چیز برای لرزیدن نمانده.
 >
@@ -29,26 +35,34 @@ $$L(n) = 0.128 + n \times 0.009475 \quad | \quad C = 0.0069 \quad | \quad H = 25
 >
 > کوانتیزاسیون هگز ۸بیتی اجازه‌ی گام دقیق نمی‌دهد؛ دنباله با جستجو بهینه شده تا واریانس گام کمینه شود. گام‌های محقق‌شده: $1.07q$ تا $1.27q$.
 
+<!-- gen:ladder-steps -->
 - **S0 (Canvas):** `#060709` ($L \approx 0.128$) — بستر مادر و مرجع مطلق تاریکی
-- **S1 (Chrome):** `#07090b` ($L \approx 0.139$) — نوبار، تب‌های ناوبری، نوارهای بیرونی
-- **S2 (Work Surface):** `#090b0d` ($L \approx 0.149$) — سطح کار؛ میزبان پنل‌ها و کارت‌ها
+- **S1 (Chrome):** `#07090b` ($L \approx 0.138$) — نوبار، تب‌های ناوبری، نوارهای بیرونی
+- **S2 (Work Surface):** `#090b0d` ($L \approx 0.148$) — سطح کار؛ میزبان پنل‌ها و کارت‌ها
 - **S3 (Nested Panel):** `#0b0d0f` ($L \approx 0.158$) — پنل‌های تو در تو، کارت‌های داخلی
 - **S4 (Raised Control):** `#0d0f12` ($L \approx 0.168$) — کنترل‌های برجسته، اینپوت‌های فعال
 - **S5 (Floating):** `#0f1114` ($L \approx 0.177$) — منوهای بازشونده، تولتیپ
 - **S6 (Popover):** `#111316` ($L \approx 0.186$) — پاپ‌اور، دراپ‌داون بزرگ
 - **S7 (Modal):** `#131518` ($L \approx 0.195$) — مدال، دراور شیت
 - **S8 (Ceiling):** `#15171a` ($L \approx 0.204$) — سقف تاریکی مجاز
+<!-- /gen:ladder-steps -->
+
 
 #### سطوح زیر-بوم (Sub-Canvas Wells)
-- **S-1 (Penumbra Ambient):** `#030406` ($L \approx 0.113$)
-- **S-2 (Contact Umbra):** `#010203` ($L \approx 0.098$)
+<!-- gen:ladder-wells -->
+- **S-1 (Penumbra Ambient):** `#030406` ($L \approx 0.106$)
+- **S-2 (Contact Umbra):** `#010203` ($L \approx 0.082$)
+<!-- /gen:ladder-wells -->
+
 
 ### 1.2 Directional Specular Rim (لبه بازتابی زاویه‌دار)
 شیب خطی ۱۸۰ درجه با توزیع نور فیزیکی: Top (۱۰۰٪) > Side (۵۵٪) > Bottom (پایین‌ترین سطح نردبان):
-- **Rim 0:** بدون لبه (برای عناصر غیرفعال `disabled`)
+<!-- gen:rim -->
 - **Rim 1 (Chrome / S1):** Top `#080a0c` | Side `#080a0c` | Bottom `#07090b`
 - **Rim 2 (Work Surface / S2):** Top `#0b0d0f` | Side `#0a0c0e` | Bottom `#090b0d`
 - **Rim 3 (Raised / S3+):** Top `#0e1013` | Side `#0d0f12` | Bottom `#0c0e10`
+<!-- /gen:rim -->
+
 - **Concave Inversion (Active State):** معکوس شدن جهت شیب نور به ۱۸۰ درجه معکوس هنگام فشرده شدن دکمه (نمایش فرورفتگی فیزیکی با جابجایی عمودی `translateY(0.5px)`).
 
 ---
@@ -56,20 +70,24 @@ $$L(n) = 0.128 + n \times 0.009475 \quad | \quad C = 0.0069 \quad | \quad H = 25
 ## 2. SHADOWS (سایه‌های زیر-بوم)
 سایه‌ها در سیستم لیمینال منحصراً از دو رنگ زیر-بوم (`S-1 #030406` و `S-2 #010203`) با زاویه نور مستقیم تشکیل شده و فقط برای عناصر شناور (`floating`) و کارت‌های شاخص (`featured`) مجازند:
 
-- **E1 (Floating Dropdown / Header):**
-  `0 2px 6px rgba(3, 4, 6, 0.30), 0 1px 2px rgba(1, 2, 3, 0.22)`
-- **E2 (Featured Card / Popover):**
-  `0 4px 12px rgba(3, 4, 6, 0.36), 0 2px 4px rgba(1, 2, 3, 0.26)`
-- **E3 (Modal / Sheet Drawer):**
-  `0 8px 28px rgba(3, 4, 6, 0.44), 0 3px 8px rgba(1, 2, 3, 0.30)`
-- **E4 (Toast / Max Floating Anchor):**
-  `0 14px 44px rgba(3, 4, 6, 0.50), 0 5px 12px rgba(1, 2, 3, 0.34)`
+<!-- gen:shadows -->
+- **E1:**
+  `0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22)`
+- **E2:**
+  `0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26)`
+- **E3:**
+  `0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30)`
+- **E4:**
+  `0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)`
+<!-- /gen:shadows -->
+
 
 ---
 
 ## 3. SPACING, RADIUS & TYPOGRAPHY (هندسه و مقیاس)
 
 ### 3.1 Spacing Tokens (مقیاس فاصله‌گذاری — اتم ۴ پیکسل)
+<!-- gen:spacing -->
 - پیوسته (Cohesive): $\le 12px$
   - `SPACING[1]` = `4px`
   - `SPACING[2]` = `8px`
@@ -81,6 +99,8 @@ $$L(n) = 0.128 + n \times 0.009475 \quad | \quad C = 0.0069 \quad | \quad H = 25
   - `SPACING[7]` = `48px`
   - `SPACING[8]` = `64px`
   - `SPACING[9]` = `96px`
+<!-- /gen:spacing -->
+
 
 ### 3.2 Radius Tokens & Concentric Law (شعاع و قانون توافق متحدالمرکز)
 فرمول شعاع فرزندی: $R_{inner} = \max(4, R_{outer} - P)$
@@ -179,17 +199,23 @@ $$L(n) = 0.128 + n \times 0.009475 \quad | \quad C = 0.0069 \quad | \quad H = 25
 ## 5. SEMANTICS & EXTENDED SPECTRUM (رنگ‌های معنایی و طیف)
 
 ### 5.1 Semantics (چهار نقش معنایی با کرومای کنترل‌شده ضد نئون)
-- **SUCCESS:** Solid `#34C08B` | Text `#6EE0B4` | Subtle `rgba(52, 192, 139, 0.08)` | Border `rgba(52, 192, 139, 0.22)`
-- **WARNING:** Solid `#E9B44C` | Text `#F5CE7A` | Subtle `rgba(233, 180, 76, 0.08)` | Border `rgba(233, 180, 76, 0.22)`
-- **DANGER:** Solid `#E25555` | Text `#F08C8C` | Subtle `rgba(226, 85, 85, 0.08)` | Border `rgba(226, 85, 85, 0.22)`
-- **INFO:** Solid `#4F8FEA` | Text `#8CC3F2` | Subtle `rgba(79, 143, 234, 0.08)` | Border `rgba(79, 143, 234, 0.22)`
+<!-- gen:semantics -->
+- **SUCCESS:** Solid `var(--liminal-success, #00875d)` | Text `#54e5aa` | On-solid `#FFFFFF` | Subtle `rgba(0, 135, 93, 0.1)` | Border `rgba(0, 135, 93, 0.22)` | Glyph `✓`
+- **WARNING:** Solid `var(--liminal-warning, #946a00)` | Text `#ffc348` | On-solid `#FFFFFF` | Subtle `rgba(148, 106, 0, 0.1)` | Border `rgba(148, 106, 0, 0.22)` | Glyph `!`
+- **DANGER:** Solid `var(--liminal-danger, #ba4646)` | Text `#ffbdb6` | On-solid `#FFFFFF` | Subtle `rgba(186, 70, 70, 0.1)` | Border `rgba(186, 70, 70, 0.22)` | Glyph `×`
+- **INFO:** Solid `var(--liminal-info, #3271c8)` | Text `#a4d1ff` | On-solid `#FFFFFF` | Subtle `rgba(50, 113, 200, 0.1)` | Border `rgba(50, 113, 200, 0.22)` | Glyph `i`
+<!-- /gen:semantics -->
+
 
 ### 5.2 Brand Primary
 - **Brand Primary:** `#E9ECF2` (Soft White)
 - **Brand On-Color:** `#060709` (Canvas)
 
 ### 5.3 Extended Spectrum (۱۲ فام کالیبره‌شده در فاصله ۳۰ درجه)
-Hue 15 (Ruby `#E86575`), 45 (Amber `#E09540`), 75 (Gold `#C8B030`), 105 (Lime `#90C440`), 145 (Emerald `#3CBF7A`), 175 (Teal `#30BCA0`), 205 (Cyan `#38B8D4`), 230 (Sapphire `#509CE8`), 260 (Iris `#7C88EC`), 290 (Amethyst `#B074E4`), 320 (Magenta `#D864B8`), 350 (Rose `#E46494`).
+<!-- gen:spectrum -->
+Ruby (`#E88A93`), hue 15 · Coral (`#E8A87C`), hue 40 · Amber (`#D9BE6E`), hue 75 · Lime (`#A8CC74`), hue 110 · Emerald (`#74CE8E`), hue 145 · Teal (`#5FCDBB`), hue 175 · Cyan (`#56C6E0`), hue 200 · Sapphire (`#6FA8EC`), hue 230 · Indigo (`#8B9CF0`), hue 260 · Violet (`#A98BEA`), hue 290 · Fuchsia (`#C983D6`), hue 320 · Rose (`#E083AE`), hue 350.
+<!-- /gen:spectrum -->
+
 
 ---
 
@@ -260,19 +286,25 @@ seam             = rgba(233,236,242, 0.07 + h × 0.004)
 ## 8. MOTION ENGINE (موتور انیمیشن و حرکت فیزیکی)
 
 ### 8.1 زمان‌بندی‌ها (6 Durations)
-- `instant`: `100ms` — فیدبک میکرو (تیک چک‌باکس، رادیو)
-- `fast`: `150ms` — تعاملات سریع (هاور، فوکوس)
-- `normal`: `200ms` — تغییرات حالت و فشرده شدن دکمه
-- `slow`: `250ms` — ورود و خروج کوچک (تولتیپ، سوییچ توگل)
-- `slower`: `350ms` — ظروف بزرگ و شناور (مدال، دراور شیت، تست لودینگ)
-- `dramatic`: `500ms` — جلوه‌های نمایشی هیرو و هاله مه
+<!-- gen:durations -->
+- `instant`: `100ms`
+- `fast`: `150ms`
+- `normal`: `200ms`
+- `slow`: `250ms`
+- `slower`: `350ms`
+- `dramatic`: `500ms`
+<!-- /gen:durations -->
+
 
 ### 8.2 منحنی‌های شتاب (5 Easings)
-- `out`: `cubic-bezier(0.16, 1, 0.3, 1)` — ورود (شروع سریع، توقف نرم)
-- `in`: `cubic-bezier(0.7, 0, 0.84, 0)` — خروج (شروع نرم، خروج پرشتاب)
-- `inOut`: `cubic-bezier(0.65, 0, 0.35, 1)` — حرکت‌های رفت و برگشتی متقارن
-- `spring`: `cubic-bezier(0.2, 0.8, 0.2, 1)` — فیزیک ارتجاعی امضای لیمینال
+<!-- gen:easings -->
+- `out`: `cubic-bezier(0.16, 1, 0.3, 1)`
+- `in`: `cubic-bezier(0.7, 0, 0.84, 0)`
+- `inOut`: `cubic-bezier(0.65, 0, 0.35, 1)`
+- `spring`: `cubic-bezier(0.2, 0.8, 0.2, 1)`
 - `linear`: `linear`
+<!-- /gen:easings -->
+
 
 ### 8.3 ترانزیشن‌های آماده و پالس اسکلت
 - `micro`, `fast`, `hover`, `normal`, `slow`, `enter`, `spring`, `exit`, `containerEnter`, `containerExit`, `dramatic`
