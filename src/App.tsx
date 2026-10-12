@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { getLiminalStyle, getTextStyle, LADDER, LiminalState } from './engine/spec-engine';
 import { resolveBorder, resolveSurface } from './engine/liminal-surface';
+import { LADDER_STEP, LADDER_HUE } from './engine/liminal-ladder';
 import { CONTRACT, getContractSections, getContractText, getContractChecklist } from './engine/liminal-contract';
 import { LiminalColorEngine } from './engine/liminal-color-engine';
 import { LiminalLayoutEngine } from './engine/liminal-layout-engine';
@@ -1224,11 +1225,20 @@ export function App() {
 
               <div className="space-y-2 font-sans">
                 {[
-                  { level: 7, label: '33px Display', text: 'Liminal Architecture' },
-                  { level: 5, label: '23px Heading 3', text: 'Perceptual Boundary Limen' },
-                  { level: 3, label: '16px Body Copy', text: 'Each layer on the threshold of perception — neither less, nor more.' },
-                  { level: 1, label: '11px Meta / Caption', text: 'ΔL = 0.015 · OKLCH Hue 270° · Concentric Curves' },
+                  { level: 7, text: 'Liminal Architecture' },
+                  { level: 5, text: 'Perceptual Boundary Limen' },
+                  { level: 3, text: 'Each layer on the threshold of perception — neither less, nor more.' },
+                  // This caption used to read 'ΔL = 0.015 · OKLCH Hue 270°'. Both
+                  // numbers were wrong — the step is LADDER_STEP and the hue is
+                  // LADDER_HUE — and ΔL 0.015 is the exact false claim Phase 0
+                  // found and fixed. It is read from the engine now, so it cannot
+                  // drift again.
+                  { level: 1, text: `ΔL = ${LADDER_STEP} · OKLCH Hue ${LADDER_HUE}° · Concentric Curves` },
                 ].map((item) => {
+                  const t = LiminalLayoutEngine.TYPOGRAPHY[item.level];
+                  // The size is fluid, so a fixed px label would be a lie. The
+                  // level and its role are what the scale actually guarantees.
+                  const label = `level ${item.level} · ${t.role}`;
                   const style = LiminalLayoutEngine.getTypeStyle(item.level as any);
                   return (
                     <div
@@ -1240,7 +1250,7 @@ export function App() {
                         className="text-[9px] font-mono mb-0.5"
                         style={{ color: getTextStyle('tertiary', 2).color }}
                       >
-                        {item.label}
+                        {label}
                       </div>
                       <div
                         style={{

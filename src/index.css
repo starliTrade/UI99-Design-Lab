@@ -54,26 +54,26 @@
   --liminal-text-quaternary: rgba(255, 255, 255, 0.448); /* ≥3:1, non-text only */
 
   /* ── 7. SEMANTICS ────────────────────────────────────────────── */
-  --liminal-success: #34C08B;
-  --liminal-success-text: #6EE0B4;
-  --liminal-success-subtle: rgba(52, 192, 139, 0.10);
-  --liminal-success-border: rgba(52, 192, 139, 0.22);
-  --liminal-success-on: #04140D;
-  --liminal-warning: #E9B44C;
-  --liminal-warning-text: #F2CE77;
-  --liminal-warning-subtle: rgba(233, 180, 76, 0.10);
-  --liminal-warning-border: rgba(233, 180, 76, 0.22);
-  --liminal-warning-on: #1A1204;
-  --liminal-danger: #E25555;
-  --liminal-danger-text: #F091A2;
-  --liminal-danger-subtle: rgba(226, 85, 85, 0.10);
-  --liminal-danger-border: rgba(226, 85, 85, 0.22);
-  --liminal-danger-on: #1A060A;
-  --liminal-info: #4F8FEA;
-  --liminal-info-text: #8CC3F2;
-  --liminal-info-subtle: rgba(79, 143, 234, 0.10);
-  --liminal-info-border: rgba(79, 143, 234, 0.22);
-  --liminal-info-on: #04101A;
+  --liminal-success: #00875d;
+  --liminal-success-text: #54e5aa;
+  --liminal-success-subtle: rgba(0, 135, 93, 0.1);
+  --liminal-success-border: rgba(0, 135, 93, 0.22);
+  --liminal-success-on: #FFFFFF;
+  --liminal-warning: #946a00;
+  --liminal-warning-text: #ffc348;
+  --liminal-warning-subtle: rgba(148, 106, 0, 0.1);
+  --liminal-warning-border: rgba(148, 106, 0, 0.22);
+  --liminal-warning-on: #FFFFFF;
+  --liminal-danger: #ba4646;
+  --liminal-danger-text: #ffbdb6;
+  --liminal-danger-subtle: rgba(186, 70, 70, 0.1);
+  --liminal-danger-border: rgba(186, 70, 70, 0.22);
+  --liminal-danger-on: #FFFFFF;
+  --liminal-info: #3271c8;
+  --liminal-info-text: #a4d1ff;
+  --liminal-info-subtle: rgba(50, 113, 200, 0.1);
+  --liminal-info-border: rgba(50, 113, 200, 0.22);
+  --liminal-info-on: #FFFFFF;
 
   /* ── 8. BRAND ────────────────────────────────────────────────── */
   --liminal-brand: #E9ECF2;
@@ -215,26 +215,26 @@
   --liminal-text-quaternary: rgba(255, 255, 255, 0.448); /* ≥3:1, non-text only */
 
   /* ── 7. SEMANTICS ────────────────────────────────────────────── */
-  --liminal-success: #34C08B;
-  --liminal-success-text: #6EE0B4;
-  --liminal-success-subtle: rgba(52, 192, 139, 0.10);
-  --liminal-success-border: rgba(52, 192, 139, 0.22);
-  --liminal-success-on: #04140D;
-  --liminal-warning: #E9B44C;
-  --liminal-warning-text: #F2CE77;
-  --liminal-warning-subtle: rgba(233, 180, 76, 0.10);
-  --liminal-warning-border: rgba(233, 180, 76, 0.22);
-  --liminal-warning-on: #1A1204;
-  --liminal-danger: #E25555;
-  --liminal-danger-text: #F091A2;
-  --liminal-danger-subtle: rgba(226, 85, 85, 0.10);
-  --liminal-danger-border: rgba(226, 85, 85, 0.22);
-  --liminal-danger-on: #1A060A;
-  --liminal-info: #4F8FEA;
-  --liminal-info-text: #8CC3F2;
-  --liminal-info-subtle: rgba(79, 143, 234, 0.10);
-  --liminal-info-border: rgba(79, 143, 234, 0.22);
-  --liminal-info-on: #04101A;
+  --liminal-success: #00875d;
+  --liminal-success-text: #54e5aa;
+  --liminal-success-subtle: rgba(0, 135, 93, 0.1);
+  --liminal-success-border: rgba(0, 135, 93, 0.22);
+  --liminal-success-on: #FFFFFF;
+  --liminal-warning: #946a00;
+  --liminal-warning-text: #ffc348;
+  --liminal-warning-subtle: rgba(148, 106, 0, 0.1);
+  --liminal-warning-border: rgba(148, 106, 0, 0.22);
+  --liminal-warning-on: #FFFFFF;
+  --liminal-danger: #ba4646;
+  --liminal-danger-text: #ffbdb6;
+  --liminal-danger-subtle: rgba(186, 70, 70, 0.1);
+  --liminal-danger-border: rgba(186, 70, 70, 0.22);
+  --liminal-danger-on: #FFFFFF;
+  --liminal-info: #3271c8;
+  --liminal-info-text: #a4d1ff;
+  --liminal-info-subtle: rgba(50, 113, 200, 0.1);
+  --liminal-info-border: rgba(50, 113, 200, 0.22);
+  --liminal-info-on: #FFFFFF;
 
   /* ── 8. BRAND ────────────────────────────────────────────────── */
   --liminal-brand: #E9ECF2;
