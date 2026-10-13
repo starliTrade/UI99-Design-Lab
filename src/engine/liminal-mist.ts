@@ -23,7 +23,7 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import { LADDER, PERCEPTUAL_QUANTUM } from './liminal-ladder';
+import { LADDER, PERCEPTUAL_QUANTUM, getLadderVar } from './liminal-ladder';
 import { ROLE_LEVEL } from './liminal-surface';
 import type { SurfaceRole } from './liminal-surface';
 
@@ -72,9 +72,12 @@ export function mistBlur(role: SurfaceRole): number {
 export function mistFillStops(role: SurfaceRole): { top: string; bottom: string; topAlpha: number; bottomAlpha: number } {
   const level = Math.min(LADDER.length - 1, ROLE_LEVEL[role]);
   const lower = Math.max(0, level - 2);
+  // A VARIABLE, not the hex. The mist is a surface, and a surface has to follow
+  // a theme like every other one — this was the last place in the engine that
+  // baked a ladder colour into a rendered style.
   return {
-    top: LADDER[level],
-    bottom: LADDER[lower],
+    top: getLadderVar(level),
+    bottom: getLadderVar(lower),
     topAlpha: 0.80 + floatHeight(role) * 0.008,
     bottomAlpha: 0.70 + floatHeight(role) * 0.008,
   };
@@ -197,7 +200,7 @@ export function mistShadowFarAlpha(role: SurfaceRole): number {
  */
 export function mistFill(role: SurfaceRole): { color: string; alpha: number } {
   const level = Math.min(LADDER.length - 1, ROLE_LEVEL[role]);
-  return { color: LADDER[level], alpha: 0.64 + floatHeight(role) * 0.015 };
+  return { color: getLadderVar(level), alpha: 0.64 + floatHeight(role) * 0.015 };
 }
 
 /**

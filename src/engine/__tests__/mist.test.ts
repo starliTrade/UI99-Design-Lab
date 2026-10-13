@@ -60,12 +60,17 @@ describe('mist — the surface diffuses light, it does not emit it', () => {
   });
 
   it('builds the fog as a vertical gradient, top lighter than bottom', () => {
+    // The stops are ladder VARIABLES, not hexes. They used to be hexes, and a
+    // hex cannot follow a theme: the mist was the last surface in the engine
+    // that ignored `data-liminal-theme`.
+    const levelOf = (v: string) => {
+      const m = v.match(/--liminal-s(\d+)/);
+      expect(m, `${v} is not a ladder variable`).not.toBeNull();
+      return Number(m![1]);
+    };
     for (const role of ROLES) {
       const { top, bottom } = mistFillStops(role);
-      expect(LADDER, `${role} top is not a ladder step`).toContain(top);
-      expect(LADDER, `${role} bottom is not a ladder step`).toContain(bottom);
-      const steps = LADDER as readonly string[];
-      expect(steps.indexOf(top)).toBeGreaterThan(steps.indexOf(bottom));
+      expect(levelOf(top), `${role} top`).toBeGreaterThan(levelOf(bottom));
     }
     expect(mistCss).toMatch(/linear-gradient\(\s*180deg/);
   });
