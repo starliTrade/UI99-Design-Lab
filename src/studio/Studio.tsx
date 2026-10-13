@@ -4,6 +4,7 @@ import type { ComponentFixture } from '../components/__matrix__/fixtures';
 import { LADDER, getTextStyle } from '../engine/spec-engine';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../engine/liminal-motion-engine';
+import { useMediaQuery } from '../engine/liminal-hooks';
 
 /**
  * LIMINAL · STUDIO
@@ -55,6 +56,11 @@ export function Studio() {
   const [size, setSize] = useState<string | undefined>(undefined);
   const [state, setState] = useState<string | undefined>(undefined);
   const [showCode, setShowCode] = useState(true);
+  // Mobile-first: the sidebar is a column on a wide screen and a horizontal
+  // strip on a narrow one. A fixed 220px column is what breaks a phone layout,
+  // and this is the tool we audit the components with — so it has to survive
+  // the same widths they do.
+  const wide = useMediaQuery('(min-width: 860px)');
 
   const fixture = FIXTURES.find((f) => f.name === selected) ?? FIXTURES[0];
   const controls = controlsFor(fixture);
@@ -73,13 +79,28 @@ export function Studio() {
   const rendered = fixture.render(activeState, activeSize);
 
   return (
-    <div style={{ display: 'flex', gap: `${S[4]}px`, alignItems: 'flex-start', width: '100%' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: wide ? 'row' : 'column',
+        gap: `${S[4]}px`,
+        alignItems: 'stretch',
+        width: '100%',
+      }}
+    >
       {/* ── the sidebar ─────────────────────────────────────────────────── */}
       <nav
         aria-label="کامپوننت‌ها"
         style={{
-          width: 220, flexShrink: 0, border: `1px solid ${LADDER[3]}`, borderRadius: `${R.card}px`,
-          padding: `${S[3]}px`, background: LADDER[1], maxHeight: '70vh', overflowY: 'auto',
+          width: wide ? 220 : '100%',
+          flexShrink: 0,
+          border: `1px solid ${LADDER[3]}`,
+          borderRadius: `${R.card}px`,
+          padding: `${S[3]}px`,
+          background: LADDER[1],
+          maxHeight: wide ? '70vh' : '34vh',
+          overflowY: 'auto',
+          boxSizing: 'border-box',
         }}
       >
         {groups.map((g) => (
@@ -126,11 +147,11 @@ export function Studio() {
         </header>
 
         {/* the controls */}
-        <div style={{ display: 'flex', gap: `${S[4]}px`, flexWrap: 'wrap', marginBottom: `${S[4]}px` }}>
+        <div style={{ display: 'flex', gap: `${S[3]}px`, flexWrap: 'wrap', marginBottom: `${S[4]}px`, alignItems: 'flex-end' }}>
           {controls.map((c) => (
             <div key={c.name}>
               <div style={{ fontSize: 11, color: FAINT, marginBottom: 4 }}>{c.name}</div>
-              <div style={{ display: 'flex', gap: 4 }}>
+              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                 {c.values.map((v) => {
                   const on = (c.name === 'size' ? activeSize : activeState) === v;
                   return (
