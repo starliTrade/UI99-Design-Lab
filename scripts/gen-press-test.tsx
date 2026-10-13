@@ -129,8 +129,8 @@ const rows = CASES.map((c) => {
  */
 const PORTALLED = [{ name: 'Toast', note: 'دکمهٔ اکشن — پورتال، استاتیک رندر نمی‌شود', own: 'SURFACE_TINT.medium', engine: engineActive('Toast') }];
 
-const col = (title: string, note: string, body: string) => `
-  <div class="col">
+const col = (title: string, note: string, body: string, cls = '') => `
+  <div class="col ${cls}">
     <div class="head"><b>${title}</b><span class="use">${note}</span></div>
     ${body}
   </div>`;
@@ -187,15 +187,14 @@ ${LAYERS}
   .hint code { color:${DIM}; }
   /* The layer's own :active rule, applied by a class so a still frame can show
      it. Identical declarations — only the trigger differs. */
-  body.pressed [data-liminal-surface] {
+  .pressed [data-liminal-surface] {
     background: var(--liminal-surface-active);
     transform: translateY(0.5px);
   }
-  .bar { display:flex; align-items:center; gap:12px; margin: 20px 0 4px; }
-  .bar button { font: inherit; font-size: 12px; color:${TEXT}; background:${LADDER[2]};
-    border: 1px solid ${LADDER[3]}; border-radius: 9px; padding: 7px 14px; cursor: pointer; }
-  .bar button[aria-pressed="true"] { background:${LADDER[4]}; border-color:${LADDER[5]}; }
+  .bar { display:flex; align-items:baseline; gap:12px; margin: 22px 0 6px; }
+  .bar b { font-size: 13px; font-weight: 600; }
   .bar span { color:${FAINT}; font-size: 12px; }
+  .cols + .cols { margin-top: 18px; }
 </style>
 </head>
 <body>
@@ -212,19 +211,16 @@ ${LAYERS}
     <tbody>${table}</tbody>
   </table>
 
-  <div class="bar">
-    <button id="press" aria-pressed="false" onclick="
-      const on = this.getAttribute('aria-pressed') !== 'true';
-      this.setAttribute('aria-pressed', String(on));
-      document.body.classList.toggle('pressed', on);
-      this.textContent = on ? 'حالت فشرده: روشن' : 'حالت فشرده را نشان بده';
-    ">حالت فشرده را نشان بده</button>
-    <span>یا خودت موس را روی کامپوننت‌ها نگه دار — هر دو ستون زنده‌اند.</span>
-  </div>
-
+  <div class="bar"><b>زنده</b><span>موس را روی کامپوننت‌ها نگه دار و فشار بده — هر دو ستون واقعی‌اند.</span></div>
   <div class="cols">
     ${col('A — بلندی حفظ می‌شود', 'همان چیزی که امروز در کد است', rows.map((r) => cell(r.name, r.a)).join(''))}
     ${col('B — یک پله پایین می‌رود', 'پیش‌فرض تولیدکننده', rows.map((r) => cell(r.name, r.b)).join(''))}
+  </div>
+
+  <div class="bar"><b>فشرده</b><span>حالت فشرده، ثابت — همان تعریف‌های <code>:active</code> خودِ لایه، با کلاس به‌جای شبه‌کلاس.</span></div>
+  <div class="cols">
+    ${col('A — فشرده', 'بلندی حفظ می‌شود', rows.map((r) => cell(r.name, r.a)).join(''), 'pressed')}
+    ${col('B — فشرده', 'یک پله پایین می‌رود', rows.map((r) => cell(r.name, r.b)).join(''), 'pressed')}
   </div>
 
   <div class="hint">
