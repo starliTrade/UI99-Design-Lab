@@ -1,3 +1,5 @@
+import { resolveSurface } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 import React from 'react';
 import type { CSSProperties, KeyboardEvent, ChangeEvent } from 'react';
 import {
@@ -40,6 +42,15 @@ export function Checkbox({
 
   const offRim = getDirectionalRim(2, 2, false);
 
+  const host = useHostSurface();
+
+  const boxBg = checked
+    ? SEMANTICS.SUCCESS.subtle
+    : offRim
+    ? offRim.cssBackground
+    : LADDER[2];
+  const hoverBg = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
+
   const boxStyle: CSSProperties = {
     width: ICON_SIZES.md,
     height: ICON_SIZES.md,
@@ -50,17 +61,18 @@ export function Checkbox({
     flexShrink: 0,
     boxSizing: 'border-box',
     transition: LiminalMotionEngine.TRANSITION.normal,
-    background: checked
-      ? SEMANTICS.SUCCESS.subtle
-      : offRim
-      ? offRim.cssBackground
-      : LADDER[2],
+    // The layer owns the surface — see data-liminal-surface. An inline
+    // background beats the CSS rule, so this line cancelled the hover.
+    '--liminal-surface-idle': boxBg,
+    // A CHECKED box keeps its fill on hover.
+    '--liminal-surface-hover': checked ? boxBg : hoverBg,
+    '--liminal-surface-active': checked ? boxBg : hoverBg,
     border: checked
       ? `1px solid ${SEMANTICS.SUCCESS.border}`
       : offRim
       ? '1px solid transparent'
       : `1px solid ${LADDER[3]}`,
-  };
+  } as CSSProperties;
 
   const labelStyle: CSSProperties = {
     color: getTextStyle('secondary', 2).color,
@@ -125,7 +137,7 @@ export function Checkbox({
         }}
       />
 
-      <span style={boxStyle}>
+      <span data-liminal-surface="" style={boxStyle}>
         <svg
           width="12"
           height="12"

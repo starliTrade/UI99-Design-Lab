@@ -1,3 +1,5 @@
+import { resolveSurface } from '../../../engine/liminal-surface';
+import { useHostSurface } from '../../../engine/liminal-surface-context';
 import React from 'react';
 import type { CSSProperties, KeyboardEvent, ChangeEvent } from 'react';
 import {
@@ -39,7 +41,16 @@ export function Radio({
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
+  const host = useHostSurface();
+
   const offRim = getDirectionalRim(2, 2, false);
+
+  const boxBg = checked
+    ? SEMANTICS.SUCCESS.subtle
+    : offRim
+    ? offRim.cssBackground
+    : LADDER[2];
+  const hoverBg = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
 
   const circleStyle: CSSProperties = {
     width: ICON_SIZES.md,
@@ -51,17 +62,18 @@ export function Radio({
     flexShrink: 0,
     boxSizing: 'border-box',
     transition: LiminalMotionEngine.TRANSITION.normal,
-    background: checked
-      ? SEMANTICS.SUCCESS.subtle
-      : offRim
-      ? offRim.cssBackground
-      : LADDER[2],
+    // The layer owns the surface — see data-liminal-surface. An inline
+    // background beats the CSS rule, so this line cancelled the hover.
+    '--liminal-surface-idle': boxBg,
+    // A CHECKED box keeps its fill on hover.
+    '--liminal-surface-hover': checked ? boxBg : hoverBg,
+    '--liminal-surface-active': checked ? boxBg : hoverBg,
     border: checked
       ? `1px solid ${SEMANTICS.SUCCESS.border}`
       : offRim
       ? '1px solid transparent'
       : `1px solid ${LADDER[3]}`,
-  };
+  } as CSSProperties;
 
   const dotStyle: CSSProperties = {
     width: ICON_SIZES.md / 2,
@@ -132,7 +144,7 @@ export function Radio({
         }}
       />
 
-      <span style={circleStyle}>
+      <span data-liminal-surface="" style={circleStyle}>
         <span style={dotStyle} />
       </span>
 

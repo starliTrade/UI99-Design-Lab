@@ -52,6 +52,13 @@ export function Toggle({
     }
   };
 
+  const trackBg = isChecked
+    ? brand.hex
+    : offRim
+    ? offRim.cssBackground
+    : resolveSurface({ role: 'control', on: host }).background;
+  const hoverBg = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
+
   const trackStyle: CSSProperties = {
     position: 'relative',
     display: 'inline-flex',
@@ -65,17 +72,20 @@ export function Toggle({
     userSelect: 'none',
     boxSizing: 'border-box',
     border: '1px solid transparent',
-    background: isChecked
-      ? brand.hex
-      : offRim
-      ? offRim.cssBackground
-      : resolveSurface({ role: 'control', on: host }).background,
+    // The layer owns the surface. The switch publishes its two states and
+    // stops setting `background` itself — an inline background beats the CSS
+    // rule, so the hover the layer would have applied could never arrive.
+    '--liminal-surface-idle': trackBg,
+    // A CHECKED switch keeps its fill on hover: the hover value equals the idle
+    // one. The same rule a selected table row uses.
+    '--liminal-surface-hover': isChecked ? trackBg : hoverBg,
+    '--liminal-surface-active': isChecked ? trackBg : hoverBg,
     // NO `outline: none` here. It cancelled the layer's :focus-visible ring, so
     // the switch had NO visible focus at all — WCAG 2.4.7. The layer owns focus;
     // `data-liminal-focusable` below opts in.
     padding: 0,
     ...customStyle,
-  };
+  } as CSSProperties;
 
   const knobStyle: CSSProperties = {
     position: 'absolute',
@@ -99,6 +109,7 @@ export function Toggle({
     <button
       type="button"
       role="switch"
+      data-liminal-surface=""
       data-liminal-focusable=""
       aria-checked={isChecked}
       aria-label={ariaLabel}
