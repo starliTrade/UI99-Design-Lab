@@ -36,6 +36,18 @@ import { Sidebar } from '../nav/Sidebar/Sidebar';
 import { Topbar } from '../nav/Topbar/Topbar';
 import { Tabs } from '../nav/Tabs/Tabs';
 import { Breadcrumb } from '../nav/Breadcrumb/Breadcrumb';
+import { Modal } from '../containers/Modal/Modal';
+import { Sheet } from '../containers/Sheet/Sheet';
+import { Toast } from '../feedback/Toast/Toast';
+import { SimpleTooltip } from '../feedback/Tooltip/SimpleTooltip';
+import { Combobox } from '../inputs/Combobox/Combobox';
+import { MultiSelect } from '../inputs/MultiSelect/MultiSelect';
+import { CommandPalette } from '../nav/CommandPalette/CommandPalette';
+import { Table } from '../data/Table/Table';
+import { TableHeader, TableRow, TableHead, TableCell } from '../data/Table';
+import { FilterBar } from '../data/FilterBar/FilterBar';
+import { AppShell } from '../layout/AppShell/AppShell';
+import { Calendar } from '../data/Calendar/Calendar';
 
 /**
  * ============================================================================
@@ -102,6 +114,24 @@ const FIXTURES: Array<[string, ReactElement]> = [
   ['Topbar', <Topbar logo={<span>App</span>} />],
   ['Tabs', <Tabs items={[{ id: 'a', label: 'A' }]} value="a" onChange={() => {}} />],
   ['Breadcrumb', <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Now' }]} />],
+
+  // ── the hard half ────────────────────────────────────────────────────────
+  //
+  // The sweep proved 33 components and skipped every one where axe has
+  // something to find: the overlays, the composite inputs, the grid. That is
+  // the half a conformance claim actually rests on.
+  ['Modal', <Modal open title="Dialog" onClose={() => {}}>Body</Modal>],
+  ['Sheet', <Sheet open title="Sheet" onClose={() => {}}>Body</Sheet>],
+  ['Toast', <Toast open title="Saved" message="Done" semantic="success" onClose={() => {}} />],
+  ['SimpleTooltip', <SimpleTooltip content="Help"><Button>Hover</Button></SimpleTooltip>],
+  ['Combobox', <Combobox label="Pick" options={[{ value: 'a', label: 'A' }]} onChange={() => {}} />],
+  ['MultiSelect', <MultiSelect label="Pick" options={[{ value: 'a', label: 'A' }]} onChange={() => {}} />],
+  ['CommandPalette', <CommandPalette isOpen onClose={() => {}} groups={[{ title: 'G', items: [{ id: 'a', label: 'A', action: () => {} }] }]} />],
+  ['Table', <Table><TableHeader><TableRow><TableHead>H</TableHead></TableRow></TableHeader><tbody><TableRow><TableCell>C</TableCell></TableRow></tbody></Table>],
+  ['FilterBar', <FilterBar activeFilters={[]} onRemoveFilter={() => {}} onClearAll={() => {}}><span>f</span></FilterBar>],
+  ['AppShell', <AppShell><span>content</span></AppShell>],
+  ['Calendar', <Calendar month={new Date(Date.UTC(2026, 9, 1))} />],
+  ['Calendar (jalali)', <Calendar calendar="jalali" lang="fa" month={new Date(Date.UTC(2026, 9, 1))} />],
 ];
 
 describe('accessibility sweep — every component renders without axe violations', () => {

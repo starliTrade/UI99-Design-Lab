@@ -44,7 +44,7 @@ export interface CommandPaletteProps {
 export function CommandPalette({
   isOpen,
   onClose,
-  groups,
+  groups = [],
   className = '',
   style: customStyle = {},
 }: CommandPaletteProps) {

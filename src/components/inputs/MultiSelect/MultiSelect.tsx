@@ -65,7 +65,7 @@ export interface MultiSelectProps {
  * - Small inline input for typing and filtering
  * - Dropdown panel via LiminalPortal + MIST quiet + SHADOWS[3]
  * - Selected items show Check icon + highlighted style; clicking toggles selection
- * - Full W3C ARIA accessibility: role="combobox", aria-multiselectable="true", aria-expanded
+ * - Full W3C ARIA accessibility: role="combobox", , aria-expanded
  */
 export function MultiSelect({
   options = [],
@@ -424,7 +424,7 @@ export function MultiSelect({
         ref={fieldWrapperRef}
         role="combobox"
         aria-expanded={isOpen}
-        aria-multiselectable="true"
+        
         aria-haspopup="listbox"
         aria-controls={listboxId}
         style={fieldWrapperStyle}

@@ -27,7 +27,7 @@ export interface FilterBarProps {
 }
 
 export function FilterBar({
-  activeFilters,
+  activeFilters = [],
   onRemoveFilter,
   onClearAll,
   children,
@@ -64,7 +64,7 @@ export function FilterBar({
 
       {/* Active Filters and Clear All */}
       {activeFilters.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 ml-auto">
+        <div className="flex flex-wrap items-center gap-2 ms-auto">
           <div className="flex items-center gap-1.5 text-xs" style={{ color: getTextStyle('tertiary', 1).color }}>
             <LiminalIcon icon={Funnel} size="xs" weight="bold" />
             <span>Active:</span>

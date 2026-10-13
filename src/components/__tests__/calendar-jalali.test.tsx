@@ -10,8 +10,11 @@ afterEach(cleanup);
 /** A fixed month, so the grid is the same on every run. */
 const OCT_2026 = new Date(Date.UTC(2026, 9, 1));
 
+// The grid's leading blanks are gridcells too — a grid's cells must live in
+// rows, so the padding is real cells rather than absent ones. The day cells are
+// the buttons.
 const cells = (container: HTMLElement) =>
-  [...container.querySelectorAll('[role="gridcell"]')].map((c) => c.textContent?.trim());
+  [...container.querySelectorAll('button[role="gridcell"]')].map((c) => c.textContent?.trim());
 
 const headers = (container: HTMLElement) =>
   [...container.querySelectorAll('[role="row"] > div')].map((c) => c.textContent?.trim());
@@ -94,13 +97,17 @@ describe('calendar — the Jalali grid is the calendar’s, not a relabelled Gre
     const j = toJalali(OCT_2026);
     const first = fromJalali({ year: j.year, month: j.month, day: 1 });
     // The cells are <button>, not <div> — the blanks are the divs.
-    const blanks = [...container.querySelectorAll('[role="grid"] > *')].findIndex((d) => d.getAttribute('role') === 'gridcell');
+    // The index of the first DAY cell — a button. The blanks before it are the
+    // padding, and that count is the first day's column.
+    const blanks = [...container.querySelectorAll('[role="grid"] > [role="row"] > [role="gridcell"]')].findIndex(
+      (d) => d.tagName === 'BUTTON',
+    );
     expect(blanks).toBe(jalaliWeekdayIndex(first));
   });
 
   it('gives every cell a full date for a screen reader, in the same calendar', () => {
     const { container } = render(<Calendar calendar="jalali" lang="fa" month={OCT_2026} />);
-    const first = container.querySelector('[role="gridcell"]')!;
+    const first = container.querySelector('button[role="gridcell"]')!;
     const label = first.getAttribute('aria-label') ?? '';
     expect(label).toContain('۱۴۰۵');
     expect(label).toContain('مهر');

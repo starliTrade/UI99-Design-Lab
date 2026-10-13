@@ -139,6 +139,14 @@ export function Calendar({
     days.push(isJalali ? fromJalali({ year: j!.year, month: j!.month, day: i }) : new Date(year, monthIndex, i));
   }
 
+  // A grid's cells must live in rows. The grid was flat, so `role="grid"` had
+  // `gridcell` children with no `role="row"` between them — which axe calls
+  // critical, and which means a screen reader cannot navigate by week.
+  const weeks: (Date | null)[][] = [];
+  for (let i = 0; i < days.length; i += 7) {
+    weeks.push(days.slice(i, i + 7));
+  }
+
   const isSameDay = (d1: Date | null, d2: Date | null) => {
     if (!d1 || !d2) return false;
     return (
@@ -221,6 +229,14 @@ export function Calendar({
   };
 
   const daysGridStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: `${SPACING[0]}px`,
+  };
+
+  // Each week is the 7-column grid; the grid itself is a column of weeks, which
+  // is what `role="grid" > role="row" > role="gridcell"` means.
+  const weekStyle: CSSProperties = {
     display: 'grid',
     gridTemplateColumns: 'repeat(7, 1fr)',
     gap: `${SPACING[0]}px`,
@@ -252,40 +268,43 @@ export function Calendar({
         </div>
       </div>
 
-      <div style={gridHeaderStyle} role="row">
-        {weekDays.map((wd) => (
-          <div key={wd}>{wd}</div>
+      <div style={daysGridStyle} role="grid" aria-label={calendar === 'jalali' ? 'تقویم' : 'Calendar'}>
+        <div role="row">
+          {weekDays.map((wd) => (
+            <div key={wd} role="columnheader">{wd}</div>
+          ))}
+        </div>
+        {weeks.map((week, wi) => (
+          <div key={`w-${wi}`} role="row" style={weekStyle}>
+            {week.map((dateObj, idx) => {
+              if (!dateObj) {
+                return <div key={`empty-${wi}-${idx}`} role="gridcell" style={{ height: DAY_CELL_HEIGHT }} />;
+              }
+
+              const selected = isSelected(dateObj);
+              const today = isToday(dateObj);
+              // The position in the month, which IS the day number in both
+              // calendars — `dateObj.getDate()` is the Gregorian one and would be
+              // wrong by up to a month in the Jalali grid. The grid is padded with
+              // `startingDayOfWeek` leading blanks, so the day number is the offset
+              // from there.
+              const dayIndex = wi * 7 + idx - startingDayOfWeek + 1;
+
+              return (
+                <DayCell
+                  key={dateObj.toISOString()}
+                  date={dateObj}
+                  label={isJalali ? (lang === 'fa' ? toPersianDigits(dayIndex) : String(dayIndex)) : String(dateObj.getDate())}
+                  ariaLabel={isJalali ? formatJalali(dateObj, lang, { dateStyle: 'full' }) : dateObj.toDateString()}
+                  selected={selected}
+                  today={today}
+                  onClick={() => handleDayClick(dateObj)}
+                  reducedMotion={reducedMotion}
+                />
+              );
+            })}
+          </div>
         ))}
-      </div>
-
-      <div style={daysGridStyle} role="grid">
-        {days.map((dateObj, idx) => {
-          if (!dateObj) {
-            return <div key={`empty-${idx}`} style={{ height: DAY_CELL_HEIGHT }} />;
-          }
-
-          const selected = isSelected(dateObj);
-          const today = isToday(dateObj);
-          // The position in the month, which IS the day number in both
-          // calendars — `dateObj.getDate()` is the Gregorian one and would be
-          // wrong by up to a month in the Jalali grid. The grid is padded with
-          // `startingDayOfWeek` leading blanks, so the day number is the offset
-          // from there.
-          const dayIndex = idx - startingDayOfWeek + 1;
-
-          return (
-            <DayCell
-              key={dateObj.toISOString()}
-              date={dateObj}
-              label={isJalali ? (lang === 'fa' ? toPersianDigits(dayIndex!) : String(dayIndex)) : String(dateObj.getDate())}
-              ariaLabel={isJalali ? formatJalali(dateObj, lang, { dateStyle: 'full' }) : dateObj.toDateString()}
-              selected={selected}
-              today={today}
-              onClick={() => handleDayClick(dateObj)}
-              reducedMotion={reducedMotion}
-            />
-          );
-        })}
       </div>
     </div>
   );
