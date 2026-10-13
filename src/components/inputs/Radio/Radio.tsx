@@ -97,7 +97,6 @@ export function Radio({
   return (
     <label
       htmlFor={id}
-      tabIndex={disabled ? -1 : 0}
       onKeyDown={handleKeyDown}
       data-liminal-focusable=""
       className={className}
@@ -123,7 +122,7 @@ export function Radio({
         checked={checked}
         disabled={disabled}
         onChange={handleChange}
-        tabIndex={-1}
+        tabIndex={disabled ? -1 : 0}
         style={{
           position: 'absolute',
           opacity: 0,

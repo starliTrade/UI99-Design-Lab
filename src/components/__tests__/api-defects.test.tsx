@@ -5,6 +5,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { Modal } from '../containers/Modal/Modal';
 import { Select } from '../inputs/Select/Select';
+import { Checkbox } from '../inputs/Checkbox/Checkbox';
+import { Radio } from '../inputs/Radio/Radio';
 
 afterEach(cleanup);
 
@@ -115,5 +117,40 @@ describe('the motion engine — no side effect on import', () => {
     // `!important` as a VALUE, not as the word in the comment that records the
     // removal — a bare substring check would fail on its own explanation.
     expect(src).not.toMatch(/'[^']*!important[^']*'/);
+  });
+});
+
+describe('Checkbox and Radio — focus the control, not its label', () => {
+  // The label carried `tabIndex={0}` and the real input `tabIndex={-1}`, so
+  // focus landed on a non-interactive element. A screen reader may not announce
+  // "checkbox, checked" for a label, and the browser's own focus ring goes to
+  // the wrong box.
+  for (const [name, ui] of [
+    ['Checkbox', <Checkbox checked={false} onChange={() => {}} label="Agree" />],
+    ['Radio', <Radio checked={false} onChange={() => {}} name="g" value="a" label="One" />],
+  ] as const) {
+    it(`${name} puts the tab stop on the input`, () => {
+      const { container } = render(ui);
+      const input = container.querySelector('input')!;
+      const label = container.querySelector('label')!;
+      expect(input.getAttribute('tabindex')).toBe('0');
+      expect(label.hasAttribute('tabindex')).toBe(false);
+    });
+  }
+});
+
+describe('Modal — the background is inert, not merely announced as inert', () => {
+  it('marks the rest of the page inert while it is open', () => {
+    const outside = document.createElement('div');
+    outside.id = 'root';
+    const sibling = document.createElement('div');
+    sibling.textContent = 'behind';
+    outside.appendChild(sibling);
+    document.body.appendChild(outside);
+    render(<Modal open title="D" onClose={() => {}}>x</Modal>);
+    expect(sibling.hasAttribute('inert')).toBe(true);
+    cleanup();
+    expect(sibling.hasAttribute('inert')).toBe(false);
+    outside.remove();
   });
 });

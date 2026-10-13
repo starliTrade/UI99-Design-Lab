@@ -1,4 +1,4 @@
-import React, { useRef, useId } from 'react';
+import React, { useRef, useId, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
 import { getDirectionalRim, getTextStyle, SHADOWS, LADDER, VEIL } from '../../../engine/spec-engine';
@@ -52,7 +52,25 @@ export function Modal({
   // A fixed id meant two modals on one page produced duplicate ids, and
   // `aria-labelledby` pointed at whichever the browser found first.
   const titleId = `${useId()}-title`;
+
   const isModalOpen = open ?? isOpen ?? false;
+
+  // `aria-modal` tells assistive technology the rest of the page is inert. It
+  // does not make it inert: the keyboard can still tab into the background and
+  // a screen reader's virtual cursor can still read it. The `inert` attribute
+  // does both, and it is what the ARIA authoring practices ask for.
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const root = document.getElementById('root') ?? document.body;
+    const changed: Element[] = [];
+    for (const child of Array.from(root.children)) {
+      if (child.contains(modalRef.current) || child === modalRef.current?.parentElement) continue;
+      if (child.hasAttribute('inert')) continue;
+      child.setAttribute('inert', '');
+      changed.push(child);
+    }
+    return () => changed.forEach((c) => c.removeAttribute('inert'));
+  }, [isModalOpen]);
   const actionContent = actions ?? footer;
   const reduced = useReducedMotion();
 

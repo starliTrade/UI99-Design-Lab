@@ -87,7 +87,6 @@ export function Checkbox({
   return (
     <label
       htmlFor={id}
-      tabIndex={disabled ? -1 : 0}
       onKeyDown={handleKeyDown}
       // The browser knows whether focus came from a keyboard. Hand-rolled Tab
       // tracking could not see Shift+Tab, programmatic focus, or a screen
@@ -116,7 +115,7 @@ export function Checkbox({
         checked={checked}
         disabled={disabled}
         onChange={handleChange}
-        tabIndex={-1}
+        tabIndex={disabled ? -1 : 0}
         style={{
           position: 'absolute',
           opacity: 0,
