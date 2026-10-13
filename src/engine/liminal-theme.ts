@@ -2,6 +2,7 @@ import { CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE, PERCEPTUAL_QUANTUM } 
 import { hexToRgb, rgbToOklch, oklchToRgb, rgbToHex } from './liminal-color-math';
 import { LiminalLayoutEngine as L } from './liminal-layout-engine';
 import { LiminalMotionEngine as M } from './liminal-motion-engine';
+import { LiminalColorEngine as C } from './liminal-color-engine';
 
 /**
  * LIMINAL · THEME
@@ -216,4 +217,101 @@ export function themeValues(theme: LiminalTheme): Record<string, string> {
 export function inGamut(hex: string): boolean {
   const back = rgbToHex(oklchToRgb(rgbToOklch(hexToRgb(hex))));
   return back === hex;
+}
+
+/**
+ * A FULL SCALE PER HUE.
+ *
+ * The spectrum shipped one colour per hue — twelve swatches. Radix Colors ships
+ * twelve STEPS per hue, which is a different capability: a consumer who wants "a
+ * green surface at three elevations" has nothing to reach for with a single
+ * swatch, and reaches for a hand-picked hex instead.
+ *
+ * So each hue gets the ladder's own treatment: the same lightness range, the
+ * same step, the same search for the nearest in-gamut value. The hue and its
+ * chroma are the only things that differ, which is what makes it the same
+ * system rather than a second palette.
+ *
+ * The steps are named for their JOB, not their number, because a number tells a
+ * consumer nothing about which one to use:
+ *
+ *   1  canvas       the page behind everything
+ *   2  subtle       a faint wash
+ *   3  surface      a panel
+ *   4  raised       a control at rest
+ *   5  hover        a control under the pointer
+ *   6  active       a control under the press
+ *   7  border       a boundary that should be seen
+ *   8  solid        a fill that carries white text
+ *   9  solidHover   the same fill, under the pointer
+ *   10 text         readable on 1 and 2
+ *   11 textStrong   readable on 3 and 4
+ *   12 emphasis     the loudest this hue gets
+ */
+export const HUE_STEP_NAMES = [
+  'canvas', 'subtle', 'surface', 'raised', 'hover', 'active',
+  'border', 'solid', 'solidHover', 'text', 'textStrong', 'emphasis',
+] as const;
+
+export type HueStep = (typeof HUE_STEP_NAMES)[number];
+
+export interface HueScale {
+  hue: number;
+  label: string;
+  chroma: number;
+  /** Twelve steps, from the page behind everything to the loudest this hue gets. */
+  steps: Record<HueStep, string>;
+}
+
+/**
+ * The twelve steps, at a hue.
+ *
+ * The lightness range is the ladder's own — the same perceptual band the whole
+ * system lives in. The chroma is the hue's calibrated value, held constant
+ * across the steps for the same reason the ladder holds its own: a scale moves
+ * in lightness, and a palette moves in everything.
+ */
+export function hueScale(hue: number, label: string, chroma: number): HueScale {
+  const lo = CANVAS_L;
+  const hi = CANVAS_L + 8 * LADDER_STEP;
+
+  // A hue cannot always hold the chroma it was given.
+  //
+  // Measured: at hue 15 (Ruby) with a chroma of 0.15, the `active` step landed
+  // at L 0.2115 — 0.93 of a quantum ABOVE the band's ceiling. sRGB is narrower
+  // near red than near the system's own blue-violet, so the same chroma asks
+  // for a colour the format cannot show and the clamp pushes it out of the
+  // band. The chroma comes down until the band is reachable, which keeps the
+  // scale a scale.
+  let c = chroma;
+  for (let i = 0; i < 40; i++) {
+    const top = rgbToOklch(hexToRgb(nearestLightness(hi, c, hue))).L;
+    if (top <= hi + 0.5 * PERCEPTUAL_QUANTUM) break;
+    c = Math.round((c - 0.005) * 1000) / 1000;
+    if (c <= 0.02) break;
+  }
+  chroma = c;
+  const at = (t: number) => nearestLightness(lo + (hi - lo) * t, chroma, hue);
+  const steps = {
+    canvas: at(0),
+    subtle: at(0.08),
+    surface: at(0.18),
+    raised: at(0.3),
+    hover: at(0.38),
+    active: at(0.46),
+    border: at(0.56),
+    solid: at(0.72),
+    solidHover: at(0.78),
+    text: at(0.88),
+    textStrong: at(0.94),
+    emphasis: at(1),
+  } as Record<HueStep, string>;
+  return { hue, label, chroma, steps };
+}
+
+/** Every spectrum hue, each with its twelve steps. */
+export function allHueScales(): HueScale[] {
+  return (C.EXTENDED_SPECTRUM as Array<{ hue: number; label: string; chroma?: number }>).map((h) =>
+    hueScale(h.hue, h.label, h.chroma ?? 0.15),
+  );
 }

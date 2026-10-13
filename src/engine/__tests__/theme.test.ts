@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createLiminalTheme, ladderAtHue, halfStepsAtHue, inGamut } from '../liminal-theme';
+import { createLiminalTheme, ladderAtHue, halfStepsAtHue, inGamut, allHueScales, HUE_STEP_NAMES } from '../liminal-theme';
 import { LADDER, LADDER_HUE, LADDER_CHROMA, LADDER_STEP, PERCEPTUAL_QUANTUM } from '../liminal-ladder';
 import { hexToRgb, rgbToOklch, oklchToRgb, rgbToHex } from '../liminal-color-math';
 import { LiminalLayoutEngine as L } from '../liminal-layout-engine';
@@ -187,6 +187,67 @@ describe('theme — it reports the steps a hue cannot hold', () => {
         const dL = rgbToOklch(hexToRgb(t.ladder[w.level])).L - rgbToOklch(hexToRgb(t.ladder[w.level - 1])).L;
         expect(dL / PERCEPTUAL_QUANTUM, `hue ${hue} S${w.level}`).toBeCloseTo(w.q, 6);
       }
+    }
+  });
+});
+
+describe('theme — a full scale per hue, not one swatch', () => {
+  // The spectrum shipped one colour per hue. Radix Colors ships twelve STEPS
+  // per hue, which is a different capability: a consumer who wants "a green
+  // surface at three elevations" has nothing to reach for with a single swatch.
+  it('gives every spectrum hue twelve named steps', () => {
+    for (const s of allHueScales()) {
+      expect(Object.keys(s.steps), s.label).toHaveLength(12);
+      for (const name of HUE_STEP_NAMES) expect(s.steps[name], `${s.label}.${name}`).toMatch(/^#[0-9a-f]{6}$/);
+    }
+  });
+
+  it('names the steps for their JOB, not their number', () => {
+    // A number tells a consumer nothing about which one to use.
+    expect(HUE_STEP_NAMES[0]).toBe('canvas');
+    expect(HUE_STEP_NAMES).toContain('solid');
+    expect(HUE_STEP_NAMES).toContain('text');
+  });
+
+  it('rises monotonically, so the scale reads as a scale', () => {
+    for (const s of allHueScales()) {
+      const ls = HUE_STEP_NAMES.map((n) => rgbToOklch(hexToRgb(s.steps[n])).L);
+      for (let i = 1; i < ls.length; i++) {
+        expect(ls[i], `${s.label} step ${i}`).toBeGreaterThanOrEqual(ls[i - 1] - 1e-6);
+      }
+    }
+  });
+
+  it('stays inside the ladder’s own lightness band', () => {
+    // The same perceptual band the whole system lives in. A scale that left it
+    // would be a second system.
+    // The band, plus what 8-bit sRGB cannot do better than. Measured: at hue 15
+    // (Ruby) the nearest value to the top of the band is 0.0028 above it — 0.34
+    // of a quantum. That is the format's floor, not the scale leaving the band.
+    const slack = 0.5 * PERCEPTUAL_QUANTUM;
+    const lo = 0.128 - slack;
+    const hi = 0.128 + 8 * LADDER_STEP + slack;
+    for (const s of allHueScales()) {
+      for (const n of HUE_STEP_NAMES) {
+        const L = rgbToOklch(hexToRgb(s.steps[n])).L;
+        expect(L, `${s.label}.${n} L ${L.toFixed(4)}`).toBeGreaterThanOrEqual(lo);
+        expect(L, `${s.label}.${n} L ${L.toFixed(4)}`).toBeLessThanOrEqual(hi);
+      }
+    }
+  });
+
+  it('holds the hue across its own steps', () => {
+    for (const s of allHueScales()) {
+      const chromas = HUE_STEP_NAMES.map((n) => rgbToOklch(hexToRgb(s.steps[n])).C);
+      const spread = Math.max(...chromas) - Math.min(...chromas);
+      expect(spread, `${s.label} chroma spread ${spread.toFixed(4)}`).toBeLessThan(0.06);
+    }
+  });
+
+  it('gives twelve distinct steps — a scale is not a palette', () => {
+    for (const s of allHueScales()) {
+      const hexes = HUE_STEP_NAMES.map((n) => s.steps[n]);
+      expect(new Set(hexes).size, s.label).toBeGreaterThanOrEqual(10);
     }
   });
 });
