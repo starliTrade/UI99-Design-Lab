@@ -21,6 +21,26 @@ import { EmptyState } from '../composites/EmptyState/EmptyState';
 import { Pagination } from '../data/Pagination/Pagination';
 import { NavItem } from '../nav/NavItem/NavItem';
 import { Breadcrumb } from '../nav/Breadcrumb/Breadcrumb';
+import { Modal } from '../containers/Modal/Modal';
+import { Sheet } from '../containers/Sheet/Sheet';
+import { Toast } from '../feedback/Toast/Toast';
+import { SimpleTooltip } from '../feedback/Tooltip/SimpleTooltip';
+import { Combobox } from '../inputs/Combobox/Combobox';
+import { MultiSelect } from '../inputs/MultiSelect/MultiSelect';
+import { CommandPalette } from '../nav/CommandPalette/CommandPalette';
+import { Table, TableHeader, TableRow, TableHead, TableCell } from '../data/Table';
+import { Calendar } from '../data/Calendar/Calendar';
+import { FilterBar } from '../data/FilterBar/FilterBar';
+import { AppShell } from '../layout/AppShell/AppShell';
+import { Footer } from '../layout/Footer/Footer';
+import { PageHeader } from '../layout/PageHeader/PageHeader';
+import { PageSection } from '../layout/PageSection/PageSection';
+import { Grid, GridCol } from '../layout/Grid/Grid';
+import { Sidebar } from '../nav/Sidebar/Sidebar';
+import { Topbar } from '../nav/Topbar/Topbar';
+import { ErrorPage } from '../composites/ErrorPage/ErrorPage';
+import { FormLayout } from '../composites/FormLayout/FormLayout';
+import { Form, Field } from '../composites/Form/Form';
 
 /**
  * THE COMPONENT MATRIX
@@ -186,6 +206,108 @@ export const FIXTURES: ComponentFixture[] = [
   {
     name: 'Breadcrumb', group: 'ناوبری', sizes: [], states: ['default'], expected: [],
     render: () => <Breadcrumb items={[{ label: 'خانه', href: '/' }, { label: 'پروژه' }]} />,
+  },
+  // ── the rest of the library ──────────────────────────────────────────────
+  {
+    name: 'Modal', group: 'ظرف‌ها', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    render: (_s, size) => <Modal open title="گفت‌وگو" size={(size ?? 'md') as 'sm'} onClose={noop}>محتوا</Modal>,
+  },
+  {
+    name: 'Sheet', group: 'ظرف‌ها', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    render: (_s, size) => <Sheet open title="کشو" size={(size ?? 'md') as 'sm'} onClose={noop}>محتوا</Sheet>,
+  },
+  {
+    name: 'Toast', group: 'بازخورد', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
+    render: (state) => <Toast open title={state} message="پیام" semantic={state as 'info'} onClose={noop} />,
+  },
+  {
+    name: 'SimpleTooltip', group: 'بازخورد', sizes: [], states: ['default'], expected: [],
+    render: () => <SimpleTooltip content="راهنما"><Button>نگه‌دار</Button></SimpleTooltip>,
+  },
+  {
+    name: 'Combobox', group: 'ورودی‌ها', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state) => (
+      <Combobox label="شهر" options={[{ value: 'a', label: 'تهران' }]} onChange={noop}
+        error={state === 'error' ? 'انتخاب کن' : undefined} disabled={state === 'disabled'} />
+    ),
+  },
+  {
+    name: 'MultiSelect', group: 'ورودی‌ها', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state) => (
+      <MultiSelect label="برچسب‌ها" options={[{ value: 'a', label: 'طراحی' }]} onChange={noop}
+        error={state === 'error' ? 'یکی انتخاب کن' : undefined} disabled={state === 'disabled'} />
+    ),
+  },
+  {
+    name: 'CommandPalette', group: 'ناوبری', sizes: [], states: ['default'], expected: [],
+    render: () => <CommandPalette isOpen onClose={noop} groups={[{ title: 'دستورها', items: [{ id: 'a', label: 'ذخیره', action: noop }] }]} />,
+  },
+  {
+    name: 'Table', group: 'داده', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <Table>
+        <TableHeader><TableRow><TableHead>نام</TableHead><TableHead>وضعیت</TableHead></TableRow></TableHeader>
+        <tbody><TableRow><TableCell>ستارلی</TableCell><TableCell>فعال</TableCell></TableRow></tbody>
+      </Table>
+    ),
+  },
+  {
+    name: 'Calendar', group: 'داده', sizes: [], states: ['gregorian', 'jalali'], expected: [],
+    render: (state) => state === 'jalali'
+      ? <Calendar calendar="jalali" lang="fa" month={new Date(Date.UTC(2026, 9, 1))} />
+      : <Calendar month={new Date(Date.UTC(2026, 9, 1))} />,
+  },
+  {
+    name: 'FilterBar', group: 'داده', sizes: [], states: ['empty', 'active'], expected: [],
+    render: (state) => (
+      <FilterBar activeFilters={state === 'active' ? [{ id: 'a', label: 'فعال', value: 'x' }] : []} onRemoveFilter={noop} onClearAll={noop}>
+        <span />
+      </FilterBar>
+    ),
+  },
+  {
+    name: 'AppShell', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    render: () => <AppShell><span>محتوا</span></AppShell>,
+  },
+  {
+    name: 'Sidebar', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    render: () => <Sidebar><NavItem>داشبورد</NavItem></Sidebar>,
+  },
+  {
+    name: 'Topbar', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    render: () => <Topbar logo={<span>LIMINAL</span>} />,
+  },
+  {
+    name: 'Footer', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    render: () => <Footer />,
+  },
+  {
+    name: 'PageHeader', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    render: () => <PageHeader title="صفحه" />,
+  },
+  {
+    name: 'PageSection', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    render: () => <PageSection title="بخش">محتوا</PageSection>,
+  },
+  {
+    name: 'Grid', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    render: () => <Grid><GridCol col={6}>نیمه</GridCol><GridCol col={6}>نیمه</GridCol></Grid>,
+  },
+  {
+    name: 'ErrorPage', group: 'کمکی', sizes: [], states: ['default'], expected: [],
+    render: () => <ErrorPage code="۴۰۴" title="پیدا نشد" />,
+  },
+  {
+    name: 'FormLayout', group: 'کمکی', sizes: [], states: ['default'], expected: [],
+    render: () => <FormLayout><FormLayout.Section title="بخش"><FormLayout.Field label="فیلد"><Input /></FormLayout.Field></FormLayout.Section></FormLayout>,
+  },
+  {
+    name: 'Form', group: 'کمکی', sizes: [], states: ['default', 'error'], expected: [],
+    render: (state) => (
+      <Form validators={{ n: (v) => (String(v ?? '').trim() ? undefined : 'لازم است') }}>
+        <Field name="n" label="نام" required hint={state === 'error' ? undefined : 'نام کامل'}><Input /></Field>
+      </Form>
+    ),
   },
 ];
 
