@@ -188,7 +188,11 @@ export function Toast({
               '--liminal-surface-idle': 'transparent',
               '--liminal-surface-hover': SURFACE_TINT.medium,
               '--liminal-surface-active': SURFACE_TINT.medium,
-              border: 'none',
+              // `borderStyle`, not the `border` shorthand: the shorthand claims
+              // `borderColor` too, which the layer owns. Saying only what this
+              // component means — there is no border — leaves the layer able to
+              // colour one if it ever draws it.
+              borderStyle: 'none',
               padding: `${SPACING[1]}px ${SPACING[2]}px`,
               borderRadius: `${RADIUS[6]}px`,
               color: semanticObj.text,

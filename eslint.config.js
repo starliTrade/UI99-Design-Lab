@@ -104,6 +104,49 @@ export default tseslint.config(
           message:
             'Raw px in a layout property. Use SPACING, RADIUS, CONTROL, TARGET or ICON_SIZES from the engine.',
         },
+        // ── The layer's property, set by the component ────────────────────
+        //
+        // FIVE times in one session a component opted into the interaction layer
+        // and then set the property the layer owns, inline. An inline style
+        // beats a CSS rule, so the component published its custom properties
+        // and cancelled the rule that reads them:
+        //
+        //   Checkbox / Radio                    `outline`
+        //   TableRow                            `background`
+        //   Alert / Toast / Breadcrumb / Tabs   `color`
+        //   Input / Textarea / Select           `background`, then `border`
+        //
+        // Every one was found by hand, by looking. This is the guard so the
+        // sixth is found by the build.
+        //
+        // One rule per attribute, because each owns a DIFFERENT property. A
+        // single rule that named all four flagged `color` on a surface element,
+        // which the layer does not own — a false positive is a guard nobody
+        // keeps.
+        {
+          selector:
+            "JSXOpeningElement:has(JSXAttribute[name.name='data-liminal-surface']) JSXAttribute[name.name='style'] Property[key.name=/^(background|backgroundColor|border|borderColor)$/]",
+          message:
+            'This element opts into data-liminal-surface AND sets background or border inline. An inline style beats the layer\'s rule. Set --liminal-surface-idle instead and remove this line.',
+        },
+        {
+          selector:
+            "JSXOpeningElement:has(JSXAttribute[name.name='data-liminal-focus-within']) JSXAttribute[name.name='style'] Property[key.name=/^(background|backgroundColor|border|borderColor)$/]",
+          message:
+            'This element opts into data-liminal-focus-within AND sets background or border inline. The layer changes both on focus and an inline style cancels that. Set --liminal-surface-idle and --liminal-border-focus instead.',
+        },
+        {
+          selector:
+            "JSXOpeningElement:has(JSXAttribute[name.name='data-liminal-hover-color']) JSXAttribute[name.name='style'] Property[key.name='color']",
+          message:
+            'This element opts into data-liminal-hover-color AND sets color inline. An inline style beats the layer\'s rule. Set --liminal-color-idle instead and remove this line.',
+        },
+        {
+          selector:
+            "JSXOpeningElement:has(JSXAttribute[name.name='data-liminal-focusable']) JSXAttribute[name.name='style'] Property[key.name=/^(outline|outlineColor|outlineStyle)$/]",
+          message:
+            'This element opts into data-liminal-focusable AND sets outline inline. An inline style beats the layer\'s :focus-visible rule. Remove this line.',
+        },
         {
           selector: 'Literal[value=/cubic-bezier\\(/]',
           message: 'Raw easing curve. Use LiminalMotionEngine.EASING.',
