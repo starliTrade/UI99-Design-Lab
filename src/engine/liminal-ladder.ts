@@ -123,6 +123,31 @@ export const HALF = [
  * Resolve a surface level to a colour.
  * Integer levels map to LADDER, fractional levels to HALF.
  */
+/**
+ * The ladder step as a CSS VARIABLE reference, not a hex.
+ *
+ * The engine has two kinds of output and they are not interchangeable:
+ *
+ *   getLadderColor   a hex. For arithmetic, for tests, for the contract.
+ *   getLadderVar     a `var(--liminal-sN)`. For a style object.
+ *
+ * The distinction is what makes a theme possible. A theme is a CSS override —
+ * and it can only override something that reads CSS. Measured before this:
+ * 305 variables published, ONE consumed, 660 engine calls in components. The
+ * layer existed and nothing used it.
+ *
+ * A component that puts `var(--liminal-s2)` in its style follows the theme for
+ * free. One that puts `#090b0d` does not, and never will.
+ */
+export const getLadderVar = (n: number): string => {
+  const clamped = Math.max(0, Math.min(LADDER.length - 1, n));
+  const whole = Math.floor(clamped);
+  const isHalf = clamped - whole >= 0.25 && clamped - whole < 0.75;
+  const i = Math.round(clamped);
+  if (isHalf) return `var(--liminal-s${whole}-5)`;
+  return `var(--liminal-s${i})`;
+};
+
 export const getLadderColor = (n: number): string => {
   const max = LADDER.length - 1;
   n = Math.max(0, Math.min(max, n));

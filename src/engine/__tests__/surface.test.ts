@@ -7,7 +7,7 @@ import {
   FLOATING_ROLES,
   STATE_SHIFT,
   roleDepthInQuanta,
-  resolveBorder,
+  resolveBorderHex,
   type SurfaceRole,
   type SurfaceState,
 } from '../liminal-surface';
@@ -160,7 +160,7 @@ describe('surface decision engine — the focus rule', () => {
   it('keeps the focus ring visible on every surface it can appear on', () => {
     for (const role of ROLES) {
       const r = resolveSurface({ role, state: 'focus' });
-      const ratio = contrastRatioHex('#E9ECF2', r.background);
+      const ratio = contrastRatioHex('#E9ECF2', r.backgroundHex);
       expect(
         ratio,
         `${role} focus ring on ${r.background} = ${ratio.toFixed(2)}:1`,
@@ -195,8 +195,8 @@ describe('surface decision engine — the measured depth', () => {
 describe('surface decision engine — the border rule', () => {
   it('makes a hairline a half-step above its surface', () => {
     const surface = resolveSurface({ role: 'work' });
-    const hairline = resolveBorder({ role: 'work', kind: 'hairline' });
-    const step = oklchLightness(hairline) - oklchLightness(surface.background);
+    const hairline = resolveBorderHex({ role: 'work', kind: 'hairline' });
+    const step = oklchLightness(hairline) - oklchLightness(surface.backgroundHex);
     const quanta = step / PERCEPTUAL_QUANTUM;
     expect(quanta, `hairline is ${quanta.toFixed(2)}q above the surface`).toBeLessThan(1);
     expect(quanta).toBeGreaterThan(0);
@@ -204,15 +204,15 @@ describe('surface decision engine — the border rule', () => {
 
   it('makes an edge a full step above its surface', () => {
     const surface = resolveSurface({ role: 'work' });
-    const edge = resolveBorder({ role: 'work', kind: 'edge' });
-    const step = oklchLightness(edge) - oklchLightness(surface.background);
+    const edge = resolveBorderHex({ role: 'work', kind: 'edge' });
+    const step = oklchLightness(edge) - oklchLightness(surface.backgroundHex);
     const quanta = step / PERCEPTUAL_QUANTUM;
     expect(quanta, `edge is ${quanta.toFixed(2)}q above the surface`).toBeGreaterThanOrEqual(1);
   });
 
   it('scales the border with the role — a divider on a popover is stronger than on the work surface', () => {
-    const onWork = resolveBorder({ role: 'work' });
-    const onPopover = resolveBorder({ role: 'popover' });
+    const onWork = resolveBorderHex({ role: 'work' });
+    const onPopover = resolveBorderHex({ role: 'popover' });
     expect(oklchLightness(onPopover)).toBeGreaterThan(oklchLightness(onWork));
   });
 
@@ -222,7 +222,7 @@ describe('surface decision engine — the border rule', () => {
     const known = new Set<string>([...LADDER, ...HALF]);
     for (const role of ROLES) {
       for (const kind of ['hairline', 'edge'] as const) {
-        const c = resolveBorder({ role: role as SurfaceRole, kind, state: 'hover' });
+        const c = resolveBorderHex({ role: role as SurfaceRole, kind, state: 'hover' });
         expect(known, `${role}/${kind} resolved to ${c}`).toContain(c);
       }
     }
@@ -230,17 +230,17 @@ describe('surface decision engine — the border rule', () => {
 
   it('inverts the border at the ceiling, where there is no room above', () => {
     const surface = resolveSurface({ role: 'toast' });
-    const hairline = resolveBorder({ role: 'toast' });
-    expect(hairline, 'a ceiling separator must not vanish').not.toBe(surface.background);
-    expect(oklchLightness(hairline)).toBeLessThan(oklchLightness(surface.background));
+    const hairline = resolveBorderHex({ role: 'toast' });
+    expect(hairline, 'a ceiling separator must not vanish').not.toBe(surface.backgroundHex);
+    expect(oklchLightness(hairline)).toBeLessThan(oklchLightness(surface.backgroundHex));
   });
 
   it('keeps a hairline visible against its own surface', () => {
     // Below the quantum it is a seam; it must still be distinguishable at all.
     for (const role of ROLES) {
       const surface = resolveSurface({ role: role as SurfaceRole });
-      const hairline = resolveBorder({ role: role as SurfaceRole });
-      expect(hairline, `${role} hairline equals its surface`).not.toBe(surface.background);
+      const hairline = resolveBorderHex({ role: role as SurfaceRole });
+      expect(hairline, `${role} hairline equals its surface`).not.toBe(surface.backgroundHex);
     }
   });
 });
@@ -252,7 +252,7 @@ describe('surface decision engine — controls are relative to their host', () =
     for (const host of HOSTS) {
       const control = resolveSurface({ role: 'control', on: host });
       const hostSurface = resolveSurface({ role: host });
-      const step = oklchLightness(control.background) - oklchLightness(hostSurface.background);
+      const step = oklchLightness(control.backgroundHex) - oklchLightness(hostSurface.backgroundHex);
       const quanta = step / PERCEPTUAL_QUANTUM;
       expect(
         quanta,
@@ -272,9 +272,9 @@ describe('surface decision engine — controls are relative to their host', () =
       const control = resolveSurface({ role: 'control', on: host });
       const hostSurface = resolveSurface({ role: host });
       expect(
-        oklchLightness(control.background),
+        oklchLightness(control.backgroundHex),
         `control on ${host} must not be darker than its host`,
-      ).toBeGreaterThan(oklchLightness(hostSurface.background));
+      ).toBeGreaterThan(oklchLightness(hostSurface.backgroundHex));
     }
   });
 
@@ -282,7 +282,7 @@ describe('surface decision engine — controls are relative to their host', () =
     const quanta = HOSTS.map((host) => {
       const c = resolveSurface({ role: 'control', on: host });
       const h = resolveSurface({ role: host });
-      return (oklchLightness(c.background) - oklchLightness(h.background)) / PERCEPTUAL_QUANTUM;
+      return (oklchLightness(c.backgroundHex) - oklchLightness(h.backgroundHex)) / PERCEPTUAL_QUANTUM;
     });
     const spread = Math.max(...quanta) - Math.min(...quanta);
     expect(spread, `the lift varies by ${spread.toFixed(2)}q across depths`).toBeLessThanOrEqual(0.2);
@@ -353,19 +353,19 @@ describe('the ceiling inversion also applies when the level came from a host', (
   const ceiling = LADDER[LADDER.length - 1];
 
   it('a control anchored on the toast still gets a visible hairline', () => {
-    const rim = resolveBorder({ role: 'control', kind: 'hairline', on: 'toast' });
+    const rim = resolveBorderHex({ role: 'control', kind: 'hairline', on: 'toast' });
     expect(rim).not.toBe(ceiling);
     expect(contrastRatioHex(rim, ceiling)).toBeGreaterThan(1);
   });
 
   it('the inverted rim is DARKER than the surface, not lighter', () => {
-    const rim = resolveBorder({ role: 'control', kind: 'hairline', on: 'toast' });
+    const rim = resolveBorderHex({ role: 'control', kind: 'hairline', on: 'toast' });
     const steps = LADDER as readonly string[];
     expect(steps.indexOf(rim)).toBeLessThan(steps.indexOf(ceiling));
   });
 
   it('below the ceiling the rim is still a highlight, unchanged', () => {
-    expect(resolveBorder({ role: 'control', kind: 'hairline', on: 'work' })).toBe(HALF[3]);
-    expect(resolveBorder({ role: 'control', kind: 'hairline', on: 'menu' })).toBe(HALF[6]);
+    expect(resolveBorderHex({ role: 'control', kind: 'hairline', on: 'work' })).toBe(HALF[3]);
+    expect(resolveBorderHex({ role: 'control', kind: 'hairline', on: 'menu' })).toBe(HALF[6]);
   });
 });

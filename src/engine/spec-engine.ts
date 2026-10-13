@@ -1,10 +1,10 @@
 import type { CSSProperties } from 'react';
-import { LADDER, HALF, getLadderColor, FOCUS_RING_COLOR } from './liminal-ladder';
+import { LADDER, HALF, getLadderColor, getLadderVar, FOCUS_RING_COLOR } from './liminal-ladder';
 import { resolveTextAlpha, type TextRole } from './liminal-contrast';
 
 // Re-exported so existing imports keep working; the definitions live in
 // liminal-ladder.ts, which has no dependencies and therefore cannot create a cycle.
-export { LADDER, HALF, getLadderColor, FOCUS_RING_COLOR };
+export { LADDER, HALF, getLadderColor, getLadderVar, FOCUS_RING_COLOR };
 
 /**
  * LIMINAL · DESIGN SYSTEM — MASTER CONTRACT v1.0 (COMPLETE)
@@ -23,7 +23,10 @@ export interface DirectionalRimResult {
   top: string;
   side: string;
   bot: string;
+  /** The gradient a component uses: built from CSS variables, so it follows a theme. */
   cssBackground: string;
+  /** The same gradient built from hexes, for tests and the contract. */
+  cssBackgroundHex: string;
   withBackground: (customBg: string) => string;
 }
 
@@ -48,11 +51,22 @@ export function getDirectionalRim(
   const bg = getLadderColor(n);
   const gradStr = `linear-gradient(${bg}, ${bg}) padding-box, linear-gradient(180deg, ${top} 0%, ${side} 55%, ${bot} 100%) border-box`;
 
+  // The same gradient built from VARIABLES. `top`/`side`/`bot` stay hexes —
+  // they are the computed values the contract and the tests read — while the
+  // gradient a component puts in a style object reads the CSS layer, so it
+  // follows a theme.
+  const vTop = getLadderVar(concave ? n - 0.5 : n + RIM[rim].t);
+  const vSide = getLadderVar(concave ? n : n + RIM[rim].s);
+  const vBot = getLadderVar(concave ? n + 0.5 : n + RIM[rim].b);
+  const vBg = getLadderVar(n);
+  const gradVar = `linear-gradient(${vBg}, ${vBg}) padding-box, linear-gradient(180deg, ${vTop} 0%, ${vSide} 55%, ${vBot} 100%) border-box`;
+
   return {
     top,
     side,
     bot,
-    cssBackground: gradStr,
+    cssBackground: gradVar,
+    cssBackgroundHex: gradStr,
     withBackground: (customBg: string) =>
       `linear-gradient(${customBg}, ${customBg}) padding-box, linear-gradient(180deg, ${top} 0%, ${side} 55%, ${bot} 100%) border-box`,
   };

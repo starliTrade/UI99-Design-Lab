@@ -35,7 +35,7 @@
  */
 
 import type { CSSProperties } from 'react';
-import { LADDER, getLadderColor, FOCUS_RING_COLOR, PERCEPTUAL_QUANTUM } from './liminal-ladder';
+import { LADDER, getLadderColor, FOCUS_RING_COLOR, PERCEPTUAL_QUANTUM, getLadderVar } from './liminal-ladder';
 import { oklchLightness } from './liminal-color-math';
 import { getDirectionalRim, SHADOWS, type DirectionalRimResult } from './spec-engine';
 import { LiminalMotionEngine } from './liminal-motion-engine';
@@ -171,7 +171,10 @@ export interface SurfaceResolution {
   /** The resolved ladder level (may be fractional). */
   level: number;
   /** The resolved background colour. */
+  /** A CSS value a component can use: a variable reference, so it follows a theme. */
   background: string;
+  /** The same surface as a hex, for tests and the contract. */
+  backgroundHex: string;
   /** The rim tier actually applied. */
   rim: 0 | 1 | 2 | 3;
   /** The rim's resolved top/side/bottom colours, when a rim applies. */
@@ -229,7 +232,7 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
   const interactive = role !== 'canvas' && role !== 'work' && role !== 'panel';
 
   const style: CSSProperties = {
-    background: rimColors ? rimColors.cssBackground : getLadderColor(Math.round(level)),
+    background: rimColors ? rimColors.cssBackground : getLadderVar(Math.round(level)),
     border: rimColors ? '1px solid transparent' : 'none',
     boxShadow: shadow,
     outline,
@@ -243,7 +246,10 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
 
   return {
     level,
-    background: getLadderColor(Math.round(level)),
+    // The style-facing value reads the CSS layer, so it follows a theme.
+    background: getLadderVar(Math.round(level)),
+    // The computed value, for tests and the contract.
+    backgroundHex: getLadderColor(Math.round(level)),
     rim,
     rimColors,
     shadow,
@@ -288,13 +294,16 @@ export function roleDepthInSteps(role: SurfaceRole): number {
  */
 export type BorderKind = 'hairline' | 'edge';
 
-export function resolveBorder(request: {
+interface BorderRequest {
   role: SurfaceRole;
   kind?: BorderKind;
   state?: SurfaceState;
   /** The surface this border sits on — see SurfaceRequest.on. */
   on?: SurfaceRole;
-}): string {
+}
+
+/** The ladder level a border lands on, before it is turned into a value. */
+function borderLevel(request: BorderRequest): number {
   const { role, kind = 'hairline', state = 'idle' } = request;
   const anchored = request.on !== undefined ? ROLE_LEVEL[request.on] + CONTROL_LIFT : ROLE_LEVEL[role];
   // Clamp BEFORE deciding whether there is room above. Without this, a control
@@ -306,8 +315,23 @@ export function resolveBorder(request: {
   const offset = kind === 'hairline' ? 0.5 : 1;
   const above = base + offset;
   // At the ceiling there is no room above, so the border inverts and goes below.
-  const level = above > MAX_LEVEL ? Math.max(0, base - offset) : above;
-  return getLadderColor(level);
+  return above > MAX_LEVEL ? Math.max(0, base - offset) : above;
+}
+
+export function resolveBorder(request: BorderRequest): string {
+  // A variable, so a border follows a theme like everything else that is drawn.
+  return getLadderVar(borderLevel(request));
+}
+
+/**
+ * The same border as a hex.
+ *
+ * The engine has two kinds of output: a value for arithmetic, tests and the
+ * contract, and a value for a style object. The first is a hex, the second is a
+ * variable reference — and only the second follows a theme.
+ */
+export function resolveBorderHex(request: BorderRequest): string {
+  return getLadderColor(borderLevel(request));
 }
 
 /**
@@ -320,7 +344,7 @@ export function resolveBorder(request: {
  */
 export function resolveInset(request: { role: SurfaceRole }): string {
   const base = ROLE_LEVEL[request.role];
-  return getLadderColor(Math.max(0, base - 1.5));
+  return getLadderVar(Math.max(0, base - 1.5));
 }
 
 /** A 1px border declaration for the given role and kind. */

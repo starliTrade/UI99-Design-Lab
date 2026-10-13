@@ -4,7 +4,7 @@ import React from 'react';
 import { Tag } from '../atoms/Tag/Tag';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
-import { resolveSurface, resolveBorder } from '../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveBorderHex } from '../../engine/liminal-surface';
 import type { SurfaceRole } from '../../engine/liminal-surface';
 import { LADDER } from '../../engine/liminal-ladder';
 import { SURFACE_TINT } from '../../engine/spec-engine';
@@ -31,6 +31,8 @@ describe('tag — the surface is derived and bounded by the ladder', () => {
 
   it('gets a hairline rim from the same host', () => {
     for (const host of HOSTS) {
+      // The component renders a CSS variable, so the assertion reads the
+      // variable — which is the whole point of the change.
       const expected = resolveBorder({ role: 'control', kind: 'hairline', on: host });
       expect(render({ host, children: 'x' }), `host ${host}`).toContain(`1px solid ${expected}`);
     }
@@ -40,7 +42,9 @@ describe('tag — the surface is derived and bounded by the ladder', () => {
     // The overlay reached L 0.2342 on the toast level. The ceiling is L(8).
     const ceiling = rgbToOklch(hexToRgb(LADDER[LADDER.length - 1])).L;
     for (const host of HOSTS) {
-      const surface = resolveSurface({ role: 'control', on: host }).background;
+      // The computed value, not the rendered one: what a component renders is
+      // a variable now, and a variable has no lightness to measure.
+      const surface = resolveSurface({ role: 'control', on: host }).backgroundHex;
       const L = rgbToOklch(hexToRgb(surface)).L;
       expect(L, `host ${host}: surface L ${L.toFixed(4)}`).toBeLessThanOrEqual(ceiling + 1e-6);
     }
@@ -100,7 +104,9 @@ describe('tag — the hue is decoration, and the label carries the meaning', () 
 describe('tag — the standards', () => {
   it('text meets WCAG AA on every surface it can sit on', () => {
     for (const host of HOSTS) {
-      const surface = resolveSurface({ role: 'control', on: host }).background;
+      // The computed value, not the rendered one: what a component renders is
+      // a variable now, and a variable has no lightness to measure.
+      const surface = resolveSurface({ role: 'control', on: host }).backgroundHex;
       for (const s of SP) {
         const ratio = contrastRatioHex(s.hex, surface);
         expect(ratio, `${s.label} on ${host}: ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(4.5);
@@ -112,8 +118,10 @@ describe('tag — the standards', () => {
     // A rim that competed with the surface would be a border, and the system
     // says a hairline is a half-step — felt, not seen.
     for (const host of HOSTS) {
-      const surface = resolveSurface({ role: 'control', on: host }).background;
-      const rim = resolveBorder({ role: 'control', kind: 'hairline', on: host });
+      // The computed value, not the rendered one: what a component renders is
+      // a variable now, and a variable has no lightness to measure.
+      const surface = resolveSurface({ role: 'control', on: host }).backgroundHex;
+      const rim = resolveBorderHex({ role: 'control', kind: 'hairline', on: host });
       const dL = Math.abs(rgbToOklch(hexToRgb(rim)).L - rgbToOklch(hexToRgb(surface)).L);
       expect(dL, `${host}: rim dL ${dL.toFixed(4)}`).toBeLessThan(0.012);
     }
