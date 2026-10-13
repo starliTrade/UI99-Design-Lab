@@ -370,6 +370,7 @@
 }
 /* @liminal-generated:end */
 @import "tailwindcss";
+@import "./engine/liminal-tailwind.css";
 
 
 /* آماده‌سازی برای Dark/Light Mode در آینده */
