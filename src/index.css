@@ -108,6 +108,7 @@
   --liminal-hue-350: #E083AE; /* Rose */
 
   /* ── 10. SPACING (atom 4) ────────────────────────────────────── */
+  --liminal-space-0: 2px; /* sub-atom: optical only */
   --liminal-space-1: 4px;
   --liminal-space-2: 8px;
   --liminal-space-3: 12px;
@@ -117,6 +118,12 @@
   --liminal-space-7: 48px;
   --liminal-space-8: 64px;
   --liminal-space-9: 96px;
+  --liminal-control-sm: 32px;
+  --liminal-control-md: 44px;
+  --liminal-control-lg: 52px;
+  --liminal-target-min: 44px; /* WCAG 2.5.5 AAA */
+  --liminal-border-hairline: 1px;
+  --liminal-border-emphasis: 2px;
 
   /* ── 11. RADIUS ──────────────────────────────────────────────── */
   --liminal-radius-chip: 6px;
@@ -282,6 +289,7 @@
   --liminal-hue-350: #E083AE; /* Rose */
 
   /* ── 10. SPACING (atom 4) ────────────────────────────────────── */
+  --liminal-space-0: 2px; /* sub-atom: optical only */
   --liminal-space-1: 4px;
   --liminal-space-2: 8px;
   --liminal-space-3: 12px;
@@ -291,6 +299,12 @@
   --liminal-space-7: 48px;
   --liminal-space-8: 64px;
   --liminal-space-9: 96px;
+  --liminal-control-sm: 32px;
+  --liminal-control-md: 44px;
+  --liminal-control-lg: 52px;
+  --liminal-target-min: 44px; /* WCAG 2.5.5 AAA */
+  --liminal-border-hairline: 1px;
+  --liminal-border-emphasis: 2px;
 
   /* ── 11. RADIUS ──────────────────────────────────────────────── */
   --liminal-radius-chip: 6px;

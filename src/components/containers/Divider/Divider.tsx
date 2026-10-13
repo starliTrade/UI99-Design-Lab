@@ -18,6 +18,7 @@ export function Divider({
   style: customStyle = {},
 }: DividerProps) {
   const SPACING = LiminalLayoutEngine.SPACING;
+  const BORDER = LiminalLayoutEngine.BORDER;
 
   // Exact half-step S1.5 (#090A0D = canonical rimSide) for optical continuity
   // A divider is a seam inside the work surface, not a decorative line.
@@ -34,7 +35,7 @@ export function Divider({
   const dividerStyle: CSSProperties =
     orientation === 'horizontal'
       ? {
-          height: '1px',
+          height: `${BORDER.hairline}px`,
           width: '100%',
           background: dividerColor,
           margin: `${margin}px 0`,
@@ -43,7 +44,7 @@ export function Divider({
           ...customStyle,
         }
       : {
-          width: '1px',
+          width: `${BORDER.hairline}px`,
           height: '100%',
           minHeight: `${LiminalLayoutEngine.SPACING[4]}px`,
           background: dividerColor,

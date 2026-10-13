@@ -25,6 +25,10 @@ import { Slot } from '../../../engine/liminal-slot';
 import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
+// Module-level: the variant table below is module-level too.
+const CONTROL = LiminalLayoutEngine.CONTROL;
+const CONTROL_PADDING = LiminalLayoutEngine.CONTROL_PADDING;
+
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
 
@@ -79,31 +83,31 @@ export const buttonVariants = createVariants({
     },
     size: {
       sm: {
-        padding: '6px 12px',
+        padding: `${CONTROL_PADDING.sm.y}px ${CONTROL_PADDING.sm.x}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
-        minHeight: '32px',
+        minHeight: CONTROL.sm,
         borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
         lineHeight: 1.4,
       },
       md: {
-        padding: '10px 18px',
+        padding: `${CONTROL_PADDING.md.y}px ${CONTROL_PADDING.md.x}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
-        minHeight: '44px',
+        minHeight: CONTROL.md,
         borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
         lineHeight: 1.5,
       },
       lg: {
         padding: `${LiminalLayoutEngine.SPACING[3]}px ${LiminalLayoutEngine.SPACING[5]}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(3),
-        minHeight: '52px',
+        minHeight: CONTROL.lg,
         borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
         lineHeight: 1.5,
       },
       icon: {
         padding: 0,
-        width: '44px',
-        height: '44px',
-        minHeight: '44px',
+        width: CONTROL.md,
+        height: CONTROL.md,
+        minHeight: CONTROL.md,
         borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
       },
     },
@@ -226,27 +230,27 @@ export const Button = createLiminalComponent<ButtonProps>(
     // 2. Size token resolution from LiminalLayoutEngine
     const sizeStyles: Record<ButtonSize, CSSProperties> = {
       sm: {
-        padding: '6px 12px',
+        padding: `${CONTROL_PADDING.sm.y}px ${CONTROL_PADDING.sm.x}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
-        minHeight: '32px',
+        minHeight: CONTROL.sm,
         lineHeight: 1.4,
       },
       md: {
-        padding: '10px 18px',
+        padding: `${CONTROL_PADDING.md.y}px ${CONTROL_PADDING.md.x}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
-        minHeight: '44px', // mobile touch target compliant
+        minHeight: CONTROL.md, // mobile touch target compliant
         lineHeight: 1.5,
       },
       lg: {
         padding: `${LiminalLayoutEngine.SPACING[3]}px ${LiminalLayoutEngine.SPACING[5]}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(3),
-        minHeight: '52px',
+        minHeight: CONTROL.lg,
         lineHeight: 1.5,
       },
       icon: {
         padding: 0,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
-        minHeight: '44px',
+        minHeight: CONTROL.md,
         lineHeight: 1,
       },
     };

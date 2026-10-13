@@ -68,10 +68,16 @@ export default tseslint.config(
     // Demos are excluded deliberately: they exist to show every component at
     // once, and they are not shipped. The exclusion is named here rather than
     // implied by a glob that happens to miss them.
+    // The demo application is excluded, and named rather than implied. It is
+    // not shipped, it is going to be rebuilt, and holding it to this rule today
+    // would mean migrating 24 literals in code that is about to be replaced.
+    // The LIBRARY is at zero.
     ignores: [
       'src/components/**/*Demo.tsx',
       'src/components/KitShowcase.tsx',
       'src/app/AppDemo.tsx',
+      'src/app/pages/**',
+      'src/App.tsx',
     ],
     rules: {
       'no-restricted-syntax': [
@@ -84,6 +90,19 @@ export default tseslint.config(
         {
           selector: 'Literal[value=/rgba?\\(/]',
           message: 'Raw rgb()/rgba() colour. Use the engine (LiminalColorEngine / getTextStyle).',
+        },
+        // A raw pixel value in a LAYOUT property. The colour ban above covers
+        // hex and rgba; this covers the other half, which was slipping through
+        // in 88 places — `padding: '6px 12px'`, `minHeight: '44px'`,
+        // `borderRadius: '12px'`.
+        //
+        // The engine has SPACING, RADIUS, CONTROL, TARGET and ICON_SIZES. A
+        // literal here means a value the system does not know about.
+        {
+          selector:
+            "Property[key.name=/^(padding|margin|gap|borderRadius|minHeight|minWidth|maxHeight|maxWidth|height|width|top|bottom|left|right|inset)[A-Za-z]*$/] > Literal[value=/^[a-z(\-]*[0-9.]+px/]",
+          message:
+            'Raw px in a layout property. Use SPACING, RADIUS, CONTROL, TARGET or ICON_SIZES from the engine.',
         },
         {
           selector: 'Literal[value=/cubic-bezier\\(/]',

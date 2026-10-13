@@ -158,7 +158,7 @@ export function Card({
                 style={{
                   ...getTextStyle('tertiary', surfaceLevel),
                   fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
-                  marginTop: '2px',
+                  marginTop: `${SPACING[0]}px`,
                 }}
               >
                 {subtitle}

@@ -6,6 +6,11 @@ import {
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 
+/** A layout decision this component owns, not a system token. */
+const HEADER_MAX_WIDTH = 640;
+/** A layout decision this component owns, not a system token. */
+const HEADER_MIN_WIDTH = 240;
+
 export interface PageHeaderProps {
   breadcrumb?: ReactNode;
   title: string;
@@ -62,7 +67,7 @@ export function PageHeader({
     lineHeight: TYPOGRAPHY[3].lh,
     letterSpacing: TYPOGRAPHY[3].ls,
     color: getTextStyle('secondary', 1).color,
-    maxWidth: '640px',
+    maxWidth: HEADER_MAX_WIDTH,
     margin: 0,
     marginTop: `${SPACING[1]}px`,
   };
@@ -87,7 +92,7 @@ export function PageHeader({
           width: '100%',
         }}
       >
-        <div style={{ flex: 1, minWidth: '240px' }}>
+        <div style={{ flex: 1, minWidth: HEADER_MIN_WIDTH }}>
           <h1 style={titleStyle}>{title}</h1>
           {subtitle && <p style={subtitleStyle}>{subtitle}</p>}
         </div>

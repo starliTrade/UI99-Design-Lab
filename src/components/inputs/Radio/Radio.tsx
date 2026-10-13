@@ -9,6 +9,7 @@ import {
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { ICON_SIZES } from '../../../engine/liminal-icon-engine';
 
 export interface RadioProps {
   checked: boolean;
@@ -41,8 +42,8 @@ export function Radio({
   const offRim = getDirectionalRim(2, 2, false);
 
   const circleStyle: CSSProperties = {
-    width: '20px',
-    height: '20px',
+    width: ICON_SIZES.md,
+    height: ICON_SIZES.md,
     borderRadius: '50%',
     display: 'inline-flex',
     alignItems: 'center',
@@ -63,8 +64,8 @@ export function Radio({
   };
 
   const dotStyle: CSSProperties = {
-    width: '10px',
-    height: '10px',
+    width: ICON_SIZES.md / 2,
+    height: ICON_SIZES.md / 2,
     borderRadius: '50%',
     background: SEMANTICS.SUCCESS.solid,
     transform: checked ? 'scale(1)' : 'scale(0)',

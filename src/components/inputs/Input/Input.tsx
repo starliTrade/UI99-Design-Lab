@@ -138,6 +138,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   const effectiveType = shouldEnableToggle ? (showPassword ? 'text' : 'password') : type;
 
   const SPACING = LiminalLayoutEngine.SPACING;
+
+  const CONTROL = LiminalLayoutEngine.CONTROL;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
@@ -192,7 +194,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
     padding: `${SPACING[3]}px`, // 12px
-    minHeight: '44px',
+    minHeight: CONTROL.md,
     borderRadius: `${RADIUS.control}px`, // 10px
     boxSizing: 'border-box',
     width: '100%',

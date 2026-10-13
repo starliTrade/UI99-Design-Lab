@@ -12,6 +12,9 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { resolveSurface } from '../../../engine/liminal-surface';
 
+/** The nav item's vertical padding: off the spacing scale, so it is named. */
+const NAV_ITEM_PAD_Y = 9;
+
 export interface NavItemProps {
   children: ReactNode;
   icon?: PhosphorIcon | ReactNode;
@@ -58,7 +61,7 @@ export function NavItem({
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
-    padding: '9px 12px',
+    padding: `${NAV_ITEM_PAD_Y}px ${SPACING[3]}px`,
     borderRadius: `${RADIUS[8]}px`, // 8px
     fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: TYPOGRAPHY[2].lh,

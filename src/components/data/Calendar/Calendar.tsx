@@ -25,6 +25,11 @@ import {
 } from '../../../engine/liminal-jalali';
 import { toPersianDigits } from '../../../engine/liminal-persian';
 
+/** A layout decision this component owns, not a system token. */
+const CALENDAR_WIDTH = 320;
+/** A layout decision this component owns, not a system token. */
+const DAY_CELL_HEIGHT = 36;
+
 export interface CalendarProps {
   /**
    * Which calendar to lay out. `jalali` is the Solar Hijri calendar, and it is
@@ -181,7 +186,7 @@ export function Calendar({
   const containerStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
-    width: '320px',
+    width: CALENDAR_WIDTH,
     padding: `${SPACING[3]}px`,
     borderRadius: `${RADIUS.card}px`,
     background: resolveSurface({ role: 'control', on: host }).background,
@@ -218,7 +223,7 @@ export function Calendar({
   const daysGridStyle: CSSProperties = {
     display: 'grid',
     gridTemplateColumns: 'repeat(7, 1fr)',
-    gap: '2px',
+    gap: `${SPACING[0]}px`,
   };
 
   return (
@@ -256,7 +261,7 @@ export function Calendar({
       <div style={daysGridStyle} role="grid">
         {days.map((dateObj, idx) => {
           if (!dateObj) {
-            return <div key={`empty-${idx}`} style={{ height: '36px' }} />;
+            return <div key={`empty-${idx}`} style={{ height: DAY_CELL_HEIGHT }} />;
           }
 
           const selected = isSelected(dateObj);
@@ -313,7 +318,7 @@ function DayCell({ date, label, ariaLabel, selected, today, onClick, reducedMoti
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '36px',
+    height: DAY_CELL_HEIGHT,
     borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
     color: selected ? getTextStyle('primary', 4).color : today ? resolveBorder({ role: 'control', kind: 'edge', on: host }) : getTextStyle('primary', 1).color,
     fontWeight: selected || today ? 600 : 400,

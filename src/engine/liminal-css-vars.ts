@@ -120,7 +120,10 @@ export function generateCssVars(): string {
 
   // ── 10. SPACING ────────────────────────────────────────────────────
   section('10. SPACING (atom 4)');
-  Object.entries(LiminalLayoutEngine.SPACING).forEach(([k, val]) => v(`space-${k}`, `${val}px`));
+  Object.entries(LiminalLayoutEngine.SPACING).forEach(([k, val]) => v(`space-${k}`, `${val}px`, k === '0' ? 'sub-atom: optical only' : undefined));
+  Object.entries(LiminalLayoutEngine.CONTROL).forEach(([k, val]) => v(`control-${k}`, `${val}px`));
+  v('target-min', `${LiminalLayoutEngine.TARGET.min}px`, 'WCAG 2.5.5 AAA');
+  Object.entries(LiminalLayoutEngine.BORDER).forEach(([k, val]) => v(`border-${k}`, `${val}px`));
 
   // ── 11. RADIUS ─────────────────────────────────────────────────────
   section('11. RADIUS');

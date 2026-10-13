@@ -22,6 +22,9 @@ import { useRovingTabIndex } from '../../../engine/liminal-hooks';
 import { resolveSurface } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
+/** The gap between tabs: off the spacing scale, so it is named. */
+const TAB_GAP = 6;
+
 interface TabsContextType {
   activeValue: string;
   onChange: (val: string) => void;
@@ -36,6 +39,7 @@ interface TabsContextType {
 }
 
 const TabsContext = createContext<TabsContextType | null>(null);
+  const SPACING = LiminalLayoutEngine.SPACING;
 
 export interface TabItem {
   id: string;
@@ -129,7 +133,7 @@ export function Tab({
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '6px',
+    gap: `${TAB_GAP}px`,
     whiteSpace: 'nowrap',
     flexShrink: 0,
     boxSizing: 'border-box',
@@ -266,8 +270,8 @@ export function Tabs({
     borderRadius: `${RADIUS.control}px`, // 10px
     display: fullWidth ? 'flex' : 'inline-flex',
     alignItems: 'center',
-    gap: '2px',
-    padding: '4px',
+    gap: `${SPACING[0]}px`,
+    padding: `${SPACING[1]}px`,
     boxSizing: 'border-box',
     width: fullWidth ? '100%' : 'auto',
     maxWidth: '100%',

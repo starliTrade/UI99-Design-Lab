@@ -119,6 +119,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   const selectedOption = options.find((opt) => opt.value === effectiveValue);
 
   const SPACING = LiminalLayoutEngine.SPACING;
+
+  const CONTROL = LiminalLayoutEngine.CONTROL;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
@@ -181,7 +183,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
     padding: `${SPACING[3]}px`, // 12px
-    minHeight: '44px',
+    minHeight: CONTROL.md,
     borderRadius: `${RADIUS.control}px`, // 10px
     boxSizing: 'border-box',
     width: '100%',

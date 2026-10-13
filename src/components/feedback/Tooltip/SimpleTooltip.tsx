@@ -15,6 +15,16 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { resolveSurface } from '../../../engine/liminal-surface';
 
+/** Half the arrow square, so the rotated corner lands on the edge. */
+const ARROW_OFFSET = 4;
+
+/** A layout decision this component owns, not a system token. */
+const TOOLTIP_MAX_WIDTH = 260;
+
+const CONTROL_PADDING = LiminalLayoutEngine.CONTROL_PADDING;
+
+const SPACING = LiminalLayoutEngine.SPACING;
+
 export interface SimpleTooltipProps {
   content: ReactNode;
   children: ReactNode;
@@ -94,8 +104,8 @@ export function SimpleTooltip({
 
     const base: CSSProperties = {
       position: 'absolute',
-      width: '8px',
-      height: '8px',
+      width: `${SPACING[2]}px`,
+      height: `${SPACING[2]}px`,
       backgroundColor: arrowColor,
       zIndex: 1001,
       transform: 'rotate(45deg)',
@@ -104,7 +114,7 @@ export function SimpleTooltip({
     if (isTop) {
       return {
         ...base,
-        bottom: '-4px',
+        bottom: `-${ARROW_OFFSET}px`,
         left: position.arrowX ? `${position.arrowX - 4}px` : 'calc(50% - 4px)',
         borderBottom: `1px solid ${arrowRim}`,
         borderRight: `1px solid ${arrowRim}`,
@@ -113,7 +123,7 @@ export function SimpleTooltip({
     if (isBottom) {
       return {
         ...base,
-        top: '-4px',
+        top: `-${ARROW_OFFSET}px`,
         left: position.arrowX ? `${position.arrowX - 4}px` : 'calc(50% - 4px)',
         borderTop: `1px solid ${arrowRim}`,
         borderLeft: `1px solid ${arrowRim}`,
@@ -122,7 +132,7 @@ export function SimpleTooltip({
     if (isLeft) {
       return {
         ...base,
-        right: '-4px',
+        right: `-${ARROW_OFFSET}px`,
         top: position.arrowY ? `${position.arrowY - 4}px` : 'calc(50% - 4px)',
         borderTop: `1px solid ${arrowRim}`,
         borderRight: `1px solid ${arrowRim}`,
@@ -131,7 +141,7 @@ export function SimpleTooltip({
     if (isRight) {
       return {
         ...base,
-        left: '-4px',
+        left: `-${ARROW_OFFSET}px`,
         top: position.arrowY ? `${position.arrowY - 4}px` : 'calc(50% - 4px)',
         borderBottom: `1px solid ${arrowRim}`,
         borderLeft: `1px solid ${arrowRim}`,
@@ -171,8 +181,8 @@ export function SimpleTooltip({
               border: rim ? '1px solid transparent' : 'none',
               boxShadow: SHADOWS[2],
               borderRadius: `${controlRadius}px`,
-              padding: '6px 12px',
-              maxWidth: '260px',
+              padding: `${CONTROL_PADDING.sm.y}px ${CONTROL_PADDING.sm.x}px`,
+              maxWidth: TOOLTIP_MAX_WIDTH,
               fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
               lineHeight: 1.4,
               color: getTextStyle('primary', 4).color,

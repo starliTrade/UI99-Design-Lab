@@ -10,6 +10,9 @@ import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { CheckCircle, Warning, XCircle, Info, X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
+/** A layout decision this component owns, not a system token. */
+const TOAST_MIN_WIDTH = 280;
+
 export interface ToastProps {
   open?: boolean;
   isOpen?: boolean;
@@ -121,7 +124,7 @@ export function Toast({
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[3]}px`, // 12px
-    minWidth: '280px',
+    minWidth: TOAST_MIN_WIDTH,
     maxWidth: 'calc(100vw - 32px)',
     boxSizing: 'border-box',
     animation: reduced
@@ -164,7 +167,7 @@ export function Toast({
             <div className="flex flex-col">
               {title && <span className="font-semibold text-white/90">{title}</span>}
               {description && (
-                <span style={{ color: getTextStyle('secondary', 4).color, fontSize: LiminalLayoutEngine.getTypeSizeCss(1), marginTop: '2px' }}>
+                <span style={{ color: getTextStyle('secondary', 4).color, fontSize: LiminalLayoutEngine.getTypeSizeCss(1), marginTop: `${SPACING[0]}px` }}>
                   {description}
                 </span>
               )}
@@ -186,7 +189,7 @@ export function Toast({
               '--liminal-surface-hover': SURFACE_TINT.medium,
               '--liminal-surface-active': SURFACE_TINT.medium,
               border: 'none',
-              padding: '4px 8px',
+              padding: `${SPACING[1]}px ${SPACING[2]}px`,
               borderRadius: `${RADIUS[6]}px`,
               color: semanticObj.text,
               fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
@@ -210,7 +213,7 @@ export function Toast({
           style={{
             background: 'transparent',
             border: 'none',
-            padding: '2px',
+            padding: `${SPACING[0]}px`,
             cursor: 'pointer',
             '--liminal-color-idle': getTextStyle('tertiary', 4).color,
             // primary, not secondary — see the note in Alert.

@@ -57,6 +57,8 @@ export function Modal({
   const reduced = useReducedMotion();
 
   const SPACING = LiminalLayoutEngine.SPACING;
+
+  const CONTROL_PADDING = LiminalLayoutEngine.CONTROL_PADDING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
@@ -167,7 +169,7 @@ export function Modal({
                   style={{
                     fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                     color: getTextStyle('tertiary', 3).color,
-                    marginTop: '4px',
+                    marginTop: `${SPACING[1]}px`,
                   }}
                 >
                   {description}
@@ -185,7 +187,7 @@ export function Modal({
             style={{
               background: 'transparent',
               border: 'none',
-              padding: '6px',
+              padding: `${CONTROL_PADDING.sm.y}px`,
               cursor: 'pointer',
               color: getTextStyle('tertiary', 3).color,
               display: 'inline-flex',

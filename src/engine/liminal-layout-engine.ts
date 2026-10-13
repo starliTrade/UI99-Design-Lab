@@ -20,6 +20,17 @@ export class LiminalLayoutEngine {
   // Separating band (between-group): 16, 24, 32, 48, 64, 96
   // Liminal boundary: 12 = last "one unit", 16 = first "separate"
   static readonly SPACING = {
+    /**
+     * The sub-atom. It exists because optical separation is a real need — a
+     * caption nudged down to sit under a title, the gap between the cells of a
+     * calendar — and it was being written as a raw `2px` in eleven places.
+     *
+     * It is NOT a spacing step. The atom's own note says why: below 4px,
+     * elements read as touching. This value is for correcting an optical
+     * relationship, never for separating two things. Naming it is the honest
+     * move; hiding it as a literal is not.
+     */
+    0: 2,
     1: 4,   // Atom (below this, elements read as "touching")
     2: 8,   // Cohesive tight
     3: 12,  // Cohesive loose (liminal boundary: last one-unit)
@@ -29,6 +40,62 @@ export class LiminalLayoutEngine {
     7: 48,  // Separating section
     8: 64,  // Separating block
     9: 96,  // Separating page
+  } as const;
+
+  /**
+   * CONTROL HEIGHTS
+   *
+   * The system had a spacing scale, a radius scale, a type scale and an icon
+   * scale — and no size scale. So every control height was a literal: `44px`
+   * eleven times, `32px` six times, and a scattering of others. They were
+   * consistent by discipline rather than by construction.
+   */
+  static readonly CONTROL = {
+    sm: 32,  // compact: a dense toolbar, a table's inline action
+    md: 44,  // default, and the system's minimum interactive size
+    lg: 52,  // a primary action that should read as the page's main one
+  } as const;
+
+  /**
+   * TARGET SIZE
+   *
+   * `44` is not a taste. WCAG 2.5.5 (Target Size, AAA) asks for 44×44 CSS px
+   * and 2.5.8 (AA) for 24×24; Apple's HIG says 44pt. The system's default
+   * control height IS the accessible minimum, which is why `CONTROL.md` and
+   * `TARGET.min` are the same number — and why it should be one name, not two
+   * literals that happen to agree.
+   */
+  static readonly TARGET = {
+    min: 44,
+    aa: 24,
+  } as const;
+
+  /**
+   * BORDER WIDTHS
+   *
+   * A hairline was written as a raw `1px` in five places. It is not a spacing
+   * step and it is not a size — it is the thinnest line the system draws, and
+   * it is the same value in every direction and on every surface.
+   */
+  static readonly BORDER = {
+    hairline: 1,
+    emphasis: 2,
+  } as const;
+
+  /**
+   * CONTROL PADDING
+   *
+   * The horizontal and vertical padding inside a control. These do NOT sit on
+   * the spacing scale and they are not derivable from the control height: a
+   * 32px control with 11px text and a 1px border would compute to 8px, and the
+   * designed value is 6. They are hand-tuned, which is exactly why they should
+   * be named rather than scattered — three controls were using `6px 12px`,
+   * `10px 18px` and `9px 12px` as literals.
+   */
+  static readonly CONTROL_PADDING = {
+    sm: { y: 6, x: 12 },
+    md: { y: 10, x: 18 },
+    lg: { y: 12, x: 24 },
   } as const;
 
   // == 2. RADIUS ==

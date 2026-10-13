@@ -7,6 +7,11 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { resolveSurface } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
+/** The knob's inset from the track edge: a visual decision, so it is named. */
+const KNOB_INSET = 3;
+
+const CONTROL = LiminalLayoutEngine.CONTROL;
+
 export interface ToggleProps {
   checked?: boolean;
   value?: boolean;
@@ -51,7 +56,7 @@ export function Toggle({
     position: 'relative',
     display: 'inline-flex',
     alignItems: 'center',
-    width: '44px',
+    width: CONTROL.md,
     height: `${LiminalLayoutEngine.SPACING[5]}px`,
     borderRadius: `${LiminalLayoutEngine.RADIUS.full}px`, // 9999px
     cursor: disabled ? 'not-allowed' : 'pointer',
@@ -74,7 +79,7 @@ export function Toggle({
 
   const knobStyle: CSSProperties = {
     position: 'absolute',
-    top: '3px',
+    top: `${KNOB_INSET}px`,
     width: `${LiminalLayoutEngine.SPACING[4]}px`,
     height: `${LiminalLayoutEngine.SPACING[4]}px`,
     borderRadius: '50%',

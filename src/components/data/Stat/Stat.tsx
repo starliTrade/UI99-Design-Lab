@@ -137,7 +137,7 @@ export function Stat({
             style={{
               fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
               fontFamily: 'monospace',
-              padding: '2px 8px',
+              padding: `${SPACING[0]}px ${SPACING[2]}px`,
               borderRadius: `${RADIUS.full}px`,
               fontWeight: 500,
               letterSpacing: '+0.04em',

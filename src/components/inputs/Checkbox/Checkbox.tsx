@@ -8,6 +8,7 @@ import {
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
+import { ICON_SIZES } from '../../../engine/liminal-icon-engine';
 
 export interface CheckboxProps {
   checked: boolean;
@@ -40,8 +41,8 @@ export function Checkbox({
   const offRim = getDirectionalRim(2, 2, false);
 
   const boxStyle: CSSProperties = {
-    width: '20px',
-    height: '20px',
+    width: ICON_SIZES.md,
+    height: ICON_SIZES.md,
     borderRadius: `${RADIUS.chip}px`, // 6px
     display: 'inline-flex',
     alignItems: 'center',
@@ -151,7 +152,7 @@ export function Checkbox({
         <span style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={labelStyle}>{label}</span>
           {description && (
-            <span style={{ ...LiminalLayoutEngine.getTypeStyle(1), color: getTextStyle('tertiary', 1).color, marginTop: '2px' }}>
+            <span style={{ ...LiminalLayoutEngine.getTypeStyle(1), color: getTextStyle('tertiary', 1).color, marginTop: `${SPACING[0]}px` }}>
               {description}
             </span>
           )}

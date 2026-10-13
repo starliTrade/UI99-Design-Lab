@@ -76,6 +76,7 @@ export function Pagination({
   const host = useHostSurface();
   const reducedMotion = useReducedMotion();
   const SPACING = LiminalLayoutEngine.SPACING;
+  const CONTROL = LiminalLayoutEngine.CONTROL;
 
   const range = generatePaginationRange(currentPage, totalPages, siblingCount);
 
@@ -114,8 +115,8 @@ export function Pagination({
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '32px',
-                height: '32px',
+                width: CONTROL.sm,
+                height: CONTROL.sm,
                 color: getTextStyle('tertiary', 1).color,
               }}
               aria-hidden="true"
@@ -160,6 +161,7 @@ interface PageButtonProps {
 }
 
 function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps) {
+  const CONTROL = LiminalLayoutEngine.CONTROL;
   const host = useHostSurface();
   // Hover is CSS's job now — no setState, no re-render per mouse move.
   const bg = isCurrent
@@ -173,8 +175,8 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: '32px',
-    height: '32px',
+    minWidth: CONTROL.sm,
+    height: CONTROL.sm,
     padding: '0 8px',
     borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
     // NO `background` here — an inline style beats the layer's rule, so this

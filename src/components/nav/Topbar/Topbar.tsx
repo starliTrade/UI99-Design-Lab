@@ -31,7 +31,7 @@ export function Topbar({
     position: sticky ? 'sticky' : 'relative',
     top: 0,
     zIndex: 50,
-    height: '64px',
+    height: `${SPACING[8]}px`,
     padding: `0 ${SPACING[5]}px`, // 24px
     background: VEIL.canvas, // Canvas #060709 with alpha 0.85
     backdropFilter: 'blur(12px)',

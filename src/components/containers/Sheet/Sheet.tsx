@@ -15,6 +15,9 @@ import { Divider } from '../Divider';
 import { X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
+/** A layout decision this component owns, not a system token. */
+const DRAG_HANDLE_WIDTH = 36;
+
 export interface SheetProps {
   open?: boolean;
   isOpen?: boolean;
@@ -56,6 +59,8 @@ export function Sheet({
   const reduced = useReducedMotion();
 
   const SPACING = LiminalLayoutEngine.SPACING;
+
+  const CONTROL_PADDING = LiminalLayoutEngine.CONTROL_PADDING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
@@ -167,8 +172,8 @@ export function Sheet({
         {isBottom && showHandle && (
           <div
             style={{
-              width: '36px',
-              height: '4px',
+              width: DRAG_HANDLE_WIDTH,
+              height: `${SPACING[1]}px`,
               borderRadius: `${RADIUS.full}px`,
               background: SURFACE_TINT.strong,
               margin: '0 auto',
@@ -197,7 +202,7 @@ export function Sheet({
                   style={{
                     fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
                     color: getTextStyle('tertiary', 2).color,
-                    marginTop: '2px',
+                    marginTop: `${SPACING[0]}px`,
                   }}
                 >
                   {subtitle}
@@ -215,7 +220,7 @@ export function Sheet({
             style={{
               background: 'transparent',
               border: 'none',
-              padding: '6px',
+              padding: `${CONTROL_PADDING.sm.y}px`,
               cursor: 'pointer',
               color: getTextStyle('tertiary', 2).color,
               display: 'inline-flex',

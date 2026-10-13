@@ -10,6 +10,9 @@ import { Tray } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { resolveInset } from '../../../engine/liminal-surface';
 
+/** A layout decision this component owns, not a system token. */
+const EMPTY_STATE_MAX_WIDTH = 360;
+
 export interface EmptyStateProps {
   icon?: ReactNode;
   title: string;
@@ -47,8 +50,8 @@ export function EmptyState({
   };
 
   const wellStyle: CSSProperties = {
-    width: '64px',
-    height: '64px',
+    width: `${SPACING[8]}px`,
+    height: `${SPACING[8]}px`,
     borderRadius: '50%',
     display: 'flex',
     alignItems: 'center',
@@ -72,7 +75,7 @@ export function EmptyState({
     fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: 1.7,
     color: getTextStyle('secondary', 1).color,
-    maxWidth: '360px',
+    maxWidth: EMPTY_STATE_MAX_WIDTH,
     margin: 0,
   };
 

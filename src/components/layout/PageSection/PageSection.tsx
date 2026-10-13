@@ -24,6 +24,7 @@ export function PageSection({
   style: customStyle = {},
 }: PageSectionProps) {
   const SPACING = LiminalLayoutEngine.SPACING;
+  const BORDER = LiminalLayoutEngine.BORDER;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
   // rimSide half-step S1.5 (#090A0D) for top divider
@@ -61,7 +62,7 @@ export function PageSection({
         <div
           role="separator"
           style={{
-            height: '1px',
+            height: `${BORDER.hairline}px`,
             background: rimSideColor,
             width: '100%',
             marginBottom: `${SPACING[5]}px`, // 24px

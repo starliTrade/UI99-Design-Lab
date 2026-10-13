@@ -7,6 +7,9 @@ import { Button } from '../../atoms/Button';
 import { Warning } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
+/** A layout decision this component owns, not a system token. */
+const ERROR_PAGE_MAX_WIDTH = 400;
+
 export interface ErrorPageProps {
   code: '404' | '500' | '403' | '401' | string;
   title: string;
@@ -79,7 +82,7 @@ export function ErrorPage({
     fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: 1.7,
     color: getTextStyle('secondary', 1).color,
-    maxWidth: '400px',
+    maxWidth: ERROR_PAGE_MAX_WIDTH,
     margin: 0,
   };
 

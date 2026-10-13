@@ -22,6 +22,11 @@ import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { mistCssVars } from '../../../engine/liminal-mist';
 import { Badge } from '../../atoms/Badge';
 
+/** A layout decision this component owns, not a system token. */
+const MENU_MAX_HEIGHT = 260;
+/** A layout decision this component owns, not a system token. */
+const TAG_MIN_WIDTH = 60;
+
 export interface MultiSelectOption {
   value: string;
   label: string;
@@ -111,6 +116,8 @@ export function MultiSelect({
   const reducedMotion = useReducedMotion();
 
   const SPACING = LiminalLayoutEngine.SPACING;
+
+  const CONTROL = LiminalLayoutEngine.CONTROL;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
@@ -339,7 +346,7 @@ export function MultiSelect({
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
     padding: `${SPACING[2]}px ${SPACING[3]}px`, // 8px 12px
-    minHeight: '44px',
+    minHeight: CONTROL.md,
     borderRadius: `${RADIUS.control}px`, // 10px
     boxSizing: 'border-box',
     width: '100%',
@@ -387,7 +394,7 @@ export function MultiSelect({
     borderRadius: `${RADIUS.control}px`,
     padding: `${SPACING[1]}px`,
     boxSizing: 'border-box',
-    maxHeight: '260px',
+    maxHeight: MENU_MAX_HEIGHT,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
@@ -461,7 +468,7 @@ export function MultiSelect({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: `${SPACING[1]}px`,
-                padding: '2px 8px',
+                padding: `${SPACING[0]}px ${SPACING[2]}px`,
                 fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
                 cursor: disabled ? 'not-allowed' : 'default',
               }}
@@ -528,7 +535,7 @@ export function MultiSelect({
           }}
           style={{
             flex: 1,
-            minWidth: '60px',
+            minWidth: TAG_MIN_WIDTH,
             border: 'none',
             background: 'transparent',
             outline: 'none',

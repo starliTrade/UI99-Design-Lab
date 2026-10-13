@@ -68,7 +68,7 @@ export function AppShell({
               flexShrink: 0,
               alignSelf: 'flex-start',
               position: 'sticky',
-              top: '88px', // 64px Topbar + 24px gap
+              top: `${SPACING[8] + SPACING[5]}px`, // 64 (topbar) + 24 (gap)
               boxSizing: 'border-box',
             }}
           >

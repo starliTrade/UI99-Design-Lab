@@ -34,7 +34,7 @@ export function SidebarSection({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '2px',
+        gap: `${SPACING[0]}px`,
         ...customStyle,
       }}
     >
@@ -83,14 +83,14 @@ export function Sidebar({
     padding: `${SPACING[4]}px`, // 16px
     display: 'flex',
     flexDirection: 'column',
-    gap: '2px',
+    gap: `${SPACING[0]}px`,
     width: `${width}px`,
     maxWidth: '100%',
     boxSizing: 'border-box',
     ...(sticky
       ? {
           position: 'sticky',
-          top: '88px',
+          top: `${SPACING[8] + SPACING[5]}px`, // 64 (topbar) + 24 (gap),
           alignSelf: 'flex-start',
         }
       : {}),

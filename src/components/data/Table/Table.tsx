@@ -11,6 +11,8 @@ import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { resolveBorder, resolveSurface } from '../../../engine/liminal-surface';
 import { Checkbox } from '../../inputs/Checkbox';
 
+const RADIUS = LiminalLayoutEngine.RADIUS;
+
 export interface TableColumn {
   key: string;
   title?: string;
@@ -62,7 +64,7 @@ export function Table({
     overflowX: 'auto',
     boxSizing: 'border-box',
     WebkitOverflowScrolling: 'touch',
-    borderRadius: '12px',
+    borderRadius: `${RADIUS.card}px`,
     background: limStyle.style.background,
     border: limStyle.style.border,
     boxShadow: limStyle.style.boxShadow,
@@ -105,7 +107,8 @@ export function Table({
   // The legacy path's last hand-picked numbers. SPACING[3] is 12 and level 2 is
   // 13px at the reference base, so nothing moves — but they are derived now.
   const SPACING = LiminalLayoutEngine.SPACING[3];
-  const TYPOGRAPHY_FS = LiminalLayoutEngine.TYPOGRAPHY[2].fs;
+  const CONTROL = LiminalLayoutEngine.CONTROL;
+    const TYPOGRAPHY_FS = LiminalLayoutEngine.TYPOGRAPHY[2].fs;
   const TYPOGRAPHY_LH = LiminalLayoutEngine.TYPOGRAPHY[2].lh;
 
   return (
@@ -117,7 +120,7 @@ export function Table({
               <th
                 scope="col"
                 style={{
-                  width: '44px',
+                  width: CONTROL.md,
                   padding: `${SPACING}px ${SPACING}px`,
                   borderBottom: `1px solid ${rimSideColor}`,
                   textAlign: 'center',

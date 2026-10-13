@@ -67,7 +67,8 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
     const { close } = useDropdownMenuContext();
 
     const SPACING = LiminalLayoutEngine.SPACING;
-    const RADIUS = LiminalLayoutEngine.RADIUS;
+
+        const RADIUS = LiminalLayoutEngine.RADIUS;
     const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
     const isDanger = variant === 'danger';
@@ -463,9 +464,10 @@ export interface DropdownMenuSeparatorProps extends HTMLAttributes<HTMLDivElemen
 export const DropdownMenuSeparator = forwardRef<HTMLDivElement, DropdownMenuSeparatorProps>(
   ({ asChild = false, className = '', style: customStyle = {}, ...props }, ref) => {
     const SPACING = LiminalLayoutEngine.SPACING;
+    const BORDER = LiminalLayoutEngine.BORDER;
 
     const separatorStyle: CSSProperties = {
-      height: '1px',
+      height: `${BORDER.hairline}px`,
       margin: `${SPACING[1]}px 0`,
       background: resolveSurface({ role: 'menu', state: 'hover' }).background,
       border: 'none',

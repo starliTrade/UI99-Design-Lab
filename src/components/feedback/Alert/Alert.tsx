@@ -100,7 +100,7 @@ export function Alert({
   const closeBtnStyle: CSSProperties = {
     background: 'transparent',
     border: 'none',
-    padding: '4px',
+    padding: `${SPACING[1]}px`,
     cursor: 'pointer',
     // The layer owns `color` — see data-liminal-hover-color below. Setting it
     // here would cancel the hover rule, which is exactly what had happened.
@@ -128,7 +128,7 @@ export function Alert({
       {/* ─── RING LAYER (separate blurred 1px border element) ─── */}
 
       {/* Icon: sharp signal */}
-      <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, marginTop: '2px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, marginTop: `${SPACING[0]}px` }}>
         {alertIcon}
       </div>
 

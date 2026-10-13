@@ -15,6 +15,11 @@ import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
 import { mistCssVars } from '../../../engine/liminal-mist';
 import { Input } from '../../inputs/Input';
 
+/** A layout decision this component owns, not a system token. */
+const PALETTE_MAX_WIDTH = 480;
+/** A layout decision this component owns, not a system token. */
+const PALETTE_MAX_HEIGHT = 380;
+
 export interface CommandPaletteItem {
   id: string;
   label: string;
@@ -108,7 +113,7 @@ export function CommandPalette({
   const panelStyle: CSSProperties = {
     position: 'relative',
     width: '100%',
-    maxWidth: '480px',
+    maxWidth: PALETTE_MAX_WIDTH,
     maxHeight: '80vh',
     borderRadius: `${RADIUS.container}px`,
     display: 'flex',
@@ -132,7 +137,7 @@ export function CommandPalette({
     display: 'flex',
     flexDirection: 'column',
     gap: `${SPACING[3]}px`,
-    maxHeight: '380px',
+    maxHeight: PALETTE_MAX_HEIGHT,
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -203,7 +208,7 @@ export function CommandPalette({
                   >
                     {group.title}
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: `${SPACING[0]}px` }}>
                     {group.items.map((item) => {
                       const globalIndex = flatItems.findIndex((i) => i.id === item.id);
                       const isActive = globalIndex === activeIndex;

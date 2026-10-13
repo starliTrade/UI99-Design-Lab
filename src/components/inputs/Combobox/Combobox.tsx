@@ -17,6 +17,9 @@ import { resolveSurface } from '../../../engine/liminal-surface';
 import { mistCssVars } from '../../../engine/liminal-mist';
 import { Input } from '../Input';
 
+/** A layout decision this component owns, not a system token. */
+const MENU_MAX_HEIGHT = 260;
+
 export interface ComboboxOption {
   value: string;
   label: string;
@@ -322,7 +325,7 @@ export function Combobox({
     borderRadius: `${RADIUS.control}px`,
     padding: `${SPACING[1]}px`, // 4px
     boxSizing: 'border-box',
-    maxHeight: '260px',
+    maxHeight: MENU_MAX_HEIGHT,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
