@@ -38,10 +38,21 @@ export function getDirectionalRim(
   if (rim === 0) return null;
   let top: string, side: string, bot: string;
 
+  // At the ceiling there is no room above, so the rim INVERTS and lights from
+  // below — the same rule the border already follows. Without it a surface at
+  // the ceiling got a flat rim: measured, a toast's top, side and bottom all
+  // resolved to `#15171a`, which is the surface itself. The rim was invisible
+  // and nothing said so.
+  const atCeiling = n + RIM[rim].t > LADDER.length - 1;
+
   if (concave) {
     top = getLadderColor(n - 0.5);
     side = getLadderColor(n);
     bot = getLadderColor(n + 0.5);
+  } else if (atCeiling) {
+    top = getLadderColor(n - RIM[rim].b);
+    side = getLadderColor(n - RIM[rim].s);
+    bot = getLadderColor(n - RIM[rim].t);
   } else {
     top = getLadderColor(n + RIM[rim].t);
     side = getLadderColor(n + RIM[rim].s);
@@ -55,9 +66,9 @@ export function getDirectionalRim(
   // they are the computed values the contract and the tests read — while the
   // gradient a component puts in a style object reads the CSS layer, so it
   // follows a theme.
-  const vTop = getLadderVar(concave ? n - 0.5 : n + RIM[rim].t);
-  const vSide = getLadderVar(concave ? n : n + RIM[rim].s);
-  const vBot = getLadderVar(concave ? n + 0.5 : n + RIM[rim].b);
+  const vTop = getLadderVar(concave ? n - 0.5 : atCeiling ? n - RIM[rim].b : n + RIM[rim].t);
+  const vSide = getLadderVar(concave ? n : atCeiling ? n - RIM[rim].s : n + RIM[rim].s);
+  const vBot = getLadderVar(concave ? n + 0.5 : atCeiling ? n - RIM[rim].t : n + RIM[rim].b);
   const vBg = getLadderVar(n);
   const gradVar = `linear-gradient(${vBg}, ${vBg}) padding-box, linear-gradient(180deg, ${vTop} 0%, ${vSide} 55%, ${vBot} 100%) border-box`;
 

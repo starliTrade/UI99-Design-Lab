@@ -129,6 +129,29 @@ function lightnessForApca(h: number, C: number, floor: number, against: string):
 }
 
 /**
+ * The lightness at which a hue reaches BOTH floors against a background.
+ *
+ * `lightnessForApca` alone is one lens. The system's rule is two lenses and the
+ * stricter wins — the same rule `SEMANTIC_SOLID_L` already follows, and the
+ * same rule every ladder text token follows through `deriveTextToken`. The
+ * semantic TEXT was the one place that took only APCA.
+ *
+ * Today it happens to pass: the tests prove all four hues clear 4.5:1 on every
+ * surface. But the OUTCOME was proven and the DERIVATION was not, so a new hue
+ * that failed WCAG would have shipped with a passing test suite.
+ */
+function lightnessForBoth(h: number, C: number, apcaFloor: number, wcagFloor: number, against: string): number {
+  let L = lightnessForApca(h, C, apcaFloor, against);
+  // Walk up until WCAG passes too. The loop is bounded and monotonic: more
+  // lightness against a dark background is more contrast on both lenses.
+  for (let i = 0; i < 60 && L < 0.995; i++) {
+    if (contrastRatioHex(oklchToHex({ L, C, h }), against) >= wcagFloor) break;
+    L = Math.min(0.995, L + 0.005);
+  }
+  return L;
+}
+
+/**
  * The same search, downward: text ON a light fill is dark, so MORE contrast
  * means LESS lightness. Searching upward here would walk to white.
  */
@@ -156,7 +179,7 @@ function deriveSemantic(hue: number, cssName: string) {
   return {
     hue,
     text: oklchToHex({
-      L: lightnessForApca(hue, textC, SEMANTIC_TEXT_FLOOR, SEMANTIC_REFERENCE),
+      L: lightnessForBoth(hue, textC, SEMANTIC_TEXT_FLOOR, SEMANTIC_ON_WCAG_FLOOR, SEMANTIC_REFERENCE),
       C: textC,
       h: hue,
     }),

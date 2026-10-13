@@ -12,6 +12,7 @@ import {
   type SurfaceState,
 } from '../liminal-surface';
 import { LADDER, HALF, PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR } from '../liminal-ladder';
+import { getDirectionalRim, getLadderColor } from '../spec-engine';
 import { contrastRatioHex, oklchLightness } from '../liminal-color-math';
 import { getLiminalStyle } from '../spec-engine';
 
@@ -367,5 +368,39 @@ describe('the ceiling inversion also applies when the level came from a host', (
   it('below the ceiling the rim is still a highlight, unchanged', () => {
     expect(resolveBorderHex({ role: 'control', kind: 'hairline', on: 'work' })).toBe(HALF[3]);
     expect(resolveBorderHex({ role: 'control', kind: 'hairline', on: 'menu' })).toBe(HALF[6]);
+  });
+});
+
+describe('the rim — it inverts at the ceiling, like the border does', () => {
+  // A surface at the ceiling had a FLAT rim: measured, a toast's top, side and
+  // bottom all resolved to `#15171a`, which is the surface itself. The rim was
+  // invisible and nothing said so. The border already solved this by inverting
+  // below the ceiling; the rim had no equivalent.
+  it('a rim at the ceiling is not flat', () => {
+    const r = getDirectionalRim(8, 3, false)!;
+    expect(r.top).not.toBe(r.side);
+    expect(r.bot).not.toBe(r.side);
+  });
+
+  it('and it is darker than its surface, because there is no room above', () => {
+    const r = getDirectionalRim(8, 3, false)!;
+    const surface = getLadderColor(8);
+    for (const c of [r.top, r.side, r.bot]) {
+      expect(oklchLightness(c), `${c} vs ${surface}`).toBeLessThan(oklchLightness(surface));
+    }
+  });
+
+  it('a rim below the ceiling still lights from above', () => {
+    const r = getDirectionalRim(3, 2, false)!;
+    expect(oklchLightness(r.top)).toBeGreaterThan(oklchLightness(r.bot));
+  });
+
+  it('every floating role gets a rim that can be seen', () => {
+    for (const role of FLOATING_ROLES) {
+      const s = resolveSurface({ role });
+      if (s.rim === 0) continue;
+      const r = getDirectionalRim(Math.round(s.level), s.rim, false)!;
+      expect(r.top !== r.side || r.side !== r.bot, `${role} has a flat rim`).toBe(true);
+    }
   });
 });
