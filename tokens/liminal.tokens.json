@@ -1,0 +1,992 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "LIMINAL — a perceptual dark-native design system. Every value is derived by the engine; none is hand-picked.",
+  "color": {
+    "ladder": {
+      "s0": {
+        "$value": "#060709",
+        "$type": "color",
+        "$description": "canvas — the mother surface"
+      },
+      "s1": {
+        "$value": "#07090b",
+        "$type": "color",
+        "$description": "chrome — nav bar, tabs, outer bars"
+      },
+      "s2": {
+        "$value": "#090b0d",
+        "$type": "color",
+        "$description": "work — where panels and cards live"
+      },
+      "s3": {
+        "$value": "#0b0d0f",
+        "$type": "color",
+        "$description": "panel — nested panels, inner cards"
+      },
+      "s4": {
+        "$value": "#0d0f12",
+        "$type": "color",
+        "$description": "control — raised controls, active inputs"
+      },
+      "s5": {
+        "$value": "#0f1114",
+        "$type": "color",
+        "$description": "floating — dropdowns, tooltips"
+      },
+      "s6": {
+        "$value": "#111316",
+        "$type": "color",
+        "$description": "popover — popover, large dropdown"
+      },
+      "s7": {
+        "$value": "#131518",
+        "$type": "color",
+        "$description": "modal — modal, drawer sheet"
+      },
+      "s8": {
+        "$value": "#15171a",
+        "$type": "color",
+        "$description": "ceiling — the ceiling of allowed darkness"
+      },
+      "s0-5": {
+        "$value": "#07080a",
+        "$type": "color",
+        "$description": "the step between s0 and s1; used by hover and the skeleton pulse"
+      },
+      "s1-5": {
+        "$value": "#080a0c",
+        "$type": "color",
+        "$description": "the step between s1 and s2; used by hover and the skeleton pulse"
+      },
+      "s2-5": {
+        "$value": "#0a0c0e",
+        "$type": "color",
+        "$description": "the step between s2 and s3; used by hover and the skeleton pulse"
+      },
+      "s3-5": {
+        "$value": "#0c0e10",
+        "$type": "color",
+        "$description": "the step between s3 and s4; used by hover and the skeleton pulse"
+      },
+      "s4-5": {
+        "$value": "#0e1013",
+        "$type": "color",
+        "$description": "the step between s4 and s5; used by hover and the skeleton pulse"
+      },
+      "s5-5": {
+        "$value": "#101215",
+        "$type": "color",
+        "$description": "the step between s5 and s6; used by hover and the skeleton pulse"
+      },
+      "s6-5": {
+        "$value": "#121417",
+        "$type": "color",
+        "$description": "the step between s6 and s7; used by hover and the skeleton pulse"
+      },
+      "s7-5": {
+        "$value": "#141619",
+        "$type": "color",
+        "$description": "the step between s7 and s8; used by hover and the skeleton pulse"
+      },
+      "penumbra": {
+        "$value": "#030406",
+        "$type": "color",
+        "$description": "the soft dark under a lifted surface"
+      },
+      "umbra": {
+        "$value": "#010203",
+        "$type": "color",
+        "$description": "the tight dark where a surface touches the canvas"
+      }
+    },
+    "rim": {
+      "rim1": {
+        "top": {
+          "$value": "#080a0c",
+          "$type": "color",
+          "$description": "100% — the light comes from above"
+        },
+        "side": {
+          "$value": "#080a0c",
+          "$type": "color",
+          "$description": "55%"
+        },
+        "bottom": {
+          "$value": "#07090b",
+          "$type": "color",
+          "$description": "the host surface itself"
+        }
+      },
+      "rim2": {
+        "top": {
+          "$value": "#0b0d0f",
+          "$type": "color",
+          "$description": "100% — the light comes from above"
+        },
+        "side": {
+          "$value": "#0a0c0e",
+          "$type": "color",
+          "$description": "55%"
+        },
+        "bottom": {
+          "$value": "#090b0d",
+          "$type": "color",
+          "$description": "the host surface itself"
+        }
+      },
+      "rim3": {
+        "top": {
+          "$value": "#0e1013",
+          "$type": "color",
+          "$description": "100% — the light comes from above"
+        },
+        "side": {
+          "$value": "#0d0f12",
+          "$type": "color",
+          "$description": "55%"
+        },
+        "bottom": {
+          "$value": "#0c0e10",
+          "$type": "color",
+          "$description": "the host surface itself"
+        }
+      }
+    },
+    "shadow": {
+      "e1": {
+        "$value": "0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22)",
+        "$type": "boxShadow",
+        "$description": "dropdown, header"
+      },
+      "e2": {
+        "$value": "0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26)",
+        "$type": "boxShadow",
+        "$description": "featured card, popover"
+      },
+      "e3": {
+        "$value": "0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30)",
+        "$type": "boxShadow",
+        "$description": "modal, drawer sheet"
+      },
+      "e4": {
+        "$value": "0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)",
+        "$type": "boxShadow",
+        "$description": "toast, max floating anchor"
+      }
+    },
+    "tint": {
+      "faint": {
+        "$value": "rgba(255, 255, 255, 0.01)",
+        "$type": "color",
+        "$description": "a fill, never for type"
+      },
+      "subtle": {
+        "$value": "rgba(255, 255, 255, 0.03)",
+        "$type": "color",
+        "$description": "a fill, never for type"
+      },
+      "medium": {
+        "$value": "rgba(255, 255, 255, 0.06)",
+        "$type": "color",
+        "$description": "a fill, never for type"
+      },
+      "strong": {
+        "$value": "rgba(255, 255, 255, 0.20)",
+        "$type": "color",
+        "$description": "a fill, never for type"
+      },
+      "solid": {
+        "$value": "rgba(255, 255, 255, 0.40)",
+        "$type": "color",
+        "$description": "a fill, never for type"
+      }
+    },
+    "veil": {
+      "backdrop": {
+        "$value": "rgba(3, 4, 6, 0.60)",
+        "$type": "color",
+        "$description": "the backdrop behind a modal"
+      },
+      "canvas": {
+        "$value": "rgba(6, 7, 9, 0.85)",
+        "$type": "color",
+        "$description": "the backdrop behind a modal"
+      }
+    },
+    "text": {
+      "primary": {
+        "$value": "rgba(255, 255, 255, 0.89)",
+        "$type": "color",
+        "$description": "APCA Lc 90 · WCAG 4.5:1 · body-preferred"
+      },
+      "secondary": {
+        "$value": "rgba(255, 255, 255, 0.79)",
+        "$type": "color",
+        "$description": "APCA Lc 75 · WCAG 4.5:1 · body-minimum"
+      },
+      "tertiary": {
+        "$value": "rgba(255, 255, 255, 0.79)",
+        "$type": "color",
+        "$description": "APCA Lc 75 · WCAG 4.5:1 · body-minimum"
+      },
+      "quaternary": {
+        "$value": "rgba(255, 255, 255, 0.44)",
+        "$type": "color",
+        "$description": "APCA Lc 30 · WCAG 3:1 · text-minimum"
+      }
+    },
+    "semantic": {
+      "success": {
+        "solid": {
+          "$value": "var(--liminal-success, #00875d)",
+          "$type": "color",
+          "$description": "the fill; hue 162.9 is a convention, the lightness is derived"
+        },
+        "text": {
+          "$value": "#54e5aa",
+          "$type": "color",
+          "$description": "readable on a surface"
+        },
+        "onSolid": {
+          "$value": "#FFFFFF",
+          "$type": "color",
+          "$description": "readable on the fill"
+        },
+        "subtle": {
+          "$value": "rgba(0, 135, 93, 0.1)",
+          "$type": "color",
+          "$description": "a wash, never for type"
+        },
+        "border": {
+          "$value": "rgba(0, 135, 93, 0.22)",
+          "$type": "color"
+        },
+        "glyph": {
+          "$value": "✓",
+          "$type": "string",
+          "$description": "meaning that survives colour blindness"
+        }
+      },
+      "warning": {
+        "solid": {
+          "$value": "var(--liminal-warning, #946a00)",
+          "$type": "color",
+          "$description": "the fill; hue 81.4 is a convention, the lightness is derived"
+        },
+        "text": {
+          "$value": "#ffc348",
+          "$type": "color",
+          "$description": "readable on a surface"
+        },
+        "onSolid": {
+          "$value": "#FFFFFF",
+          "$type": "color",
+          "$description": "readable on the fill"
+        },
+        "subtle": {
+          "$value": "rgba(148, 106, 0, 0.1)",
+          "$type": "color",
+          "$description": "a wash, never for type"
+        },
+        "border": {
+          "$value": "rgba(148, 106, 0, 0.22)",
+          "$type": "color"
+        },
+        "glyph": {
+          "$value": "!",
+          "$type": "string",
+          "$description": "meaning that survives colour blindness"
+        }
+      },
+      "danger": {
+        "solid": {
+          "$value": "var(--liminal-danger, #ba4646)",
+          "$type": "color",
+          "$description": "the fill; hue 23.5 is a convention, the lightness is derived"
+        },
+        "text": {
+          "$value": "#ffbdb6",
+          "$type": "color",
+          "$description": "readable on a surface"
+        },
+        "onSolid": {
+          "$value": "#FFFFFF",
+          "$type": "color",
+          "$description": "readable on the fill"
+        },
+        "subtle": {
+          "$value": "rgba(186, 70, 70, 0.1)",
+          "$type": "color",
+          "$description": "a wash, never for type"
+        },
+        "border": {
+          "$value": "rgba(186, 70, 70, 0.22)",
+          "$type": "color"
+        },
+        "glyph": {
+          "$value": "×",
+          "$type": "string",
+          "$description": "meaning that survives colour blindness"
+        }
+      },
+      "info": {
+        "solid": {
+          "$value": "var(--liminal-info, #3271c8)",
+          "$type": "color",
+          "$description": "the fill; hue 257.5 is a convention, the lightness is derived"
+        },
+        "text": {
+          "$value": "#a4d1ff",
+          "$type": "color",
+          "$description": "readable on a surface"
+        },
+        "onSolid": {
+          "$value": "#FFFFFF",
+          "$type": "color",
+          "$description": "readable on the fill"
+        },
+        "subtle": {
+          "$value": "rgba(50, 113, 200, 0.1)",
+          "$type": "color",
+          "$description": "a wash, never for type"
+        },
+        "border": {
+          "$value": "rgba(50, 113, 200, 0.22)",
+          "$type": "color"
+        },
+        "glyph": {
+          "$value": "i",
+          "$type": "string",
+          "$description": "meaning that survives colour blindness"
+        }
+      }
+    },
+    "spectrum": {
+      "15": {
+        "$value": "#E88A93",
+        "$type": "color",
+        "$description": "Ruby"
+      },
+      "40": {
+        "$value": "#E8A87C",
+        "$type": "color",
+        "$description": "Coral"
+      },
+      "75": {
+        "$value": "#D9BE6E",
+        "$type": "color",
+        "$description": "Amber"
+      },
+      "110": {
+        "$value": "#A8CC74",
+        "$type": "color",
+        "$description": "Lime"
+      },
+      "145": {
+        "$value": "#74CE8E",
+        "$type": "color",
+        "$description": "Emerald"
+      },
+      "175": {
+        "$value": "#5FCDBB",
+        "$type": "color",
+        "$description": "Teal"
+      },
+      "200": {
+        "$value": "#56C6E0",
+        "$type": "color",
+        "$description": "Cyan"
+      },
+      "230": {
+        "$value": "#6FA8EC",
+        "$type": "color",
+        "$description": "Sapphire"
+      },
+      "260": {
+        "$value": "#8B9CF0",
+        "$type": "color",
+        "$description": "Indigo"
+      },
+      "290": {
+        "$value": "#A98BEA",
+        "$type": "color",
+        "$description": "Violet"
+      },
+      "320": {
+        "$value": "#C983D6",
+        "$type": "color",
+        "$description": "Fuchsia"
+      },
+      "350": {
+        "$value": "#E083AE",
+        "$type": "color",
+        "$description": "Rose"
+      }
+    }
+  },
+  "dimension": {
+    "spacing": {
+      "0": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the sub-atom: optical correction only, never separation"
+      },
+      "1": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the atom; below this, elements read as touching"
+      },
+      "2": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      },
+      "3": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      },
+      "4": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      },
+      "5": {
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      },
+      "6": {
+        "$value": {
+          "value": 32,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      },
+      "7": {
+        "$value": {
+          "value": 48,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      },
+      "8": {
+        "$value": {
+          "value": 64,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      },
+      "9": {
+        "$value": {
+          "value": 96,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      }
+    },
+    "radius": {
+      "4": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "6": {
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "8": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "10": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "12": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "16": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "20": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "24": {
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "chip": {
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "control": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "card": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "panel": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "container": {
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      },
+      "full": {
+        "$value": {
+          "value": 9999,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the concentric law: an inner radius is the outer minus the padding"
+      }
+    },
+    "control": {
+      "sm": {
+        "$value": {
+          "value": 32,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      },
+      "md": {
+        "$value": {
+          "value": 44,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "the system default, and the accessible minimum"
+      },
+      "lg": {
+        "$value": {
+          "value": 52,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      }
+    },
+    "target": {
+      "min": {
+        "$value": {
+          "value": 44,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "WCAG 2.5.5 (AAA)"
+      },
+      "aa": {
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        },
+        "$type": "dimension",
+        "$description": "WCAG 2.5.8 (AA)"
+      }
+    },
+    "border": {
+      "hairline": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      },
+      "emphasis": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$type": "dimension"
+      }
+    }
+  },
+  "typography": {
+    "1": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 0.694444)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.45,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "+0.04em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 400,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "meta, quaternary",
+        "$type": "string"
+      }
+    },
+    "2": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 0.833333)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.5,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "+0.01em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 500,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "label, tertiary",
+        "$type": "string"
+      }
+    },
+    "3": {
+      "fontSize": {
+        "$value": "var(--liminal-type-base)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.6,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "0",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 400,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "body, secondary",
+        "$type": "string"
+      }
+    },
+    "4": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 1.200000)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.35,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "-0.005em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 600,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "lead, h4",
+        "$type": "string"
+      }
+    },
+    "5": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 1.440000)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.25,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "-0.01em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 600,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "h3",
+        "$type": "string"
+      }
+    },
+    "6": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 1.728000)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.2,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "-0.015em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 600,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "h2",
+        "$type": "string"
+      }
+    },
+    "7": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 2.073600)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.15,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "-0.02em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 600,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "h1",
+        "$type": "string"
+      }
+    },
+    "8": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 2.488320)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.1,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "-0.025em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 700,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "display",
+        "$type": "string"
+      }
+    }
+  },
+  "motion": {
+    "duration": {
+      "instant": {
+        "$value": {
+          "value": 100,
+          "unit": "ms"
+        },
+        "$type": "duration"
+      },
+      "fast": {
+        "$value": {
+          "value": 150,
+          "unit": "ms"
+        },
+        "$type": "duration"
+      },
+      "normal": {
+        "$value": {
+          "value": 200,
+          "unit": "ms"
+        },
+        "$type": "duration"
+      },
+      "slow": {
+        "$value": {
+          "value": 250,
+          "unit": "ms"
+        },
+        "$type": "duration"
+      },
+      "slower": {
+        "$value": {
+          "value": 350,
+          "unit": "ms"
+        },
+        "$type": "duration"
+      },
+      "dramatic": {
+        "$value": {
+          "value": 500,
+          "unit": "ms"
+        },
+        "$type": "duration"
+      }
+    },
+    "easing": {
+      "out": {
+        "$value": [
+          0.16,
+          1,
+          0.3,
+          1
+        ],
+        "$type": "cubicBezier"
+      },
+      "in": {
+        "$value": [
+          0.7,
+          0,
+          0.84,
+          0
+        ],
+        "$type": "cubicBezier"
+      },
+      "inOut": {
+        "$value": [
+          0.65,
+          0,
+          0.35,
+          1
+        ],
+        "$type": "cubicBezier"
+      },
+      "spring": {
+        "$value": [
+          0.2,
+          0.8,
+          0.2,
+          1
+        ],
+        "$type": "cubicBezier"
+      },
+      "linear": {
+        "$value": "linear",
+        "$type": "string",
+        "$description": "linear"
+      }
+    }
+  },
+  "font": {
+    "latin": {
+      "$value": "ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+      "$type": "fontFamily"
+    },
+    "persian": {
+      "$value": "Vazirmatn, \"Vazirmatn RD\", \"Noto Naskh Arabic\", \"Segoe UI\", Tahoma, sans-serif",
+      "$type": "fontFamily",
+      "$description": "the line-height floor 1.5625 is derived from this face's own metrics"
+    }
+  },
+  "$extensions": {
+    "com.liminal.ladder": {
+      "canvasL": 0.128,
+      "step": 0.009475,
+      "chroma": 0.0069,
+      "hue": 258.4,
+      "perceptualQuantum": 0.0083,
+      "reliableBoundary": 0.0112,
+      "note": "The step is a MEASURED perceptual quantum. A theme may change the hue; it may not change the step, because the step does not depend on the colour."
+    },
+    "com.liminal.persian": {
+      "lineHeightFloor": 1.5625,
+      "note": "From Vazirmatn: (2100 + 1100 + 0) / 2048. A different face needs the floor re-derived."
+    }
+  }
+}
