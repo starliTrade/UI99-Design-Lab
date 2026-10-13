@@ -165,6 +165,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
 
   const CONTROL = LiminalLayoutEngine.CONTROL;
 
+  const L = LiminalLayoutEngine;
+
   const CONTROL_PADDING = LiminalLayoutEngine.CONTROL_PADDING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
@@ -219,10 +221,19 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
-    // The padding scales with the size. It did not: it was a fixed 12px, so
-    // `minHeight` was a floor the padding always cleared — every size rendered
-    // at the same height and the `size` prop was invisible.
-    padding: `${CONTROL_PADDING[size].y}px ${SPACING[3]}px`,
+    // The vertical padding is DERIVED from the control height, not fixed.
+    //
+    // It was a fixed value, and a fixed value cannot be right: the padding plus
+    // the content must equal the declared height, and the content differs
+    // between a Button and an Input. Measured: `CONTROL.md` says 44 and the
+    // input rendered at 48, because 26 (line box) + 2x10 (padding) + 2 (border)
+    // is 48 and `minHeight` is only a floor.
+    //
+    // `1lh` is the element's own line box, so the control is EXACTLY its
+    // declared height — and it stays exact when the fluid type changes the line
+    // box, because the padding absorbs the difference.
+    paddingBlock: `calc((${CONTROL[size]}px - 1lh - ${2 * L.BORDER.hairline}px) / 2)`,
+    paddingInline: `${SPACING[3]}px`,
     minHeight: CONTROL[size],
     borderRadius: `${RADIUS.control}px`, // 10px
     boxSizing: 'border-box',

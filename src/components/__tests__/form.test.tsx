@@ -148,3 +148,36 @@ describe('form — a form does not submit with invalid data', () => {
     expect(container.querySelector('form')!.hasAttribute('novalidate')).toBe(true);
   });
 });
+
+describe('input — the control height is exactly its token', () => {
+  // It was not. `CONTROL.md` says 44 and the input rendered at 48, because the
+  // padding was a fixed value and `minHeight` is only a floor: 26 (line box) +
+  // 2x10 (padding) + 2 (border) is 48.
+  //
+  // A fixed padding cannot be right, because the padding plus the content must
+  // equal the declared height and the content differs between a Button and an
+  // Input. So the vertical padding is DERIVED — `calc((44px - 1lh - 2px) / 2)` —
+  // and the control is exactly its declared height at every viewport, because
+  // `1lh` follows the fluid type and the padding absorbs the difference.
+  it('derives the vertical padding from the control height', () => {
+    const { container } = render(<Input size="md" />);
+    const wrapper = container.querySelector('input')!.parentElement!;
+    const padding = wrapper.style.paddingBlock || wrapper.style.paddingTop;
+    expect(padding).toContain('1lh');
+    expect(padding).toContain('44px');
+  });
+
+  it('uses the engine’s control scale, not a literal', () => {
+    for (const [size, expected] of [['sm', 32], ['md', 44], ['lg', 52]] as const) {
+      const { container } = render(<Input size={size} />);
+      const wrapper = container.querySelector('input')!.parentElement!;
+      expect(wrapper.style.minHeight, size).toBe(`${expected}px`);
+      cleanup();
+    }
+  });
+
+  it('defaults to md, which is also the accessible minimum', () => {
+    const { container } = render(<Input />);
+    expect(container.querySelector('input')!.parentElement!.style.minHeight).toBe('44px');
+  });
+});
