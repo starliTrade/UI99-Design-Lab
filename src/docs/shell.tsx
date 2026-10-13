@@ -21,7 +21,15 @@ import { PAGES, routeKey, type Route } from './routes';
 
 const pct = (n: number) => Math.round(n * 100);
 
-function ThemeControls({ compact }: { compact?: boolean } = {}) {
+function ThemeControls({
+  compact,
+  dir,
+  onDir,
+}: {
+  compact?: boolean;
+  dir: 'ltr' | 'rtl';
+  onDir: (d: 'ltr' | 'rtl') => void;
+}) {
   const { state, set, reset, isSystem, theme } = useTheme();
   const sliders: { key: keyof typeof state; label: string; min: number; max: number; step: number; fmt: (v: number) => string }[] = [
     { key: 'brandHue', label: 'Hue', min: 0, max: 360, step: 1, fmt: (v) => `${v}°` },
@@ -51,6 +59,13 @@ function ThemeControls({ compact }: { compact?: boolean } = {}) {
           <span key={i} title={`S${i} ${hex}`} style={{ width: 9, height: 16, background: hex }} />
         ))}
       </div>
+      <Btn
+        onClick={() => onDir(dir === 'ltr' ? 'rtl' : 'ltr')}
+        active={dir === 'rtl'}
+        title="Flip the document direction"
+      >
+        {dir === 'ltr' ? 'LTR' : 'RTL'}
+      </Btn>
       {!isSystem && (
         <Button size="sm" variant="ghost" onClick={reset}>
           Reset to the system theme
@@ -63,10 +78,14 @@ function ThemeControls({ compact }: { compact?: boolean } = {}) {
 export function DocsShell({
   route,
   go,
+  dir,
+  onDir,
   children,
 }: {
   route: Route;
   go: (r: Route) => void;
+  dir: 'ltr' | 'rtl';
+  onDir: (d: 'ltr' | 'rtl') => void;
   children: React.ReactNode;
 }) {
   const [q, setQ] = React.useState('');
@@ -89,7 +108,7 @@ export function DocsShell({
           the drawer there, and the topbar keeps the ladder and the reset. */}
       {narrow && (
         <div style={{ paddingBlock: `${S[2]}px` }}>
-          <ThemeControls />
+          <ThemeControls dir={dir} onDir={onDir} />
         </div>
       )}
       <div style={{ paddingBlock: `${S[2]}px` }}>
@@ -170,7 +189,7 @@ export function DocsShell({
               <Badge>v1.0</Badge>
             </span>
           }
-          actions={<ThemeControls compact={narrow} />}
+          actions={<ThemeControls compact={narrow} dir={dir} onDir={onDir} />}
         />
       </header>
 

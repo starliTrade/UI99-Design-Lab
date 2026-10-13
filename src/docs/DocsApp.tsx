@@ -11,6 +11,7 @@
  */
 import React, { useState } from 'react';
 import { ThemeProvider } from './theme';
+import { DirProvider, type Direction } from '../engine/liminal-direction';
 import { DocsShell } from './shell';
 import { OverviewPage } from './pages/Overview';
 import { ComponentsPage } from './pages/Components';
@@ -62,6 +63,16 @@ function Page({ route, go }: { route: Route; go: (r: Route) => void }) {
 
 export function DocsApp() {
   const [route, setRoute] = useState<Route>({ page: 'overview' });
+  /**
+   * The direction is a first-class switch, not a build flag.
+   *
+   * The engine's RTL work — logical properties, the positioning engine, the
+   * Jalali calendar, Persian typography — has no way to be SEEN except by
+   * flipping the page. So the page flips. `DirProvider` puts `dir` on the
+   * document element, which is where the browser reads it from and where
+   * portals inherit it too.
+   */
+  const [dir, setDir] = useState<Direction>('ltr');
   const key = routeKey(route);
   // A route change is a page change: scroll to the top, or the reader lands in
   // the middle of the next page.
@@ -71,11 +82,13 @@ export function DocsApp() {
 
   return (
     <ThemeProvider>
-      <DocsShell route={route} go={setRoute}>
+      <DirProvider dir={dir}>
+      <DocsShell route={route} go={setRoute} dir={dir} onDir={setDir}>
         <div key={key} style={{ minWidth: 0 }}>
           <Page route={route} go={setRoute} />
         </div>
       </DocsShell>
+      </DirProvider>
     </ThemeProvider>
   );
 }
