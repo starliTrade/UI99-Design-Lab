@@ -46,13 +46,22 @@ describe('the interaction variables have ONE producer', () => {
     expect(offenders, 'hand-assembled interaction variables').toEqual([]);
   });
 
-  it('no component opts into the layer without publishing them', () => {
-    const offenders: string[] = [];
-    for (const file of COMPONENT_FILES) {
-      const text = readFileSync(file, 'utf8');
-      if (!text.includes('data-liminal-surface')) continue;
-      if (!text.includes('resolveInteractionVars')) offenders.push(file.replace(SRC + '/', ''));
-    }
-    expect(offenders, 'opted into data-liminal-surface with no producer').toEqual([]);
-  });
+  // Both opt-ins read the six: `surface` reads idle/hover/active, `focus-within`
+  // reads focus and the focus border. A component that opts into either and
+  // publishes nothing gets `transparent` — the state it asked for, silently dead.
+  for (const attr of ['data-liminal-surface', 'data-liminal-focus-within']) {
+    it(`no component opts into ${attr} without publishing them`, () => {
+      const optIn: string[] = [];
+      const offenders: string[] = [];
+      for (const file of COMPONENT_FILES) {
+        const text = readFileSync(file, 'utf8');
+        if (!text.includes(attr)) continue;
+        optIn.push(file.replace(SRC + '/', ''));
+        if (!text.includes('resolveInteractionVars')) offenders.push(file.replace(SRC + '/', ''));
+      }
+      // A guard that passes because it found nothing is not a guard.
+      expect(optIn.length, `components opting into ${attr}`).toBeGreaterThan(0);
+      expect(offenders, `opted into ${attr} with no producer`).toEqual([]);
+    });
+  }
 });
