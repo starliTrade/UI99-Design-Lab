@@ -30,6 +30,15 @@ type NativeInputProps = Omit<
 >;
 
 export interface InputProps extends NativeInputProps {
+  /**
+   * The control height. `md` is the default AND the accessible minimum — the
+   * engine's `CONTROL.md` and `TARGET.min` are the same number, so the default
+   * is not a compromise.
+   *
+   * It was missing: `minHeight` was hardcoded to `CONTROL.md`, so every input
+   * was 44px and there was no way to ask for a denser one.
+   */
+  size?: 'sm' | 'md' | 'lg';
   type?: 'text' | 'email' | 'password' | 'search' | 'number' | 'tel' | 'url';
   label?: string;
   placeholder?: string;
@@ -106,6 +115,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     ariaControls,
     ariaActiveDescendant,
     ariaAutocomplete,
+    size = 'md',
     className = '',
     style: customStyle = {},
     ...rest
@@ -154,6 +164,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   const SPACING = LiminalLayoutEngine.SPACING;
 
   const CONTROL = LiminalLayoutEngine.CONTROL;
+
+  const CONTROL_PADDING = LiminalLayoutEngine.CONTROL_PADDING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
@@ -207,8 +219,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
-    padding: `${SPACING[3]}px`, // 12px
-    minHeight: CONTROL.md,
+    // The padding scales with the size. It did not: it was a fixed 12px, so
+    // `minHeight` was a floor the padding always cleared — every size rendered
+    // at the same height and the `size` prop was invisible.
+    padding: `${CONTROL_PADDING[size].y}px ${SPACING[3]}px`,
+    minHeight: CONTROL[size],
     borderRadius: `${RADIUS.control}px`, // 10px
     boxSizing: 'border-box',
     width: '100%',
@@ -480,8 +495,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       )}
 
       <div
-        data-liminal-focus-within=""
         data-liminal-disabled={disabled ? "" : undefined}
+        data-liminal-focus-within=""
         style={fieldWrapperStyle}
       >
         {renderAdornment(rawLeft)}
