@@ -22,6 +22,7 @@ import { LADDER, HALF, SHADOWS, SURFACE_TINT, VEIL, getDirectionalRim, getTextSt
 import { LADDER_STEP, LADDER_CHROMA, LADDER_HUE, CANVAS_L, PERCEPTUAL_QUANTUM, RELIABLE_BOUNDARY, WELLS } from '../src/engine/liminal-ladder';
 import { PERSIAN_FONT_STACK, PERSIAN_LINE_HEIGHT_FLOOR } from '../src/engine/liminal-persian';
 import { TEXT_ROLE_SPEC } from '../src/engine/liminal-contrast';
+import { TOKEN_VERSION, TOKEN_CHANGES, DEPRECATION_WINDOW_MINORS, tokenVersionSummary } from '../src/engine/liminal-token-version';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, '../tokens/liminal.tokens.json');
@@ -130,6 +131,15 @@ const doc = {
     persian: str(PERSIAN_FONT_STACK, 'fontFamily', `the line-height floor ${PERSIAN_LINE_HEIGHT_FLOOR} is derived from this face's own metrics`),
   },
   $extensions: {
+    // The token contract's OWN version, which is not the package version. A
+    // component can be refactored without a token changing, and a token can
+    // change without a line of component code moving.
+    'com.liminal.contract': {
+      version: TOKEN_VERSION,
+      deprecationWindowMinors: DEPRECATION_WINDOW_MINORS,
+      summary: tokenVersionSummary(),
+      changes: TOKEN_CHANGES,
+    },
     'com.liminal.ladder': {
       canvasL: CANVAS_L,
       step: LADDER_STEP,
