@@ -3,8 +3,6 @@ import type { CSSProperties, ReactNode, KeyboardEvent, MouseEvent } from 'react'
 import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import {
-  getDirectionalRim,
-  getLadderColor,
   getTextStyle,
   getFocusRing,
 } from '../../../engine/spec-engine';
@@ -42,7 +40,7 @@ export function NavItem({
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
   // Active state: Surface 2 with Rim 1 (180° directional rim)
-  const activeRim = getDirectionalRim(2, 1, false);
+  const activeRim = resolveSurface({ role: 'work' }).rimColors;
 
   let bg = 'transparent';
   let color = getTextStyle('tertiary', 2).color;

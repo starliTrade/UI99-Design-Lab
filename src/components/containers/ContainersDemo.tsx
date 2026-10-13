@@ -8,7 +8,6 @@ import { Divider } from './Divider';
 import { Button } from '../atoms/Button';
 import { Badge } from '../atoms/Badge';
 import {
-  getDirectionalRim,
   getTextStyle,
   getLadderColor,
   } from '../../engine/spec-engine';
@@ -44,7 +43,7 @@ export function ContainersDemo() {
   const calculatedInnerRadius = LiminalLayoutEngine.getConcentricRadius(RADIUS.card, concavePadding); // max(4, 16 - 16) -> 4px (or 8px with 8px pad)
 
   // Inset Well: Surface 1 concave rim (top is darker, bottom has specular reflection)
-  const concaveRim = getDirectionalRim(1, 2, true);
+  const concaveRim = resolveSurface({ role: 'work', inset: true }).rimColors;
 
   const insetWellStyle: CSSProperties = {
     background: concaveRim ? concaveRim.cssBackground : getLadderColor(0.5),

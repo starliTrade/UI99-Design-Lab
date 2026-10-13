@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useId } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent, MouseEvent } from 'react';
 import { Eye, EyeSlash, X } from '@phosphor-icons/react';
 import {
-  getDirectionalRim,
   getTextStyle,
   LiminalState,
 } from '../../../engine/spec-engine';
@@ -198,12 +197,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
 
   if (!disabled) {
     if (error) {
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
         background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
       }
     } else if (success) {
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
         background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
       }

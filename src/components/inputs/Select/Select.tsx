@@ -3,9 +3,8 @@ import { useDirection } from '../../../engine/liminal-direction';
 import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { CaretDown } from '@phosphor-icons/react';
 import {
-  getDirectionalRim,
   getTextStyle,
-  LiminalState, getLadderColor } from '../../../engine/spec-engine';
+  LiminalState } from '../../../engine/spec-engine';
 import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
@@ -158,12 +157,12 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
 
   if (!disabled) {
     if (error) {
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
         background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
       }
     } else if (success) {
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
         background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
       }

@@ -36,7 +36,8 @@ export function Toggle({
   const host = useHostSurface();
   const isChecked = checked ?? value ?? on ?? false;
   const brand = LiminalColorEngine.BRAND_PRIMARY;
-  const offRim = getDirectionalRim(2, 2, false);
+  // The fill an unselected control rests in: a named role, not a hand-picked pair.
+  const offRim = resolveSurface({ role: 'well' }).rimColors;
 
   const handleClick = () => {
     if (!disabled) {

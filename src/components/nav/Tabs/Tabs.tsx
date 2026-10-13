@@ -8,7 +8,6 @@ import React, { useId,
 } from 'react';
 import type { CSSProperties, ReactNode, KeyboardEvent } from 'react';
 import {
-  getDirectionalRim,
   getTextStyle,
   getFocusRing,
   SHADOWS,
@@ -85,7 +84,7 @@ export function Tab({
   const rovingProps = getItemProps(tabIndexInList >= 0 ? tabIndexInList : 0);
 
   // Active state: Surface 3 with Rim 2 and micro E1 shadow
-  const activeRim = getDirectionalRim(3, 2, false);
+  const activeRim = resolveSurface({ role: 'panel' }).rimColors;
 
   let bg = 'transparent';
   let color = getTextStyle('tertiary', 1).color;

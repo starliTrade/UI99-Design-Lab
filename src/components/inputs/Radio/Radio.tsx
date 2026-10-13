@@ -1,13 +1,8 @@
-import { resolveSurface, resolveInteractionVars } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import React from 'react';
 import type { CSSProperties, KeyboardEvent, ChangeEvent } from 'react';
-import {
-  getDirectionalRim,
-  getTextStyle,
-  getLadderColor,
-  LADDER,
-} from '../../../engine/spec-engine';
+import { getLadderVar, getTextStyle } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -43,13 +38,14 @@ export function Radio({
 
   const host = useHostSurface();
 
-  const offRim = getDirectionalRim(2, 2, false);
+  // The fill an unselected control rests in: a named role, not a hand-picked pair.
+  const offRim = resolveSurface({ role: 'well' }).rimColors;
 
   const boxBg = checked
     ? SEMANTICS.SUCCESS.subtle
     : offRim
     ? offRim.cssBackground
-    : LADDER[2];
+    : getLadderVar(ROLE_LEVEL.well);
 
   const circleStyle: CSSProperties = {
     width: ICON_SIZES.md,
@@ -76,7 +72,7 @@ export function Radio({
       ? `1px solid ${SEMANTICS.SUCCESS.border}`
       : offRim
       ? '1px solid transparent'
-      : `1px solid ${LADDER[3]}`,
+      : `1px solid ${resolveBorder({ role: 'well', kind: 'edge' })}`,
   } as CSSProperties;
 
   const dotStyle: CSSProperties = {

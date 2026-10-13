@@ -1,14 +1,12 @@
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import {
-  getDirectionalRim,
-  getLadderColor,
   getTextStyle,
 } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { Tray } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
-import { resolveInset } from '../../../engine/liminal-surface';
+import { resolveInset, resolveSurface } from '../../../engine/liminal-surface';
 
 /** A layout decision this component owns, not a system token. */
 const EMPTY_STATE_MAX_WIDTH = 360;
@@ -33,8 +31,9 @@ export function EmptyState({
   const SPACING = LiminalLayoutEngine.SPACING;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
-  // Well concave rim: light from bottom (recess sensation) via getDirectionalRim(n, 2, true)
-  const wellRim = getDirectionalRim(1.5, 2, true);
+  // A well is cut into its host: one and a half steps below the work plane — the
+  // same role its background already came from, so the fill and the edge agree.
+  const wellRim = resolveSurface({ role: 'work', inset: true }).rimColors;
 
   const wrapperStyle: CSSProperties = {
     display: 'flex',

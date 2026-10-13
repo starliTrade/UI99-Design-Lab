@@ -11,14 +11,12 @@ import { Badge } from '../../components/atoms/Badge';
 import { Topbar } from '../../components/nav/Topbar';
 import { NavItem } from '../../components/nav/NavItem';
 import {
-  getLadderColor,
-  getTextStyle,
-  getDirectionalRim, BRAND_ALPHA } from '../../engine/spec-engine';
+  getTextStyle, BRAND_ALPHA } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { Lock, Shield, ArrowRight, Stack, Key } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
-import { resolveInset } from '../../engine/liminal-surface';
+import { resolveInset, resolveSurface } from '../../engine/liminal-surface';
 import { resolveBorder } from '../../engine/liminal-surface';
 
 /** A page-level boundary is a hairline on the panel role. */
@@ -36,7 +34,7 @@ export function LoginPage() {
   const BRAND = LiminalColorEngine.BRAND_PRIMARY;
 
   // Concave well for lock icon
-  const wellRim = getDirectionalRim(1.5, 2, true);
+  const wellRim = resolveSurface({ role: 'work', inset: true }).rimColors;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

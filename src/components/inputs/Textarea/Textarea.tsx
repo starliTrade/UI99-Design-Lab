@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useId } from 'react';
 import type { CSSProperties, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import {
-  getDirectionalRim,
   getTextStyle,
   LiminalState,
 } from '../../../engine/spec-engine';
@@ -98,12 +97,12 @@ export function Textarea({
 
   if (!disabled) {
     if (error) {
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
         background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
       }
     } else if (success) {
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
         background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
       }

@@ -1,6 +1,5 @@
 import React from 'react';
 import type { CSSProperties, ReactNode, MouseEvent } from 'react';
-import { getLadderColor, getDirectionalRim } from '../../../engine/spec-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { resolveBorder, resolveSurface, resolveInteractionVars } from '../../../engine/liminal-surface';
@@ -25,7 +24,7 @@ export function TableRow({
 
   // A row separator: a seam inside the work surface.
   const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
-  const selectedRim = getDirectionalRim(2, 1, false);
+  const selectedRim = resolveSurface({ role: 'work' }).rimColors;
 
   let rowBg = 'transparent';
   if (isSelected) {

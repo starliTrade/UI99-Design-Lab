@@ -1,7 +1,8 @@
 import React, { useRef, useId, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
-import { getDirectionalRim, getTextStyle, SHADOWS, LADDER, VEIL } from '../../../engine/spec-engine';
+import { getLadderVar, getTextStyle, SHADOWS, VEIL } from '../../../engine/spec-engine';
+import { resolveSurface, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import {
   useScrollLock,
@@ -104,7 +105,7 @@ export function Modal({
   };
 
   // Surface 3 with Rim 2 and Sub-Canvas Penumbra SHADOWS[3]
-  const rim = getDirectionalRim(3, 2, false);
+  const rim = resolveSurface({ role: 'panel' }).rimColors;
 
   const backdropStyle: CSSProperties = {
     position: 'fixed',
@@ -126,7 +127,7 @@ export function Modal({
     width: `${sizeWidths[size]}px`,
     maxWidth: maxWidth ?? 'calc(100vw - 32px)',
     maxHeight: 'calc(100vh - 64px)',
-    background: rim ? rim.cssBackground : LADDER[3],
+    background: rim ? rim.cssBackground : getLadderVar(ROLE_LEVEL.panel),
     border: rim ? '1px solid transparent' : 'none',
     borderRadius: `${RADIUS.panel}px`, // 20px
     boxShadow: SHADOWS[3], // Authentic dual-layer penumbra

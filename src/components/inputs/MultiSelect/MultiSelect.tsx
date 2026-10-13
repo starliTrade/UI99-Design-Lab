@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef, useId, useCallback } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 import { CaretDown, Check, X } from '@phosphor-icons/react';
 import {
-  getDirectionalRim,
   getTextStyle,
-  getLadderColor,
   SHADOWS,
   Z_INDEX,
   LiminalState,
@@ -326,13 +324,13 @@ export function MultiSelect({
   if (!disabled) {
     if (error) {
       borderColor = SEMANTICS.DANGER.border;
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
         background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
       }
     } else if (success) {
       borderColor = SEMANTICS.SUCCESS.border;
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
         background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
       }

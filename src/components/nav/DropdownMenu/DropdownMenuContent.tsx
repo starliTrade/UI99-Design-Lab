@@ -9,8 +9,6 @@ import type {
   HTMLAttributes,
 } from 'react';
 import {
-  getLadderColor,
-  getDirectionalRim,
   SHADOWS,
   Z_INDEX,
 } from '../../../engine/spec-engine';
@@ -23,7 +21,7 @@ import {
   useReducedMotion,
 } from '../../../engine/liminal-hooks';
 import { Slot } from '../../../engine/liminal-slot';
-import { resolveBorder } from '../../../engine/liminal-surface';
+import { resolveBorder, resolveSurface } from '../../../engine/liminal-surface';
 import { mistCssVars } from '../../../engine/liminal-mist';
 import { useDropdownMenuContext } from './DropdownMenu';
 
@@ -110,7 +108,7 @@ export const DropdownMenuContent = forwardRef<HTMLDivElement, DropdownMenuConten
     const SPACING = LiminalLayoutEngine.SPACING;
     const RADIUS = LiminalLayoutEngine.RADIUS;
     const mistVars = mistCssVars('menu');
-    const rim = getDirectionalRim(2, 1, false);
+    const rim = resolveSurface({ role: 'work' }).rimColors;
 
     const basePanelStyle: CSSProperties = {
       position: 'fixed',

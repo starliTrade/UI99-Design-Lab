@@ -1,8 +1,9 @@
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { getDirectionalRim, getTextStyle, SURFACE_TINT } from '../../../engine/spec-engine';
+import { getTextStyle, SURFACE_TINT } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { resolveSurface, ROLE_LEVEL, type SurfaceRole } from '../../../engine/liminal-surface';
+import { SurfaceProvider, useHostSurface } from '../../../engine/liminal-surface-context';
 import { resolveBorder } from '../../../engine/liminal-surface';
 import { Divider } from '../Divider';
 
@@ -57,8 +58,12 @@ export function InsetWell({
   const paddingVal = padding === 'sm' ? SPACING[3] : SPACING[4]; // 12px or 16px
   const innerRadius = LiminalLayoutEngine.getConcentricRadius(RADIUS.card, paddingVal);
 
-  // Inverted Concave Rim (S1 concave)
-  const concaveRim = getDirectionalRim(1, 2, true);
+  // A well is CUT INTO its host — one and a half steps below the card's own
+  // role, with a defined edge and a concave rim. The engine states the rule;
+  // this used to be a hand-picked `(1, 2, true)`. The host comes from context,
+  // because an InsetWell does not know which card it was cut into.
+  const host = useHostSurface();
+  const concaveRim = resolveSurface({ role: host, inset: true }).rimColors;
 
   const wellStyle: CSSProperties = {
     background: concaveRim ? concaveRim.cssBackground : resolveSurface({ role: 'work', state: 'active' }).background,
@@ -143,6 +148,7 @@ export function Card({
   };
 
   return (
+    <SurfaceProvider role={surface}>
     <div className={className} style={cardStyle}>
       {(title || subtitle || action) && (
         <div
@@ -204,6 +210,7 @@ export function Card({
         </div>
       )}
     </div>
+    </SurfaceProvider>
   );
 }
 

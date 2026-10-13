@@ -50,7 +50,8 @@ export type SurfaceRole =
   | 'menu' // a dropdown, tooltip or command list
   | 'popover' // a larger floating panel
   | 'modal' // a dialog or sheet that takes over the view
-  | 'toast'; // the highest floating anchor
+  | 'toast' // the highest floating anchor
+  | 'well'; // the resting fill of a control that is OFF
 
 /** What is happening to the element right now. */
 export type SurfaceState = 'idle' | 'hover' | 'focus' | 'active' | 'disabled';
@@ -66,6 +67,11 @@ export const ROLE_LEVEL: Record<SurfaceRole, number> = {
   canvas: 0,
   chrome: 1,
   work: 2,
+  // A well sits at the WORK plane, not above it. It is the fill an unselected
+  // control shows: the surface the control is cut into, with the defined edge
+  // that still makes the control read as an object. Seven sites hand-picked
+  // `getDirectionalRim(2, 2, …)` because the engine had no name for it.
+  well: 2,
   panel: 3,
   control: 4,
   menu: 5,
@@ -89,6 +95,10 @@ export const ROLE_RIM: Record<SurfaceRole, 0 | 1 | 2 | 3> = {
   canvas: 0,
   chrome: 1,
   work: 1,
+  // The well shares the work plane's LEVEL but not its edge: a quiet seam would
+  // make the control disappear into the surface, which is the opposite of what
+  // an unselected control should do.
+  well: 2,
   panel: 2,
   control: 2,
   menu: 2,
@@ -112,6 +122,7 @@ export const ROLE_SHADOW: Record<SurfaceRole, 1 | 2 | 3 | 4 | null> = {
   canvas: null,
   chrome: null, // chrome is part of the frame, not floating above it
   work: null,
+  well: null, // a well is cut into the flow; nothing in the flow floats
   panel: null,
   control: null,
   menu: 1,
@@ -145,6 +156,14 @@ export interface SurfaceRequest {
   depth?: number;
   /** Override the shadow elevation for a role that floats. */
   elevation?: 1 | 2 | 3 | 4;
+  /**
+   * Cut this surface INTO its host rather than raising it above.
+   *
+   * One and a half steps below the role, rim 2, concave. That is the shape an
+   * empty-state container, a code block and a pressed control all share, and it
+   * was hand-picked as `getDirectionalRim(1.5, 2, true)` in three places.
+   */
+  inset?: boolean;
   /**
    * Whether this surface answers the pointer.
    *
@@ -227,13 +246,19 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
     : base;
 
   // A disabled element drops to its parent's level: it is present but inert.
+  // An inset is cut one and a half steps below — between the canvas and chrome,
+  // which is where a well belongs.
   const level = state === 'disabled'
     ? Math.max(0, anchored - 1)
+    : request.inset
+    ? Math.max(0, anchored - 1.5)
     : Math.max(0, Math.min(MAX_LEVEL, anchored + depth + shift));
 
   // ── rim: from the role, suppressed when disabled ────────────────────────
-  const rim: 0 | 1 | 2 | 3 = state === 'disabled' ? 0 : ROLE_RIM[role];
-  const concave = state === 'active';
+  // An inset takes a defined edge whatever its role: the well has to read as a
+  // cut, and a quiet seam would not.
+  const rim: 0 | 1 | 2 | 3 = state === 'disabled' ? 0 : request.inset ? 2 : ROLE_RIM[role];
+  const concave = state === 'active' || request.inset === true;
   const rimColors = rim === 0 ? null : getDirectionalRim(Math.round(level), rim, concave);
 
   // ── shadow: only for roles that float ───────────────────────────────────
@@ -243,7 +268,8 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
   // ── focus ring: visible on keyboard focus, never on pointer focus ───────
   const outline = state === 'focus' ? `2px solid ${FOCUS_RING_COLOR}` : 'none';
 
-  const interactive = request.interactive ?? (role !== 'canvas' && role !== 'work' && role !== 'panel');
+  const interactive =
+    request.interactive ?? !['canvas', 'work', 'well', 'panel'].includes(role);
 
   const style: CSSProperties = {
     background: rimColors ? rimColors.cssBackground : getLadderVar(Math.round(level)),
