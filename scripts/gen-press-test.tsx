@@ -143,11 +143,11 @@ const cell = (label: string, markup: string) => `
 
 const table = [...rows, ...PORTALLED].map((r) => `
   <tr>
-    <td class="mono">${r.name}</td>
-    <td class="muted">${r.note}</td>
-    <td class="mono">${r.own}</td>
-    <td class="mono">${r.engine}</td>
-    <td class="${r.own === r.engine ? 'same' : 'diff'}">${r.own === r.engine ? 'بدون تفاوت' : 'تفاوت دارد'}</td>
+    <td class="mono" data-label="کامپوننت">${r.name}</td>
+    <td class="muted" data-label="حالت">${r.note}</td>
+    <td class="mono" data-label="مقدار فعلی (A)">${r.own}</td>
+    <td class="mono" data-label="پیش‌فرض (B)">${r.engine}</td>
+    <td class="${r.own === r.engine ? 'same' : 'diff'}" data-label="نتیجه">${r.own === r.engine ? 'بدون تفاوت' : 'تفاوت دارد'}</td>
   </tr>`).join('');
 
 const html = `<!doctype html>
@@ -195,6 +195,36 @@ ${LAYERS}
   .bar b { font-size: 13px; font-weight: 600; }
   .bar span { color:${FAINT}; font-size: 12px; }
   .cols + .cols { margin-top: 18px; }
+
+  /* ── Narrow screens ──────────────────────────────────────────────────────
+   * This page IS a comparison, and a comparison needs room. Side by side on a
+   * phone gives each column about 150px: the label takes 132 of them, the
+   * component gets a sliver, and the Calendar pushes the whole layout viewport
+   * wider than the device — measured at 507px on a 390px screen.
+   *
+   * Below 900px the columns stack, the label moves above the component, and
+   * the values table becomes one card per row. Nothing is hidden: every value
+   * that was readable on a desktop is readable on a phone.
+   */
+  @media (max-width: 900px) {
+    body { padding: 20px 12px 56px; }
+    h1 { font-size: 19px; }
+    .sub { font-size: 12px; }
+    .cols { grid-template-columns: 1fr; gap: 14px; }
+    .cols + .cols { margin-top: 14px; }
+    .case { flex-direction: column; align-items: stretch; gap: 8px; padding: 12px; }
+    .lbl { width: auto; }
+    /* A component still wider than the screen scrolls inside its own row
+       rather than dragging the page. The Calendar is the one that does. */
+    .stage { overflow-x: auto; }
+    .bar { flex-direction: column; gap: 2px; margin: 18px 0 6px; }
+    thead { display: none; }
+    table { margin: 18px 0 22px; }
+    tr { display: block; border: 1px solid ${LADDER[2]}; border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; }
+    td { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; border: none; padding: 3px 0; }
+    td::before { content: attr(data-label); color:${FAINT}; font-size: 11px; flex: none; }
+    .hint { font-size: 11px; line-height: 1.9; }
+  }
 </style>
 </head>
 <body>
