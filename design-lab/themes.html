@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LIMINAL — تم‌ها</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#060709; color:rgba(255, 255, 255, 0.89);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; font-size:15px; line-height:1.7; }
+  .wrap { max-width:1400px; margin:0 auto; padding:48px 24px 96px; }
+  h1 { font-size:30px; margin:0 0 6px; font-weight:700; letter-spacing:-0.02em; }
+  .eyebrow { font-family:ui-monospace,monospace; font-size:11px; color:rgba(255, 255, 255, 0.79); letter-spacing:.1em; text-transform:uppercase; }
+  .lede { color:rgba(255, 255, 255, 0.79); max-width:80ch; margin:0 0 8px; }
+  .claim { border-inline-start:2px solid #0b0d0f; padding-inline-start:14px; margin:18px 0 32px; color:rgba(255, 255, 255, 0.79); max-width:80ch; }
+  .claim b { color:rgba(255, 255, 255, 0.89); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
+  .col { border:1px solid #0b0d0f; border-radius:14px; padding:16px; background:#07090b; }
+  .head { display:flex; flex-direction:column; gap:2px; margin-bottom:12px; }
+  .head b { font-size:16px; }
+  .mono { font-family:ui-monospace,monospace; font-size:12px; }
+  .dim { color:rgba(255, 255, 255, 0.79); }
+  .use { color:rgba(255, 255, 255, 0.79); font-size:12px; }
+  .stack { display:flex; flex-direction:column; border:1px solid #0b0d0f; border-radius:10px; overflow:hidden; }
+  .step { display:flex; justify-content:space-between; align-items:center; padding:7px 10px; min-height:34px; }
+  .step .mono { color:rgba(255, 255, 255, 0.89); opacity:.75; }
+  .nums { display:flex; gap:14px; margin:12px 0; }
+  .warn { border:1px solid #8a5a2a; background:#1a1410; border-radius:8px; padding:8px 10px; font-size:12px; color:#e0b070; margin-bottom:10px; }
+  .ok { border:1px solid #2a5a3a; background:#101a13; border-radius:8px; padding:8px 10px; font-size:12px; color:#7fd0a0; margin-bottom:10px; }
+  .nums > div { display:flex; flex-direction:column; }
+  .k { font-size:11px; color:rgba(255, 255, 255, 0.79); }
+  .v { font-size:13px; }
+  .demo { border:1px solid; border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:10px; }
+  .card { border:1px solid; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:2px; }
+  .btn { border:1px solid; border-radius:8px; padding:8px 14px; font:inherit; font-size:13px; cursor:pointer; }
+  footer { color:rgba(255, 255, 255, 0.79); font-size:12px; margin-top:40px; border-top:1px solid #0b0d0f; padding-top:18px; }
+  code { font-family:ui-monospace,monospace; background:#07090b; border:1px solid #0b0d0f; border-radius:4px; padding:1px 5px; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">LIMINAL · تست چشمی · تم</p>
+  <h1>یک سیستم، پنج هیو</h1>
+  <p class="lede">هر مقدار این صفحه توسط <code>createLiminalTheme</code> تولید می‌شود و عددهای زیر هر ستون <b>از نردبان تولیدشده اندازه‌گیری شده‌اند</b>، نه تایپ‌شده.</p>
+  <p class="claim">
+    ادعایی که این صفحه باید نشان دهد: <b>عوض‌کردن هیو، فاصله‌ی ادراکی سطوح را عوض نمی‌کند.</b>
+    گام یک کوانتوم ادراکی است — به این وابسته نیست که نردبان چه رنگی باشد.
+    <br>این کل دلیل ساختن نردبان در OKLCH است: <b>هیو حرکت می‌کند، ادراک نه.</b>
+  </p>
+  <div class="grid">
+  <div class="col">
+    <div class="head">
+      <b>LIMINAL</b>
+      <span class="mono">258.4°</span>
+      <span class="use">هیوی خودِ سیستم — مرجع</span>
+    </div>
+    <div class="stack">
+      
+        <div class="step" style="background:#060709">
+          <span class="mono">S0</span>
+          <span class="mono dim">#060709</span>
+        </div>
+        <div class="step" style="background:#07090b">
+          <span class="mono">S1</span>
+          <span class="mono dim">#07090b</span>
+        </div>
+        <div class="step" style="background:#090b0d">
+          <span class="mono">S2</span>
+          <span class="mono dim">#090b0d</span>
+        </div>
+        <div class="step" style="background:#0b0d0f">
+          <span class="mono">S3</span>
+          <span class="mono dim">#0b0d0f</span>
+        </div>
+        <div class="step" style="background:#0d0f12">
+          <span class="mono">S4</span>
+          <span class="mono dim">#0d0f12</span>
+        </div>
+        <div class="step" style="background:#0f1114">
+          <span class="mono">S5</span>
+          <span class="mono dim">#0f1114</span>
+        </div>
+        <div class="step" style="background:#111316">
+          <span class="mono">S6</span>
+          <span class="mono dim">#111316</span>
+        </div>
+        <div class="step" style="background:#131518">
+          <span class="mono">S7</span>
+          <span class="mono dim">#131518</span>
+        </div>
+        <div class="step" style="background:#15171a">
+          <span class="mono">S8</span>
+          <span class="mono dim">#15171a</span>
+        </div>
+    </div>
+    <div class="nums">
+      <div><span class="k">گام</span><span class="v mono">1.07q – 1.21q</span></div>
+      <div><span class="k">کنتراست S0↔S8</span><span class="v mono">1.12:1</span></div>
+    </div>
+    <div class="ok">✓ همه‌ی گام‌ها بالای کوانتوم</div>
+    <div class="demo" style="background:#090b0d; border-color:#0b0d0f">
+      <div class="card" style="background:#0d0f12; border-color:#0f1114">
+        <span style="color:rgba(255, 255, 255, 0.89)">پنل روی سطح کار</span>
+        <span class="use" style="color:rgba(255, 255, 255, 0.79)">متن ثانویه</span>
+      </div>
+      <button class="btn" style="background:#111316; border-color:#131518; color:rgba(255, 255, 255, 0.89)">دکمه</button>
+    </div>
+  </div>
+  <div class="col">
+    <div class="head">
+      <b>Forest</b>
+      <span class="mono">145°</span>
+      <span class="use">سبز</span>
+    </div>
+    <div class="stack">
+      
+        <div class="step" style="background:#060806">
+          <span class="mono">S0</span>
+          <span class="mono dim">#060806</span>
+        </div>
+        <div class="step" style="background:#080907">
+          <span class="mono">S1</span>
+          <span class="mono dim">#080907</span>
+        </div>
+        <div class="step" style="background:#090b09">
+          <span class="mono">S2</span>
+          <span class="mono dim">#090b09</span>
+        </div>
+        <div class="step" style="background:#0b0d0b">
+          <span class="mono">S3</span>
+          <span class="mono dim">#0b0d0b</span>
+        </div>
+        <div class="step" style="background:#0d0f0d">
+          <span class="mono">S4</span>
+          <span class="mono dim">#0d0f0d</span>
+        </div>
+        <div class="step" style="background:#0f110f">
+          <span class="mono">S5</span>
+          <span class="mono dim">#0f110f</span>
+        </div>
+        <div class="step" style="background:#111311">
+          <span class="mono">S6</span>
+          <span class="mono dim">#111311</span>
+        </div>
+        <div class="step" style="background:#131613">
+          <span class="mono">S7</span>
+          <span class="mono dim">#131613</span>
+        </div>
+        <div class="step" style="background:#151815">
+          <span class="mono">S8</span>
+          <span class="mono dim">#151815</span>
+        </div>
+    </div>
+    <div class="nums">
+      <div><span class="k">گام</span><span class="v mono">0.85q – 1.45q</span></div>
+      <div><span class="k">کنتراست S0↔S8</span><span class="v mono">1.12:1</span></div>
+    </div>
+    <div class="warn">⚠ S1 = 0.85q<br><span class="use">این هیو گامی زیر کوانتوم دارد — دو سطح مجاور از هم قابل‌تشخیص نیستند</span></div>
+    <div class="demo" style="background:#090b09; border-color:#0b0d0b">
+      <div class="card" style="background:#0d0f0d; border-color:#0f110f">
+        <span style="color:rgba(255, 255, 255, 0.89)">پنل روی سطح کار</span>
+        <span class="use" style="color:rgba(255, 255, 255, 0.79)">متن ثانویه</span>
+      </div>
+      <button class="btn" style="background:#111311; border-color:#131613; color:rgba(255, 255, 255, 0.89)">دکمه</button>
+    </div>
+  </div>
+  <div class="col">
+    <div class="head">
+      <b>Ember</b>
+      <span class="mono">35°</span>
+      <span class="use">نارنجی</span>
+    </div>
+    <div class="stack">
+      
+        <div class="step" style="background:#090606">
+          <span class="mono">S0</span>
+          <span class="mono dim">#090606</span>
+        </div>
+        <div class="step" style="background:#0b0807">
+          <span class="mono">S1</span>
+          <span class="mono dim">#0b0807</span>
+        </div>
+        <div class="step" style="background:#0d0a09">
+          <span class="mono">S2</span>
+          <span class="mono dim">#0d0a09</span>
+        </div>
+        <div class="step" style="background:#0e0c0b">
+          <span class="mono">S3</span>
+          <span class="mono dim">#0e0c0b</span>
+        </div>
+        <div class="step" style="background:#110e0d">
+          <span class="mono">S4</span>
+          <span class="mono dim">#110e0d</span>
+        </div>
+        <div class="step" style="background:#13100f">
+          <span class="mono">S5</span>
+          <span class="mono dim">#13100f</span>
+        </div>
+        <div class="step" style="background:#161211">
+          <span class="mono">S6</span>
+          <span class="mono dim">#161211</span>
+        </div>
+        <div class="step" style="background:#181413">
+          <span class="mono">S7</span>
+          <span class="mono dim">#181413</span>
+        </div>
+        <div class="step" style="background:#1a1615">
+          <span class="mono">S8</span>
+          <span class="mono dim">#1a1615</span>
+        </div>
+    </div>
+    <div class="nums">
+      <div><span class="k">گام</span><span class="v mono">0.98q – 1.33q</span></div>
+      <div><span class="k">کنتراست S0↔S8</span><span class="v mono">1.12:1</span></div>
+    </div>
+    <div class="warn">⚠ S3 = 0.98q<br><span class="use">این هیو گامی زیر کوانتوم دارد — دو سطح مجاور از هم قابل‌تشخیص نیستند</span></div>
+    <div class="demo" style="background:#0d0a09; border-color:#0e0c0b">
+      <div class="card" style="background:#110e0d; border-color:#13100f">
+        <span style="color:rgba(255, 255, 255, 0.89)">پنل روی سطح کار</span>
+        <span class="use" style="color:rgba(255, 255, 255, 0.79)">متن ثانویه</span>
+      </div>
+      <button class="btn" style="background:#161211; border-color:#181413; color:rgba(255, 255, 255, 0.89)">دکمه</button>
+    </div>
+  </div>
+  <div class="col">
+    <div class="head">
+      <b>Plum</b>
+      <span class="mono">320°</span>
+      <span class="use">بنفش-سرخ</span>
+    </div>
+    <div class="stack">
+      
+        <div class="step" style="background:#080608">
+          <span class="mono">S0</span>
+          <span class="mono dim">#080608</span>
+        </div>
+        <div class="step" style="background:#0a080a">
+          <span class="mono">S1</span>
+          <span class="mono dim">#0a080a</span>
+        </div>
+        <div class="step" style="background:#0c0a0c">
+          <span class="mono">S2</span>
+          <span class="mono dim">#0c0a0c</span>
+        </div>
+        <div class="step" style="background:#0e0c0e">
+          <span class="mono">S3</span>
+          <span class="mono dim">#0e0c0e</span>
+        </div>
+        <div class="step" style="background:#100e10">
+          <span class="mono">S4</span>
+          <span class="mono dim">#100e10</span>
+        </div>
+        <div class="step" style="background:#121012">
+          <span class="mono">S5</span>
+          <span class="mono dim">#121012</span>
+        </div>
+        <div class="step" style="background:#141215">
+          <span class="mono">S6</span>
+          <span class="mono dim">#141215</span>
+        </div>
+        <div class="step" style="background:#161417">
+          <span class="mono">S7</span>
+          <span class="mono dim">#161417</span>
+        </div>
+        <div class="step" style="background:#181619">
+          <span class="mono">S8</span>
+          <span class="mono dim">#181619</span>
+        </div>
+    </div>
+    <div class="nums">
+      <div><span class="k">گام</span><span class="v mono">1.07q – 1.39q</span></div>
+      <div><span class="k">کنتراست S0↔S8</span><span class="v mono">1.12:1</span></div>
+    </div>
+    <div class="ok">✓ همه‌ی گام‌ها بالای کوانتوم</div>
+    <div class="demo" style="background:#0c0a0c; border-color:#0e0c0e">
+      <div class="card" style="background:#100e10; border-color:#121012">
+        <span style="color:rgba(255, 255, 255, 0.89)">پنل روی سطح کار</span>
+        <span class="use" style="color:rgba(255, 255, 255, 0.79)">متن ثانویه</span>
+      </div>
+      <button class="btn" style="background:#141215; border-color:#161417; color:rgba(255, 255, 255, 0.89)">دکمه</button>
+    </div>
+  </div>
+  <div class="col">
+    <div class="head">
+      <b>Abyss</b>
+      <span class="mono">215°</span>
+      <span class="use">آبی سرد</span>
+    </div>
+    <div class="stack">
+      
+        <div class="step" style="background:#050808">
+          <span class="mono">S0</span>
+          <span class="mono dim">#050808</span>
+        </div>
+        <div class="step" style="background:#07090a">
+          <span class="mono">S1</span>
+          <span class="mono dim">#07090a</span>
+        </div>
+        <div class="step" style="background:#080b0c">
+          <span class="mono">S2</span>
+          <span class="mono dim">#080b0c</span>
+        </div>
+        <div class="step" style="background:#090d0e">
+          <span class="mono">S3</span>
+          <span class="mono dim">#090d0e</span>
+        </div>
+        <div class="step" style="background:#0b0f10">
+          <span class="mono">S4</span>
+          <span class="mono dim">#0b0f10</span>
+        </div>
+        <div class="step" style="background:#0d1112">
+          <span class="mono">S5</span>
+          <span class="mono dim">#0d1112</span>
+        </div>
+        <div class="step" style="background:#0f1315">
+          <span class="mono">S6</span>
+          <span class="mono dim">#0f1315</span>
+        </div>
+        <div class="step" style="background:#111617">
+          <span class="mono">S7</span>
+          <span class="mono dim">#111617</span>
+        </div>
+        <div class="step" style="background:#131819">
+          <span class="mono">S8</span>
+          <span class="mono dim">#131819</span>
+        </div>
+    </div>
+    <div class="nums">
+      <div><span class="k">گام</span><span class="v mono">0.92q – 1.45q</span></div>
+      <div><span class="k">کنتراست S0↔S8</span><span class="v mono">1.12:1</span></div>
+    </div>
+    <div class="warn">⚠ S1 = 0.92q<br><span class="use">این هیو گامی زیر کوانتوم دارد — دو سطح مجاور از هم قابل‌تشخیص نیستند</span></div>
+    <div class="demo" style="background:#080b0c; border-color:#090d0e">
+      <div class="card" style="background:#0b0f10; border-color:#0d1112">
+        <span style="color:rgba(255, 255, 255, 0.89)">پنل روی سطح کار</span>
+        <span class="use" style="color:rgba(255, 255, 255, 0.79)">متن ثانویه</span>
+      </div>
+      <button class="btn" style="background:#0f1315; border-color:#111617; color:rgba(255, 255, 255, 0.89)">دکمه</button>
+    </div>
+  </div></div>
+  <footer>
+    تولید‌شده توسط <code>scripts/gen-theme-test.ts</code> · بدون شبکه ·
+    هیوی مرجع 258.4° · کوانتوم 0.0083
+  </footer>
+</div>
+</body>
+</html>

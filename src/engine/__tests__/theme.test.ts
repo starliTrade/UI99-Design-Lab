@@ -155,3 +155,38 @@ describe('theme — the CSS is a scope, not a second system', () => {
     expect(new Set(names).size).toBe(names.length);
   });
 });
+
+describe('theme — it reports the steps a hue cannot hold', () => {
+  // 8-bit sRGB is not equally fine at every hue. Measured: Forest's first step
+  // is 0.85q and Abyss's is 0.92q — pairs of surfaces the eye cannot separate,
+  // which is the one thing the ladder exists to prevent. The search repairs
+  // what it can; this is what it cannot, and a designer choosing a hue should
+  // know before shipping it.
+  it('the system’s own hue is clean', () => {
+    expect(createLiminalTheme().warnings).toEqual([]);
+  });
+
+  it('names the level and the realised step, not just that something is wrong', () => {
+    const forest = createLiminalTheme({ brandHue: 145, name: 'forest' });
+    expect(forest.warnings.length).toBeGreaterThan(0);
+    for (const w of forest.warnings) {
+      expect(w.kind).toBe('below-quantum');
+      expect(w.level).toBeGreaterThanOrEqual(1);
+      expect(w.q).toBeLessThan(1.0);
+    }
+  });
+
+  it('a clean hue reports nothing', () => {
+    expect(createLiminalTheme({ brandHue: 320, name: 'plum' }).warnings).toEqual([]);
+  });
+
+  it('every warning is a step that really is out of band', () => {
+    for (const hue of [0, 35, 90, 145, 200, 215, 258.4, 320]) {
+      const t = createLiminalTheme({ brandHue: hue });
+      for (const w of t.warnings) {
+        const dL = rgbToOklch(hexToRgb(t.ladder[w.level])).L - rgbToOklch(hexToRgb(t.ladder[w.level - 1])).L;
+        expect(dL / PERCEPTUAL_QUANTUM, `hue ${hue} S${w.level}`).toBeCloseTo(w.q, 6);
+      }
+    }
+  });
+});

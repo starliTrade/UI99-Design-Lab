@@ -46,6 +46,14 @@ export interface LiminalThemeOptions {
   name?: string;
 }
 
+export interface ThemeWarning {
+  /** The level whose step from the one below it is out of band. */
+  level: number;
+  /** The realised step, in quanta. */
+  q: number;
+  kind: 'below-quantum' | 'above-band';
+}
+
 export interface LiminalTheme {
   name: string;
   brandHue: number;
@@ -56,6 +64,20 @@ export interface LiminalTheme {
   ladder: string[];
   /** The CSS that overrides the defaults. Drop it in a scope. */
   css: string;
+  /**
+   * Steps this hue cannot hold.
+   *
+   * 8-bit sRGB is not equally fine at every hue. Measured across five hues:
+   * LIMINAL 1.07q–1.21q, Plum 1.07q–1.39q, but Forest 0.85q–1.45q, Abyss
+   * 0.92q–1.45q and Ember 0.98q–1.33q. A step below the quantum is a pair of
+   * surfaces the eye cannot separate — which is the one thing the ladder exists
+   * to prevent.
+   *
+   * The search repairs what it can and this reports what it cannot. A designer
+   * choosing a hue should know before shipping it, and a theme that silently
+   * produced an unreadable ladder would be worse than one that refused.
+   */
+  warnings: ThemeWarning[];
 }
 
 /**
@@ -160,6 +182,14 @@ export function createLiminalTheme(options: LiminalThemeOptions = {}): LiminalTh
     Object.entries(M.DURATION).forEach(([k, v]) => lines.push(`--liminal-duration-${k}: ${Math.round(v * motion)}ms;`));
   }
 
+  const warnings: ThemeWarning[] = [];
+  for (let i = 1; i < ladder.length; i++) {
+    const dL = rgbToOklch(hexToRgb(ladder[i])).L - rgbToOklch(hexToRgb(ladder[i - 1])).L;
+    const q = dL / PERCEPTUAL_QUANTUM;
+    if (q < MIN_STEP_Q) warnings.push({ level: i, q, kind: 'below-quantum' });
+    else if (q > MAX_STEP_Q) warnings.push({ level: i, q, kind: 'above-band' });
+  }
+
   return {
     name,
     brandHue,
@@ -168,6 +198,7 @@ export function createLiminalTheme(options: LiminalThemeOptions = {}): LiminalTh
     motion,
     ladder,
     css: `[data-liminal-theme="${name}"] {\n  ${lines.join('\n  ')}\n}`,
+    warnings,
   };
 }
 
