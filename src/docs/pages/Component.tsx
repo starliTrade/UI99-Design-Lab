@@ -22,11 +22,11 @@ function EyeNotes({ name }: { name: string }) {
   const f = FIXTURES.find((x) => x.name === name);
   if (!f) return null;
   const notes: string[] = [];
-  if (!f.sizes.length) notes.push('اندازه ندارد — اگر کنترلی است، باید داشته باشد');
-  if (!f.variants?.length) notes.push('واریانت ندارد');
+  if (!f.sizes.length) notes.push('No sizes — if it is a control, it needs them');
+  if (!f.variants?.length) notes.push('No variants');
   const missing = f.expected.filter((s) => !f.states.includes(s));
-  if (missing.length) notes.push(`حالتِ گمشده: ${missing.join(' · ')}`);
-  if (!notes.length) notes.push('ساختارش کامل است — با چشم بسنج');
+  if (missing.length) notes.push(`Missing states: ${missing.join(' · ')}`);
+  if (!notes.length) notes.push('Structurally complete — judge it by eye');
   return (
     <ul style={{ margin: 0, paddingInlineStart: `${S[4]}px`, fontSize: 12, lineHeight: 2, opacity: 0.85 }}>
       {notes.map((n, i) => (
@@ -40,8 +40,8 @@ export function ComponentPage({ name }: { name: string }) {
   const f = FIXTURES.find((x) => x.name === name);
   if (!f) {
     return (
-      <Section title="پیدا نشد" note={name} role="work">
-        <Prose>این کامپوننت در جدولِ fixture نیست — پس استودیو و ماتریس و a11y sweep هم نمی‌شناسندش.</Prose>
+      <Section title="Not found" note={name} role="work">
+        <Prose>This component is not in the fixture table — so the studio, the matrix and the a11y sweep do not know it either.</Prose>
       </Section>
     );
   }
@@ -51,21 +51,21 @@ export function ComponentPage({ name }: { name: string }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title={f.name} note={`${f.group} — ${c}% پوشش`} role="work">
+      <Section title={f.name} note={`${f.group} — ${c}% coverage`} role="work">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: `${S[4]}px` }}>
-          <Stat value={String(f.states.length)} label="حالت" />
-          <Stat value={String(f.sizes.length)} label="اندازه" />
-          <Stat value={String(f.variants?.length ?? 0)} label="واریانت" />
-          <Stat value={String(missing.length)} label="حالتِ گمشده" tone={missing.length ? 'warn' : undefined} />
+          <Stat value={String(f.states.length)} label="States" />
+          <Stat value={String(f.sizes.length)} label="Sizes" />
+          <Stat value={String(f.variants?.length ?? 0)} label="Variants" />
+          <Stat value={String(missing.length)} label="Missing states" tone={missing.length ? 'warn' : undefined} />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px` }}>
-          <Value label="حالت‌ها" value={f.states.join(' · ')} />
-          <Value label="سیستم انتظار دارد" value={f.expected.join(' · ') || '—'} />
-          <Value label="اندازه‌ها" value={f.sizes.join(' · ') || '—'} />
-          <Value label="واریانت‌ها" value={f.variants?.join(' · ') || '—'} />
+          <Value label="States" value={f.states.join(' · ')} />
+          <Value label="Expected" value={f.expected.join(' · ') || '—'} />
+          <Value label="Sizes" value={f.sizes.join(' · ') || '—'} />
+          <Value label="Variants" value={f.variants?.join(' · ') || '—'} />
         </div>
         <Prose>
-          <b>چشم:</b>
+          <b>By eye:</b>
         </Prose>
         <EyeNotes name={f.name} />
       </Section>
@@ -73,10 +73,10 @@ export function ComponentPage({ name }: { name: string }) {
       {/* The workbench. Same component the studio renders. */}
       <Studio initial={f.name} />
 
-      <Section title="جدولِ fixture" note="یک ردیف — و استودیو، ماتریس و a11y sweep خودکار می‌گیرندش">
+      <Section title="The fixture table" note="One row — and the studio, the matrix and the a11y sweep pick it up">
         <Prose>
-          افزودن یک کامپوننت یعنی افزودن یک ردیف به{' '}
-          <code style={{ fontFamily: MONO }}>src/components/__matrix__/fixtures.tsx</code>. نه سه جا.
+          Adding a component is adding one row to{' '}
+          <code style={{ fontFamily: MONO }}>src/components/__matrix__/fixtures.tsx</code>. Not three places.
         </Prose>
         <div style={{ display: 'flex', gap: `${S[2]}px`, flexWrap: 'wrap' }}>
           <span style={{ ...declared.style, padding: `${S[1]}px ${S[2]}px`, borderRadius: `${R.chip}px`, fontSize: 11 }}>

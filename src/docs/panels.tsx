@@ -91,8 +91,8 @@ export function ThemeBar({
   const system = isSystemTheme(state);
   return (
     <Card
-      title="تم"
-      note={system ? 'تمِ خودِ سیستم — مرجع' : 'تمِ زنده، روی همین ابزار'}
+      title="Theme"
+      note={system ? 'The system theme — the reference' : 'Live, on this tool'}
       role="chrome"
     >
       <div
@@ -103,7 +103,7 @@ export function ThemeBar({
         }}
       >
         <Slider
-          label="هیو"
+          label="Hue"
           value={state.brandHue}
           min={0}
           max={360}
@@ -112,7 +112,7 @@ export function ThemeBar({
           onChange={(brandHue) => onChange({ ...state, brandHue })}
         />
         <Slider
-          label="کرما"
+          label="Chroma"
           value={state.brandChroma}
           min={0}
           max={0.06}
@@ -121,7 +121,7 @@ export function ThemeBar({
           onChange={(brandChroma) => onChange({ ...state, brandChroma })}
         />
         <Slider
-          label="چگالی"
+          label="Density"
           value={state.density}
           min={0.8}
           max={1.4}
@@ -130,7 +130,7 @@ export function ThemeBar({
           onChange={(density) => onChange({ ...state, density })}
         />
         <Slider
-          label="حرکت"
+          label="Motion"
           value={state.motion}
           min={0}
           max={2}
@@ -152,12 +152,12 @@ export function ThemeBar({
             borderRadius: `${R.chip}px`,
           }}
         >
-          بازگشت به تمِ سیستم
+          Reset to the system theme
         </button>
         <span style={{ fontSize: 11, opacity: 0.7 }}>
           {theme.warnings.length === 0
-            ? 'هر ۹ پله بالای کوانتوم — نردبان سالم است'
-            : `${theme.warnings.length} هشدار روی پله‌ها`}
+            ? 'All nine steps above the quantum — the ladder holds'
+            : `${theme.warnings.length} steps out of band`}
         </span>
       </div>
 
@@ -177,7 +177,7 @@ export function ThemeBar({
           {theme.warnings.map((w, i) => (
             <li key={i}>
               <code style={{ fontFamily: MONO }}>S{w.level}</code> — {w.q.toFixed(2)}q ·{' '}
-              {w.kind === 'below-quantum' ? 'زیرِ کوانتوم: دو سطح که چشم جدا نمی‌کند' : 'بالای باند'}
+              {w.kind === 'below-quantum' ? 'below the quantum: two surfaces the eye cannot separate' : 'above the band'}
             </li>
           ))}
         </ul>
@@ -243,17 +243,17 @@ export function readEngineSnapshot(el: HTMLElement | null, ladder: string[]): En
 export function EngineReadout({ snapshot }: { snapshot: EngineSnapshot | null }) {
   if (!snapshot) {
     return (
-      <Card title="موتور" note="چه چیزی برای همین المان منتشر شد">
+      <Card title="Engine" note="What the engine published for this element">
         <span style={{ fontSize: 12, opacity: 0.7 }}>
-          المانی با <code style={{ fontFamily: MONO }}>data-liminal-surface</code> در پیش‌نمایش نیست.
+          No element with <code style={{ fontFamily: MONO }}>data-liminal-surface</code> in the preview.
         </span>
       </Card>
     );
   }
   const missing = INTERACTION_VARS.filter((v) => !snapshot.vars[v]);
   return (
-    <Card title="موتور" note="چه چیزی برای همین المان منتشر شد — خوانده‌شده از DOM، نه از حافظه">
-      <Value label="سطح" value={snapshot.level === null ? '—' : `S${snapshot.level}`} />
+    <Card title="Engine" note="What the engine published — read from the DOM, not from memory">
+      <Value label="Level" value={snapshot.level === null ? '—' : `S${snapshot.level}`} />
       {INTERACTION_VARS.map((v) => (
         <Value key={v} label={v.replace('--liminal-', '')} value={snapshot.vars[v] || '—'} tone={snapshot.vars[v] ? undefined : 'warn'} />
       ))}
@@ -262,7 +262,7 @@ export function EngineReadout({ snapshot }: { snapshot: EngineSnapshot | null })
       <Value label="cursor" value={snapshot.cursor} />
       {missing.length > 0 && (
         <p style={{ margin: 0, fontSize: 11, color: 'var(--liminal-danger, #ba4646)' }}>
-          {missing.length} متغیر منتشر نشده — یعنی حالتی هست که این کنترل ندارد.
+          {missing.length} variables not published — a state this control does not have.
         </p>
       )}
     </Card>
@@ -299,20 +299,21 @@ export function ContractChecks({ surfaceHex, level }: { surfaceHex: string; leve
   const light = oklchLightness(surfaceHex) > 0.5;
   if (light) {
     return (
-      <Card title="قرارداد" note={`متن روی ${surfaceHex}`}>
+      <Card title="Contract" note={`Text on ${surfaceHex}`}>
         <p style={{ margin: 0, fontSize: 12, lineHeight: 1.9 }}>
-          این سطح <b>روشن</b> است (L {oklchLightness(surfaceHex).toFixed(3)}). سلسله‌مراتبِ متنِ موتور
-          سفید-روی-تیره است و کف‌هایش برای همان گفته شده — پس اینجا چیزی برای سنجیدن نیست.
-          کامپوننت رنگِ روی خودش را اعلام می‌کند (<code style={{ fontFamily: MONO }}>onColor</code>).
+          This surface is <b>light</b> (L {oklchLightness(surfaceHex).toFixed(3)}). The engine's
+          text hierarchy is white-on-dark and its floors are stated for that — so there is nothing
+          to measure here. The component declares its own on-colour
+          (<code style={{ fontFamily: MONO }}>onColor</code>).
         </p>
       </Card>
     );
   }
   return (
-    <Card title="قرارداد" note={level === null ? `متن روی ${surfaceHex}` : `متن روی S${level} · ${surfaceHex}`}>
+    <Card title="Contract" note={level === null ? `Text on ${surfaceHex}` : `Text on S${level} · ${surfaceHex}`}>
       <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr 1fr 1fr', gap: `${S[2]}px ${S[3]}px`, fontSize: 11 }}>
-        <span style={{ opacity: 0.6 }}>نقش</span>
-        <span style={{ opacity: 0.6 }}>آلفا</span>
+        <span style={{ opacity: 0.6 }}>Role</span>
+        <span style={{ opacity: 0.6 }}>Alpha</span>
         <span style={{ opacity: 0.6 }}>WCAG</span>
         <span style={{ opacity: 0.6 }}>APCA</span>
         {ROLES.map((role) => {
@@ -340,16 +341,16 @@ export function ContractChecks({ surfaceHex, level }: { surfaceHex: string; leve
                 }}
               >
                 {ok
-                  ? `می‌گذرد — سخت‌گیرتر: ${t.boundBy}`
-                  : `زیرِ کف — سخت‌گیرتر: ${t.boundBy}`}
+                  ? `passes — bound by ${t.boundBy}`
+                  : `below the floor — bound by ${t.boundBy}`}
               </span>
             </React.Fragment>
           );
         })}
       </div>
       <p style={{ margin: 0, fontSize: 11, opacity: 0.7 }}>
-        آلفاها <b>مشتق</b> می‌شوند، نه انتخاب: کفِ هر نقش از کاربردِ اعلام‌شده‌اش می‌آید و
-        سخت‌گیرترین عدسی برنده است.
+        Alphas are <b>derived</b>, not chosen: each role's floor comes from its declared use and
+        the stricter lens wins.
       </p>
     </Card>
   );
@@ -360,8 +361,42 @@ export function ContractChecks({ surfaceHex, level }: { surfaceHex: string; leve
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function CodePanel({ element }: { element: React.ReactElement }) {
+  const [copied, setCopied] = React.useState(false);
+  const source = toJsx(element);
+  const copy = () => {
+    // `navigator.clipboard` is not available over a plain-HTTP origin, which is
+    // exactly how the docs run locally. Falling back to the old path keeps the
+    // button honest instead of silently doing nothing.
+    const done = () => { setCopied(true); window.setTimeout(() => setCopied(false), 1400); };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(source).then(done).catch(done);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = source;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      done();
+    }
+  };
   return (
-    <Card title="کد" note="همان المانی که رندر شد">
+    <Card title="Code" note="The element that rendered">
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <button
+          type="button"
+          onClick={copy}
+          style={{
+            ...resolveSurface({ role: 'control', on: 'panel' }).style,
+            font: 'inherit',
+            fontSize: 11,
+            padding: `2px ${S[2]}px`,
+            borderRadius: `${R.chip}px`,
+          }}
+        >
+          {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
       <pre
         style={{
           margin: 0,
@@ -374,7 +409,7 @@ export function CodePanel({ element }: { element: React.ReactElement }) {
           opacity: 0.9,
         }}
       >
-        {toJsx(element)}
+        {source}
       </pre>
     </Card>
   );
@@ -401,7 +436,7 @@ export function CoveragePanel({
 }) {
   const missing = expected.filter((s) => !has.includes(s));
   return (
-    <Card title="پوشش" note={`${name} — ${coveragePercent}%`}>
+    <Card title="Coverage" note={`${name} — ${coveragePercent}%`}>
       <div style={{ height: 6, borderRadius: 999, background: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
         <div
           style={{
@@ -412,16 +447,16 @@ export function CoveragePanel({
           }}
         />
       </div>
-      <Value label="حالت‌ها" value={has.join(' · ') || '—'} />
-      <Value label="اندازه‌ها" value={sizes.join(' · ') || '—'} />
-      <Value label="واریانت‌ها" value={variants.join(' · ') || '—'} />
+      <Value label="States" value={has.join(' · ') || '—'} />
+      <Value label="Sizes" value={sizes.join(' · ') || '—'} />
+      <Value label="Variants" value={variants.join(' · ') || '—'} />
       {missing.length > 0 ? (
         <p style={{ margin: 0, fontSize: 11, color: 'var(--liminal-danger, #ba4646)' }}>
-          کم است: {missing.join(' · ')}
+          Missing: {missing.join(' · ')}
         </p>
       ) : (
         <p style={{ margin: 0, fontSize: 11, opacity: 0.7 }}>
-          {expected.length ? 'هر چیزی که سیستم انتظار دارد را دارد' : 'سیستم برایش حالتی انتظار ندارد'}
+          {expected.length ? 'Has everything the system expects' : 'The system expects no states for it'}
         </p>
       )}
     </Card>

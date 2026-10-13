@@ -47,11 +47,11 @@ const WELL = resolveSurface({ role: 'well', interactive: false });
 
 /** The states the harness can force, and the label a reviewer reads. */
 const FORCED = [
-  { id: 'none', label: 'آزاد' },
+  { id: 'none', label: 'Free' },
   { id: 'hover', label: 'hover' },
   { id: 'focus', label: 'focus' },
-  { id: 'active', label: 'فشرده' },
-  { id: 'disabled', label: 'غیرفعال' },
+  { id: 'active', label: 'Pressed' },
+  { id: 'disabled', label: 'Disabled' },
 ] as const;
 type ForcedId = (typeof FORCED)[number]['id'];
 
@@ -156,7 +156,7 @@ export function Studio({ initial }: { initial?: string } = {}) {
       >
         {/* ── the component list ──────────────────────────────────────────── */}
         <nav
-          aria-label="کامپوننت‌ها"
+          aria-label="Components"
           style={{
             ...CHROME.style,
             flex: '1 1 220px',
@@ -220,7 +220,7 @@ export function Studio({ initial }: { initial?: string } = {}) {
 
         {/* ── the work ────────────────────────────────────────────────────── */}
         <main style={{ flex: '2 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[4]}px` }}>
-          <Card title="پیش‌نمایش" note={`${fixture.name} — زنده، با همان لایهٔ تعامل`} role="work">
+          <Card title="Preview" note={`${fixture.name} — live, with the real interaction layer`} role="work">
             {/* the prop controls, derived from what the fixture says it HAS */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[3]}px` }}>
               {controls.map((c) => (
@@ -262,7 +262,7 @@ export function Studio({ initial }: { initial?: string } = {}) {
 
             {/* the forcing harness */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
-              <span style={{ fontSize: 10, opacity: 0.6 }}>حالت اجباری</span>
+              <span style={{ fontSize: 10, opacity: 0.6 }}>Forced state</span>
               {FORCED.map((f) => (
                 <button
                   key={f.id}
@@ -301,8 +301,9 @@ export function Studio({ initial }: { initial?: string } = {}) {
               {rendered}
             </div>
             <p style={{ margin: 0, fontSize: 11, opacity: 0.7 }}>
-              hover و focus روی پیش‌نمایش <b>واقعی</b> کار می‌کنند. «حالت اجباری» همان تعریف‌های
-              لایه است با کلاس به‌جای شبه‌کلاس — یک هارنس برای دیدن، نه رفتارِ کامپوننت.
+              Hover and focus work on the <b>real</b> preview. "Forced state" applies the
+              layer's own declarations through a class — a harness for seeing, not the component's
+              behaviour.
             </p>
           </Card>
 

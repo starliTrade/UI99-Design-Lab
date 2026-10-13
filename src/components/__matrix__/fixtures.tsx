@@ -86,24 +86,24 @@ const FEEDBACK_STATES = ['info', 'success', 'warning', 'danger'];
 
 export const FIXTURES: ComponentFixture[] = [
   {
-    name: 'Button', group: 'اتم‌ها', sizes: ['sm', 'md', 'lg'], states: INTERACTIVE, expected: INTERACTIVE,
+    name: 'Button', group: 'Atoms', sizes: ['sm', 'md', 'lg'], states: INTERACTIVE, expected: INTERACTIVE,
     variants: ['primary', 'secondary', 'ghost', 'danger', 'outline', 'link'],
     render: (state, size, variant) => (
       <Button size={(size ?? 'md') as 'sm'} disabled={state === 'disabled'} variant={(variant ?? 'primary') as 'primary'}>
-        {state === 'default' ? 'دکمه' : state}
+        {state === 'default' ? 'Button' : state}
       </Button>
     ),
   },
   {
-    name: 'Input', group: 'ورودی‌ها', sizes: ['sm', 'md', 'lg'], states: INPUT_STATES, expected: INPUT_STATES,
+    name: 'Input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: INPUT_STATES, expected: INPUT_STATES,
     render: (state, size) => (
       <Input
         size={(size ?? 'md') as 'sm'}
-        label="نام کاربری"
+        label="Username"
         // `hint` is not an Input prop — it lives on `Field`. Recorded rather
         // than worked around: an input that cannot say what it wants is a gap.
-        helperText={state === 'error' ? undefined : '۳ تا ۲۰ کاراکتر'}
-        error={state === 'error' ? 'این نام قبلاً گرفته شده' : undefined}
+        helperText={state === 'error' ? undefined : '3–20 characters'}
+        error={state === 'error' ? 'That name is taken' : undefined}
         disabled={state === 'disabled'}
         readOnly={state === 'readonly'}
         defaultValue={state === 'default' ? '' : 'starli'}
@@ -111,212 +111,212 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Textarea', group: 'ورودی‌ها', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'Textarea', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
       <Textarea
-        label="درباره"
-        error={state === 'error' ? 'حداکثر ۲۰۰ کاراکتر' : undefined}
+        label="About"
+        error={state === 'error' ? 'Up to 200 characters' : undefined}
         disabled={state === 'disabled'}
         rows={2}
       />
     ),
   },
   {
-    name: 'Select', group: 'ورودی‌ها', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'Select', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
       <Select
-        label="مسیر"
-        options={[{ value: 'a', label: 'تهران' }, { value: 'b', label: 'شیراز' }]}
-        error={state === 'error' ? 'یک مسیر انتخاب کن' : undefined}
+        label="Route"
+        options={[{ value: 'a', label: 'Tehran' }, { value: 'b', label: 'Shiraz' }]}
+        error={state === 'error' ? 'Pick a route' : undefined}
         disabled={state === 'disabled'}
       />
     ),
   },
   {
-    name: 'Checkbox', group: 'ورودی‌ها', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
+    name: 'Checkbox', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
     render: (state) => (
-      <Checkbox checked={state === 'checked'} disabled={state === 'disabled'} onChange={noop} label="می‌پذیرم" />
+      <Checkbox checked={state === 'checked'} disabled={state === 'disabled'} onChange={noop} label="I accept" />
     ),
   },
   {
-    name: 'Radio', group: 'ورودی‌ها', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
+    name: 'Radio', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
     render: (state) => (
-      <Radio checked={state === 'checked'} disabled={state === 'disabled'} onChange={noop} name="m" value="a" label="گزینه" />
+      <Radio checked={state === 'checked'} disabled={state === 'disabled'} onChange={noop} name="m" value="a" label="Option" />
     ),
   },
   {
-    name: 'Toggle', group: 'اتم‌ها', sizes: [], states: ['off', 'on', 'disabled'], expected: INTERACTIVE,
+    name: 'Toggle', group: 'Atoms', sizes: [], states: ['off', 'on', 'disabled'], expected: INTERACTIVE,
     render: (state) => (
-      <Toggle checked={state === 'on'} disabled={state === 'disabled'} onChange={noop} aria-label="فعال" />
+      <Toggle checked={state === 'on'} disabled={state === 'disabled'} onChange={noop} aria-label="Enabled" />
     ),
   },
   {
-    name: 'Badge', group: 'اتم‌ها', sizes: [], states: ['neutral', 'success', 'warning', 'danger', 'info'], expected: [],
+    name: 'Badge', group: 'Atoms', sizes: [], states: ['neutral', 'success', 'warning', 'danger', 'info'], expected: [],
     variants: ['neutral', 'success', 'warning', 'danger', 'info'],
-    render: (state) => <Badge semantic={state === 'neutral' ? undefined : (state as 'success')}>برچسب</Badge>,
+    render: (state) => <Badge semantic={state === 'neutral' ? undefined : (state as 'success')}>Badge</Badge>,
   },
   {
-    name: 'Tag', group: 'اتم‌ها', sizes: [], states: ['default'], expected: [],
-    render: () => <Tag>طراحی</Tag>,
+    name: 'Tag', group: 'Atoms', sizes: [], states: ['default'], expected: [],
+    render: () => <Tag>Design</Tag>,
   },
   {
-    name: 'Alert', group: 'بازخورد', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
+    name: 'Alert', group: 'Feedback', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
     render: (state) => (
-      <Alert semantic={state as 'info'} title={state} onClose={noop}>پیام</Alert>
+      <Alert semantic={state as 'info'} title={state} onClose={noop}>Message</Alert>
     ),
   },
   {
-    name: 'Progress', group: 'داده', sizes: ['sm', 'md', 'lg'], states: ['default', 'success', 'warning', 'danger'], expected: [],
+    name: 'Progress', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default', 'success', 'warning', 'danger'], expected: [],
     render: (state, size) => (
-      <Progress value={62} label="آپلود" size={(size ?? 'md') as 'sm'} semantic={state === 'default' ? undefined : (state as 'success')} />
+      <Progress value={62} label="Upload" size={(size ?? 'md') as 'sm'} semantic={state === 'default' ? undefined : (state as 'success')} />
     ),
   },
   {
-    name: 'Avatar', group: 'داده', // Avatar has three sizes, not the icon engine's five. Recorded as-is.
+    name: 'Avatar', group: 'Data', // Avatar has three sizes, not the icon engine's five. Recorded as-is.
     sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
     render: (_s, size) => <Avatar name="Starli Trade" size={(size ?? 'md') as 'md'} />,
   },
   {
-    name: 'Stat', group: 'داده', sizes: [], states: ['default'], expected: [],
-    render: () => <Stat label="درخواست‌ها" value="۱٬۲۰۴" />,
+    name: 'Stat', group: 'Data', sizes: [], states: ['default'], expected: [],
+    render: () => <Stat label="Requests" value="1,204" />,
   },
   {
-    name: 'Card', group: 'ظرف‌ها', sizes: [], states: ['default'], expected: [],
-    render: () => <Card>محتوای کارت</Card>,
+    name: 'Card', group: 'Containers', sizes: [], states: ['default'], expected: [],
+    render: () => <Card>Card content</Card>,
   },
   {
-    name: 'Panel', group: 'ظرف‌ها', sizes: [], states: ['default'], expected: [],
-    render: () => <Panel title="پنل">محتوا</Panel>,
+    name: 'Panel', group: 'Containers', sizes: [], states: ['default'], expected: [],
+    render: () => <Panel title="Panel">Content</Panel>,
   },
   {
-    name: 'Divider', group: 'ظرف‌ها', sizes: [], states: ['default'], expected: [],
+    name: 'Divider', group: 'Containers', sizes: [], states: ['default'], expected: [],
     render: () => <div style={{ width: 200 }}><Divider /></div>,
   },
   {
-    name: 'Skeleton', group: 'کمکی', sizes: [], states: ['text', 'circle', 'rect'], expected: [],
+    name: 'Skeleton', group: 'Utilities', sizes: [], states: ['text', 'circle', 'rect'], expected: [],
     variants: ['text', 'circle', 'rect'],
     render: (state) => <Skeleton variant={state as 'text'} width={160} />,
   },
   {
-    name: 'EmptyState', group: 'کمکی', sizes: [], states: ['default'], expected: [],
-    render: () => <EmptyState title="چیزی نیست" />,
+    name: 'EmptyState', group: 'Utilities', sizes: [], states: ['default'], expected: [],
+    render: () => <EmptyState title="Nothing here" />,
   },
   {
-    name: 'Mist', group: 'اتم‌ها', sizes: [], states: ['default'], expected: [],
-    render: () => <Mist aria-label="شناور">مه</Mist>,
+    name: 'Mist', group: 'Atoms', sizes: [], states: ['default'], expected: [],
+    render: () => <Mist aria-label="Floating">Mist</Mist>,
   },
   {
-    name: 'Pagination', group: 'داده', sizes: [], states: ['default'], expected: INTERACTIVE,
+    name: 'Pagination', group: 'Data', sizes: [], states: ['default'], expected: INTERACTIVE,
     // Pagination has no `disabled` prop — recorded as a gap rather than faked.
     render: () => <Pagination currentPage={2} totalPages={5} onPageChange={noop} />,
   },
   {
-    name: 'NavItem', group: 'ناوبری', sizes: [], states: ['default', 'active', 'disabled'], expected: INTERACTIVE,
-    render: (state) => <NavItem active={state === 'active'} disabled={state === 'disabled'}>داشبورد</NavItem>,
+    name: 'NavItem', group: 'Navigation', sizes: [], states: ['default', 'active', 'disabled'], expected: INTERACTIVE,
+    render: (state) => <NavItem active={state === 'active'} disabled={state === 'disabled'}>Dashboard</NavItem>,
   },
   {
-    name: 'Breadcrumb', group: 'ناوبری', sizes: [], states: ['default'], expected: [],
-    render: () => <Breadcrumb items={[{ label: 'خانه', href: '/' }, { label: 'پروژه' }]} />,
+    name: 'Breadcrumb', group: 'Navigation', sizes: [], states: ['default'], expected: [],
+    render: () => <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Projects' }]} />,
   },
   // ── the rest of the library ──────────────────────────────────────────────
   {
-    name: 'Modal', group: 'ظرف‌ها', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
-    render: (_s, size) => <Modal open title="گفت‌وگو" size={(size ?? 'md') as 'sm'} onClose={noop}>محتوا</Modal>,
+    name: 'Modal', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    render: (_s, size) => <Modal open title="Dialog" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Modal>,
   },
   {
-    name: 'Sheet', group: 'ظرف‌ها', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
-    render: (_s, size) => <Sheet open title="کشو" size={(size ?? 'md') as 'sm'} onClose={noop}>محتوا</Sheet>,
+    name: 'Sheet', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    render: (_s, size) => <Sheet open title="Sheet" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Sheet>,
   },
   {
-    name: 'Toast', group: 'بازخورد', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
-    render: (state) => <Toast open title={state} message="پیام" semantic={state as 'info'} onClose={noop} />,
+    name: 'Toast', group: 'Feedback', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
+    render: (state) => <Toast open title={state} message="Message" semantic={state as 'info'} onClose={noop} />,
   },
   {
-    name: 'SimpleTooltip', group: 'بازخورد', sizes: [], states: ['default'], expected: [],
-    render: () => <SimpleTooltip content="راهنما"><Button>نگه‌دار</Button></SimpleTooltip>,
+    name: 'SimpleTooltip', group: 'Feedback', sizes: [], states: ['default'], expected: [],
+    render: () => <SimpleTooltip content="Tooltip"><Button>Hover me</Button></SimpleTooltip>,
   },
   {
-    name: 'Combobox', group: 'ورودی‌ها', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'Combobox', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
-      <Combobox label="شهر" options={[{ value: 'a', label: 'تهران' }]} onChange={noop}
-        error={state === 'error' ? 'انتخاب کن' : undefined} disabled={state === 'disabled'} />
+      <Combobox label="City" options={[{ value: 'a', label: 'Tehran' }]} onChange={noop}
+        error={state === 'error' ? 'Choose one' : undefined} disabled={state === 'disabled'} />
     ),
   },
   {
-    name: 'MultiSelect', group: 'ورودی‌ها', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'MultiSelect', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
-      <MultiSelect label="برچسب‌ها" options={[{ value: 'a', label: 'طراحی' }]} onChange={noop}
-        error={state === 'error' ? 'یکی انتخاب کن' : undefined} disabled={state === 'disabled'} />
+      <MultiSelect label="Labels" options={[{ value: 'a', label: 'Design' }]} onChange={noop}
+        error={state === 'error' ? 'Choose one' : undefined} disabled={state === 'disabled'} />
     ),
   },
   {
-    name: 'CommandPalette', group: 'ناوبری', sizes: [], states: ['default'], expected: [],
-    render: () => <CommandPalette isOpen onClose={noop} groups={[{ title: 'دستورها', items: [{ id: 'a', label: 'ذخیره', action: noop }] }]} />,
+    name: 'CommandPalette', group: 'Navigation', sizes: [], states: ['default'], expected: [],
+    render: () => <CommandPalette isOpen onClose={noop} groups={[{ title: 'Commands', items: [{ id: 'a', label: 'Save', action: noop }] }]} />,
   },
   {
-    name: 'Table', group: 'داده', sizes: [], states: ['default'], expected: [],
+    name: 'Table', group: 'Data', sizes: [], states: ['default'], expected: [],
     render: () => (
       <Table>
-        <TableHeader><TableRow><TableHead>نام</TableHead><TableHead>وضعیت</TableHead></TableRow></TableHeader>
-        <tbody><TableRow><TableCell>ستارلی</TableCell><TableCell>فعال</TableCell></TableRow></tbody>
+        <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
+        <tbody><TableRow><TableCell>Starli</TableCell><TableCell>Active</TableCell></TableRow></tbody>
       </Table>
     ),
   },
   {
-    name: 'Calendar', group: 'داده', sizes: [], states: ['gregorian', 'jalali'], expected: [],
+    name: 'Calendar', group: 'Data', sizes: [], states: ['gregorian', 'jalali'], expected: [],
     render: (state) => state === 'jalali'
       ? <Calendar calendar="jalali" lang="fa" month={new Date(Date.UTC(2026, 9, 1))} />
       : <Calendar month={new Date(Date.UTC(2026, 9, 1))} />,
   },
   {
-    name: 'FilterBar', group: 'داده', sizes: [], states: ['empty', 'active'], expected: [],
+    name: 'FilterBar', group: 'Data', sizes: [], states: ['empty', 'active'], expected: [],
     render: (state) => (
-      <FilterBar activeFilters={state === 'active' ? [{ id: 'a', label: 'فعال', value: 'x' }] : []} onRemoveFilter={noop} onClearAll={noop}>
+      <FilterBar activeFilters={state === 'active' ? [{ id: 'a', label: 'Active', value: 'x' }] : []} onRemoveFilter={noop} onClearAll={noop}>
         <span />
       </FilterBar>
     ),
   },
   {
-    name: 'AppShell', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
-    render: () => <AppShell><span>محتوا</span></AppShell>,
+    name: 'AppShell', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <AppShell><span>Content</span></AppShell>,
   },
   {
-    name: 'Sidebar', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
-    render: () => <Sidebar><NavItem>داشبورد</NavItem></Sidebar>,
+    name: 'Sidebar', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <Sidebar><NavItem>Dashboard</NavItem></Sidebar>,
   },
   {
-    name: 'Topbar', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    name: 'Topbar', group: 'Layout', sizes: [], states: ['default'], expected: [],
     render: () => <Topbar logo={<span>LIMINAL</span>} />,
   },
   {
-    name: 'Footer', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    name: 'Footer', group: 'Layout', sizes: [], states: ['default'], expected: [],
     render: () => <Footer />,
   },
   {
-    name: 'PageHeader', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
-    render: () => <PageHeader title="صفحه" />,
+    name: 'PageHeader', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <PageHeader title="Page" />,
   },
   {
-    name: 'PageSection', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
-    render: () => <PageSection title="بخش">محتوا</PageSection>,
+    name: 'PageSection', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <PageSection title="Section">Content</PageSection>,
   },
   {
-    name: 'Grid', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
-    render: () => <Grid><GridCol col={6}>نیمه</GridCol><GridCol col={6}>نیمه</GridCol></Grid>,
+    name: 'Grid', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <Grid><GridCol col={6}>Half</GridCol><GridCol col={6}>Half</GridCol></Grid>,
   },
   {
-    name: 'ErrorPage', group: 'کمکی', sizes: [], states: ['default'], expected: [],
-    render: () => <ErrorPage code="۴۰۴" title="پیدا نشد" />,
+    name: 'ErrorPage', group: 'Utilities', sizes: [], states: ['default'], expected: [],
+    render: () => <ErrorPage code="404" title="Not found" />,
   },
   {
-    name: 'FormLayout', group: 'کمکی', sizes: [], states: ['default'], expected: [],
-    render: () => <FormLayout><FormLayout.Section title="بخش"><FormLayout.Field label="فیلد"><Input /></FormLayout.Field></FormLayout.Section></FormLayout>,
+    name: 'FormLayout', group: 'Utilities', sizes: [], states: ['default'], expected: [],
+    render: () => <FormLayout><FormLayout.Section title="Section"><FormLayout.Field label="Field"><Input /></FormLayout.Field></FormLayout.Section></FormLayout>,
   },
   {
-    name: 'Form', group: 'کمکی', sizes: [], states: ['default', 'error'], expected: [],
+    name: 'Form', group: 'Utilities', sizes: [], states: ['default', 'error'], expected: [],
     render: (state) => (
-      <Form validators={{ n: (v) => (String(v ?? '').trim() ? undefined : 'لازم است') }}>
-        <Field name="n" label="نام" required hint={state === 'error' ? undefined : 'نام کامل'}><Input /></Field>
+      <Form validators={{ n: (v) => (String(v ?? '').trim() ? undefined : 'Required') }}>
+        <Field name="n" label="Name" required hint={state === 'error' ? undefined : 'Full name'}><Input /></Field>
       </Form>
     ),
   },

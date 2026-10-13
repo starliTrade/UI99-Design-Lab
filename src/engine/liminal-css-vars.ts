@@ -151,7 +151,11 @@ export function generateCssVars(): string {
   // line-height floor in liminal-persian.ts is derived from Vazirmatn's own
   // metrics, so a different Persian face would need the floor re-derived.
   section('12b. FONTS');
-  v('font-en', 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif');
+  // Inter first, then the system stack. The body asked for Inter and nothing
+  // loaded it, so every page silently fell back — and the type scale was
+  // measured against a face nobody chose. `scripts/fetch-latin-font.mjs`
+  // self-hosts it; the stack stays as the fallback for a page that has not.
+  v('font-en', 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif');
   v('font-fa', PERSIAN_FONT_STACK);
   v('line-height-fa-floor', String(PERSIAN_LINE_HEIGHT_FLOOR), 'from Vazirmatn metrics');
 

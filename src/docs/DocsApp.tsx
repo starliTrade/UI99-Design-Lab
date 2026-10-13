@@ -25,11 +25,11 @@ import { routeKey, type Route } from './routes';
 function ExamplesPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title="نمونه‌ها" note="یک اپ ساخته‌شده با همین کامپوننت‌ها" role="work">
+      <Section title="Examples" note="An app built from these components" role="work">
         <Prose>
-          این همان دموی قبلی است — ورود، داشبورد، پروژه، حالت بارگذاری و ۴۰۴. نگه داشته شد چون
-          یک اپِ کامل است، نه یک ویترین: اگر کامپوننتی در یک صفحهٔ واقعی نشکند، در ویترین هم
-          نمی‌شکند.
+          This is the old demo — login, dashboard, project, loading and 404. It was kept because
+          a whole app is a better test than a showcase: a component that survives a real page
+          survives a display case.
         </Prose>
       </Section>
       <div style={{ minWidth: 0 }}>

@@ -25,10 +25,10 @@ export function TokensPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title="نردبان" note={`${theme.ladder.length} پله · کوانتوم ${PERCEPTUAL_QUANTUM}`} role="work">
+      <Section title="The ladder" note={`${theme.ladder.length} steps · quantum ${PERCEPTUAL_QUANTUM}`} role="work">
         <Prose>
-          هر پله یک <b>کوانتوم ادراکی</b> از پلهٔ قبلی فاصله دارد — نه یک درصدِ دلبخواه. عددِ سبز یعنی
-          گام در باند است؛ سرخ یعنی این هیو نمی‌تواند نگهش دارد.
+          Each step sits one <b>perceptual quantum</b> from the one below — not an arbitrary
+          percentage. A green number means the step is in band; red means this hue cannot hold it.
         </Prose>
         <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px` }}>
           {theme.ladder.map((hex, i) => (
@@ -58,27 +58,27 @@ export function TokensPage() {
         </div>
         {theme.warnings.length > 0 && (
           <Prose>
-            <b style={{ color: 'var(--liminal-danger, #ba4646)' }}>{theme.warnings.length} هشدار:</b>{' '}
+            <b style={{ color: 'var(--liminal-danger, #ba4646)' }}>{theme.warnings.length} warnings:</b>{' '}
             {theme.warnings.map((w) => `S${w.level} (${w.q.toFixed(2)}q)`).join(' · ')}
           </Prose>
         )}
       </Section>
 
-      <Section title="متن" note="آلفا مشتق می‌شود، نه انتخاب">
+      <Section title="Text" note="The alpha is derived, not chosen">
         <Prose>
-          کفِ هر نقش از <b>کاربردِ اعلام‌شدهٔ</b> آن می‌آید: primary برای سرفصل، secondary و tertiary
-          برای هر متنی که باید خوانده شود، quaternary فقط برای نشانه‌های غیرمتنی. هر دو عدسی حساب
-          می‌شوند و <b>سخت‌گیرتر برنده است</b>.
+          Each role's floor comes from its <b>declared use</b>: primary for headings, secondary
+          and tertiary for any text meant to be read, quaternary for non-text marks only. Both
+          lenses are computed and <b>the stricter one wins</b>.
         </Prose>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
             <thead>
               <tr style={{ opacity: 0.65 }}>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>نقش</th>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>کاربرد</th>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>کف WCAG</th>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>کف APCA</th>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>نمونه روی S3</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Role</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Use</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>WCAG floor</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>APCA floor</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Sample on S3</th>
               </tr>
             </thead>
             <tbody>
@@ -94,7 +94,7 @@ export function TokensPage() {
                     <td style={{ padding: `${S[1]}px ${S[2]}px`, fontFamily: MONO }}>{spec.wcag}</td>
                     <td style={{ padding: `${S[1]}px ${S[2]}px`, fontFamily: MONO }}>{spec.apca}</td>
                     <td style={{ padding: `${S[1]}px ${S[2]}px` }}>
-                      <span style={{ color: t.value, fontSize: 13 }}>نمونهٔ متنِ فارسی</span>
+                      <span style={{ color: t.value, fontSize: 13 }}>The quick brown fox</span>
                     </td>
                   </tr>
                 );
@@ -108,7 +108,7 @@ export function TokensPage() {
             return (
               <Value
                 key={role}
-                label={`${role} روی S3`}
+                label={`${role} on S3`}
                 value={`α ${t.alpha.toFixed(3)} · ${t.boundBy}`}
               />
             );
@@ -116,10 +116,11 @@ export function TokensPage() {
         </div>
       </Section>
 
-      <Section title="چاه‌ها" note="زیرِ بوم — عمق، نه رنگ">
+      <Section title="Wells" note="Below the canvas — depth, not colour">
         <Prose>
-          چاه جایی است که چیزی <b>فرورفته</b>: حالت خالی، بلوک کد، کنترلِ فشرده. یک‌ونیم پله زیر
-          بوم می‌نشیند — بین بوم و chrome، نه یک مقدارِ اختراعی.
+          A well is where something is <b>recessed</b>: an empty state, a code block, a pressed
+          control. It sits one and a half steps below the canvas — between the canvas and chrome,
+          not at an invented value.
         </Prose>
         <div style={{ display: 'flex', gap: `${S[3]}px`, flexWrap: 'wrap' }}>
           {Object.entries(WELLS).map(([name, hex]) => (
@@ -133,7 +134,7 @@ export function TokensPage() {
         </div>
       </Section>
 
-      <Section title="معنایی و گسترده" note="فقط هیو قرارداد است، نه رنگ">
+      <Section title="Semantic and extended" note="Only the hue is convention, not the colour">
         <div style={{ display: 'flex', gap: `${S[3]}px`, flexWrap: 'wrap' }}>
           {(Object.keys(LiminalColorEngine.SEMANTICS) as (keyof typeof LiminalColorEngine.SEMANTICS)[]).map((k) => (
             <div key={String(k)} style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px` }}>
@@ -151,12 +152,12 @@ export function TokensPage() {
           ))}
         </div>
         <Prose>
-          {LiminalColorEngine.EXTENDED_SPECTRUM.length} هیوی گسترده هم هست — برای نمودار و برچسب،
-          نه برای سطح. سطح همیشه از نردبان می‌آید.
+          There are also {LiminalColorEngine.EXTENDED_SPECTRUM.length} extended hues — for charts
+          and labels, never for a surface. A surface always comes from the ladder.
         </Prose>
       </Section>
 
-      <Section title="حلقهٔ فوکوس" note="یک رنگ، یک قاعده">
+      <Section title="The focus ring" note="One colour, one rule">
         <div style={{ display: 'flex', alignItems: 'center', gap: `${S[4]}px`, flexWrap: 'wrap' }}>
           <span
             style={{
@@ -167,11 +168,11 @@ export function TokensPage() {
               fontSize: 12,
             }}
           >
-            فوکوسِ کیبورد
+            Keyboard focus
           </span>
-          <Value label="رنگ" value={FOCUS_RING_COLOR} />
+          <Value label="Colour" value={FOCUS_RING_COLOR} />
           <Value
-            label="کنتراست روی S0"
+            label="Contrast on S0"
             value={`${contrastRatioHex(FOCUS_RING_COLOR, LADDER[0]).toFixed(2)}:1`}
           />
         </div>

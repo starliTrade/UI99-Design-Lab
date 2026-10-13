@@ -1,6 +1,7 @@
 @import "./engine/liminal-mist.css";
 @import "./engine/liminal-bidi.css";
 @import "./engine/liminal-fonts.css";
+@import "./engine/liminal-fonts-latin.css";
 @import "./engine/liminal-motion.css";
 @import "./engine/liminal-forced-colors.css";
 @import "./engine/liminal-interaction.css";
@@ -163,7 +164,7 @@
   --liminal-weight-8: 700;
 
   /* ── 12b. FONTS ──────────────────────────────────────────────── */
-  --liminal-font-en: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --liminal-font-en: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --liminal-font-fa: Vazirmatn, "Vazirmatn RD", "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif;
   --liminal-line-height-fa-floor: 1.5625; /* from Vazirmatn metrics */
 
@@ -344,7 +345,7 @@
   --liminal-weight-8: 700;
 
   /* ── 12b. FONTS ──────────────────────────────────────────────── */
-  --liminal-font-en: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --liminal-font-en: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --liminal-font-fa: Vazirmatn, "Vazirmatn RD", "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif;
   --liminal-line-height-fa-floor: 1.5625; /* from Vazirmatn metrics */
 

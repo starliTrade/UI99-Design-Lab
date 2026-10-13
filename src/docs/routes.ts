@@ -21,12 +21,12 @@ export interface PageDef {
 }
 
 export const PAGES: PageDef[] = [
-  { page: 'overview', label: 'مرور', note: 'موتور در یک نگاه' },
-  { page: 'components', label: 'کامپوننت‌ها', note: 'همه، با پوشش' },
-  { page: 'tokens', label: 'توکن‌ها', note: 'نردبان، چاه‌ها، کنتراست' },
-  { page: 'contract', label: 'قرارداد', note: 'قوانین سخت، زنده' },
-  { page: 'studio', label: 'استودیو', note: 'ابزارِ بازبینی' },
-  { page: 'examples', label: 'نمونه‌ها', note: 'یک اپ ساخته‌شده' },
+  { page: 'overview', label: 'Overview', note: 'The engine at a glance' },
+  { page: 'components', label: 'Components', note: 'All of them, with coverage' },
+  { page: 'tokens', label: 'Tokens', note: 'The ladder, the wells, contrast' },
+  { page: 'contract', label: 'Contract', note: 'The hard rules, live' },
+  { page: 'studio', label: 'Studio', note: 'The review tool' },
+  { page: 'examples', label: 'Examples', note: 'A built app' },
 ];
 
 /** A stable key for a route, so React can tell two routes apart. */

@@ -22,32 +22,33 @@ export function OverviewPage({ go }: { go: (name: string) => void }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title="LIMINAL" note="سیستم طراحیِ ریاضی‌محورِ تاریک — با موتور، نه با فایلِ توکن" role="work">
+      <Section title="LIMINAL" note="A mathematically derived dark system — an engine, not a token file" role="work">
         <Prose>
-          این یک کتابخانهٔ کامپوننت نیست که یک فایل CSS داشته باشد. یک <b>موتور</b> است: هر سطح، هر
-          لبه، هر رنگ و هر فاصله از یک قاعده می‌آید — و قاعده در تست نوشته شده. کامپوننت‌ها چیزی
-          انتخاب نمی‌کنند؛ اعلام می‌کنند که <b>چه هستند</b> و موتور تصمیم می‌گیرد.
+          This is not a component library with a CSS file. It is an <b>engine</b>: every surface,
+          every edge, every colour and every space comes from a rule — and the rule is written as a
+          test. Components do not choose anything. They declare <b>what they are</b>, and the engine
+          decides.
         </Prose>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: `${S[4]}px` }}>
-          <Stat value={String(ROLES.length)} label="نقش در سلسله‌مراتب" />
-          <Stat value={String(LADDER.length)} label="پلهٔ نردبان" />
-          <Stat value={String(FIXTURES.length)} label="کامپوننت در ماتریس" />
-          <Stat value={`${avg}%`} label="میانگین پوشش" tone={avg < 100 ? 'warn' : undefined} />
-          <Stat value={String(incomplete)} label="کامپوننتِ ناقص" tone={incomplete ? 'warn' : undefined} />
-          <Stat value={String(LiminalColorEngine.EXTENDED_SPECTRUM.length)} label="هیوی گسترده" />
+          <Stat value={String(ROLES.length)} label="Roles in the hierarchy" />
+          <Stat value={String(LADDER.length)} label="Ladder steps" />
+          <Stat value={String(FIXTURES.length)} label="Components in the matrix" />
+          <Stat value={`${avg}%`} label="Average coverage" tone={avg < 100 ? 'warn' : undefined} />
+          <Stat value={String(incomplete)} label="Incomplete" tone={incomplete ? 'warn' : undefined} />
+          <Stat value={String(LiminalColorEngine.EXTENDED_SPECTRUM.length)} label="Extended hues" />
         </div>
       </Section>
 
-      <Section title="سلسله‌مراتب" note="یک عدد، یک معنا — عمق نسبت به بوم">
+      <Section title="The hierarchy" note="One number, one meaning — depth from the canvas">
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
             <thead>
               <tr style={{ textAlign: 'start', opacity: 0.65 }}>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>نقش</th>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>سطح</th>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>ریم</th>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>سایه</th>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>رنگ</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Role</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Level</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Rim</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Shadow</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Colour</th>
               </tr>
             </thead>
             <tbody>
@@ -80,32 +81,33 @@ export function OverviewPage({ go }: { go: (name: string) => void }) {
           </table>
         </div>
         <Prose>
-          یک کامپوننت <b>نقش</b> اعلام می‌کند، نه پله. دو کامپوننت که یک نقش را اعلام کنند نمی‌توانند
-          سرِ عمق اختلاف داشته باشند — و این همان چیزی است که یک عددِ دستی نمی‌تواند تضمین کند.
+          A component declares a <b>role</b>, not a step. Two components that declare the same role
+          cannot disagree about depth — which is exactly what a hand-picked number cannot promise.
         </Prose>
       </Section>
 
-      <Section title="قاعده‌ای که همه‌چیز از آن می‌آید" note="یک جمله، و هفت نگهبان که اجرایش می‌کنند">
+      <Section title="The rule everything comes from" note="One sentence, and seven guards that enforce it">
         <Prose>
-          <b>مقدار → توکن. انتخاب → نام. عدد خام → ممنوع.</b>
+          <b>Values become tokens. Selections become names. Raw numbers are forbidden.</b>
         </Prose>
         <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px` }}>
-          <Value label="نردبان" value={`${LADDER.length} پله، ΔL ثابت`} />
-          <Value label="متن" value="آلفاها از کفِ کاربردِ اعلام‌شده مشتق می‌شوند" />
-          <Value label="سطح" value="resolveSurface({ role }) — تنها راه" />
-          <Value label="تعامل" value="resolveInteractionVars — شش متغیر، یک تولیدکننده" />
-          <Value label="تم" value="createLiminalTheme — سه عدد" />
+          <Value label="Ladder" value={`${LADDER.length} steps, constant ΔL`} />
+          <Value label="Text" value="alphas derived from each role's declared use" />
+          <Value label="Level" value="resolveSurface({ role }) — the only way" />
+          <Value label="Interaction" value="resolveInteractionVars — six variables, one producer" />
+          <Value label="Theme" value="createLiminalTheme — three numbers" />
         </div>
         <Prose>
-          و هفت نگهبان که هرکدام یک الگو را ممنوع می‌کنند: عدد خام · hex در style · resolver بازنشسته ·
-          opt-in بدون تولیدکننده · سطحِ خام به‌عنوان prop · رنگِ پخته در style · نقض axe.
+          And seven guards, each banning one pattern: a raw number · a hex in a style · the
+          retired resolver · opting in without the producer · a raw depth as a prop · a baked colour
+          in a style · an axe violation.
         </Prose>
       </Section>
 
-      <Section title="وضعیت کامپوننت‌ها" note="اندازه‌گیری، نه ادعا">
+      <Section title="The state of the components" note="Measured, not asserted">
         <Prose>
-          موتور کامل است. کامپوننت‌ها نه — و دلیلش روشن است: آن‌ها را <b>قبل از</b> تمام‌شدن موتور
-          نوشتیم. این جدول همان فاصله را نشان می‌دهد.
+          The engine is complete. The components are not — and the reason is plain: they were
+          written <b>before</b> the engine settled. This is that distance, measured.
         </Prose>
         <div style={{ display: 'flex', gap: `${S[2]}px`, flexWrap: 'wrap' }}>
           {FIXTURES.map((f) => {

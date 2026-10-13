@@ -18,7 +18,7 @@ import { LADDER } from '../../engine/liminal-ladder';
 describe('the studio', () => {
   it('renders every panel it promises', () => {
     render(<ThemeProvider><Studio /></ThemeProvider>);
-    for (const label of ['تم', 'پیش‌نمایش', 'موتور', 'قرارداد', 'پوشش', 'کد']) {
+    for (const label of ['Theme', 'Preview', 'Engine', 'Contract', 'Coverage', 'Code']) {
       expect(screen.getByLabelText(label), label).toBeTruthy();
     }
   });

@@ -26,43 +26,43 @@ interface Rule {
 
 const RULES: Rule[] = [
   {
-    rule: 'مقدار → توکن. انتخاب → نام. عدد خام → ممنوع.',
-    why: 'عددی که در کامپوننت نوشته شود، از قرارداد جدا می‌افتد و هیچ تستی نمی‌تواند بگوید درست است یا نه.',
+    rule: 'Values become tokens. Selections become names. Raw numbers are forbidden.',
+    why: 'A number written inside a component drifts away from the contract, and no test can say whether it is right.',
     guard: 'no-raw-numbers.test.ts',
   },
   {
-    rule: 'یک resolver برای سطح.',
-    why: 'دو resolver سرِ یک عمق اختلاف داشتند: یکی ریمِ ۱ می‌کشید و دیگری ریمِ ۲. کامپوننت می‌توانست هرکدام را انتخاب کند.',
+    rule: 'One resolver for a surface.',
+    why: 'Two resolvers disagreed about the same depth: one drew a rim of 1, the other a rim of 2. A component could pick either.',
     guard: 'one-resolver.test.ts',
   },
   {
-    rule: 'شش متغیر تعامل، یک تولیدکننده.',
-    why: 'کامپوننتی که خودش می‌سازد می‌تواند مقدار hover را منتشر کند و idle را فراموش کند — یا background را inline بگذارد و قاعده را لغو کند.',
+    rule: 'Six interaction variables, one producer.',
+    why: 'A component that assembles them by hand can publish a hover value and forget the idle one — or set background inline and cancel the rule that reads them.',
     guard: 'interaction-vars.test.ts',
   },
   {
-    rule: 'سطح، متغیر است؛ hex پخته ممنوع.',
-    why: 'مه از LADDER[level] ساخته می‌شد، پس صفحهٔ تم‌شده مهی داشت که تم را نادیده می‌گرفت.',
+    rule: 'A surface is a variable; a baked hex is not allowed.',
+    why: 'The mist was built from LADDER[level], so a themed page had a mist that ignored the theme.',
     guard: 'theme-reach.test.ts',
   },
   {
-    rule: 'آلفای متن مشتق می‌شود، نه انتخاب.',
-    why: 'tertiary با دست ۳٫۷:۱ بود در حالی که متنِ ۱۲٫۵px است. حالا کف از کاربردِ اعلام‌شده می‌آید و سخت‌گیرترین عدسی برنده است.',
+    rule: 'A text alpha is derived, not chosen.',
+    why: 'tertiary was hand-picked at 3.7:1 while it is 12.5px copy. Now the floor comes from the declared use and the stricter lens wins.',
     guard: 'contrast.test.ts',
   },
   {
-    rule: 'هر کامپوننت باید در جدولِ fixture باشد.',
-    why: 'استودیو، ماتریس و a11y sweep از همان جدول می‌خوانند. کامپوننتی که در آن نباشد، از هیچ‌کدام عبور نمی‌کند.',
+    rule: 'Every component must be in the fixture table.',
+    why: 'The studio, the matrix and the a11y sweep all read that one table. A component that is not in it passes through none of them.',
     guard: 'a11y-sweep.test.tsx',
   },
   {
-    rule: 'قرارداد از کد تولید می‌شود.',
-    why: 'DESIGN-CONTRACT.md یازده بار از موتور عقب افتاد. حالا بلوک‌های عددی‌اش تولید می‌شوند.',
+    rule: 'The contract is generated from the code.',
+    why: 'DESIGN-CONTRACT.md drifted eleven times behind the engine. Its numeric blocks are generated now.',
     guard: 'contract-md.test.ts',
   },
   {
-    rule: 'هیچ کامپوننتی رنگ نردبان را در style پخته نمی‌کند.',
-    why: 'یک hex جایی که یک متغیر لازم است، یعنی سطحی که تم را دنبال نمی‌کند.',
+    rule: 'No component bakes a ladder colour into a style.',
+    why: 'A hex where a variable belongs is a surface that does not follow a theme.',
     guard: 'theme-reach.test.ts',
   },
 ];
@@ -100,18 +100,18 @@ export function ContractPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title="قرارداد" note="هر قاعده، و نگهبانی که اجرایش می‌کند" role="work">
+      <Section title="Contract" note="Every rule, and the guard that holds it" role="work">
         <Prose>
-          قاعده‌ای که نگهبان ندارد، عادت است. این پروژه یک نقص را <b>هفت بار</b> دیده — پس هر قاعده
-          اینجا نامِ تستی را می‌آورد که با شکستنش سرخ می‌شود.
+          A rule with no guard is a habit. This project watched one defect appear <b>seven
+          times</b> — so every rule here names the test that goes red when it is broken.
         </Prose>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
             <thead>
               <tr style={{ opacity: 0.65 }}>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>قاعده</th>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>چرا</th>
-                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>نگهبان</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Rule</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Why</th>
+                <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>Guard</th>
               </tr>
             </thead>
             <tbody>
@@ -129,38 +129,38 @@ export function ContractPage() {
         </div>
       </Section>
 
-      <Section title="ناوردها — زنده" note="همین حالا، روی تمِ فعلی حساب می‌شود">
+      <Section title="Invariants — live" note="Computed now, on the current theme">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: `${S[4]}px` }}>
-          <Stat value={`${minStep.toFixed(2)}q`} label="کوچک‌ترین گام" tone={minStep < 1 ? 'warn' : undefined} />
-          <Stat value={floors.length ? `${floors.length}` : '0'} label="سلولِ کنتراست" />
-          <Stat value={ringOk ? '✓' : '✗'} label="حلقهٔ فوکوس" tone={ringOk ? undefined : 'warn'} />
+          <Stat value={`${minStep.toFixed(2)}q`} label="Smallest step" tone={minStep < 1 ? 'warn' : undefined} />
+          <Stat value={floors.length ? `${floors.length}` : '0'} label="Contrast cells" />
+          <Stat value={ringOk ? '✓' : '✗'} label="Focus ring" tone={ringOk ? undefined : 'warn'} />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px` }}>
-          <Check ok={minStep >= 1} label="هر گام ≥ ۱ کوانتوم" detail={`کوچک‌ترین ${minStep.toFixed(3)}q از ${PERCEPTUAL_QUANTUM}`} />
-          <Check ok={monotonic} label="نردبان صعودی است" detail={`${theme.ladder.length} پله`} />
-          <Check ok={levelsOrdered} label="ترتیب نقش‌ها صعودی است" detail={`${levels.length} نقش`} />
-          <Check ok={floorsOk} label="هر نقش روی هر سطح، هر دو کف را رعایت می‌کند" detail={`${floors.length} سلول`} />
-          <Check ok={ringOk} label="حلقهٔ فوکوس روی بوم دیده می‌شود" detail={`${contrastRatioHex(FOCUS_RING_COLOR, LADDER[0]).toFixed(2)}:1`} />
+          <Check ok={minStep >= 1} label="Every step ≥ 1 quantum" detail={`smallest ${minStep.toFixed(3)}q of ${PERCEPTUAL_QUANTUM}`} />
+          <Check ok={monotonic} label="The ladder rises" detail={`${theme.ladder.length} steps`} />
+          <Check ok={levelsOrdered} label="Roles are ordered" detail={`${levels.length} roles`} />
+          <Check ok={floorsOk} label="Every role holds both floors on every surface" detail={`${floors.length} cells`} />
+          <Check ok={ringOk} label="The focus ring is visible on the canvas" detail={`${contrastRatioHex(FOCUS_RING_COLOR, LADDER[0]).toFixed(2)}:1`} />
         </div>
         {!floorsOk && (
           <Prose>
-            <b style={{ color: 'var(--liminal-danger, #ba4646)' }}>سلول‌های سرخ‌شده:</b>{' '}
+            <b style={{ color: 'var(--liminal-danger, #ba4646)' }}>Cells below the floor:</b>{' '}
             {floors.filter((f) => !f.ok).map((f) => f.role).join(' · ')}
           </Prose>
         )}
       </Section>
 
-      <Section title="و آنچه هنوز نگهبان ندارد" note="صادقانه">
+      <Section title="And what has no guard yet" note="Honestly">
         <Prose>
-          بودجهٔ باندل اندازه‌گیری نشده. Storybook نیست. مستنداتِ هر کامپوننت به‌صورت جدولِ API نیست.
-          و ۴۶ کامپوننت از ۴۸ هنوز اندازه و واریانتِ کامل ندارند — چون قبل از تمام‌شدن موتور نوشته
-          شدند. این‌ها در رودمپ ثبت‌اند.
+          No bundle budget is measured. There is no Storybook. There is no per-component API
+          table. And 46 of 48 components still lack complete sizes and variants — because they were
+          written before the engine settled. All of it is recorded in the roadmap.
         </Prose>
         <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px` }}>
-          <Value label="بودجهٔ باندل در CI" value="ندارد" tone="warn" />
-          <Value label="Storybook" value="ندارد" tone="warn" />
-          <Value label="جدول API هر کامپوننت" value="ندارد" tone="warn" />
-          <Value label="کامپوننت‌های کامل (اندازه + واریانت + حالت)" value="۲ از ۴۸" tone="warn" />
+          <Value label="Bundle budget in CI" value="none" tone="warn" />
+          <Value label="Storybook" value="none" tone="warn" />
+          <Value label="Per-component API table" value="none" tone="warn" />
+          <Value label="Complete components (size + variant + state)" value="2 of 48" tone="warn" />
         </div>
       </Section>
     </div>

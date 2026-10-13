@@ -24,10 +24,10 @@ const pct = (n: number) => Math.round(n * 100);
 function ThemeControls({ compact }: { compact?: boolean } = {}) {
   const { state, set, reset, isSystem, theme } = useTheme();
   const sliders: { key: keyof typeof state; label: string; min: number; max: number; step: number; fmt: (v: number) => string }[] = [
-    { key: 'brandHue', label: 'هیو', min: 0, max: 360, step: 1, fmt: (v) => `${v}°` },
-    { key: 'brandChroma', label: 'کرما', min: 0, max: 0.06, step: 0.001, fmt: (v) => v.toFixed(3) },
-    { key: 'density', label: 'چگالی', min: 0.8, max: 1.4, step: 0.05, fmt: (v) => `${v.toFixed(2)}×` },
-    { key: 'motion', label: 'حرکت', min: 0, max: 2, step: 0.1, fmt: (v) => `${v.toFixed(1)}×` },
+    { key: 'brandHue', label: 'Hue', min: 0, max: 360, step: 1, fmt: (v) => `${v}°` },
+    { key: 'brandChroma', label: 'Chroma', min: 0, max: 0.06, step: 0.001, fmt: (v) => v.toFixed(3) },
+    { key: 'density', label: 'Density', min: 0.8, max: 1.4, step: 0.05, fmt: (v) => `${v.toFixed(2)}×` },
+    { key: 'motion', label: 'Motion', min: 0, max: 2, step: 0.1, fmt: (v) => `${v.toFixed(1)}×` },
   ];
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: `${S[3]}px`, flexWrap: 'wrap', minWidth: 0 }}>
@@ -53,7 +53,7 @@ function ThemeControls({ compact }: { compact?: boolean } = {}) {
       </div>
       {!isSystem && (
         <Button size="sm" variant="ghost" onClick={reset}>
-          بازگشت به تمِ سیستم
+          Reset to the system theme
         </Button>
       )}
     </div>
@@ -95,13 +95,13 @@ export function DocsShell({
       <div style={{ paddingBlock: `${S[2]}px` }}>
         <Input
           size="sm"
-          placeholder="جست‌وجوی کامپوننت…"
+          placeholder="Search components…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          aria-label="جست‌وجوی کامپوننت"
+          aria-label="Search components"
         />
       </div>
-      <SidebarSection label="صفحه‌ها">
+      <SidebarSection label="Pages">
         {PAGES.map((p) => (
           <NavItem
             key={p.page}
@@ -162,7 +162,7 @@ export function DocsShell({
           logo={
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: `${S[2]}px` }}>
               {narrow && (
-                <Btn onClick={() => setNavOpen((v) => !v)} active={navOpen} title="فهرست">
+                <Btn onClick={() => setNavOpen((v) => !v)} active={navOpen} title="Navigation">
                   ☰
                 </Btn>
               )}
@@ -192,7 +192,7 @@ export function DocsShell({
             cannot become a bottom bar, and AppShell has no rule for either —
             its class names are hooks with no CSS behind them. */}
         <aside
-          aria-label="فهرست"
+          aria-label="Navigation"
           style={{
             width: narrow ? '100%' : 248,
             flexShrink: 0,

@@ -25,15 +25,15 @@ export function ComponentsPage({ go }: { go: (name: string) => void }) {
   const groups = [...new Set(FIXTURES.map((f) => f.group))];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title="کامپوننت‌ها" note={`${FIXTURES.length} کامپوننت، زنده`} role="work">
+      <Section title="Components" note={`${FIXTURES.length} components, live`} role="work">
         <Prose>
-          هر کارت خودِ کامپوننت است، نه تصویرش. درصد، پوششِ حالت‌ها را نشان می‌دهد: چه چیزی سیستم
-          انتظار دارد و چه چیزی هست. عددِ سرخ یعنی چیزی کم است.
+          Every card IS the component, not a picture of it. The percentage is state coverage:
+          what the system expects against what exists. A red number means something is missing.
         </Prose>
       </Section>
 
       {groups.map((g) => (
-        <Section key={g} title={g} note={`${FIXTURES.filter((f) => f.group === g).length} کامپوننت`}>
+        <Section key={g} title={g} note={`${FIXTURES.filter((f) => f.group === g).length} components`}>
           <div
             style={{
               display: 'grid',
@@ -87,9 +87,9 @@ export function ComponentsPage({ go }: { go: (name: string) => void }) {
                     <Preview name={f.name} />
                   </span>
                   <span style={{ fontSize: 10, opacity: 0.6 }}>
-                    {f.sizes.length ? `${f.sizes.length} اندازه` : 'بدون اندازه'}
-                    {f.variants?.length ? ` · ${f.variants.length} واریانت` : ''}
-                    {missing.length ? ` · کم: ${missing.join(', ')}` : ''}
+                    {f.sizes.length ? `${f.sizes.length} sizes` : 'no sizes'}
+                    {f.variants?.length ? ` · ${f.variants.length} variants` : ''}
+                    {missing.length ? ` · missing: ${missing.join(', ')}` : ''}
                   </span>
                 </button>
               );
