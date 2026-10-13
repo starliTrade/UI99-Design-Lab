@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LIMINAL — the system</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#060709; color:rgba(255, 255, 255, 0.89);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1180px; margin:0 auto; padding:56px 24px 120px; }
+  header h1 { font-size:34px; margin:0 0 8px; font-weight:700; letter-spacing:-0.02em; }
+  header p { color:rgba(255, 255, 255, 0.79); margin:0 0 6px; max-width:70ch; }
+  .eyebrow { font-family:ui-monospace,monospace; font-size:11px; color:rgba(255, 255, 255, 0.79); letter-spacing:.1em; text-transform:uppercase; }
+  nav { display:flex; flex-wrap:wrap; gap:8px; margin:28px 0 8px; }
+  nav a { font-family:ui-monospace,monospace; font-size:12px; color:rgba(255, 255, 255, 0.79); text-decoration:none;
+    border:1px solid #0a0c0e; border-radius:999px; padding:4px 12px; }
+  nav a:hover { color:rgba(255, 255, 255, 0.89); border-color:rgba(255, 255, 255, 0.79); }
+  section { margin:56px 0 0; padding-top:28px; border-top:1px solid #0a0c0e; }
+  h2 { font-size:22px; margin:0 0 6px; font-weight:650; letter-spacing:-0.01em; }
+  h3 { font-size:15px; margin:22px 0 8px; font-weight:600; }
+  .lede { color:rgba(255, 255, 255, 0.79); margin:0 0 16px; max-width:78ch; }
+  .use { color:rgba(255, 255, 255, 0.79); font-size:12.5px; }
+  .note { color:rgba(255, 255, 255, 0.79); font-size:13.5px; border-inline-start:2px solid #0a0c0e; padding-inline-start:12px; margin:14px 0; max-width:78ch; }
+  .formula { font-family:ui-monospace,monospace; font-size:13px; background:#090b0d;
+    border:1px solid #0a0c0e; border-radius:10px; padding:12px 14px; margin:0 0 16px;
+    direction:ltr; text-align:left; color:rgba(255, 255, 255, 0.79); overflow-x:auto; }
+  .mono { font-family:ui-monospace,monospace; font-size:12.5px; }
+  .small { font-size:11.5px; }
+  table { width:100%; border-collapse:collapse; margin:0 0 8px; }
+  th { text-align:start; font-size:11.5px; font-weight:600; color:rgba(255, 255, 255, 0.79); text-transform:uppercase;
+    letter-spacing:.06em; padding:8px 10px; border-bottom:1px solid #0a0c0e; }
+  td { padding:9px 10px; border-bottom:1px solid #0a0c0e; vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  .sw { display:inline-block; width:18px; height:18px; border-radius:4px; border:1px solid #0a0c0e;
+    vertical-align:middle; margin-inline-end:8px; }
+  .sw.big { width:40px; height:40px; border-radius:8px; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin:0 0 20px; }
+  .stat { border:1px solid #0a0c0e; border-radius:12px; padding:14px; background:#090b0d; }
+  .stat .k { display:block; font-size:11.5px; color:rgba(255, 255, 255, 0.79); text-transform:uppercase; letter-spacing:.05em; }
+  .stat .v { display:block; font-family:ui-monospace,monospace; font-size:24px; color:rgba(255, 255, 255, 0.89); margin:4px 0; }
+  .stat .n { display:block; font-size:12px; color:rgba(255, 255, 255, 0.79); }
+  .row { display:flex; flex-wrap:wrap; gap:14px; }
+  .well { display:flex; gap:12px; align-items:center; border:1px solid #0a0c0e; border-radius:12px; padding:14px; background:#090b0d; flex:1 1 260px; }
+  .chip { display:inline-block; font-size:12px; font-weight:600; border-radius:999px; padding:3px 10px; }
+  .shadowbox { width:70px; height:44px; border-radius:10px; background:#0f1114;
+    display:flex; align-items:center; justify-content:center; font-size:12px; color:rgba(255, 255, 255, 0.79); }
+  .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:22px; }
+  .scale table { margin:0; }
+  .bar { display:inline-block; height:8px; background:rgba(255, 255, 255, 0.79); border-radius:2px; }
+  .rad { display:inline-block; width:22px; height:22px; border:1.5px solid rgba(255, 255, 255, 0.79); }
+  .mistcard { border:1px solid #0a0c0e; border-radius:12px; padding:14px; background:#090b0d; flex:1 1 300px; }
+  footer { color:rgba(255, 255, 255, 0.79); font-size:12px; margin-top:56px; border-top:1px solid #0a0c0e; padding-top:20px; }
+  code { font-family:ui-monospace,monospace; background:#090b0d; border:1px solid #0a0c0e; border-radius:4px; padding:1px 5px; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">LIMINAL · سیستم طراحی ادراکی</p>
+    <h1>سیستم، با فرمول‌هایش</h1>
+    <p>هر مقدار این صفحه <b>از موتور خوانده می‌شود</b>. هیچ هگز دست‌نویس، هیچ اندازه‌ی دست‌نویس، هیچ فرمول کپی‌شده‌ای در آن نیست.</p>
+    <p class="use">دلیلش ساده است: قرارداد یازده بار از موتور جدا شد چون یک نسخه‌ی دوم بود. این صفحه نمی‌تواند جدا شود — چون نسخه‌ی دوم نیست.</p>
+    <nav>
+      <a href="#ladder">نردبان</a><a href="#rim">ریم</a><a href="#borders">حاشیه</a>
+      <a href="#shadows">سایه</a><a href="#text">متن</a><a href="#semantics">معنایی</a>
+      <a href="#scales">مقیاس‌ها</a><a href="#mist">مه</a>
+    </nav>
+  </header>
+  
+<section id="ladder">
+  <h2>The tonal ladder</h2>
+  <p class="lede">
+  Nine surfaces, and the step between them is a <b>measured perceptual quantum</b>, not a taste.
+  Hue and chroma are held constant, so only lightness moves — which is what makes it a scale rather
+  than a palette. The previous hand-made ladder wandered 14° in hue and varied 2.3× in chroma.
+</p>
+  
+  <div class="formula">L(n) = 0.128 + n × 0.009475 &nbsp;|&nbsp; C = 0.0069 &nbsp;|&nbsp; H = 258.4°</div>
+  <div class="cards">
+    <div class="stat"><span class="k">q — the perceptual threshold</span><span class="v">0.0083</span><span class="n">50% detection, measured over 3 sessions (0.0083 / 0.0079 / 0.0089)</span></div>
+    <div class="stat"><span class="k">r — the reliable boundary</span><span class="v">0.0112</span><span class="n">95% detection · r/q = 1.35</span></div>
+    <div class="stat"><span class="k">realised step</span><span class="v">1.07q–1.27q</span><span class="n">⁨8-bit hex quantisation⁩ نمیتواند هدف را دقیق بزند؛ دنباله بهینه شده تا واریانس گام کمینه شود</span></div>
+  </div>
+  <table>
+    <thead><tr><th>step</th><th>hex</th><th>OKLCH L</th><th>ΔL</th><th>ΔL / q</th><th>role</th><th>where it is used</th></tr></thead>
+    <tbody>
+  <tr>
+    <td class="mono">S0</td>
+    <td><span class="sw" style="background:#060709"></span><span class="mono">#060709</span></td>
+    <td class="mono">0.128</td>
+    <td class="mono">—</td>
+    <td class="mono">—</td>
+    <td>Canvas</td>
+    <td class="use">the mother surface</td>
+  </tr>
+  <tr>
+    <td class="mono">S1</td>
+    <td><span class="sw" style="background:#07090b"></span><span class="mono">#07090b</span></td>
+    <td class="mono">0.138</td>
+    <td class="mono">0.0100</td>
+    <td class="mono">1.20q</td>
+    <td>Chrome</td>
+    <td class="use">nav bar, tabs, outer bars</td>
+  </tr>
+  <tr>
+    <td class="mono">S2</td>
+    <td><span class="sw" style="background:#090b0d"></span><span class="mono">#090b0d</span></td>
+    <td class="mono">0.148</td>
+    <td class="mono">0.0101</td>
+    <td class="mono">1.21q</td>
+    <td>Work Surface</td>
+    <td class="use">where panels and cards live</td>
+  </tr>
+  <tr>
+    <td class="mono">S3</td>
+    <td><span class="sw" style="background:#0b0d0f"></span><span class="mono">#0b0d0f</span></td>
+    <td class="mono">0.158</td>
+    <td class="mono">0.0095</td>
+    <td class="mono">1.15q</td>
+    <td>Nested Panel</td>
+    <td class="use">nested panels, inner cards</td>
+  </tr>
+  <tr>
+    <td class="mono">S4</td>
+    <td><span class="sw" style="background:#0d0f12"></span><span class="mono">#0d0f12</span></td>
+    <td class="mono">0.168</td>
+    <td class="mono">0.0099</td>
+    <td class="mono">1.19q</td>
+    <td>Raised Control</td>
+    <td class="use">raised controls, active inputs</td>
+  </tr>
+  <tr>
+    <td class="mono">S5</td>
+    <td><span class="sw" style="background:#0f1114"></span><span class="mono">#0f1114</span></td>
+    <td class="mono">0.177</td>
+    <td class="mono">0.0092</td>
+    <td class="mono">1.11q</td>
+    <td>Floating</td>
+    <td class="use">dropdowns, tooltips</td>
+  </tr>
+  <tr>
+    <td class="mono">S6</td>
+    <td><span class="sw" style="background:#111316"></span><span class="mono">#111316</span></td>
+    <td class="mono">0.186</td>
+    <td class="mono">0.0091</td>
+    <td class="mono">1.10q</td>
+    <td>Popover</td>
+    <td class="use">popover, large dropdown</td>
+  </tr>
+  <tr>
+    <td class="mono">S7</td>
+    <td><span class="sw" style="background:#131518"></span><span class="mono">#131518</span></td>
+    <td class="mono">0.195</td>
+    <td class="mono">0.0090</td>
+    <td class="mono">1.08q</td>
+    <td>Modal</td>
+    <td class="use">modal, drawer sheet</td>
+  </tr>
+  <tr>
+    <td class="mono">S8</td>
+    <td><span class="sw" style="background:#15171a"></span><span class="mono">#15171a</span></td>
+    <td class="mono">0.204</td>
+    <td class="mono">0.0089</td>
+    <td class="mono">1.07q</td>
+    <td>Ceiling</td>
+    <td class="use">the ceiling of allowed darkness</td>
+  </tr></tbody>
+  </table>
+  <h3>Sub-canvas wells</h3>
+  <p class="lede">Below the canvas. Two wells, for ambient and contact shadow — the only places the system goes darker than S0.</p>
+  <div class="row">
+    
+      <div class="well"><span class="sw big" style="background:#030406"></span>
+        <div><b>penumbra</b><div class="mono">#030406 · L 0.106</div>
+        <div class="use">the soft dark under a lifted surface</div></div>
+      </div>
+      <div class="well"><span class="sw big" style="background:#010203"></span>
+        <div><b>umbra</b><div class="mono">#010203 · L 0.082</div>
+        <div class="use">the tight dark where a surface touches the canvas</div></div>
+      </div>
+  </div>
+
+</section>
+<section id="rim">
+  <h2>The directional rim</h2>
+  <p class="lede">
+  A 180° linear gradient that fakes a light source above. Top is 100%, side 55%, bottom is the
+  lowest ladder step. It is what makes a surface read as <i>lifted</i> rather than merely lighter.
+</p>
+  
+  <div class="formula">top = ladder(host + 1) &nbsp;|&nbsp; side = ladder(host + 0.5) &nbsp;|&nbsp; bottom = ladder(host)</div>
+  <table>
+    <thead><tr><th>tier</th><th>top (100%)</th><th>side (55%)</th><th>bottom</th><th>where</th></tr></thead>
+    <tbody>
+  <tr>
+    <td class="mono">Rim 1</td>
+    <td><span class="sw" style="background:#080a0c"></span><span class="mono">#080a0c</span></td>
+    <td><span class="sw" style="background:#080a0c"></span><span class="mono">#080a0c</span></td>
+    <td><span class="sw" style="background:#07090b"></span><span class="mono">#07090b</span></td>
+    <td class="use">chrome, S1</td>
+  </tr>
+  <tr>
+    <td class="mono">Rim 2</td>
+    <td><span class="sw" style="background:#0b0d0f"></span><span class="mono">#0b0d0f</span></td>
+    <td><span class="sw" style="background:#0a0c0e"></span><span class="mono">#0a0c0e</span></td>
+    <td><span class="sw" style="background:#090b0d"></span><span class="mono">#090b0d</span></td>
+    <td class="use">work surface, S2</td>
+  </tr>
+  <tr>
+    <td class="mono">Rim 3</td>
+    <td><span class="sw" style="background:#0e1013"></span><span class="mono">#0e1013</span></td>
+    <td><span class="sw" style="background:#0d0f12"></span><span class="mono">#0d0f12</span></td>
+    <td><span class="sw" style="background:#0c0e10"></span><span class="mono">#0c0e10</span></td>
+    <td class="use">raised, S3 and above</td>
+  </tr></tbody>
+  </table>
+  <p class="note">On press, the gradient inverts to 180° reversed and the element moves down
+  <span class="mono">translateY(0.5px)</span> — the surface reads as physically pushed in.</p>
+
+</section>
+<section id="borders">
+  <h2>Borders</h2>
+  <p class="lede">
+  A border is not a colour. It is the <b>ladder step one half above its host</b>, so it is always
+  exactly as visible as the surface it sits on — never more, never less.
+</p>
+  
+  <div class="formula">border(role, kind) = ladder(host + 0.5) &nbsp; clamped to the ceiling</div>
+  <table>
+    <thead><tr><th>kind</th><th>on the work surface</th><th>on a menu</th><th>width</th><th>what it means</th></tr></thead>
+    <tbody>
+  <tr>
+    <td class="mono">hairline</td>
+    <td><span class="sw" style="background:#0a0c0e"></span><span class="mono">#0a0c0e</span></td>
+    <td><span class="sw" style="background:#101215"></span><span class="mono">#101215</span></td>
+    <td class="mono">1px</td>
+    <td class="use">the thinnest line the system draws — a seam, not a wall</td>
+  </tr>
+  <tr>
+    <td class="mono">edge</td>
+    <td><span class="sw" style="background:#0b0d0f"></span><span class="mono">#0b0d0f</span></td>
+    <td><span class="sw" style="background:#111316"></span><span class="mono">#111316</span></td>
+    <td class="mono">2px</td>
+    <td class="use">a boundary that should be seen — an input, a focused control</td>
+  </tr></tbody>
+  </table>
+  <p class="note">The clamp matters: without it, a border on the ceiling surface would ask for a
+  ladder step that does not exist and silently return the ceiling itself.</p>
+
+</section>
+<section id="shadows">
+  <h2>Shadows</h2>
+  <p class="lede">
+  Four elevations. Each is <b>two layers</b> — a wide soft one and a tight one — because a single
+  blur reads as a smudge rather than as a surface above another.
+</p>
+  
+  <table>
+    <thead><tr><th></th><th>rendered</th><th>value</th><th>where</th></tr></thead>
+    <tbody>
+  <tr>
+    <td class="mono">E1</td>
+    <td><div class="shadowbox" style="box-shadow:0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22)">E1</div></td>
+    <td class="mono small">0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22)</td>
+    <td class="use">dropdown, header</td>
+  </tr>
+  <tr>
+    <td class="mono">E2</td>
+    <td><div class="shadowbox" style="box-shadow:0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26)">E2</div></td>
+    <td class="mono small">0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26)</td>
+    <td class="use">featured card, popover</td>
+  </tr>
+  <tr>
+    <td class="mono">E3</td>
+    <td><div class="shadowbox" style="box-shadow:0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30)">E3</div></td>
+    <td class="mono small">0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30)</td>
+    <td class="use">modal, drawer sheet</td>
+  </tr>
+  <tr>
+    <td class="mono">E4</td>
+    <td><div class="shadowbox" style="box-shadow:0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)">E4</div></td>
+    <td class="mono small">0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)</td>
+    <td class="use">toast, max floating anchor</td>
+  </tr></tbody>
+  </table>
+
+</section>
+<section id="text">
+  <h2>Text hierarchy</h2>
+  <p class="lede">
+  Four levels, and the alpha of each is <b>derived from a declared-use floor</b> rather than picked.
+  Both lenses are applied — APCA and WCAG — and the stricter one wins. There is no code path that
+  returns a colour which fails its floor.
+</p>
+  
+  <div class="formula">alpha = the smallest value where APCA ≥ Lc floor <b>and</b> WCAG ≥ ratio floor</div>
+  <table>
+    <thead><tr><th>role</th><th>rendered</th><th>value</th><th>alpha</th><th>APCA floor</th><th>WCAG floor</th><th>declared use</th></tr></thead>
+    <tbody>
+  <tr>
+    <td class="mono">primary</td>
+    <td style="color:rgba(255, 255, 255, 0.89)">The quick brown fox</td>
+    <td class="mono">rgba(255, 255, 255, 0.89)</td>
+    <td class="mono">0.890</td>
+    <td class="mono">Lc 90</td>
+    <td class="mono">4.5:1</td>
+    <td class="use">body-preferred</td>
+  </tr>
+  <tr>
+    <td class="mono">secondary</td>
+    <td style="color:rgba(255, 255, 255, 0.79)">The quick brown fox</td>
+    <td class="mono">rgba(255, 255, 255, 0.79)</td>
+    <td class="mono">0.790</td>
+    <td class="mono">Lc 75</td>
+    <td class="mono">4.5:1</td>
+    <td class="use">body-minimum</td>
+  </tr>
+  <tr>
+    <td class="mono">tertiary</td>
+    <td style="color:rgba(255, 255, 255, 0.79)">The quick brown fox</td>
+    <td class="mono">rgba(255, 255, 255, 0.79)</td>
+    <td class="mono">0.790</td>
+    <td class="mono">Lc 75</td>
+    <td class="mono">4.5:1</td>
+    <td class="use">body-minimum</td>
+  </tr>
+  <tr>
+    <td class="mono">quaternary</td>
+    <td style="color:rgba(255, 255, 255, 0.44)">The quick brown fox</td>
+    <td class="mono">rgba(255, 255, 255, 0.44)</td>
+    <td class="mono">0.440</td>
+    <td class="mono">Lc 30</td>
+    <td class="mono">3:1</td>
+    <td class="use">text-minimum</td>
+  </tr></tbody>
+  </table>
+  <p class="note"><b>secondary and tertiary share an alpha</b> (0.790). Their hierarchy is size and
+  weight, not colour — the honest reading of a shared floor, chosen by eye from a live test.</p>
+  <p class="note"><b>quaternary is not for read copy.</b> Its floor is APCA Lc 30 — the minimum for
+  <i>any</i> text — and it measures 4.06:1 on the darkest surface, under the 4.5 AA asks for normal
+  text. Its legitimate uses are placeholders, disabled text and decorative separators.</p>
+
+</section>
+<section id="semantics">
+  <h2>Semantic roles</h2>
+  <p class="lede">
+  Four roles. <b>Only the hue is a convention</b> — everything else is derived: the fill's lightness
+  from the APCA floor against white text, the chroma from one value shared by all four, the text
+  colour from the same dual-lens derivation as the text hierarchy.
+</p>
+  
+  <div class="formula">hue is chosen &nbsp;|&nbsp; L(fill) from APCA &nbsp;|&nbsp; C is one value for all four &nbsp;|&nbsp; onSolid is white &nbsp;|&nbsp; both lenses must pass</div>
+  <table>
+    <thead><tr><th>role</th><th>rendered</th><th>fill</th><th>text on surface</th><th>hue</th><th>why it works without colour</th></tr></thead>
+    <tbody>
+  <tr>
+    <td class="mono">SUCCESS</td>
+    <td><span class="chip" style="background:var(--liminal-success, #00875d);color:#FFFFFF">✓ SUCCESS</span></td>
+    <td><span class="sw" style="background:var(--liminal-success, #00875d)"></span><span class="mono small">var(--liminal-success, #00875d)</span></td>
+    <td style="color:#54e5aa">Readable</td>
+    <td class="mono">162.9</td>
+    <td class="use">glyph <b>✓</b> — meaning survives colour blindness</td>
+  </tr>
+  <tr>
+    <td class="mono">WARNING</td>
+    <td><span class="chip" style="background:var(--liminal-warning, #946a00);color:#FFFFFF">! WARNING</span></td>
+    <td><span class="sw" style="background:var(--liminal-warning, #946a00)"></span><span class="mono small">var(--liminal-warning, #946a00)</span></td>
+    <td style="color:#ffc348">Readable</td>
+    <td class="mono">81.4</td>
+    <td class="use">glyph <b>!</b> — meaning survives colour blindness</td>
+  </tr>
+  <tr>
+    <td class="mono">DANGER</td>
+    <td><span class="chip" style="background:var(--liminal-danger, #ba4646);color:#FFFFFF">× DANGER</span></td>
+    <td><span class="sw" style="background:var(--liminal-danger, #ba4646)"></span><span class="mono small">var(--liminal-danger, #ba4646)</span></td>
+    <td style="color:#ffbdb6">Readable</td>
+    <td class="mono">23.5</td>
+    <td class="use">glyph <b>×</b> — meaning survives colour blindness</td>
+  </tr>
+  <tr>
+    <td class="mono">INFO</td>
+    <td><span class="chip" style="background:var(--liminal-info, #3271c8);color:#FFFFFF">i INFO</span></td>
+    <td><span class="sw" style="background:var(--liminal-info, #3271c8)"></span><span class="mono small">var(--liminal-info, #3271c8)</span></td>
+    <td style="color:#a4d1ff">Readable</td>
+    <td class="mono">257.5</td>
+    <td class="use">glyph <b>i</b> — meaning survives colour blindness</td>
+  </tr></tbody>
+  </table>
+
+</section>
+<section id="scales">
+  <h2>The scales</h2>
+  <p class="lede">
+  Every geometric value the system decides. Nothing here is a literal in a component — there is a
+  lint rule that fails the build if one appears.
+</p>
+  
+  <div class="grid2">
+    
+  <div class="scale"><h3>Spacing</h3><p class="use">atom 4px · below it, elements read as touching</p><table><tbody><tr><td class="mono">SPACING[0]</td><td class="mono">2px</td><td><span class="bar" style="width:2px"></span></td><td class="use">sub-atom: optical correction only, never separation</td></tr><tr><td class="mono">SPACING[1]</td><td class="mono">4px</td><td><span class="bar" style="width:4px"></span></td><td class="use"></td></tr><tr><td class="mono">SPACING[2]</td><td class="mono">8px</td><td><span class="bar" style="width:8px"></span></td><td class="use"></td></tr><tr><td class="mono">SPACING[3]</td><td class="mono">12px</td><td><span class="bar" style="width:12px"></span></td><td class="use"></td></tr><tr><td class="mono">SPACING[4]</td><td class="mono">16px</td><td><span class="bar" style="width:16px"></span></td><td class="use"></td></tr><tr><td class="mono">SPACING[5]</td><td class="mono">24px</td><td><span class="bar" style="width:24px"></span></td><td class="use"></td></tr><tr><td class="mono">SPACING[6]</td><td class="mono">32px</td><td><span class="bar" style="width:32px"></span></td><td class="use"></td></tr><tr><td class="mono">SPACING[7]</td><td class="mono">48px</td><td><span class="bar" style="width:48px"></span></td><td class="use"></td></tr><tr><td class="mono">SPACING[8]</td><td class="mono">64px</td><td><span class="bar" style="width:64px"></span></td><td class="use"></td></tr><tr><td class="mono">SPACING[9]</td><td class="mono">96px</td><td><span class="bar" style="width:96px"></span></td><td class="use"></td></tr></tbody></table></div>
+    
+  <div class="scale"><h3>Radius</h3><p class="use">concentric law: inner radius = outer − padding</p><table><tbody><tr><td class="mono">4</td><td class="mono">4px</td><td><span class="rad" style="border-radius:4px"></span></td></tr><tr><td class="mono">6</td><td class="mono">6px</td><td><span class="rad" style="border-radius:6px"></span></td></tr><tr><td class="mono">8</td><td class="mono">8px</td><td><span class="rad" style="border-radius:8px"></span></td></tr><tr><td class="mono">10</td><td class="mono">10px</td><td><span class="rad" style="border-radius:10px"></span></td></tr><tr><td class="mono">12</td><td class="mono">12px</td><td><span class="rad" style="border-radius:12px"></span></td></tr><tr><td class="mono">16</td><td class="mono">16px</td><td><span class="rad" style="border-radius:16px"></span></td></tr><tr><td class="mono">20</td><td class="mono">20px</td><td><span class="rad" style="border-radius:20px"></span></td></tr><tr><td class="mono">24</td><td class="mono">24px</td><td><span class="rad" style="border-radius:20px"></span></td></tr><tr><td class="mono">chip</td><td class="mono">6px</td><td><span class="rad" style="border-radius:6px"></span></td></tr><tr><td class="mono">control</td><td class="mono">10px</td><td><span class="rad" style="border-radius:10px"></span></td></tr><tr><td class="mono">card</td><td class="mono">16px</td><td><span class="rad" style="border-radius:16px"></span></td></tr><tr><td class="mono">panel</td><td class="mono">20px</td><td><span class="rad" style="border-radius:20px"></span></td></tr><tr><td class="mono">container</td><td class="mono">24px</td><td><span class="rad" style="border-radius:20px"></span></td></tr><tr><td class="mono">full</td><td class="mono">9999px</td><td><span class="rad" style="border-radius:20px"></span></td></tr></tbody></table></div>
+    
+  <div class="scale"><h3>Control heights</h3><p class="use">md IS the accessible minimum, which is why the two names agree</p><table><tbody><tr><td class="mono">sm</td><td class="mono">32px</td><td class="use"></td></tr><tr><td class="mono">md</td><td class="mono">44px</td><td class="use">= TARGET.min (WCAG 2.5.5 AAA)</td></tr><tr><td class="mono">lg</td><td class="mono">52px</td><td class="use"></td></tr></tbody></table></div>
+    
+  <div class="scale"><h3>Type</h3><p class="use">ratio 1.2 · base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)</p><table><tbody><tr><td class="mono">1</td><td class="mono">11.11px</td><td style="font-size:11.11px;line-height:1.1">Aa</td><td class="use">meta, quaternary · lh 1.45 · ls +0.04em</td></tr><tr><td class="mono">2</td><td class="mono">13.33px</td><td style="font-size:13.33px;line-height:1.1">Aa</td><td class="use">label, tertiary · lh 1.5 · ls +0.01em</td></tr><tr><td class="mono">3</td><td class="mono">16px</td><td style="font-size:16px;line-height:1.1">Aa</td><td class="use">body, secondary · lh 1.6 · ls 0</td></tr><tr><td class="mono">4</td><td class="mono">19.2px</td><td style="font-size:19.2px;line-height:1.1">Aa</td><td class="use">lead, h4 · lh 1.35 · ls -0.005em</td></tr><tr><td class="mono">5</td><td class="mono">23.04px</td><td style="font-size:23.04px;line-height:1.1">Aa</td><td class="use">h3 · lh 1.25 · ls -0.01em</td></tr><tr><td class="mono">6</td><td class="mono">27.65px</td><td style="font-size:27.65px;line-height:1.1">Aa</td><td class="use">h2 · lh 1.2 · ls -0.015em</td></tr><tr><td class="mono">7</td><td class="mono">33.18px</td><td style="font-size:33.18px;line-height:1.1">Aa</td><td class="use">h1 · lh 1.15 · ls -0.02em</td></tr><tr><td class="mono">8</td><td class="mono">39.81px</td><td style="font-size:39.81px;line-height:1.1">Aa</td><td class="use">display · lh 1.1 · ls -0.025em</td></tr></tbody></table></div>
+    
+  <div class="scale"><h3>Motion</h3><p class="use">durations and easings</p><table><tbody><tr><td class="mono">instant</td><td class="mono">100ms</td><td class="use"></td></tr><tr><td class="mono">fast</td><td class="mono">150ms</td><td class="use"></td></tr><tr><td class="mono">normal</td><td class="mono">200ms</td><td class="use"></td></tr><tr><td class="mono">slow</td><td class="mono">250ms</td><td class="use"></td></tr><tr><td class="mono">slower</td><td class="mono">350ms</td><td class="use"></td></tr><tr><td class="mono">dramatic</td><td class="mono">500ms</td><td class="use"></td></tr></tbody></table></div>
+    
+  <div class="scale"><h3>Extended spectrum</h3><p class="use">12 hues, calibrated</p><table><tbody><tr><td class="mono">15</td><td><span class="sw" style="background:#E88A93"></span></td><td class="mono small">#E88A93</td><td class="use">Ruby</td></tr><tr><td class="mono">40</td><td><span class="sw" style="background:#E8A87C"></span></td><td class="mono small">#E8A87C</td><td class="use">Coral</td></tr><tr><td class="mono">75</td><td><span class="sw" style="background:#D9BE6E"></span></td><td class="mono small">#D9BE6E</td><td class="use">Amber</td></tr><tr><td class="mono">110</td><td><span class="sw" style="background:#A8CC74"></span></td><td class="mono small">#A8CC74</td><td class="use">Lime</td></tr><tr><td class="mono">145</td><td><span class="sw" style="background:#74CE8E"></span></td><td class="mono small">#74CE8E</td><td class="use">Emerald</td></tr><tr><td class="mono">175</td><td><span class="sw" style="background:#5FCDBB"></span></td><td class="mono small">#5FCDBB</td><td class="use">Teal</td></tr><tr><td class="mono">200</td><td><span class="sw" style="background:#56C6E0"></span></td><td class="mono small">#56C6E0</td><td class="use">Cyan</td></tr><tr><td class="mono">230</td><td><span class="sw" style="background:#6FA8EC"></span></td><td class="mono small">#6FA8EC</td><td class="use">Sapphire</td></tr><tr><td class="mono">260</td><td><span class="sw" style="background:#8B9CF0"></span></td><td class="mono small">#8B9CF0</td><td class="use">Indigo</td></tr><tr><td class="mono">290</td><td><span class="sw" style="background:#A98BEA"></span></td><td class="mono small">#A98BEA</td><td class="use">Violet</td></tr><tr><td class="mono">320</td><td><span class="sw" style="background:#C983D6"></span></td><td class="mono small">#C983D6</td><td class="use">Fuchsia</td></tr><tr><td class="mono">350</td><td><span class="sw" style="background:#E083AE"></span></td><td class="mono small">#E083AE</td><td class="use">Rose</td></tr></tbody></table></div>
+  </div>
+
+</section>
+<section id="mist">
+  <h2>Mist</h2>
+  <p class="lede">
+  The surface treatment for floating elements. It is <b>derived from float height</b> — the further
+  a surface is from the canvas, the more fog it collects. There is no blur: <code>⁨backdrop-filter⁩</code>
+  was measured at <b>35.7×</b> the compositing cost for no visible gain on near-uniform dark.
+</p>
+  
+  <div class="formula">height = ladder level − canvas &nbsp;|&nbsp; every mist value is a function of height</div>
+  <div class="row">
+    <div class="mistcard">
+        <b>menu</b>
+        <div class="mono small">level 5 · height 5 · 5.00q</div>
+        <div class="mono small">fill #0f1114 α 0.715</div>
+        <div class="mono small">ring α 0.180 · edge α 0.375</div>
+        <div class="mono small">light: blur 5 α 0.047 · blur 15 α 0.038 · blur 37 α 0.030 · blur 78 α 0.022</div>
+      </div><div class="mistcard">
+        <b>toast</b>
+        <div class="mono small">level 8 · height 8 · 8.00q</div>
+        <div class="mono small">fill #15171a α 0.760</div>
+        <div class="mono small">ring α 0.204 · edge α 0.420</div>
+        <div class="mono small">light: blur 6 α 0.060 · blur 19 α 0.049 · blur 48 α 0.038 · blur 100 α 0.028</div>
+      </div>
+  </div>
+
+</section>
+  <footer>
+    تولید‌شده توسط <code>scripts/gen-system-page.ts</code> · بدون شبکه · بدون وابستگی ·
+    9 سطح · 4 ارتفاع · 12 فام
+  </footer>
+</div>
+</body>
+</html>
