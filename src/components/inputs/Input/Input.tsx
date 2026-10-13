@@ -239,8 +239,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     boxSizing: 'border-box',
     width: '100%',
     transition: LiminalMotionEngine.TRANSITION.slow,
-    background,
-    border,
+    // NO `background`. The layer owns it — see data-liminal-surface.
+    // An inline background beats the CSS rule, so this line cancelled the
+    // hover the component had just opted into. Fifth time this session.
+    // Only the width and style. `borderColor` belongs to the layer, which
+    // changes it on focus — an inline shorthand would cancel that too.
+    borderWidth: 1,
+    borderStyle: 'solid',
     opacity: disabled ? 0.5 : 1,
     cursor: disabled ? 'not-allowed' : 'text',
   } as CSSProperties;
