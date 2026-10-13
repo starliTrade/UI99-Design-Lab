@@ -112,8 +112,16 @@
  * browser's answer, and it is what replaces the JS focus tracking in the
  * input components.
  */
+/* The base half. Every other opt-in pattern has one; this one did not, which is
+ * the same defect that already caused two bugs. And its variable had no
+ * fallback, so a component that opted in and forgot the var got
+ * `background: transparent` — a control that vanished on focus. */
+[data-liminal-focus-within] {
+  background: var(--liminal-surface-idle, transparent);
+}
+
 [data-liminal-focus-within]:focus-within {
-  background: var(--liminal-surface-focus);
+  background: var(--liminal-surface-focus, var(--liminal-surface-idle, transparent));
   border-color: var(--liminal-border-focus, var(--liminal-brand, #E9ECF2));
 }
 

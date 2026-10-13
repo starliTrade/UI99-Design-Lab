@@ -418,20 +418,12 @@
 /* The responsive sidebar rule now lives in Sidebar.tsx, where it can read the
    derived breakpoint from the engine instead of hard-coding a number. */
 
-@keyframes liminal-skeleton-pulse {
-  0%, 100% {
-    background-color: #0a0b10; /* S2 */
-  }
-  50% {
-    background-color: #0b0d11; /* S2.5 */
-  }
-}
+/* The skeleton pulse is defined ONCE, in liminal-motion.css, from the ladder's
+ * own variables. It was defined here too — with `#0a0b10`/`#0b0d11`, the hexes
+ * of a ladder that was deleted. Because this file comes after the @import, the
+ * WRONG copy won: the skeleton animated between two colours that are not in the
+ * system, and it did not follow a theme. */
 
-@keyframes liminal-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* `liminal-spin` is defined in liminal-motion.css, with the rest of the
+ * keyframes. It was defined here too — identically, so nothing broke, but a
+ * second definition is a second thing to keep in step. */

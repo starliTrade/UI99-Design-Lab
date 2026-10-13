@@ -27,7 +27,7 @@ describe('the interaction layer — every opt-in pattern has both halves', () =>
   const patterns = [
     { attr: 'data-liminal-surface', base: 'background', hover: 'background' },
     { attr: 'data-liminal-hover-color', base: 'color', hover: 'color' },
-    { attr: 'data-liminal-focus-within', base: 'background', hover: null },
+    { attr: 'data-liminal-focus-within', base: 'background', hover: 'background' },
     { attr: 'data-liminal-hover-reveal', base: null, hover: null },
   ];
 
@@ -40,7 +40,10 @@ describe('the interaction layer — every opt-in pattern has both halves', () =>
   it('gives every pattern that sets a property on hover a base rule too', () => {
     // Without the base rule the component has to set the property itself, and
     // an inline style then cancels the hover — which is exactly what happened.
-    for (const p of patterns.filter((x) => x.hover)) {
+    // EVERY pattern, not only the ones with a hover rule. The filter that was
+    // here excluded `focus-within` from the very check it describes — so the
+    // pattern with no base half was the one the test could not see.
+    for (const p of patterns.filter((x) => x.base)) {
       const baseRule = new RegExp(`\\[${p.attr}\\]\\s*\\{[^}]*${p.base}`, 's');
       expect(baseRule.test(css), `${p.attr} has a hover rule but no base rule`).toBe(true);
     }
@@ -80,5 +83,50 @@ describe('the interaction layer — a component that opts in must not set the pr
       expect(c.html, `${c.name} does not opt in`).toContain(c.attr);
       expect(c.forbidden.test(c.html), `${c.name} still sets the property inline`).toBe(false);
     }
+  });
+});
+
+
+describe('the stylesheets — nothing is defined twice', () => {
+  // The skeleton pulse was defined in TWO places: `liminal-motion.css` from the
+  // ladder's variables, and `src/index.css` with `#0a0b10`/`#0b0d11` — the
+  // hexes of a ladder that had been deleted. Because `index.css` comes after
+  // the @import, the WRONG copy won, and the skeleton animated between two
+  // colours that are not in the system.
+  //
+  // The guard that existed checked the generated block and the KEYWORD
+  // `@keyframes`, not the hand-written CSS below it. This checks the names.
+  const CSS = resolve(process.cwd(), 'src');
+  const read = (rel: string) => readFileSync(resolve(CSS, rel), 'utf8');
+
+  const files = [
+    'index.css',
+    'engine/liminal-motion.css',
+    'engine/liminal-interaction.css',
+    'engine/liminal-mist.css',
+    'engine/liminal-bidi.css',
+    'engine/liminal-fonts.css',
+    'engine/liminal-forced-colors.css',
+    'engine/liminal-tailwind.css',
+  ];
+
+  it('no @keyframes name appears in more than one stylesheet', () => {
+    const seen = new Map<string, string>();
+    const dupes: string[] = [];
+    for (const f of files) {
+      for (const m of read(f).matchAll(/@keyframes\s+([A-Za-z0-9_-]+)/g)) {
+        const name = m[1];
+        if (seen.has(name)) dupes.push(`${name}: ${seen.get(name)} and ${f}`);
+        else seen.set(name, f);
+      }
+    }
+    expect(dupes).toEqual([]);
+  });
+
+  it('and the generated block carries no keyframes at all', () => {
+    // Keyframes belong in the layer, where they can read the variables.
+    const index = read('index.css');
+    const generated = index.slice(index.indexOf(':root'), index.indexOf('.dark'));
+    expect(generated).not.toContain('@keyframes');
   });
 });
