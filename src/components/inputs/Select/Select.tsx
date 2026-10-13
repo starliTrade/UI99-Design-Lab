@@ -301,6 +301,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
       )}
 
       <div
+        // The wrapper sets `--liminal-surface-hover` and never opted in, so the
+        // layer's hover rule could not reach it: the variable was published and
+        // nothing read it. `data-liminal-focus-within` gives focus; this is what
+        // gives hover and the idle fill.
+        data-liminal-surface=""
         data-liminal-focus-within=""
         data-liminal-disabled={disabled ? "" : undefined}
         style={containerStyle}

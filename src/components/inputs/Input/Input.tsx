@@ -507,6 +507,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
 
       <div
         data-liminal-disabled={disabled ? "" : undefined}
+        // The wrapper sets `--liminal-surface-hover` and never opted in, so the
+        // layer's hover rule could not reach it: the variable was published and
+        // nothing read it. `data-liminal-focus-within` gives focus; this is what
+        // gives hover and the idle fill.
+        data-liminal-surface=""
         data-liminal-focus-within=""
         style={fieldWrapperStyle}
       >
