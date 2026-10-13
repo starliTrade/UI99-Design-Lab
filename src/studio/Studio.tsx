@@ -1,48 +1,79 @@
-import React, { useState, useMemo } from 'react';
-import { FIXTURES, coverage } from '../components/__matrix__/fixtures';
-import type { ComponentFixture } from '../components/__matrix__/fixtures';
-import { LADDER, getTextStyle } from '../engine/spec-engine';
-import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
-import { LiminalMotionEngine } from '../engine/liminal-motion-engine';
-import { useMediaQuery } from '../engine/liminal-hooks';
-
 /**
  * LIMINAL · STUDIO
  * «صفحه‌ای که ماتریس نمی‌تواند بسازد.»
  *
- * The matrix renders every state to static markup, which is enough to see a
- * component and not enough to TOUCH one. Hover and focus are CSS; a prop change
- * is a re-render; neither exists in a still frame. And this session found five
- * defects in exactly the places a still frame is blind to.
+ * The matrix renders every state to static markup. That is enough to see a
+ * component and not enough to TOUCH one: hover and focus are CSS, a prop change
+ * is a re-render, and neither exists in a still frame. Five defects in this
+ * project were found in exactly the places a still frame is blind to.
  *
- * So the studio is a live app, not a generated page: pick a component, change
- * its props, see the result, read the JSX that produced it. It is fed by the
- * SAME fixture table the matrix uses, so adding a component is still one row.
+ * So the studio is a live app, not a generated page. It answers four questions
+ * the eye cannot:
  *
- * It lives in the demo rather than in the library, because it is a tool for
- * reviewing the library and not a part of it.
+ *   what does the engine publish for THIS element?   read from the DOM
+ *   does that surface hold the contract's floors?    derived, both lenses
+ *   what does a theme actually change?               the tool re-themes itself
+ *   what is missing?                                 measured against expected
+ *
+ * It is fed by the SAME fixture table the matrix uses, so adding a component is
+ * still one row. And it is built from the engine's own roles — a tool that
+ * hand-picked its surfaces could not audit a system that forbids hand-picking.
  */
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { FIXTURES, coverage } from '../components/__matrix__/fixtures';
+import type { ComponentFixture } from '../components/__matrix__/fixtures';
+import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
+import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
+import { resolveSurface } from '../engine/liminal-surface';
+import { SYSTEM_THEME, STUDIO_THEME_SCOPE, useStudioTheme, type StudioThemeState } from './theme';
+import {
+  Card,
+  CodePanel,
+  ContractChecks,
+  CoveragePanel,
+  EngineReadout,
+  ThemeBar,
+  readEngineSnapshot,
+  type EngineSnapshot,
+} from './panels';
 
-const TEXT = getTextStyle('primary', 2).color as string;
-const DIM = getTextStyle('secondary', 2).color as string;
-const FAINT = getTextStyle('tertiary', 2).color as string;
 const S = L.SPACING;
 const R = L.RADIUS;
 
-/** The props a consumer can turn, and what turning them does. */
-interface Control {
-  name: string;
-  values: string[];
-}
+const CHROME = resolveSurface({ role: 'chrome', interactive: false });
+const WORK = resolveSurface({ role: 'work', interactive: false });
+const WELL = resolveSurface({ role: 'well', interactive: false });
+
+/** The states the harness can force, and the label a reviewer reads. */
+const FORCED = [
+  { id: 'none', label: 'آزاد' },
+  { id: 'hover', label: 'hover' },
+  { id: 'focus', label: 'focus' },
+  { id: 'active', label: 'فشرده' },
+  { id: 'disabled', label: 'غیرفعال' },
+] as const;
+type ForcedId = (typeof FORCED)[number]['id'];
 
 /**
- * The controls, derived from what the fixture says the component HAS.
+ * THE FORCING HARNESS.
  *
- * Not hand-written per component: a component that gains a size gains a
- * control, and one that has none does not grow a dead one.
+ * `:hover`, `:focus-visible` and `:active` cannot be set from JavaScript, and a
+ * reviewer cannot hold a mouse over one component while reading another. So the
+ * harness applies the LAYER'S OWN DECLARATIONS through a class. Identical
+ * declarations — only the trigger differs. It is a harness, not behaviour: the
+ * component still does the real thing when you use it.
  */
-function controlsFor(f: ComponentFixture): Control[] {
-  const out: Control[] = [];
+const FORCE_CSS = `
+.force-hover [data-liminal-surface] { background: var(--liminal-surface-hover); }
+.force-hover [data-liminal-hover-color] { color: var(--liminal-hover-color); }
+.force-active [data-liminal-surface] { background: var(--liminal-surface-active); transform: translateY(0.5px); }
+.force-focus [data-liminal-surface]:not([data-liminal-focus-within]) { outline: 2px solid var(--liminal-brand, #E9ECF2); outline-offset: 2px; }
+.force-focus [data-liminal-focus-within] { background: var(--liminal-surface-focus, var(--liminal-surface-idle)); border-color: var(--liminal-border-focus, var(--liminal-brand, #E9ECF2)); }
+.force-disabled { opacity: 0.25; pointer-events: none; }
+`;
+
+function controlsFor(f: ComponentFixture): { name: string; values: string[] }[] {
+  const out: { name: string; values: string[] }[] = [];
   if (f.sizes.length) out.push({ name: 'size', values: f.sizes });
   if (f.states.length) out.push({ name: 'state', values: f.states });
   if (f.variants?.length) out.push({ name: 'variant', values: f.variants });
@@ -52,25 +83,59 @@ function controlsFor(f: ComponentFixture): Control[] {
 const pct = (n: number) => Math.round(n * 100);
 
 export function Studio() {
+  const [theme, setTheme] = useState<StudioThemeState>({ ...SYSTEM_THEME });
+  const live = useStudioTheme(theme);
+
   const groups = useMemo(() => [...new Set(FIXTURES.map((f) => f.group))], []);
   const [selected, setSelected] = useState<string>(FIXTURES[0].name);
-  const [size, setSize] = useState<string | undefined>(undefined);
-  const [state, setState] = useState<string | undefined>(undefined);
-  const [variant, setVariant] = useState<string | undefined>(undefined);
-  const [showCode, setShowCode] = useState(true);
-  // Mobile-first: the sidebar is a column on a wide screen and a horizontal
-  // strip on a narrow one. A fixed 220px column is what breaks a phone layout,
-  // and this is the tool we audit the components with — so it has to survive
-  // the same widths they do.
-  const wide = useMediaQuery('(min-width: 860px)');
+  const [size, setSize] = useState<string | undefined>();
+  const [state, setState] = useState<string | undefined>();
+  const [variant, setVariant] = useState<string | undefined>();
+  const [forced, setForced] = useState<ForcedId>('none');
 
   const fixture = FIXTURES.find((f) => f.name === selected) ?? FIXTURES[0];
   const controls = controlsFor(fixture);
   const activeSize = size && fixture.sizes.includes(size) ? size : fixture.sizes[0];
   const activeState = state && fixture.states.includes(state) ? state : fixture.states[0];
   const activeVariant = variant && fixture.variants?.includes(variant) ? variant : fixture.variants?.[0];
-  const cov = coverage(fixture);
-  const missing = fixture.expected.filter((s) => !fixture.states.includes(s));
+
+  const rendered = fixture.render(activeState, activeSize, activeVariant);
+
+  // ── what the engine published, read off the element ──────────────────────
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [snapshot, setSnapshot] = useState<EngineSnapshot | null>(null);
+  useEffect(() => {
+    const host = previewRef.current;
+    if (!host) return;
+    const el =
+      host.querySelector<HTMLElement>('[data-liminal-surface]') ??
+      host.querySelector<HTMLElement>('[data-liminal-focus-within]') ??
+      host.querySelector<HTMLElement>('[data-liminal-focusable]');
+    setSnapshot(readEngineSnapshot(el, live.ladder));
+    // NOT `rendered`: `fixture.render(...)` returns a fresh element every render,
+    // so depending on it re-runs the effect on every render, which sets state,
+    // which renders again — an infinite loop. The inputs that actually change
+    // what is on screen are the props and the theme.
+  }, [selected, activeState, activeSize, activeVariant, forced, live.ladder]);
+
+  /**
+   * The surface the text actually sits on.
+   *
+   * Not always a ladder step: a primary Button's fill is the brand, and a
+   * semantic Alert's is its own hue. So the resolved level is used when the
+   * engine named one, and the element's own computed fill when it did not —
+   * otherwise the contract panel would quietly check the wrong surface, which
+   * is worse than not checking.
+   */
+  const surfaceHex = useMemo(() => {
+    if (snapshot?.level != null) return live.ladder[Math.round(snapshot.level)];
+    const solid = snapshot?.background.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (solid && !snapshot?.background.includes('0, 0, 0, 0')) {
+      const hex = (n: string) => Number(n).toString(16).padStart(2, '0');
+      return `#${hex(solid[1])}${hex(solid[2])}${hex(solid[3])}`;
+    }
+    return live.ladder[0];
+  }, [snapshot, live.ladder]);
 
   const pick = (name: string) => {
     setSelected(name);
@@ -78,149 +143,208 @@ export function Studio() {
     setSize(f.sizes[0]);
     setState(f.states[0]);
     setVariant(f.variants?.[0]);
+    setForced('none');
   };
-
-  const rendered = fixture.render(activeState, activeSize, activeVariant);
 
   return (
     <div
-      style={{
-        display: 'flex',
-        flexDirection: wide ? 'row' : 'column',
-        gap: `${S[4]}px`,
-        alignItems: 'stretch',
-        width: '100%',
-      }}
+      data-liminal-theme={STUDIO_THEME_SCOPE}
+      style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, width: '100%', minWidth: 0 }}
     >
-      {/* ── the sidebar ─────────────────────────────────────────────────── */}
-      <nav
-        aria-label="کامپوننت‌ها"
+      {/* The generated block, scoped by the attribute above. */}
+      <style>{live.css}</style>
+      <style>{FORCE_CSS}</style>
+
+      <ThemeBar state={theme} theme={live} onChange={setTheme} />
+
+      {/* A flex row that WRAPS, not a media query.
+       *
+       * The studio lives inside the demo's own frame, so the viewport width says
+       * nothing about the room it has: at a 1440px window the frame is about
+       * 600px wide, and a `min-width: 900px` query laid the panels out for a
+       * width they never had. `flex-wrap` asks the container, which is the only
+       * thing that knows. */}
+      <div
         style={{
-          width: wide ? 220 : '100%',
-          flexShrink: 0,
-          border: `1px solid ${LADDER[3]}`,
-          borderRadius: `${R.card}px`,
-          padding: `${S[3]}px`,
-          background: LADDER[1],
-          maxHeight: wide ? '70vh' : '34vh',
-          overflowY: 'auto',
-          boxSizing: 'border-box',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: `${S[4]}px`,
+          alignItems: 'flex-start',
+          minWidth: 0,
         }}
       >
-        {groups.map((g) => (
-          <div key={g} style={{ marginBottom: `${S[3]}px` }}>
-            <div style={{ fontSize: 11, color: FAINT, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: `${S[1]}px` }}>
-              {g}
-            </div>
-            {FIXTURES.filter((f) => f.group === g).map((f) => {
-              const on = f.name === selected;
-              const c = pct(coverage(f));
-              return (
-                <button
-                  key={f.name}
-                  type="button"
-                  onClick={() => pick(f.name)}
-                  aria-current={on ? 'true' : undefined}
-                  style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: `${S[2]}px`,
-                    width: '100%', textAlign: 'start', border: '1px solid transparent',
-                    borderRadius: `${R.chip}px`, padding: `4px ${S[2]}px`, marginBottom: 2,
-                    background: on ? LADDER[3] : 'transparent', color: on ? TEXT : DIM,
-                    font: 'inherit', fontSize: 13, cursor: 'pointer',
-                  }}
-                >
-                  <span>{f.name}</span>
-                  <span style={{ fontFamily: 'ui-monospace,monospace', fontSize: 10.5, color: c === 100 ? '#7fd0a0' : '#e0b070' }}>{c}%</span>
-                </button>
-              );
-            })}
-          </div>
-        ))}
-      </nav>
-
-      {/* ── the component ───────────────────────────────────────────────── */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <header style={{ display: 'flex', alignItems: 'baseline', gap: `${S[3]}px`, flexWrap: 'wrap', marginBottom: `${S[3]}px` }}>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 650 }}>{fixture.name}</h2>
-          <span style={{ fontFamily: 'ui-monospace,monospace', fontSize: 12, color: FAINT }}>{fixture.group}</span>
-          {missing.length
-            ? <span style={{ fontSize: 11.5, color: '#e0b070', border: '1px solid #8a5a2a', background: '#1a1410', borderRadius: 999, padding: '2px 10px' }}>
-                غایب: {missing.join(' · ')}
-              </span>
-            : <span style={{ fontSize: 11.5, color: '#7fd0a0', border: '1px solid #2a5a3a', background: '#101a13', borderRadius: 999, padding: '2px 10px' }}>کامل</span>}
-        </header>
-
-        {/* the controls */}
-        <div style={{ display: 'flex', gap: `${S[3]}px`, flexWrap: 'wrap', marginBottom: `${S[4]}px`, alignItems: 'flex-end' }}>
-          {controls.map((c) => (
-            <div key={c.name}>
-              <div style={{ fontSize: 11, color: FAINT, marginBottom: 4 }}>{c.name}</div>
-              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                {c.values.map((v) => {
-                  const current = c.name === 'size' ? activeSize : c.name === 'state' ? activeState : activeVariant;
-                  const on = current === v;
-                  return (
-                    <button
-                      key={v}
-                      type="button"
-                      onClick={() => (c.name === 'size' ? setSize(v) : c.name === 'state' ? setState(v) : setVariant(v))}
-                      aria-pressed={on}
-                      style={{
-                        border: `1px solid ${on ? LADDER[6] : LADDER[3]}`, borderRadius: `${R.chip}px`,
-                        padding: `3px ${S[2]}px`, background: on ? LADDER[4] : 'transparent',
-                        color: on ? TEXT : DIM, font: 'inherit', fontSize: 12, cursor: 'pointer',
-                      }}
-                    >
-                      {v}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-          <div style={{ marginInlineStart: 'auto' }}>
-            <div style={{ fontSize: 11, color: FAINT, marginBottom: 4 }}>&nbsp;</div>
-            <button
-              type="button"
-              onClick={() => setShowCode((v) => !v)}
-              aria-pressed={showCode}
-              style={{
-                border: `1px solid ${LADDER[3]}`, borderRadius: `${R.chip}px`, padding: `3px ${S[2]}px`,
-                background: 'transparent', color: DIM, font: 'inherit', fontSize: 12, cursor: 'pointer',
-              }}
-            >
-              {showCode ? 'پنهان‌کردن کد' : 'نمایش کد'}
-            </button>
-          </div>
-        </div>
-
-        {/* the live preview — hover and focus work here, which is the point */}
-        <div
+        {/* ── the component list ──────────────────────────────────────────── */}
+        <nav
+          aria-label="کامپوننت‌ها"
           style={{
-            border: `1px solid ${LADDER[3]}`, borderRadius: `${R.card}px`, padding: `${S[5]}px`,
-            background: LADDER[2], marginBottom: `${S[4]}px`, minHeight: 140,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            ...CHROME.style,
+            flex: '1 1 220px',
+            maxWidth: 260,
+            borderRadius: `${R.card}px`,
+            padding: `${S[3]}px`,
+            maxHeight: '70vh',
+            overflowY: 'auto',
+            minWidth: 0,
           }}
         >
-          {rendered}
-        </div>
+          {groups.map((g) => (
+            <div key={g} style={{ marginBottom: `${S[3]}px` }}>
+              <div style={{ fontSize: 11, opacity: 0.6, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: `${S[1]}px` }}>
+                {g}
+              </div>
+              {FIXTURES.filter((f) => f.group === g).map((f) => {
+                const on = f.name === selected;
+                const c = pct(coverage(f));
+                const missing = f.expected.filter((s) => !f.states.includes(s));
+                return (
+                  <button
+                    key={f.name}
+                    type="button"
+                    onClick={() => pick(f.name)}
+                    aria-current={on ? 'true' : undefined}
+                    style={{
+                      ...(on ? WORK.style : WELL.style),
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: `${S[2]}px`,
+                      width: '100%',
+                      font: 'inherit',
+                      fontSize: 12,
+                      textAlign: 'start',
+                      padding: `${S[1]}px ${S[2]}px`,
+                      borderRadius: `${R.chip}px`,
+                      border: '1px solid transparent',
+                      marginBottom: 2,
+                    }}
+                  >
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</span>
+                    <code
+                      style={{
+                        fontFamily: 'ui-monospace, monospace',
+                        fontSize: 10,
+                        opacity: c === 100 ? 0.55 : 0.95,
+                        color: missing.length ? 'var(--liminal-danger, #ba4646)' : undefined,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {c}%
+                    </code>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
 
-        {showCode && (
-          <pre
+        {/* ── the work ────────────────────────────────────────────────────── */}
+        <main style={{ flex: '2 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[4]}px` }}>
+          <Card title="پیش‌نمایش" note={`${fixture.name} — زنده، با همان لایهٔ تعامل`} role="work">
+            {/* the prop controls, derived from what the fixture says it HAS */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[3]}px` }}>
+              {controls.map((c) => (
+                <div key={c.name} style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px` }}>
+                  <span style={{ fontSize: 10, opacity: 0.6, fontFamily: 'ui-monospace, monospace' }}>{c.name}</span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                    {c.values.map((v) => {
+                      const on =
+                        (c.name === 'size' && v === activeSize) ||
+                        (c.name === 'state' && v === activeState) ||
+                        (c.name === 'variant' && v === activeVariant);
+                      return (
+                        <button
+                          key={v}
+                          type="button"
+                          aria-pressed={on}
+                          onClick={() => {
+                            if (c.name === 'size') setSize(v);
+                            if (c.name === 'state') setState(v);
+                            if (c.name === 'variant') setVariant(v);
+                          }}
+                          style={{
+                            ...(on ? WORK.style : WELL.style),
+                            font: 'inherit',
+                            fontSize: 11,
+                            padding: `2px ${S[2]}px`,
+                            borderRadius: `${R.chip}px`,
+                            border: '1px solid transparent',
+                          }}
+                        >
+                          {v}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* the forcing harness */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
+              <span style={{ fontSize: 10, opacity: 0.6 }}>حالت اجباری</span>
+              {FORCED.map((f) => (
+                <button
+                  key={f.id}
+                  type="button"
+                  aria-pressed={forced === f.id}
+                  onClick={() => setForced(f.id)}
+                  style={{
+                    ...(forced === f.id ? WORK.style : WELL.style),
+                    font: 'inherit',
+                    fontSize: 11,
+                    padding: `2px ${S[2]}px`,
+                    borderRadius: `${R.chip}px`,
+                    border: '1px solid transparent',
+                  }}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            <div
+              ref={previewRef}
+              className={forced === 'none' ? undefined : `force-${forced}`}
+              style={{
+                ...WELL.style,
+                borderRadius: `${R.card}px`,
+                padding: `${S[5]}px`,
+                minHeight: 132,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflowX: 'auto',
+                transition: M.getTransition('background', 'normal'),
+              }}
+            >
+              {rendered}
+            </div>
+            <p style={{ margin: 0, fontSize: 11, opacity: 0.7 }}>
+              hover و focus روی پیش‌نمایش <b>واقعی</b> کار می‌کنند. «حالت اجباری» همان تعریف‌های
+              لایه است با کلاس به‌جای شبه‌کلاس — یک هارنس برای دیدن، نه رفتارِ کامپوننت.
+            </p>
+          </Card>
+
+          <div
             style={{
-              margin: 0, border: `1px solid ${LADDER[3]}`, borderRadius: `${R.card}px`,
-              padding: `${S[3]}px`, background: LADDER[1], overflowX: 'auto',
-              fontFamily: 'ui-monospace,monospace', fontSize: 12, color: DIM,
-              direction: 'ltr', textAlign: 'left',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: `${S[4]}px`,
             }}
           >
-{`<${fixture.name}${activeVariant ? ` variant="${activeVariant}"` : ''}${activeSize ? ` size="${activeSize}"` : ''}${activeState && activeState !== 'default' ? ` /* ${activeState} */` : ''} />`}
-          </pre>
-        )}
-
-        <p style={{ color: FAINT, fontSize: 12, marginTop: `${S[3]}px` }}>
-          hover و focus روی پیش‌نمایش <b>واقعی</b> کار می‌کنند — همان چیزی که یک فریم ثابت نمی‌تواند نشان دهد.
-        </p>
+            <EngineReadout snapshot={snapshot} />
+            <ContractChecks surfaceHex={surfaceHex} level={snapshot?.level ?? null} />
+            <CoveragePanel
+              name={fixture.name}
+              has={fixture.states}
+              expected={fixture.expected}
+              sizes={fixture.sizes}
+              variants={fixture.variants ?? []}
+              coveragePercent={pct(coverage(fixture))}
+            />
+            <CodePanel element={rendered} />
+          </div>
+        </main>
       </div>
     </div>
   );
