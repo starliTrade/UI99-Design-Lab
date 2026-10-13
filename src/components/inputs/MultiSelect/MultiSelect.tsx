@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useId, useCallback } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 import { CaretDown, Check, X } from '@phosphor-icons/react';
 import {
-  getLiminalStyle,
   getDirectionalRim,
   getTextStyle,
   getLadderColor,
@@ -10,7 +9,7 @@ import {
   Z_INDEX,
   LiminalState,
 } from '../../../engine/spec-engine';
-import { resolveSurface, resolveBorder, resolveInteractionVars } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
@@ -121,6 +120,9 @@ export function MultiSelect({
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  // The text sits on the surface that HOSTS the field, not on the field.
+  // `surfaceLevel` below is a hand-picked pair for the validation tint's
+  // rim and is recorded for gap 8 (21 hand-picked numbers).
   const surfaceLevel = 2;
 
   const currentValues = value !== undefined ? value : internalValues;
@@ -375,7 +377,7 @@ export function MultiSelect({
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
-    color: getTextStyle('secondary', surfaceLevel).color,
+    color: getTextStyle('secondary', ROLE_LEVEL[host]).color,
     marginBottom: `${SPACING[1]}px`,
     userSelect: 'none',
   };
@@ -388,7 +390,7 @@ export function MultiSelect({
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('tertiary', surfaceLevel).color,
+      : getTextStyle('tertiary', ROLE_LEVEL[host]).color,
     marginTop: `${SPACING[1]}px`,
   };
 
@@ -461,7 +463,7 @@ export function MultiSelect({
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              color: getTextStyle('tertiary', surfaceLevel).color,
+              color: getTextStyle('tertiary', ROLE_LEVEL[host]).color,
               flexShrink: 0,
             }}
           >
@@ -555,7 +557,7 @@ export function MultiSelect({
             border: 'none',
             background: 'transparent',
             outline: 'none',
-            color: getTextStyle('primary', surfaceLevel).color,
+            color: getTextStyle('primary', ROLE_LEVEL[host]).color,
             fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
             lineHeight: TYPOGRAPHY[3].lh,
             fontFamily: 'inherit',
@@ -582,7 +584,7 @@ export function MultiSelect({
               padding: 0,
               margin: 0,
               cursor: 'pointer',
-              color: getTextStyle('tertiary', surfaceLevel).color,
+              color: getTextStyle('tertiary', ROLE_LEVEL[host]).color,
               transition: reducedMotion
                 ? 'none'
                 : LiminalMotionEngine.getTransition('color', 'fast'),
@@ -620,8 +622,8 @@ export function MultiSelect({
               ? 'none'
               : LiminalMotionEngine.getTransition('transform', 'normal'),
             color: isOpen
-              ? getTextStyle('secondary', surfaceLevel).color
-              : getTextStyle('tertiary', surfaceLevel).color,
+              ? getTextStyle('secondary', ROLE_LEVEL[host]).color
+              : getTextStyle('tertiary', ROLE_LEVEL[host]).color,
           }}
         >
           <LiminalIcon icon={CaretDown} size="sm" weight="light" />

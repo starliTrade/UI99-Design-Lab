@@ -3,11 +3,10 @@ import { useDirection } from '../../../engine/liminal-direction';
 import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { CaretDown } from '@phosphor-icons/react';
 import {
-  getLiminalStyle,
   getDirectionalRim,
   getTextStyle,
   LiminalState, getLadderColor } from '../../../engine/spec-engine';
-import { resolveSurface, resolveBorder, resolveInteractionVars } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
@@ -63,7 +62,7 @@ export interface SelectProps {
  * - Phosphor CaretDown icon with <LiminalIcon size="sm" weight="light" />
  * - In RTL: CaretDown placed on the left side
  * - Wrapped in flex container matching Input.tsx architecture (rim and focus ring around whole component)
- * - Icon color: getTextStyle('tertiary', surfaceLevel), hover: getTextStyle('secondary', surfaceLevel)
+ * - Icon color: getTextStyle('tertiary', ROLE_LEVEL[host]), hover: getTextStyle('secondary', ROLE_LEVEL[host])
  * - Motion: LiminalMotionEngine.getTransition('color', 'fast'), disabled on reduced-motion
  */
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select(
@@ -124,6 +123,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  // The text sits on the surface that HOSTS the field, not on the field.
+  // `surfaceLevel` below is a hand-picked pair for the validation tint's
+  // rim and is recorded for gap 8 (21 hand-picked numbers).
   const surfaceLevel = 2;
 
   // The direction comes from the document, not from a prop. `DirProvider` puts
@@ -221,8 +223,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     border: 'none',
     outline: 'none',
     color: effectiveValue
-      ? getTextStyle('primary', surfaceLevel).color
-      : getTextStyle('quaternary', surfaceLevel).color,
+      ? getTextStyle('primary', ROLE_LEVEL[host]).color
+      : getTextStyle('quaternary', ROLE_LEVEL[host]).color,
     fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
     lineHeight: TYPOGRAPHY[3].lh,
     fontFamily: 'inherit',
@@ -238,7 +240,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
-    color: getTextStyle('secondary', surfaceLevel).color,
+    color: getTextStyle('secondary', ROLE_LEVEL[host]).color,
     marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
     textAlign: 'start',
@@ -252,7 +254,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('tertiary', surfaceLevel).color,
+      : getTextStyle('tertiary', ROLE_LEVEL[host]).color,
     marginTop: `${SPACING[1]}px`, // 4px
     textAlign: 'start',
   };
@@ -273,11 +275,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     onBlur?.(e);
   };
 
-  // Caret icon color logic: getTextStyle('tertiary', surfaceLevel), hover: getTextStyle('secondary', surfaceLevel)
+  // Caret icon color logic: getTextStyle('tertiary', ROLE_LEVEL[host]), hover: getTextStyle('secondary', ROLE_LEVEL[host])
   const isCaretActiveHover = false; // the caret is driven by CSS now
   const caretColor = isCaretActiveHover
-    ? getTextStyle('secondary', surfaceLevel).color
-    : getTextStyle('tertiary', surfaceLevel).color;
+    ? getTextStyle('secondary', ROLE_LEVEL[host]).color
+    : getTextStyle('tertiary', ROLE_LEVEL[host]).color;
 
   const caretNode = (
     <div
@@ -331,7 +333,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
               display: 'flex',
               alignItems: 'center',
               flexShrink: 0,
-              color: getTextStyle('tertiary', surfaceLevel).color,
+              color: getTextStyle('tertiary', ROLE_LEVEL[host]).color,
             }}
           >
             {prefix}
@@ -388,7 +390,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
               display: 'flex',
               alignItems: 'center',
               flexShrink: 0,
-              color: getTextStyle('tertiary', surfaceLevel).color,
+              color: getTextStyle('tertiary', ROLE_LEVEL[host]).color,
             }}
           >
             {suffix}

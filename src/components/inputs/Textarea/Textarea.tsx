@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef, useId } from 'react';
 import type { CSSProperties, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import {
-  getLiminalStyle,
   getDirectionalRim,
   getTextStyle,
   LiminalState,
 } from '../../../engine/spec-engine';
-import { resolveSurface, resolveBorder, resolveInteractionVars } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
@@ -75,6 +74,9 @@ export function Textarea({
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  // The text sits on the surface that HOSTS the field, not on the field.
+  // `surfaceLevel` below is a hand-picked pair for the validation tint's
+  // rim and is recorded for gap 8 (21 hand-picked numbers).
   const surfaceLevel = 2;
 
 
@@ -151,7 +153,7 @@ export function Textarea({
     border: 'none',
     outline: 'none',
     boxShadow: 'none',
-    color: getTextStyle('primary', surfaceLevel).color,
+    color: getTextStyle('primary', ROLE_LEVEL[host]).color,
     fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
     lineHeight: 1.6,
     fontFamily: 'inherit',
@@ -166,7 +168,7 @@ export function Textarea({
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
-    color: getTextStyle('secondary', surfaceLevel).color,
+    color: getTextStyle('secondary', ROLE_LEVEL[host]).color,
     marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
   };
@@ -179,7 +181,7 @@ export function Textarea({
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('tertiary', surfaceLevel).color,
+      : getTextStyle('tertiary', ROLE_LEVEL[host]).color,
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -196,7 +198,7 @@ export function Textarea({
     ? SEMANTICS.DANGER.text
     : isCountWarning
     ? SEMANTICS.WARNING.text
-    : getTextStyle('tertiary', surfaceLevel).color;
+    : getTextStyle('tertiary', ROLE_LEVEL[host]).color;
 
   // A visible label must be programmatically associated with its control.
   // Without a generated id, `htmlFor` is undefined and screen readers announce

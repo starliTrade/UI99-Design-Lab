@@ -4,7 +4,7 @@ import { App } from './App';
 import { Card } from '../components/containers/Card';
 import { Button } from '../components/atoms/Button';
 import { Badge } from '../components/atoms/Badge';
-import { getTextStyle, getLiminalStyle } from '../engine/spec-engine';
+import { getTextStyle } from '../engine/spec-engine';
 import { LiminalLayoutEngine } from '../engine/liminal-layout-engine';
 import {
   SquaresFour,

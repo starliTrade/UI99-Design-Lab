@@ -2,12 +2,11 @@ import React, { useState, useEffect, useRef, useId } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent, MouseEvent } from 'react';
 import { Eye, EyeSlash, X } from '@phosphor-icons/react';
 import {
-  getLiminalStyle,
   getDirectionalRim,
   getTextStyle,
   LiminalState,
 } from '../../../engine/spec-engine';
-import { resolveSurface, resolveBorder, resolveInteractionVars } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
@@ -171,6 +170,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  // The text sits on the surface that HOSTS the field, not on the field.
+  // `surfaceLevel` below is a hand-picked pair for the validation tint's
+  // rim and is recorded for gap 8 (21 hand-picked numbers).
   const surfaceLevel = 2;
 
   const rawLeft = prefix ?? leftIcon;
@@ -266,7 +268,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     background: 'transparent',
     border: 'none',
     outline: 'none',
-    color: getTextStyle('primary', surfaceLevel).color,
+    color: getTextStyle('primary', ROLE_LEVEL[host]).color,
     fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
     lineHeight: TYPOGRAPHY[3].lh,
     fontFamily: 'inherit',
@@ -280,7 +282,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
-    color: getTextStyle('secondary', surfaceLevel).color,
+    color: getTextStyle('secondary', ROLE_LEVEL[host]).color,
     marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
   };
@@ -293,7 +295,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('tertiary', surfaceLevel).color,
+      : getTextStyle('tertiary', ROLE_LEVEL[host]).color,
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -314,8 +316,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   // happened in every other user of the pattern. The target is `primary`:
   // `secondary` derives to the same alpha as `tertiary` (both 0.790), so a
   // secondary hover would not have changed anything even once the rule worked.
-  const toggleIconIdle = getTextStyle('tertiary', surfaceLevel).color;
-  const toggleIconHover = getTextStyle('primary', surfaceLevel).color;
+  const toggleIconIdle = getTextStyle('tertiary', ROLE_LEVEL[host]).color;
+  const toggleIconHover = getTextStyle('primary', ROLE_LEVEL[host]).color;
 
   const toggleButtonStyle: CSSProperties = {
     display: 'inline-flex',
@@ -363,8 +365,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   ) : null;
 
   // Clear Action (WS-4) — same treatment as the toggle above.
-  const clearIconIdle = getTextStyle('tertiary', surfaceLevel).color;
-  const clearIconHover = getTextStyle('primary', surfaceLevel).color;
+  const clearIconIdle = getTextStyle('tertiary', ROLE_LEVEL[host]).color;
+  const clearIconHover = getTextStyle('primary', ROLE_LEVEL[host]).color;
 
   const clearButtonStyle: CSSProperties = {
     display: 'inline-flex',
@@ -429,7 +431,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   const renderAdornment = (node: ReactNode) => {
     if (node === null || node === undefined || node === false) return null;
 
-    const tertiaryColor = getTextStyle('tertiary', surfaceLevel).color;
+    const tertiaryColor = getTextStyle('tertiary', ROLE_LEVEL[host]).color;
 
     // Text prefix/suffix: 13px (TYPOGRAPHY[2].fs), color tertiary
     if (typeof node === 'string' || typeof node === 'number') {
@@ -491,7 +493,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     ? SEMANTICS.DANGER.text
     : isCountWarning
     ? SEMANTICS.WARNING.text
-    : getTextStyle('tertiary', surfaceLevel).color;
+    : getTextStyle('tertiary', ROLE_LEVEL[host]).color;
 
   // A visible label must be programmatically associated with its control.
   // Without a generated id, `htmlFor` is undefined and screen readers announce

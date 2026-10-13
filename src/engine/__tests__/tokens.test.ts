@@ -3,9 +3,9 @@ import {
   LADDER,
   HALF,
   getTextAlpha,
-  getLiminalStyle,
   TEXT_HIERARCHY,
 } from '../spec-engine';
+import { resolveSurface } from '../liminal-surface';
 import { TEXT_ROLE_SPEC, whiteAlphaApcaOn } from '../liminal-contrast';
 import {
   PERCEPTUAL_QUANTUM,
@@ -14,6 +14,7 @@ import {
   LADDER_CHROMA,
   LADDER_HUE,
   LADDER_SIZE,
+  FOCUS_RING_COLOR,
 } from '../liminal-ladder';
 import { LiminalColorEngine } from '../liminal-color-engine';
 import { LiminalLayoutEngine } from '../liminal-layout-engine';
@@ -328,38 +329,15 @@ describe('LIMINAL contract — focus visibility', () => {
     expect(ring.outline).toBe('none');
   });
 
-  it('resolveInteractiveSurface keeps the ring visible in the focus state', () => {
-    for (const surface of SURFACES) {
-      const style = LiminalComponentEngine.resolveInteractiveSurface({
-        surfaceLevel: surface.index,
-        state: 'focus',
-        isKeyboardFocused: true,
-      });
-      const color = outlineColor(style as Record<string, unknown>);
-      expect(color, `S${surface.index} focus state must expose a ring color`).not.toBeNull();
-      const ratio = contrastRatioHex(color as string, surface.hex);
-      expect(
-        ratio,
-        `interactive focus ring on S${surface.index} = ${ratio.toFixed(2)}:1`,
-      ).toBeGreaterThanOrEqual(NON_TEXT_MIN);
-    }
-  });
-
-  it('getLiminalStyle never emits a dark-on-dark focus ring', () => {
-    for (const surface of SURFACES) {
-      const resolved = getLiminalStyle({
-        surfaceLevel: surface.index,
-        interactive: true,
-        state: 'focus',
-      });
-      const color = outlineColor(resolved.style as Record<string, unknown>);
-      if (color === null) continue;
-      const ratio = contrastRatioHex(color, surface.hex);
-      expect(
-        ratio,
-        `getLiminalStyle focus ring ${color} on S${surface.index} = ${ratio.toFixed(2)}:1`,
-      ).toBeGreaterThanOrEqual(NON_TEXT_MIN);
-    }
+  it('the surface resolver draws that same ring on focus, and none on idle', () => {
+    // One colour, one rule. `getFocusRing` above proves the colour is visible on
+    // every surface; this proves the resolver draws THAT colour and not another,
+    // and that it draws nothing when the keyboard is not involved.
+    const focus = outlineColor(resolveSurface({ role: 'control', state: 'focus' }).style as Record<string, unknown>);
+    const ringHex = FOCUS_RING_COLOR.match(/#[0-9a-fA-F]{3,8}/)![0];
+    expect(focus).toBe(ringHex);
+    const idle = outlineColor(resolveSurface({ role: 'control' }).style as Record<string, unknown>);
+    expect(idle).toBeNull();
   });
 });
 

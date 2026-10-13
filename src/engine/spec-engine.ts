@@ -142,98 +142,23 @@ export const Z_INDEX = {
 export type LiminalState = 'idle' | 'hover' | 'focus' | 'active' | 'disabled';
 export type TextLevel = 'primary' | 'secondary' | 'tertiary' | 'quaternary';
 
-export interface LiminalStyleElement {
-  surfaceLevel: number;
-  containerLevel?: number;
-  isContainer?: boolean;
-  interactive?: boolean;
-  isFeatured?: boolean;
-  isFloating?: boolean;
-  isInput?: boolean;
-  elevation?: 1 | 2 | 3 | 4;
-  state?: LiminalState;
-  concave?: boolean;
-}
-
 /**
- * The deepest surface the ladder allows.
+ * THE DEPTH API WAS HERE, AND IT IS GONE.
  *
- * Derived, never written down. This was a literal `5` in three places — correct
- * when the ladder had six steps, and silently wrong once it grew to nine.
- * Anything at S6, S7 or S8 was clamped onto S5, so `getLiminalStyle` could only
- * produce six distinct surfaces while `liminal-surface.resolveSurface` could
- * produce nine. Two engines, two answers for the same depth.
+ * `getLiminalStyle({ surfaceLevel })` took a raw depth and returned a surface.
+ * `liminal-surface.resolveSurface({ role })` takes a ROLE and returns one. They
+ * disagreed: at level 3 the old one still drew a rim of 1, which the contract
+ * says belongs to chrome and work, while the new one draws 2. Two answers for
+ * the same depth, and a component could pick either.
  *
- * A hard-coded ceiling is the same defect class as a hard-coded breakpoint: a
- * number that used to be right, left sitting where the thing it described has
- * changed underneath it.
+ * Every call site now declares what it IS — `role: 'chrome'`, `role: 'work'`,
+ * `role: 'panel'` — and the governing principle already said why: values become
+ * tokens, selections become names, raw numbers are forbidden.
+ *
+ * The rule that made this a defect rather than a preference: a hard-coded
+ * ceiling (`Math.min(5, ...)`) outlived the ladder growing to nine steps, so
+ * S6, S7 and S8 were silently flattened onto S5.
  */
-const MAX_SURFACE_LEVEL = LADDER.length - 1;
-
-export function getLiminalStyle(el: LiminalStyleElement) {
-  const baseN = Math.max(0, Math.min(MAX_SURFACE_LEVEL, el.surfaceLevel));
-  let n = baseN;
-  const container = el.containerLevel ?? Math.max(0, baseN - 1);
-  let rim: 0 | 1 | 2 | 3 = el.isContainer ? 1 : (el.interactive || el.isFeatured) ? 2 : 0;
-  let concave = el.concave ?? false;
-  let outline = 'none';
-  let outlineOffset = '0px';
-  let transform = 'none';
-  let opacity = 1;
-  let cursor = el.isInput ? 'text' : el.interactive ? 'pointer' : 'default';
-  let shadow = 'none';
-
-  const st = el.state ?? 'idle';
-
-  if (st === 'hover') {
-    n = Math.min(MAX_SURFACE_LEVEL, n + 0.5);
-  }
-  if (st === 'focus') {
-    n = Math.min(MAX_SURFACE_LEVEL, n + 0.5);
-    rim = 3;
-    outline = `2px solid ${FOCUS_RING_COLOR}`;
-    outlineOffset = '2px';
-  }
-  if (st === 'active') {
-    n = Math.max(0, n - 0.5);
-    rim = 2;
-    concave = true;
-    transform = 'translateY(0.5px)';
-  }
-  if (st === 'disabled') {
-    n = container;
-    rim = 0;
-    opacity = 0.25;
-    cursor = 'not-allowed';
-  }
-
-  if (el.isFloating && el.elevation) {
-    shadow = SHADOWS[el.elevation];
-  } else if (el.isFeatured) {
-    shadow = SHADOWS[2];
-  }
-
-  const rd = getDirectionalRim(n, rim, concave);
-
-  return {
-    n,
-    bg: getLadderColor(n),
-    rimLevel: rim,
-    isConcave: concave,
-    state: st,
-    opacity,
-    style: {
-      background: rd ? rd.cssBackground : getLadderColor(n),
-      border: rd ? '1px solid transparent' : 'none',
-      boxShadow: shadow,
-      outline,
-      outlineOffset,
-      transform,
-      opacity,
-      cursor,
-    } as CSSProperties,
-  };
-}
 
 // 5) TEXT HIERARCHY — DERIVED, NOT HAND-PICKED
 //
