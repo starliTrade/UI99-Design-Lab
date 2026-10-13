@@ -142,3 +142,39 @@ describe('calendar — the navigation arrows follow the reading direction', () =
     expect(rtl).not.toBe(ltr);
   });
 });
+
+describe('calendar — the grid is reachable by keyboard', () => {
+  // The contract §14 claimed "roving tabindex" and "ArrowUp/Down/Left/Right and
+  // Home/End". The code had none of it: every cell was a plain button with no
+  // tab stop management, so a keyboard user could tab through thirty cells one
+  // at a time and could not move by week.
+  it('has exactly one tab stop in the grid', () => {
+    const { container } = render(<Calendar month={OCT_2026} />);
+    const stops = [...container.querySelectorAll('button[role="gridcell"]')].filter(
+      (c) => c.getAttribute('tabindex') === '0',
+    );
+    expect(stops).toHaveLength(1);
+  });
+
+  it('moves the tab stop with the arrow keys', async () => {
+    const { container } = render(<Calendar month={OCT_2026} />);
+    const grid = container.querySelector('[role="grid"]')!;
+    const at = () =>
+      [...container.querySelectorAll('button[role="gridcell"]')].findIndex((c) => c.getAttribute('tabindex') === '0');
+    const first = at();
+    grid.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    await new Promise((r) => setTimeout(r, 0));
+    expect(at()).toBe(first + 1);
+  });
+
+  it('moves by a week with up and down', async () => {
+    const { container } = render(<Calendar month={OCT_2026} />);
+    const grid = container.querySelector('[role="grid"]')!;
+    const at = () =>
+      [...container.querySelectorAll('button[role="gridcell"]')].findIndex((c) => c.getAttribute('tabindex') === '0');
+    const first = at();
+    grid.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    await new Promise((r) => setTimeout(r, 0));
+    expect(at()).toBe(first + 7);
+  });
+});

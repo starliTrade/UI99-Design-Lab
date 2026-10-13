@@ -62,6 +62,19 @@ export function Calendar({
 }: CalendarProps) {
   const host = useHostSurface();
   const dir = useDirection();
+  // The contract said §14 the calendar had roving tabindex and arrow keys. It
+  // did not. A grid a keyboard cannot move through is a grid a keyboard user
+  // cannot use.
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
+
+  // One cell carries the tab stop even before the user has moved: today when it
+  // is in view, otherwise the first day of the month. A grid with no tab stop is
+  // unreachable by keyboard at all.
+  const defaultFocusIndex = (dates: (Date | null)[]) => {
+    const real = dates.filter(Boolean) as Date[];
+    const todayAt = real.findIndex((d) => isSameDay(d, new Date()));
+    return todayAt >= 0 ? todayAt : 0;
+  };
   const [internalMonth, setInternalMonth] = useState<Date>(controlledMonth || new Date());
   const reducedMotion = useReducedMotion();
   const SPACING = LiminalLayoutEngine.SPACING;
@@ -242,6 +255,33 @@ export function Calendar({
     gap: `${SPACING[0]}px`,
   };
 
+  // Arrow keys move the focused cell; Home and End go to the ends of the week.
+  // The grid is seven columns wide, so up and down are ±7. The contract claimed
+  // §14 this existed; it did not.
+  const handleGridKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const cells = days.filter(Boolean) as Date[];
+    if (!cells.length) return;
+    const current = focusIndex ?? cells.findIndex((d) => isSameDay(d, new Date()));
+    const at = current < 0 ? 0 : current;
+    const delta: Record<string, number> = {
+      ArrowRight: 1,
+      ArrowLeft: -1,
+      ArrowDown: 7,
+      ArrowUp: -7,
+    };
+    let next: number;
+    if (e.key in delta) next = at + delta[e.key];
+    else if (e.key === 'Home') next = at - (at % 7);
+    else if (e.key === 'End') next = at - (at % 7) + 6;
+    else return;
+    e.preventDefault();
+    next = Math.max(0, Math.min(cells.length - 1, next));
+    setFocusIndex(next);
+    const el = e.currentTarget.querySelectorAll<HTMLElement>('button[role="gridcell"]')[next];
+    el?.focus();
+  };
+
+
   return (
     <div className={className} style={containerStyle}>
       <div style={headerStyle}>
@@ -268,7 +308,7 @@ export function Calendar({
         </div>
       </div>
 
-      <div style={daysGridStyle} role="grid" aria-label={calendar === 'jalali' ? 'تقویم' : 'Calendar'}>
+      <div style={daysGridStyle} role="grid" aria-label={calendar === 'jalali' ? 'تقویم' : 'Calendar'} onKeyDown={handleGridKeyDown}>
         <div role="row">
           {weekDays.map((wd) => (
             <div key={wd} role="columnheader">{wd}</div>
@@ -300,6 +340,7 @@ export function Calendar({
                   today={today}
                   onClick={() => handleDayClick(dateObj)}
                   reducedMotion={reducedMotion}
+                  tabIndex={(focusIndex ?? defaultFocusIndex(days)) === dayIndex - 1 ? 0 : -1}
                 />
               );
             })}
@@ -312,6 +353,8 @@ export function Calendar({
 
 interface DayCellProps {
   date: Date;
+  /** Roving tab stop: one cell in the grid is reachable by Tab. */
+  tabIndex: number;
   /** The day number in the calendar being shown — not `date.getDate()`, which
    *  is the Gregorian one. In the Jalali calendar they differ by up to a month. */
   label: string;
@@ -323,7 +366,7 @@ interface DayCellProps {
   reducedMotion: boolean;
 }
 
-function DayCell({ date, label, ariaLabel, selected, today, onClick, reducedMotion }: DayCellProps) {
+function DayCell({ date, label, ariaLabel, selected, today, onClick, reducedMotion, tabIndex }: DayCellProps) {
   const host = useHostSurface();
   // Hover is CSS's job now. A selected cell keeps its raised surface; an
   // unselected one lifts to the control surface on hover.
@@ -353,6 +396,7 @@ function DayCell({ date, label, ariaLabel, selected, today, onClick, reducedMoti
       aria-label={ariaLabel}
       aria-selected={selected}
       role="gridcell"
+      tabIndex={tabIndex}
       data-liminal-surface=""
       style={cellStyle}
     >
