@@ -1,17 +1,29 @@
 #!/usr/bin/env bun
 /**
- * LIMINAL — what should a control do when it is PRESSED?
+ * LIMINAL — what a control does when it is PRESSED, and what it used to do.
  *
- * The producer's default is the engine's active level: one half-step below the
- * control's own. Ten sites pass `active` explicitly instead, and nine of them
- * pass the SAME expression they passed for `hover` — press keeps the lift
- * rather than dropping. The line is a copy of the hover line, the contract says
- * nothing about press, and the layer's own comment says "active one half-step
- * below, pressed". So it is probably a habit. It is also a visible difference,
- * so it is a decision, and the decision is made by eye.
+ * THE DECISION (2026-10-14): the engine's active level. Press sinks one
+ * half-step below the control's rest, which is what `STATE_SHIFT` in
+ * liminal-surface.ts already said — hover +0.5, active -0.5.
  *
- * Both answers are rendered side by side, live: hover and press the real
- * components. Press is transient, so hold the mouse down.
+ * It was not always so. Nine sites passed the SAME expression for `active` as
+ * for `hover`, so press kept the lift and the pressed state did not exist. The
+ * clearest symptom was Tabs: pressing an inactive tab emptied it completely.
+ *
+ * The reasons, in the order they weighed:
+ *
+ *   1. Every serious system gives pressed a state of its own. Material 3 draws
+ *      it STRONGER than hover; Radix, Fluent, Ant and Carbon all darken it.
+ *   2. The engine already said so: STATE_SHIFT is hover +0.5, active -0.5.
+ *   3. The contract's "a chosen control keeps its fill" rule is NOT this. It is
+ *      about a control already in a committed state — checked, selected — and
+ *      `frozen` is what implements it. It was never a rule about pressing.
+ *   4. On touch there is no hover. Press is the ONLY feedback, and under the old
+ *      value it was a half-pixel nudge.
+ *
+ * This page is the record. The left column is what each control published
+ * before the change, hard-coded; the right column is read from the components
+ * as they are now. The forced-pressed pair below shows both without a mouse.
  *
  * Run: bun scripts/gen-press-test.tsx
  */
@@ -30,7 +42,7 @@ import { Calendar } from '../src/components/data/Calendar/Calendar';
 import { Toast } from '../src/components/feedback/Toast/Toast';
 import { DropdownMenuContext } from '../src/components/nav/DropdownMenu/DropdownMenu';
 import { DropdownMenuItem } from '../src/components/nav/DropdownMenu/DropdownMenuItem';
-import { LADDER, getTextStyle } from '../src/engine/spec-engine';
+import { LADDER, getTextStyle, SURFACE_TINT } from '../src/engine/spec-engine';
 import { resolveSurface, type SurfaceRole } from '../src/engine/liminal-surface';
 import { LiminalLayoutEngine as L } from '../src/engine/liminal-layout-engine';
 
@@ -64,6 +76,23 @@ const ROLE: Record<string, { role: SurfaceRole; on?: SurfaceRole }> = {
   Toast: { role: 'control', on: 'toast' },
   DropdownMenuItem: { role: 'menu' },
   NavItem: { role: 'chrome' },
+};
+
+/**
+ * What each control published for `--liminal-surface-active` BEFORE the change.
+ * Hard-coded on purpose: the components no longer produce these values, and a
+ * record has to keep its own copy or it stops being a record.
+ */
+const BEFORE: Record<string, string> = {
+  Toggle: 'var(--liminal-s4)',
+  Checkbox: 'var(--liminal-s4)',
+  Radio: 'var(--liminal-s4)',
+  Tabs: 'transparent',
+  Table: 'var(--liminal-s3)',
+  Calendar: 'var(--liminal-s3)',
+  DropdownMenuItem: 'var(--liminal-s6)',
+  NavItem: 'var(--liminal-s1)',
+  Toast: SURFACE_TINT.medium,
 };
 
 const engineActive = (name: string) =>
@@ -119,7 +148,18 @@ const CASES: { name: string; note: string; el: React.ReactElement }[] = [
 
 const rows = CASES.map((c) => {
   const a = render(c.el);
-  return { ...c, a, b: withEngineActive(a, c.name), own: ownActive(a), engine: engineActive(c.name) };
+  return {
+    ...c,
+    a,
+    b: withEngineActive(a, c.name),
+    own: ownActive(a),          // what the component publishes NOW
+    engine: engineActive(c.name),
+    before: BEFORE[c.name] ?? '—',
+    // The two columns, rendered: BEFORE is the recorded value substituted in;
+    // NOW is the component as it actually is.
+    beforeMarkup: a.replace(/--liminal-surface-active:[^;"]*/g, `--liminal-surface-active:${BEFORE[c.name] ?? engineActive(c.name)}`),
+    nowMarkup: a,
+  };
 });
 
 /**
@@ -127,7 +167,13 @@ const rows = CASES.map((c) => {
  * renderToStaticMarkup — so its action button cannot be shown here. Its values
  * are read from the code instead and listed, so the comparison is still whole.
  */
-const PORTALLED = [{ name: 'Toast', note: 'دکمهٔ اکشن — پورتال، استاتیک رندر نمی‌شود', own: 'SURFACE_TINT.medium', engine: engineActive('Toast') }];
+const PORTALLED = [{
+  name: 'Toast',
+  note: 'دکمهٔ اکشن — پورتال، استاتیک رندر نمی‌شود',
+  before: SURFACE_TINT.medium,
+  own: engineActive('Toast'),
+  engine: engineActive('Toast'),
+}];
 
 const col = (title: string, note: string, body: string, cls = '') => `
   <div class="col ${cls}">
@@ -145,9 +191,9 @@ const table = [...rows, ...PORTALLED].map((r) => `
   <tr>
     <td class="mono" data-label="کامپوننت">${r.name}</td>
     <td class="muted" data-label="حالت">${r.note}</td>
-    <td class="mono" data-label="مقدار فعلی (A)">${r.own}</td>
-    <td class="mono" data-label="پیش‌فرض (B)">${r.engine}</td>
-    <td class="${r.own === r.engine ? 'same' : 'diff'}" data-label="نتیجه">${r.own === r.engine ? 'بدون تفاوت' : 'تفاوت دارد'}</td>
+    <td class="mono" data-label="قبل">${r.before}</td>
+    <td class="mono" data-label="حالا">${r.own}</td>
+    <td class="${r.before === r.own ? 'same' : 'diff'}" data-label="تغییر">${r.before === r.own ? 'بدون تغییر' : 'تغییر کرد'}</td>
   </tr>`).join('');
 
 const html = `<!doctype html>
@@ -229,28 +275,32 @@ ${LAYERS}
 </head>
 <body>
 <div class="wrap">
-  <h1>فشردن: بلندی بماند، یا یک پله پایین برود؟</h1>
+  <h1>فشردن: تصمیم گرفته شد — یک پله پایین</h1>
   <div class="sub">
-    ده سایت <span class="mono">active</span> را دستی می‌دهند، و نُهِ آن‌ها دقیقاً همان عبارتی را می‌دهند که به
-    <span class="mono">hover</span> داده‌اند — یعنی هنگام فشردن، بلندی حفظ می‌شود. پیش‌فرض تولیدکننده سطحِ
-    <span class="mono">active</span> موتور است: یک پله پایین‌تر. هر دو، زنده و کنار هم. <b>موس را نگه دار</b> تا حالت فشرده را ببینی.
+    نُه سایت <span class="mono">active</span> را دقیقاً همان عبارتی می‌دادند که به <span class="mono">hover</span> داده بودند،
+    پس حالتِ فشرده وجود نداشت. حالا فشردن یک پله پایین می‌رود — همان چیزی که
+    <span class="mono">STATE_SHIFT</span> موتور از اول می‌گفت: hover ‎+۰٫۵، active ‎−۰٫۵.
+    <br>
+    این صفحه سندِ تصمیم است: ستون <b>قبل</b> مقداری است که هر کنترل پیش از تغییر منتشر می‌کرد (ثبت‌شده)،
+    و ستون <b>حالا</b> از خودِ کامپوننت‌ها خوانده می‌شود. <b>موس را نگه دار</b> تا حالت فشرده را ببینی،
+    یا ردیف «فشرده» را بخوان.
   </div>
 
   <table>
-    <thead><tr><th>کامپوننت</th><th>حالت</th><th>مقدار فعلی (A)</th><th>پیش‌فرض تولیدکننده (B)</th><th></th></tr></thead>
+    <thead><tr><th>کامپوننت</th><th>حالت</th><th>قبل از تصمیم</th><th>حالا</th><th></th></tr></thead>
     <tbody>${table}</tbody>
   </table>
 
   <div class="bar"><b>زنده</b><span>موس را روی کامپوننت‌ها نگه دار و فشار بده — هر دو ستون واقعی‌اند.</span></div>
   <div class="cols">
-    ${col('A — بلندی حفظ می‌شود', 'همان چیزی که امروز در کد است', rows.map((r) => cell(r.name, r.a)).join(''))}
-    ${col('B — یک پله پایین می‌رود', 'پیش‌فرض تولیدکننده', rows.map((r) => cell(r.name, r.b)).join(''))}
+    ${col('قبل', 'فشردن بلندی را حفظ می‌کرد', rows.map((r) => cell(r.name, r.beforeMarkup)).join(''))}
+    ${col('حالا', 'فشردن یک پله پایین می‌رود', rows.map((r) => cell(r.name, r.nowMarkup)).join(''))}
   </div>
 
   <div class="bar"><b>فشرده</b><span>حالت فشرده، ثابت — همان تعریف‌های <code>:active</code> خودِ لایه، با کلاس به‌جای شبه‌کلاس.</span></div>
   <div class="cols">
-    ${col('A — فشرده', 'بلندی حفظ می‌شود', rows.map((r) => cell(r.name, r.a)).join(''), 'pressed')}
-    ${col('B — فشرده', 'یک پله پایین می‌رود', rows.map((r) => cell(r.name, r.b)).join(''), 'pressed')}
+    ${col('قبل — فشرده', 'بلندی حفظ می‌شد', rows.map((r) => cell(r.name, r.beforeMarkup)).join(''), 'pressed')}
+    ${col('حالا — فشرده', 'یک پله پایین می‌رود', rows.map((r) => cell(r.name, r.nowMarkup)).join(''), 'pressed')}
   </div>
 
   <div class="hint">
@@ -265,4 +315,4 @@ ${LAYERS}
 
 writeFileSync(OUT, html);
 console.log(`wrote ${OUT} ${(html.length / 1024).toFixed(1)}KB`);
-for (const r of [...rows, ...PORTALLED]) console.log(`  ${r.name.padEnd(17)} A=${r.own.padEnd(18)} B=${r.engine.padEnd(14)} ${r.own === r.engine ? 'same' : 'DIFFERS'}`);
+for (const r of [...rows, ...PORTALLED]) console.log(`  ${r.name.padEnd(17)} before=${String(r.before).padEnd(18)} now=${String(r.own).padEnd(18)} ${r.before === r.own ? 'unchanged' : 'CHANGED'}`);

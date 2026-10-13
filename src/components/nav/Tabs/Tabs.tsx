@@ -108,14 +108,13 @@ export function Tab({
     // resolved to nothing and the inline `background` below was the only
     // background — which also cancelled the hover.
     //
-    // An active tab keeps its raised surface; an inactive one lies flat on the
-    // bar, lifts on hover, and returns to the bar while pressed.
+    // An active tab keeps its raised surface in EVERY state; an inactive one
+    // lies flat on the bar, lifts on hover, and sinks below the bar on press.
     ...resolveInteractionVars({
       role: 'control',
       on: host,
       idle: bg,
-      hover: isActive ? bg : undefined,
-      active: bg,
+      frozen: isActive ? bg : undefined,
     }),
     padding: `${SPACING[2]}px ${SPACING[4]}px`,
     borderRadius: `${RADIUS[8]}px`, // 8px

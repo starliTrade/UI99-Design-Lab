@@ -57,7 +57,6 @@ export function Toggle({
     : offRim
     ? offRim.cssBackground
     : resolveSurface({ role: 'control', on: host }).background;
-  const hoverBg = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
 
   const trackStyle: CSSProperties = {
     position: 'relative',
@@ -76,15 +75,15 @@ export function Toggle({
     // setting `background` itself — an inline background beats the CSS rule, so
     // the hover the layer would have applied could never arrive.
     //
-    // A CHECKED switch keeps its fill in every state: the same rule a selected
-    // table row uses. An unchecked one lifts on hover and holds that lift while
-    // pressed.
+    // A CHECKED switch keeps its fill in EVERY state — the contract's rule for a
+    // control already in a chosen state. An unchecked one lifts on hover and
+    // sinks below its rest on press, which is the engine's own STATE_SHIFT:
+    // hover +0.5, active -0.5.
     ...resolveInteractionVars({
       role: 'control',
       on: host,
       idle: trackBg,
-      hover: isChecked ? trackBg : hoverBg,
-      active: isChecked ? trackBg : hoverBg,
+      frozen: isChecked ? trackBg : undefined,
     }),
     // NO `outline: none` here. It cancelled the layer's :focus-visible ring, so
     // the switch had NO visible focus at all — WCAG 2.4.7. The layer owns focus;

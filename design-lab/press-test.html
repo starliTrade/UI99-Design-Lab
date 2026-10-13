@@ -646,78 +646,82 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>فشردن: بلندی بماند، یا یک پله پایین برود؟</h1>
+  <h1>فشردن: تصمیم گرفته شد — یک پله پایین</h1>
   <div class="sub">
-    ده سایت <span class="mono">active</span> را دستی می‌دهند، و نُهِ آن‌ها دقیقاً همان عبارتی را می‌دهند که به
-    <span class="mono">hover</span> داده‌اند — یعنی هنگام فشردن، بلندی حفظ می‌شود. پیش‌فرض تولیدکننده سطحِ
-    <span class="mono">active</span> موتور است: یک پله پایین‌تر. هر دو، زنده و کنار هم. <b>موس را نگه دار</b> تا حالت فشرده را ببینی.
+    نُه سایت <span class="mono">active</span> را دقیقاً همان عبارتی می‌دادند که به <span class="mono">hover</span> داده بودند،
+    پس حالتِ فشرده وجود نداشت. حالا فشردن یک پله پایین می‌رود — همان چیزی که
+    <span class="mono">STATE_SHIFT</span> موتور از اول می‌گفت: hover ‎+۰٫۵، active ‎−۰٫۵.
+    <br>
+    این صفحه سندِ تصمیم است: ستون <b>قبل</b> مقداری است که هر کنترل پیش از تغییر منتشر می‌کرد (ثبت‌شده)،
+    و ستون <b>حالا</b> از خودِ کامپوننت‌ها خوانده می‌شود. <b>موس را نگه دار</b> تا حالت فشرده را ببینی،
+    یا ردیف «فشرده» را بخوان.
   </div>
 
   <table>
-    <thead><tr><th>کامپوننت</th><th>حالت</th><th>مقدار فعلی (A)</th><th>پیش‌فرض تولیدکننده (B)</th><th></th></tr></thead>
+    <thead><tr><th>کامپوننت</th><th>حالت</th><th>قبل از تصمیم</th><th>حالا</th><th></th></tr></thead>
     <tbody>
   <tr>
     <td class="mono" data-label="کامپوننت">Toggle</td>
     <td class="muted" data-label="حالت">خاموش</td>
-    <td class="mono" data-label="مقدار فعلی (A)">var(--liminal-s4)</td>
-    <td class="mono" data-label="پیش‌فرض (B)">var(--liminal-s3)</td>
-    <td class="diff" data-label="نتیجه">تفاوت دارد</td>
+    <td class="mono" data-label="قبل">var(--liminal-s4)</td>
+    <td class="mono" data-label="حالا">var(--liminal-s3)</td>
+    <td class="diff" data-label="تغییر">تغییر کرد</td>
   </tr>
   <tr>
     <td class="mono" data-label="کامپوننت">Checkbox</td>
     <td class="muted" data-label="حالت">تیک‌نخورده</td>
-    <td class="mono" data-label="مقدار فعلی (A)">var(--liminal-s4)</td>
-    <td class="mono" data-label="پیش‌فرض (B)">var(--liminal-s3)</td>
-    <td class="diff" data-label="نتیجه">تفاوت دارد</td>
+    <td class="mono" data-label="قبل">var(--liminal-s4)</td>
+    <td class="mono" data-label="حالا">var(--liminal-s3)</td>
+    <td class="diff" data-label="تغییر">تغییر کرد</td>
   </tr>
   <tr>
     <td class="mono" data-label="کامپوننت">Radio</td>
     <td class="muted" data-label="حالت">انتخاب‌نشده</td>
-    <td class="mono" data-label="مقدار فعلی (A)">var(--liminal-s4)</td>
-    <td class="mono" data-label="پیش‌فرض (B)">var(--liminal-s3)</td>
-    <td class="diff" data-label="نتیجه">تفاوت دارد</td>
+    <td class="mono" data-label="قبل">var(--liminal-s4)</td>
+    <td class="mono" data-label="حالا">var(--liminal-s3)</td>
+    <td class="diff" data-label="تغییر">تغییر کرد</td>
   </tr>
   <tr>
     <td class="mono" data-label="کامپوننت">Tabs</td>
     <td class="muted" data-label="حالت">تبِ غیرفعال</td>
-    <td class="mono" data-label="مقدار فعلی (A)">transparent</td>
-    <td class="mono" data-label="پیش‌فرض (B)">var(--liminal-s3)</td>
-    <td class="diff" data-label="نتیجه">تفاوت دارد</td>
+    <td class="mono" data-label="قبل">transparent</td>
+    <td class="mono" data-label="حالا">var(--liminal-s3)</td>
+    <td class="diff" data-label="تغییر">تغییر کرد</td>
   </tr>
   <tr>
     <td class="mono" data-label="کامپوننت">Table</td>
     <td class="muted" data-label="حالت">ردیفِ انتخاب‌نشده</td>
-    <td class="mono" data-label="مقدار فعلی (A)">var(--liminal-s3)</td>
-    <td class="mono" data-label="پیش‌فرض (B)">var(--liminal-s2)</td>
-    <td class="diff" data-label="نتیجه">تفاوت دارد</td>
+    <td class="mono" data-label="قبل">var(--liminal-s3)</td>
+    <td class="mono" data-label="حالا">var(--liminal-s2)</td>
+    <td class="diff" data-label="تغییر">تغییر کرد</td>
   </tr>
   <tr>
     <td class="mono" data-label="کامپوننت">Calendar</td>
     <td class="muted" data-label="حالت">روزِ انتخاب‌نشده</td>
-    <td class="mono" data-label="مقدار فعلی (A)">var(--liminal-s3)</td>
-    <td class="mono" data-label="پیش‌فرض (B)">var(--liminal-s3)</td>
-    <td class="same" data-label="نتیجه">بدون تفاوت</td>
+    <td class="mono" data-label="قبل">var(--liminal-s3)</td>
+    <td class="mono" data-label="حالا">var(--liminal-s3)</td>
+    <td class="same" data-label="تغییر">بدون تغییر</td>
   </tr>
   <tr>
     <td class="mono" data-label="کامپوننت">DropdownMenuItem</td>
     <td class="muted" data-label="حالت">آیتمِ منو</td>
-    <td class="mono" data-label="مقدار فعلی (A)">var(--liminal-s6)</td>
-    <td class="mono" data-label="پیش‌فرض (B)">var(--liminal-s5)</td>
-    <td class="diff" data-label="نتیجه">تفاوت دارد</td>
+    <td class="mono" data-label="قبل">var(--liminal-s6)</td>
+    <td class="mono" data-label="حالا">var(--liminal-s5)</td>
+    <td class="diff" data-label="تغییر">تغییر کرد</td>
   </tr>
   <tr>
     <td class="mono" data-label="کامپوننت">NavItem</td>
     <td class="muted" data-label="حالت">آیتمِ غیرفعال</td>
-    <td class="mono" data-label="مقدار فعلی (A)">var(--liminal-s1)</td>
-    <td class="mono" data-label="پیش‌فرض (B)">var(--liminal-s1)</td>
-    <td class="same" data-label="نتیجه">بدون تفاوت</td>
+    <td class="mono" data-label="قبل">var(--liminal-s1)</td>
+    <td class="mono" data-label="حالا">var(--liminal-s1)</td>
+    <td class="same" data-label="تغییر">بدون تغییر</td>
   </tr>
   <tr>
     <td class="mono" data-label="کامپوننت">Toast</td>
     <td class="muted" data-label="حالت">دکمهٔ اکشن — پورتال، استاتیک رندر نمی‌شود</td>
-    <td class="mono" data-label="مقدار فعلی (A)">SURFACE_TINT.medium</td>
-    <td class="mono" data-label="پیش‌فرض (B)">var(--liminal-s8)</td>
-    <td class="diff" data-label="نتیجه">تفاوت دارد</td>
+    <td class="mono" data-label="قبل">rgba(255, 255, 255, 0.06)</td>
+    <td class="mono" data-label="حالا">var(--liminal-s8)</td>
+    <td class="diff" data-label="تغییر">تغییر کرد</td>
   </tr></tbody>
   </table>
 
@@ -725,7 +729,7 @@
   <div class="cols">
     
   <div class="col ">
-    <div class="head"><b>A — بلندی حفظ می‌شود</b><span class="use">همان چیزی که امروز در کد است</span></div>
+    <div class="head"><b>قبل</b><span class="use">فشردن بلندی را حفظ می‌کرد</span></div>
     
   <div class="case">
     <div class="lbl mono">Toggle</div>
@@ -741,7 +745,7 @@
   </div>
   <div class="case">
     <div class="lbl mono">Tabs</div>
-    <div class="stage"><div role="tablist" class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s1-5) 0%, var(--liminal-s1-5) 55%, var(--liminal-s1) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;border-radius:10px;display:inline-flex;align-items:center;gap:2px;padding:4px;width:auto;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none"><button data-tab-value="a" type="button" role="tab" id="_R_0_-tab-a" aria-controls="_R_0_-panel-a" aria-selected="false" tabindex="-1" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:transparent;--liminal-surface-hover:var(--liminal-s4);--liminal-surface-active:transparent;--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.79);box-shadow:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>غیرفعال</span></button><button data-tab-value="b" type="button" role="tab" id="_R_0_-tab-b" aria-controls="_R_0_-panel-b" aria-selected="true" tabindex="0" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-hover:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-active:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.89);box-shadow:0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>فعال</span></button></div></div>
+    <div class="stage"><div role="tablist" class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s1-5) 0%, var(--liminal-s1-5) 55%, var(--liminal-s1) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;border-radius:10px;display:inline-flex;align-items:center;gap:2px;padding:4px;width:auto;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none"><button data-tab-value="a" type="button" role="tab" id="_R_0_-tab-a" aria-controls="_R_0_-panel-a" aria-selected="false" tabindex="-1" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:transparent;--liminal-surface-hover:var(--liminal-s4);--liminal-surface-active:transparent;--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.79);box-shadow:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>غیرفعال</span></button><button data-tab-value="b" type="button" role="tab" id="_R_0_-tab-b" aria-controls="_R_0_-panel-b" aria-selected="true" tabindex="0" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-hover:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-active:transparent;--liminal-surface-focus:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.89);box-shadow:0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>فعال</span></button></div></div>
   </div>
   <div class="case">
     <div class="lbl mono">Table</div>
@@ -762,7 +766,7 @@
   </div>
     
   <div class="col ">
-    <div class="head"><b>B — یک پله پایین می‌رود</b><span class="use">پیش‌فرض تولیدکننده</span></div>
+    <div class="head"><b>حالا</b><span class="use">فشردن یک پله پایین می‌رود</span></div>
     
   <div class="case">
     <div class="lbl mono">Toggle</div>
@@ -778,7 +782,7 @@
   </div>
   <div class="case">
     <div class="lbl mono">Tabs</div>
-    <div class="stage"><div role="tablist" class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s1-5) 0%, var(--liminal-s1-5) 55%, var(--liminal-s1) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;border-radius:10px;display:inline-flex;align-items:center;gap:2px;padding:4px;width:auto;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none"><button data-tab-value="a" type="button" role="tab" id="_R_0_-tab-a" aria-controls="_R_0_-panel-a" aria-selected="false" tabindex="-1" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:transparent;--liminal-surface-hover:var(--liminal-s4);--liminal-surface-active:var(--liminal-s3);--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.79);box-shadow:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>غیرفعال</span></button><button data-tab-value="b" type="button" role="tab" id="_R_0_-tab-b" aria-controls="_R_0_-panel-b" aria-selected="true" tabindex="0" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-hover:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-active:var(--liminal-s3);--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.89);box-shadow:0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>فعال</span></button></div></div>
+    <div class="stage"><div role="tablist" class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s1-5) 0%, var(--liminal-s1-5) 55%, var(--liminal-s1) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;border-radius:10px;display:inline-flex;align-items:center;gap:2px;padding:4px;width:auto;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none"><button data-tab-value="a" type="button" role="tab" id="_R_0_-tab-a" aria-controls="_R_0_-panel-a" aria-selected="false" tabindex="-1" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:transparent;--liminal-surface-hover:var(--liminal-s4);--liminal-surface-active:var(--liminal-s3);--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.79);box-shadow:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>غیرفعال</span></button><button data-tab-value="b" type="button" role="tab" id="_R_0_-tab-b" aria-controls="_R_0_-panel-b" aria-selected="true" tabindex="0" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-hover:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-active:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-focus:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.89);box-shadow:0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>فعال</span></button></div></div>
   </div>
   <div class="case">
     <div class="lbl mono">Table</div>
@@ -803,7 +807,7 @@
   <div class="cols">
     
   <div class="col pressed">
-    <div class="head"><b>A — فشرده</b><span class="use">بلندی حفظ می‌شود</span></div>
+    <div class="head"><b>قبل — فشرده</b><span class="use">بلندی حفظ می‌شد</span></div>
     
   <div class="case">
     <div class="lbl mono">Toggle</div>
@@ -819,7 +823,7 @@
   </div>
   <div class="case">
     <div class="lbl mono">Tabs</div>
-    <div class="stage"><div role="tablist" class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s1-5) 0%, var(--liminal-s1-5) 55%, var(--liminal-s1) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;border-radius:10px;display:inline-flex;align-items:center;gap:2px;padding:4px;width:auto;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none"><button data-tab-value="a" type="button" role="tab" id="_R_0_-tab-a" aria-controls="_R_0_-panel-a" aria-selected="false" tabindex="-1" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:transparent;--liminal-surface-hover:var(--liminal-s4);--liminal-surface-active:transparent;--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.79);box-shadow:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>غیرفعال</span></button><button data-tab-value="b" type="button" role="tab" id="_R_0_-tab-b" aria-controls="_R_0_-panel-b" aria-selected="true" tabindex="0" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-hover:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-active:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.89);box-shadow:0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>فعال</span></button></div></div>
+    <div class="stage"><div role="tablist" class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s1-5) 0%, var(--liminal-s1-5) 55%, var(--liminal-s1) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;border-radius:10px;display:inline-flex;align-items:center;gap:2px;padding:4px;width:auto;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none"><button data-tab-value="a" type="button" role="tab" id="_R_0_-tab-a" aria-controls="_R_0_-panel-a" aria-selected="false" tabindex="-1" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:transparent;--liminal-surface-hover:var(--liminal-s4);--liminal-surface-active:transparent;--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.79);box-shadow:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>غیرفعال</span></button><button data-tab-value="b" type="button" role="tab" id="_R_0_-tab-b" aria-controls="_R_0_-panel-b" aria-selected="true" tabindex="0" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-hover:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-active:transparent;--liminal-surface-focus:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.89);box-shadow:0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>فعال</span></button></div></div>
   </div>
   <div class="case">
     <div class="lbl mono">Table</div>
@@ -840,7 +844,7 @@
   </div>
     
   <div class="col pressed">
-    <div class="head"><b>B — فشرده</b><span class="use">یک پله پایین می‌رود</span></div>
+    <div class="head"><b>حالا — فشرده</b><span class="use">یک پله پایین می‌رود</span></div>
     
   <div class="case">
     <div class="lbl mono">Toggle</div>
@@ -856,7 +860,7 @@
   </div>
   <div class="case">
     <div class="lbl mono">Tabs</div>
-    <div class="stage"><div role="tablist" class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s1-5) 0%, var(--liminal-s1-5) 55%, var(--liminal-s1) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;border-radius:10px;display:inline-flex;align-items:center;gap:2px;padding:4px;width:auto;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none"><button data-tab-value="a" type="button" role="tab" id="_R_0_-tab-a" aria-controls="_R_0_-panel-a" aria-selected="false" tabindex="-1" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:transparent;--liminal-surface-hover:var(--liminal-s4);--liminal-surface-active:var(--liminal-s3);--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.79);box-shadow:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>غیرفعال</span></button><button data-tab-value="b" type="button" role="tab" id="_R_0_-tab-b" aria-controls="_R_0_-panel-b" aria-selected="true" tabindex="0" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-hover:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-active:var(--liminal-s3);--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.89);box-shadow:0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>فعال</span></button></div></div>
+    <div class="stage"><div role="tablist" class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s1-5) 0%, var(--liminal-s1-5) 55%, var(--liminal-s1) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;border-radius:10px;display:inline-flex;align-items:center;gap:2px;padding:4px;width:auto;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none"><button data-tab-value="a" type="button" role="tab" id="_R_0_-tab-a" aria-controls="_R_0_-panel-a" aria-selected="false" tabindex="-1" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:transparent;--liminal-surface-hover:var(--liminal-s4);--liminal-surface-active:var(--liminal-s3);--liminal-surface-focus:var(--liminal-s4);--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.79);box-shadow:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>غیرفعال</span></button><button data-tab-value="b" type="button" role="tab" id="_R_0_-tab-b" aria-controls="_R_0_-panel-b" aria-selected="true" tabindex="0" class="" style="--liminal-hover-color:rgba(255, 255, 255, 0.89);--liminal-surface-idle:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-hover:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-active:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-focus:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-brand, #E9ECF2);padding:8px 16px;border-radius:8px;font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;font-family:inherit;font-weight:500;border:1px solid transparent;--liminal-color-idle:rgba(255, 255, 255, 0.89);box-shadow:0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);user-select:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex-shrink:0;box-sizing:border-box" data-liminal-hover-color="" data-liminal-surface=""><span>فعال</span></button></div></div>
   </div>
   <div class="case">
     <div class="lbl mono">Table</div>

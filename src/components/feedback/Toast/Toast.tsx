@@ -194,7 +194,6 @@ export function Toast({
                 on: 'toast',
                 idle: 'transparent',
                 hover: SURFACE_TINT.medium,
-                active: SURFACE_TINT.medium,
               }),
               // `borderStyle`, not the `border` shorthand: the shorthand claims
               // `borderColor` too, which the layer owns. Saying only what this

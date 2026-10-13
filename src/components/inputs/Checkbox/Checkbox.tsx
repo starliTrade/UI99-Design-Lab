@@ -49,7 +49,6 @@ export function Checkbox({
     : offRim
     ? offRim.cssBackground
     : LADDER[2];
-  const hoverBg = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
 
   const boxStyle: CSSProperties = {
     width: ICON_SIZES.md,
@@ -64,14 +63,13 @@ export function Checkbox({
     // The layer owns the surface — see data-liminal-surface. An inline
     // background beats the CSS rule, so this line cancelled the hover.
     //
-    // A CHECKED box keeps its fill in every state; an unchecked one lifts on
-    // hover and holds that lift while pressed.
+    // A CHECKED box keeps its fill in EVERY state; an unchecked one lifts on
+    // hover and sinks below its rest on press.
     ...resolveInteractionVars({
       role: 'control',
       on: host,
       idle: boxBg,
-      hover: checked ? boxBg : hoverBg,
-      active: checked ? boxBg : hoverBg,
+      frozen: checked ? boxBg : undefined,
     }),
     border: checked
       ? `1px solid ${SEMANTICS.SUCCESS.border}`

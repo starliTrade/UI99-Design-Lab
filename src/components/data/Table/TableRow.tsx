@@ -31,12 +31,10 @@ export function TableRow({
   if (isSelected) {
     rowBg = selectedRim ? selectedRim.cssBackground : resolveSurface({ role: 'work', state: 'hover' }).background;
   }
-  const rowHoverBg = resolveSurface({ role: 'work', state: 'hover' }).background;
-
   const rowStyle: CSSProperties = {
-    // A row is a seam in the work surface, not a control that lifts off it, so
-    // a pressed row keeps the hover fill rather than sinking below the rest.
-    ...resolveInteractionVars({ role: 'work', idle: rowBg, active: rowHoverBg }),
+    // A row is a seam in the work surface: it lifts on hover and sinks below the
+    // seam on press, like every other control.
+    ...resolveInteractionVars({ role: 'work', idle: rowBg }),
     // NO `background` here. An inline style beats a CSS rule, so this line was
     // silently cancelling the layer's :hover — the row has had no hover state
     // since the Step 2.1 migration, and nothing caught it because the property

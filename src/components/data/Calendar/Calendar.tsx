@@ -383,7 +383,6 @@ function DayCell({ date, label, ariaLabel, selected, today, onClick, reducedMoti
       on: host,
       idle: idleBg,
       hover: hoverBg,
-      active: hoverBg,
     }),
     display: 'flex',
     alignItems: 'center',
