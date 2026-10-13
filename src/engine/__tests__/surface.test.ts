@@ -8,6 +8,7 @@ import {
   STATE_SHIFT,
   roleDepthInQuanta,
   resolveBorderHex,
+  resolveInteractionVars,
   type SurfaceRole,
   type SurfaceState,
 } from '../liminal-surface';
@@ -402,5 +403,49 @@ describe('the rim — it inverts at the ceiling, like the border does', () => {
       const r = getDirectionalRim(Math.round(s.level), s.rim, false)!;
       expect(r.top !== r.side || r.side !== r.bot, `${role} has a flat rim`).toBe(true);
     }
+  });
+});
+
+describe('the interaction variables have a producer', () => {
+  // They had none. Every component hand-assembled them — twelve-plus sites,
+  // often by calling `resolveSurface` two or three times in a row. That is the
+  // mechanism behind two real bugs: a component that hand-builds the variables
+  // can publish a hover value and forget the idle one, or set `background`
+  // inline beside them and cancel the rule that reads them.
+  it('produces all six the layer reads', () => {
+    const v = resolveInteractionVars({ role: 'control', on: 'work' });
+    expect(Object.keys(v).sort()).toEqual([
+      '--liminal-border-focus', '--liminal-border-idle',
+      '--liminal-surface-active', '--liminal-surface-focus',
+      '--liminal-surface-hover', '--liminal-surface-idle',
+    ]);
+  });
+
+  it('gives every state a value, so none can be forgotten', () => {
+    const v = resolveInteractionVars({ role: 'control', on: 'work' });
+    for (const [k, val] of Object.entries(v)) expect(val, k).toBeTruthy();
+  });
+
+  it('idle and hover differ, which is what makes a hover visible', () => {
+    const v = resolveInteractionVars({ role: 'control', on: 'work' });
+    expect(v['--liminal-surface-idle']).not.toBe(v['--liminal-surface-hover']);
+  });
+
+  it('a frozen control keeps its fill in every state', () => {
+    // A checked box, a selected row. The contract already states this rule.
+    const v = resolveInteractionVars({ role: 'control', on: 'work', frozen: 'var(--liminal-brand)' });
+    expect(v['--liminal-surface-hover']).toBe('var(--liminal-brand)');
+    expect(v['--liminal-surface-active']).toBe('var(--liminal-brand)');
+    expect(v['--liminal-surface-focus']).toBe('var(--liminal-brand)');
+  });
+
+  it('a caller can supply its own idle fill', () => {
+    const v = resolveInteractionVars({ role: 'control', on: 'work', idle: '#123456' });
+    expect(v['--liminal-surface-idle']).toBe('#123456');
+  });
+
+  it('the values are variables, so they follow a theme', () => {
+    const v = resolveInteractionVars({ role: 'control', on: 'work' });
+    expect(v['--liminal-surface-idle']).toContain('var(--liminal-');
   });
 });

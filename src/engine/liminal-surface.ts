@@ -366,3 +366,56 @@ export function roleDepthInQuanta(role: SurfaceRole): number {
   const roleL = oklchLightness(LADDER[ROLE_LEVEL[role]]);
   return (roleL - canvasL) / PERCEPTUAL_QUANTUM;
 }
+
+/**
+ * THE INTERACTION VARIABLES, FROM THE ENGINE.
+ *
+ * The CSS layer reads `--liminal-surface-{idle,hover,active,focus}` and
+ * `--liminal-border-{idle,focus}`. Until now NO engine module produced them:
+ * every component hand-assembled them, twelve-plus sites, often by calling
+ * `resolveSurface` two or three times in a row.
+ *
+ * That is not only repetition. It is the mechanism behind two real bugs this
+ * session: a component that hand-builds the variables can publish a HOVER value
+ * and forget the IDLE one, or set `background` inline beside them and cancel the
+ * rule that reads them. One producer removes the class.
+ */
+export interface InteractionVars {
+  '--liminal-surface-idle': string;
+  '--liminal-surface-hover': string;
+  '--liminal-surface-active': string;
+  '--liminal-surface-focus': string;
+  '--liminal-border-idle': string;
+  '--liminal-border-focus': string;
+}
+
+export interface InteractionVarsRequest {
+  role: SurfaceRole;
+  /** The surface this control sits on. */
+  on?: SurfaceRole;
+  /** Freeze the control in one state — a checked box keeps its fill on hover. */
+  frozen?: string;
+  /** A caller that needs its own idle fill, such as a brand or semantic colour. */
+  idle?: string;
+  /** A caller that needs its own border colour. */
+  border?: string;
+}
+
+export function resolveInteractionVars(request: InteractionVarsRequest): InteractionVars {
+  const { role, on, frozen, idle, border } = request;
+  const at = (state: SurfaceState) => resolveSurface({ role, state, on }).background;
+
+  const idleBg = idle ?? at('idle');
+  // A frozen control — a checked box, a selected row — keeps its own fill in
+  // every state. The same rule the contract states for hover on controls.
+  const frozenBg = frozen ?? idleBg;
+
+  return {
+    '--liminal-surface-idle': idleBg,
+    '--liminal-surface-hover': frozen ? frozenBg : at('hover'),
+    '--liminal-surface-active': frozen ? frozenBg : at('active'),
+    '--liminal-surface-focus': frozen ? frozenBg : at('focus'),
+    '--liminal-border-idle': border ?? resolveBorder({ role, kind: 'edge', on }),
+    '--liminal-border-focus': FOCUS_RING_COLOR,
+  };
+}
