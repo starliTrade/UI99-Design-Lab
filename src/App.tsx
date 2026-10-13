@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Studio } from './studio/Studio';
 import { getLiminalStyle, getTextStyle, LADDER, LiminalState } from './engine/spec-engine';
 import { resolveBorder, resolveSurface } from './engine/liminal-surface';
 import { LADDER_STEP, LADDER_HUE, HALF } from './engine/liminal-ladder';
@@ -67,7 +68,7 @@ const DEMO_ONLY = { sky: '#38BDF8', blue: '#60a5fa', muted: '#555D6E', code: '#A
 export function App() {
   const [copied, setCopied] = useState<boolean>(false);
   const [deviceMode, setDeviceMode] = useState<'mobile' | 'fluid'>('mobile');
-  const [activeTab, setActiveTab] = useState<'app' | 'gateway' | 'motion' | 'atoms' | 'inputs' | 'containers' | 'nav' | 'data' | 'feedback' | 'layout' | 'composites' | 'bench' | 'tokens' | 'contract'>('app');
+  const [activeTab, setActiveTab] = useState<'app' | 'gateway' | 'motion' | 'atoms' | 'inputs' | 'containers' | 'nav' | 'data' | 'feedback' | 'layout' | 'composites' | 'bench' | 'tokens' | 'contract' | 'studio'>('app');
   const [selectedHue, setSelectedHue] = useState<number>(230);
   const [interactiveState, setInteractiveState] = useState<LiminalState>('idle');
   const [bottomDrawerOpen, setBottomDrawerOpen] = useState<boolean>(false);
@@ -384,6 +385,7 @@ export function App() {
               { id: 'bench', label: 'States' },
               { id: 'tokens', label: 'Colors' },
               { id: 'contract', label: 'Contract' },
+              { id: 'studio', label: 'استودیو' },
             ].map((tab) => {
               const isSelected = activeTab === tab.id;
               const tabStyle = isSelected
@@ -1274,6 +1276,10 @@ export function App() {
         )}
 
         {/* ─── TAB 4: MASTER CONTRACT & HARD RULES CHECKLIST ─── */}
+        {activeTab === 'studio' && (
+          <Studio />
+        )}
+
         {activeTab === 'contract' && (
           <div className="space-y-4 animate-in fade-in-50 duration-200">
             {/* Hard Rules Checklist Card */}
