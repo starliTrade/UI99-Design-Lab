@@ -33,19 +33,16 @@
  */
 [data-liminal-surface] {
   background: var(--liminal-surface-idle);
+  /* Both halves of the border pattern live here. A component that hands
+   * `border-color` over has to have somewhere to hand it TO: without this the
+   * border falls back to `currentColor` — the text colour — and a 1px border
+   * becomes a bright line. Measured: an Input rendered with a near-white 1px
+   * border because nothing set the colour. */
+  border-color: var(--liminal-border-idle, transparent);
   transition:
     background var(--liminal-duration-fast, 150ms) var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
     border-color var(--liminal-duration-fast, 150ms) var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
     opacity var(--liminal-duration-fast, 150ms) var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
-}
-
-/* The base half of the surface pattern, for the same reason `hover-color` has
- * one: a component that hands `border-color` over has to have somewhere to hand
- * it TO. Without this rule the border falls back to `currentColor` — the text
- * colour — and a 1px border becomes a bright line. Measured: an Input rendered
- * with a near-white 1px border because nothing set the colour. */
-[data-liminal-surface] {
-  border-color: var(--liminal-border-idle, transparent);
 }
 
 [data-liminal-surface]:hover:not([data-liminal-disabled]) {
