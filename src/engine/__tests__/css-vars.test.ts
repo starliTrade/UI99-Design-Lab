@@ -9,7 +9,7 @@ import {
   CSS_VARS_START,
   CSS_VARS_END,
 } from '../liminal-css-vars';
-import { LADDER, TEXT_HIERARCHY, SURFACE_TINT, VEIL, SHADOWS, Z_INDEX } from '../spec-engine';
+import { LADDER, TEXT_HIERARCHY, SURFACE_TINT, VEIL, SHADOWS, Z_INDEX, HALF } from '../spec-engine';
 import { LiminalLayoutEngine } from '../liminal-layout-engine';
 import { LiminalMotionEngine } from '../liminal-motion-engine';
 import { LiminalColorEngine } from '../liminal-color-engine';
@@ -175,5 +175,34 @@ describe('CSS variable layer — every emitted value is a real CSS value', () =>
       .filter(({ value }) => csstree.lexer.matchProperty('color', value).error !== null)
       .map(({ name, value }) => `${name}: ${value}`);
     expect(bad).toEqual([]);
+  });
+});
+
+describe('the CSS layer — a value published twice is a value that can disagree', () => {
+  // Adding the half-steps named them `s${i}`, which collided with the ladder and
+  // silently overwrote every surface: `--liminal-s0` became `#07080a` instead of
+  // `#060709`. The build still passed and the tests still passed. This is the
+  // guard.
+  const css = readFileSync(resolve(process.cwd(), 'src/index.css'), 'utf8');
+  const rootBlock = css.slice(css.indexOf(':root'), css.indexOf('.dark'));
+
+  it('publishes every ladder step with the ladder’s own hex', () => {
+    LADDER.forEach((hex, i) => {
+      expect(rootBlock, `--liminal-s${i}`).toContain(`--liminal-s${i}: ${hex}`);
+    });
+  });
+
+  it('publishes the half-steps under a name that cannot collide', () => {
+    // `HALF[i]` sits between `LADDER[i]` and `LADDER[i + 1]`.
+    HALF.forEach((hex, i) => {
+      expect(rootBlock, `--liminal-s${i}-5`).toContain(`--liminal-s${i}-5: ${hex}`);
+    });
+  });
+
+  it('declares no variable twice inside the root block', () => {
+    const names = [...rootBlock.matchAll(/--liminal-([a-z0-9-]+):/g)].map((m) => m[1]);
+    const seen = new Set<string>();
+    const dupes = names.filter((n) => (seen.has(n) ? true : (seen.add(n), false)));
+    expect(dupes).toEqual([]);
   });
 });

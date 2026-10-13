@@ -1,0 +1,69 @@
+/**
+ * LIMINAL · MOTION KEYFRAMES
+ *
+ * These used to live in `liminal-motion-engine.ts` as a string that the module
+ * injected into `document.head` at IMPORT TIME. That is a module-level side
+ * effect: a bundler cannot tree-shake a module that has an effect on import, and
+ * a server component importing the engine would try to touch a document that
+ * does not exist.
+ *
+ * They are a stylesheet, so they are a stylesheet. Nothing is injected at
+ * runtime and nothing has to be.
+ */
+
+  @keyframes enterFromTop {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes enterFromBottom {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes enterFromLeft {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes enterFromRight {
+    from { opacity: 0; transform: translateX(8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes exitToTop {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-8px); }
+  }
+  @keyframes exitToBottom {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(8px); }
+  }
+  @keyframes exitToLeft {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-8px); }
+  }
+  @keyframes exitToRight {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(8px); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes liminal-skeleton-pulse {
+    0%, 100% { background-color: var(--liminal-s2); }
+    50% { background-color: var(--liminal-s2-5); }
+  }
+  @keyframes liminal-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes liminal-mist-halo {
+    0%, 100% { opacity: 0.9; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.02); }
+  }

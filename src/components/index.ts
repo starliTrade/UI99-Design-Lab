@@ -4,3 +4,5 @@ export * from './containers';
 export * from './feedback';
 export * from './data';
 export * from './nav';
+export * from './layout';
+export * from './composites';

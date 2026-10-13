@@ -30,22 +30,33 @@ export class LiminalMotionEngine {
     linear: 'linear',
   } as const;
 
+  /**
+   * The properties a transition may animate.
+   *
+   * `transition: all` is a compositing footgun: it animates layout properties
+   * too, so a change to `width` or `top` is interpolated frame by frame instead
+   * of being applied. These are the ones that are safe to animate — the
+   * compositor handles all of them — and naming them makes an accidental layout
+   * animation impossible rather than merely unlikely.
+   */
+  static readonly ANIMATABLE = 'color, background-color, border-color, box-shadow, opacity, transform';
+
   // ===== COMBINED PRESETS (ready-to-use transitions) =====
   static readonly TRANSITION = {
-    micro: `all ${LiminalMotionEngine.DURATION.instant}ms ${LiminalMotionEngine.EASING.out}`,
-    fast: `all ${LiminalMotionEngine.DURATION.fast}ms ${LiminalMotionEngine.EASING.out}`,
-    hover: `all ${LiminalMotionEngine.DURATION.fast}ms ${LiminalMotionEngine.EASING.out}`,
-    normal: `all ${LiminalMotionEngine.DURATION.normal}ms ${LiminalMotionEngine.EASING.out}`,
-    slow: `all ${LiminalMotionEngine.DURATION.slow}ms ${LiminalMotionEngine.EASING.out}`,
-    enter: `all ${LiminalMotionEngine.DURATION.slower}ms ${LiminalMotionEngine.EASING.out}`,
-    spring: `all ${LiminalMotionEngine.DURATION.slower}ms ${LiminalMotionEngine.EASING.spring}`,
+    micro: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.instant}ms ${LiminalMotionEngine.EASING.out}`,
+    fast: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.fast}ms ${LiminalMotionEngine.EASING.out}`,
+    hover: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.fast}ms ${LiminalMotionEngine.EASING.out}`,
+    normal: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.normal}ms ${LiminalMotionEngine.EASING.out}`,
+    slow: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.slow}ms ${LiminalMotionEngine.EASING.out}`,
+    enter: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.slower}ms ${LiminalMotionEngine.EASING.out}`,
+    spring: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.slower}ms ${LiminalMotionEngine.EASING.spring}`,
     // Compatibility aliases:
-    state: `all ${LiminalMotionEngine.DURATION.normal}ms ${LiminalMotionEngine.EASING.spring}`,
-    interactive: `all ${LiminalMotionEngine.DURATION.normal}ms ${LiminalMotionEngine.EASING.spring}`,
-    exit: `all ${LiminalMotionEngine.DURATION.slow}ms ${LiminalMotionEngine.EASING.in}`,
-    containerEnter: `all ${LiminalMotionEngine.DURATION.slower}ms ${LiminalMotionEngine.EASING.out}`,
-    containerExit: `all ${LiminalMotionEngine.DURATION.slower}ms ${LiminalMotionEngine.EASING.in}`,
-    dramatic: `all ${LiminalMotionEngine.DURATION.dramatic}ms ${LiminalMotionEngine.EASING.spring}`,
+    state: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.normal}ms ${LiminalMotionEngine.EASING.spring}`,
+    interactive: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.normal}ms ${LiminalMotionEngine.EASING.spring}`,
+    exit: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.slow}ms ${LiminalMotionEngine.EASING.in}`,
+    containerEnter: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.slower}ms ${LiminalMotionEngine.EASING.out}`,
+    containerExit: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.slower}ms ${LiminalMotionEngine.EASING.in}`,
+    dramatic: `${LiminalMotionEngine.ANIMATABLE} ${LiminalMotionEngine.DURATION.dramatic}ms ${LiminalMotionEngine.EASING.spring}`,
   } as const;
 
   // ===== KEYFRAME GENERATORS =====
@@ -108,10 +119,15 @@ export class LiminalMotionEngine {
   // ===== REDUCED MOTION SAFEGUARD =====
   static readonly REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
-  static readonly REDUCED_MOTION_STYLE = {
-    transition: 'none !important',
-    animation: 'none !important',
-  } as const;
+  /**
+   * REMOVED: a `REDUCED_MOTION_STYLE` object with `!important` in it.
+   *
+   * It was dead code — nothing referenced it — and it could not have worked:
+   * React ignores `!important` in an inline style object, so it would have set
+   * `transition: none` without the precedence it was asking for. Reduced motion
+   * is handled globally in `liminal-interaction.css`, where it applies to every
+   * component without any of them having to remember.
+   */
 
   // ===== KEYFRAMES MAP =====
   static readonly KEYFRAMES = {
@@ -143,74 +159,18 @@ export class LiminalMotionEngine {
 }
 
 // Keyframe definitions (to be injected via <style> or CSS module)
-export const MOTION_KEYFRAMES = `
-  @keyframes enterFromTop {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes enterFromBottom {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes enterFromLeft {
-    from { opacity: 0; transform: translateX(-8px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes enterFromRight {
-    from { opacity: 0; transform: translateX(8px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes exitToTop {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0; transform: translateY(-8px); }
-  }
-  @keyframes exitToBottom {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0; transform: translateY(8px); }
-  }
-  @keyframes exitToLeft {
-    from { opacity: 1; transform: translateX(0); }
-    to { opacity: 0; transform: translateX(-8px); }
-  }
-  @keyframes exitToRight {
-    from { opacity: 1; transform: translateX(0); }
-    to { opacity: 0; transform: translateX(8px); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-  }
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.96); }
-    to { opacity: 1; transform: scale(1); }
-  }
-  @keyframes liminal-skeleton-pulse {
-    0%, 100% { background-color: ${getLadderColor(2)}; }
-    50% { background-color: ${getLadderColor(2.5)}; }
-  }
-  @keyframes liminal-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  @keyframes liminal-mist-halo {
-    0%, 100% { opacity: 0.9; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.02); }
-  }
-`;
+/**
+ * The keyframes used to live here as a string that the module injected into
+ * `document.head` at IMPORT TIME. That is a module-level side effect: it makes
+ * the module non-tree-shakeable (a bundler cannot drop code that has an effect
+ * on import) and it makes the module RSC-hostile (a server component importing
+ * the engine would try to touch a document that does not exist).
+ *
+ * They are in `liminal-motion.css` now, alongside every other layer, and the
+ * stylesheet is imported once by the entry point. Nothing is injected at
+ * runtime and nothing has to be.
+ */
 
-// Auto-inject keyframes into document head if running in client environment
-if (typeof document !== 'undefined') {
-  const styleId = 'liminal-motion-keyframes';
-  if (!document.getElementById(styleId)) {
-    const style = document.createElement('style');
-    style.id = styleId;
-    style.textContent = MOTION_KEYFRAMES;
-    document.head.appendChild(style);
-  }
-}
+
 
 export default LiminalMotionEngine;

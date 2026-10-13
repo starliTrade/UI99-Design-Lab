@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useId } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
 import { getDirectionalRim, getTextStyle, SHADOWS, LADDER, VEIL } from '../../../engine/spec-engine';
@@ -49,6 +49,9 @@ export function Modal({
   style: customStyle = {},
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  // A fixed id meant two modals on one page produced duplicate ids, and
+  // `aria-labelledby` pointed at whichever the browser found first.
+  const titleId = `${useId()}-title`;
   const isModalOpen = open ?? isOpen ?? false;
   const actionContent = actions ?? footer;
   const reduced = useReducedMotion();
@@ -139,7 +142,7 @@ export function Modal({
         ref={modalRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={title ? 'liminal-modal-title' : undefined}
+        aria-labelledby={title ? titleId : undefined}
         tabIndex={-1}
         onKeyDown={handleKeyDown}
         className={className}
@@ -156,7 +159,7 @@ export function Modal({
         >
           {title ? (
             <div>
-              <h2 id="liminal-modal-title" style={titleStyle}>
+              <h2 id={titleId} style={titleStyle}>
                 {title}
               </h2>
               {description && (

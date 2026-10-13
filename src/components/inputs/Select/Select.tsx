@@ -30,7 +30,14 @@ export interface SelectProps {
   options?: SelectOption[];
   value?: string;
   defaultValue?: string;
-  onChange?: ((value: string) => void) | ((e: ChangeEvent<HTMLSelectElement>) => void);
+  /**
+   * ONE signature. It used to accept either `(value: string)` or `(event)`, and
+   * tried to tell them apart with `try { onChange(value) } catch { onChange(e) }`
+   * — which cannot work: calling an event-style handler with a string does not
+   * throw, so the catch never fired and the caller silently received a string
+   * where it expected an event. Nothing used the event form, so it is gone.
+   */
+  onChange?: (value: string) => void;
   onFocus?: (e: FocusEvent<HTMLSelectElement>) => void;
   onBlur?: (e: FocusEvent<HTMLSelectElement>) => void;
   disabled?: boolean;
@@ -238,14 +245,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     if (value === undefined) {
       setInternalValue(newVal);
     }
-    if (onChange) {
-      // Support both string signature and ChangeEvent signature
-      try {
-        (onChange as (val: string) => void)(newVal);
-      } catch {
-        (onChange as (event: ChangeEvent<HTMLSelectElement>) => void)(e);
-      }
-    }
+    onChange?.(newVal);
   };
 
   const handleFocus = (e: FocusEvent<HTMLSelectElement>) => {

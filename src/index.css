@@ -1,6 +1,7 @@
 @import "./engine/liminal-mist.css";
 @import "./engine/liminal-bidi.css";
 @import "./engine/liminal-fonts.css";
+@import "./engine/liminal-motion.css";
 @import "./engine/liminal-interaction.css";
 /* @liminal-generated:start */
 /* Generated from src/engine/liminal-css-vars.ts — do not edit by hand.
@@ -18,6 +19,14 @@
   --liminal-s6: #111316;
   --liminal-s7: #131518;
   --liminal-s8: #15171a;
+  --liminal-s0-5: #07080a;
+  --liminal-s1-5: #080a0c;
+  --liminal-s2-5: #0a0c0e;
+  --liminal-s3-5: #0c0e10;
+  --liminal-s4-5: #0e1013;
+  --liminal-s5-5: #101215;
+  --liminal-s6-5: #121417;
+  --liminal-s7-5: #141619;
   --liminal-s-minus-1: #030406; /* penumbra */
   --liminal-s-minus-2: #010203; /* contact umbra */
 
@@ -184,6 +193,14 @@
   --liminal-s6: #111316;
   --liminal-s7: #131518;
   --liminal-s8: #15171a;
+  --liminal-s0-5: #07080a;
+  --liminal-s1-5: #080a0c;
+  --liminal-s2-5: #0a0c0e;
+  --liminal-s3-5: #0c0e10;
+  --liminal-s4-5: #0e1013;
+  --liminal-s5-5: #101215;
+  --liminal-s6-5: #121417;
+  --liminal-s7-5: #141619;
   --liminal-s-minus-1: #030406; /* penumbra */
   --liminal-s-minus-2: #010203; /* contact umbra */
 

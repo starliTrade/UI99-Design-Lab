@@ -44,6 +44,16 @@ export function generateCssVars(): string {
   // ── 1. TONAL LADDER ────────────────────────────────────────────────
   section('1. TONAL LADDER');
   LADDER.forEach((hex, i) => v(`s${i}`, hex, i === 0 ? 'canvas' : undefined));
+  // The half-steps are part of the system, not an implementation detail: the
+  // hover of a surface and the pulse of a skeleton both land on one. They were
+  // reachable only from JavaScript, so a keyframe that needed one had to
+  // interpolate it at runtime — which is how a stylesheet ended up with
+  // `getLadderColor(2.5)` written inside it.
+  // `HALF[i]` sits BETWEEN `LADDER[i]` and `LADDER[i + 1]`, so it is named for
+  // the pair: `s0-5` is the step between S0 and S1. Naming it `s${i}` collided
+  // with the ladder and silently overwrote every surface — which is the defect
+  // this system keeps finding, so there is a test for it now.
+  HALF.forEach((hex, i) => v(`s${i}-5`, hex));
   v('s-minus-1', WELLS.penumbra, 'penumbra');
   v('s-minus-2', WELLS.umbra, 'contact umbra');
 
