@@ -16,7 +16,20 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
 
-export interface InputProps {
+/**
+ * The standard `<input>` attributes are accepted, not enumerated.
+ *
+ * They were enumerated — every prop listed and passed explicitly — and `...rest`
+ * was never spread. So `aria-invalid`, `aria-required`, `data-*` and every other
+ * attribute a consumer passes was silently dropped. A form that wires its errors
+ * through `aria-invalid` could not: the attribute never reached the element.
+ */
+type NativeInputProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'value' | 'defaultValue' | 'onChange' | 'size' | 'type' | 'prefix'
+>;
+
+export interface InputProps extends NativeInputProps {
   type?: 'text' | 'email' | 'password' | 'search' | 'number' | 'tel' | 'url';
   label?: string;
   placeholder?: string;
@@ -95,6 +108,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     ariaAutocomplete,
     className = '',
     style: customStyle = {},
+    ...rest
   }: InputProps,
   forwardedRef
 ) {
@@ -486,7 +500,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
           autoFocus={autoFocus}
           maxLength={maxLength}
           autoComplete={autoComplete}
-          aria-describedby={ariaDescribedBy}
+          aria-describedby={ariaDescribedBy ?? (rest['aria-describedby'] as string | undefined)}
           role={role}
           aria-expanded={ariaExpanded}
           aria-haspopup={ariaHasPopup}
@@ -498,6 +512,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
           onFocus={onFocus}
           onBlur={onBlur}
           style={inputElementStyle}
+          {...rest}
         />
 
         {renderAdornment(rawRight)}
