@@ -34,7 +34,7 @@ import { Footer } from '../layout/Footer/Footer';
 import { NavItem } from '../nav/NavItem/NavItem';
 import { Sidebar } from '../nav/Sidebar/Sidebar';
 import { Topbar } from '../nav/Topbar/Topbar';
-import { Tabs } from '../nav/Tabs/Tabs';
+import { Tabs, TabPanel } from '../nav/Tabs/Tabs';
 import { Breadcrumb } from '../nav/Breadcrumb/Breadcrumb';
 import { Modal } from '../containers/Modal/Modal';
 import { Sheet } from '../containers/Sheet/Sheet';
@@ -112,7 +112,7 @@ const FIXTURES: Array<[string, ReactElement]> = [
   ['NavItem', <NavItem>Dashboard</NavItem>],
   ['Sidebar', <Sidebar><NavItem>Dashboard</NavItem></Sidebar>],
   ['Topbar', <Topbar logo={<span>App</span>} />],
-  ['Tabs', <Tabs items={[{ id: 'a', label: 'A' }]} value="a" onChange={() => {}} />],
+  ['Tabs', <Tabs items={[{ id: 'a', label: 'A' }]} value="a" onChange={() => {}}><TabPanel value="a">A</TabPanel></Tabs>],
   ['Breadcrumb', <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Now' }]} />],
 
   // ── the hard half ────────────────────────────────────────────────────────

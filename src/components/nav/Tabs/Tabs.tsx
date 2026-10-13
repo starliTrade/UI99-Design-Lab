@@ -1,4 +1,4 @@
-import React, {
+import React, { useId,
   createContext,
   useContext,
   useState,
@@ -32,6 +32,7 @@ interface TabsContextType {
   tabValues: string[];
   keyboardMode: boolean;
   setKeyboardMode: (val: boolean) => void;
+  idPrefix: string;
   getItemProps: (index: number) => {
     tabIndex: number;
     onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
@@ -66,6 +67,7 @@ export function Tab({
 }: TabProps) {
   const host = useHostSurface();
   const context = useContext(TabsContext);
+  const idPrefix = context?.idPrefix ?? '';
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const RADIUS = LiminalLayoutEngine.RADIUS;
@@ -158,6 +160,10 @@ export function Tab({
       data-tab-value={value}
       type="button"
       role="tab"
+      id={`${idPrefix}-tab-${value}`}
+      // The panel is not rendered by Tabs — the consumer renders it — so the
+      // tab points at an id the consumer can produce with the same helper.
+      aria-controls={`${idPrefix}-panel-${value}`}
       aria-selected={isActive}
       disabled={disabled}
       tabIndex={rovingProps.tabIndex}
@@ -208,6 +214,9 @@ export function Tabs({
   className = '',
   style: customStyle = {},
 }: TabsProps) {
+  // A tab and its panel have to name each other. `useId` gives the pair a
+  // prefix that is stable per instance and unique per page.
+  const idPrefix = useId();
   const [keyboardMode, setKeyboardMode] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
@@ -293,6 +302,7 @@ export function Tabs({
         tabValues,
         keyboardMode,
         setKeyboardMode,
+        idPrefix: idPrefix,
         getItemProps,
       }}
     >
@@ -317,6 +327,11 @@ export function Tabs({
             ))
           : children}
       </div>
+      {/* The panels are ALWAYS children — the tabs may come from `items`, but
+          the panels never do. Rendering children only when `items` was absent
+          meant `aria-controls` pointed at an element that was never rendered,
+          which is worse than not having the attribute at all. */}
+      {safeItems ? children : null}
     </TabsContext.Provider>
   );
 }
@@ -324,3 +339,42 @@ export function Tabs({
 Tabs.Tab = Tab;
 
 export default Tabs;
+
+
+/**
+ * The other half of the tab pattern.
+ *
+ * `Tabs` renders the tablist; the consumer renders the panel. Without this, the
+ * tab pointed at nothing: no `aria-controls`, no `role="tabpanel"`, no
+ * `aria-labelledby`. A screen reader could read the tabs and had no way to
+ * reach what they control.
+ */
+export interface TabPanelProps {
+  /** Must match the `value` of the tab it belongs to. */
+  value: string;
+  children: ReactNode;
+  className?: string;
+  style?: CSSProperties;
+}
+
+export function TabPanel({ value, children, className = '', style }: TabPanelProps) {
+  const ctx = React.useContext(TabsContext);
+  if (!ctx) throw new Error('TabPanel must be used inside Tabs');
+  const idPrefix = ctx.idPrefix;
+  return (
+    <div
+      role="tabpanel"
+      id={`${idPrefix}-panel-${value}`}
+      aria-labelledby={`${idPrefix}-tab-${value}`}
+      // A panel is focusable so the reader can move into it with the keyboard.
+      tabIndex={0}
+      hidden={ctx.activeValue !== value}
+      className={className}
+      style={style}
+    >
+      {children}
+    </div>
+  );
+}
+
+Tabs.Panel = TabPanel;
