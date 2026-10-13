@@ -1,7 +1,6 @@
 import React, { useId,
   createContext,
   useContext,
-  useState,
   useRef,
   useEffect,
   useMemo,
@@ -28,8 +27,6 @@ interface TabsContextType {
   onChange: (val: string) => void;
   registerTabRef: (val: string, ref: HTMLButtonElement | null) => void;
   tabValues: string[];
-  keyboardMode: boolean;
-  setKeyboardMode: (val: boolean) => void;
   idPrefix: string;
   getItemProps: (index: number) => {
     tabIndex: number;
@@ -78,8 +75,6 @@ export function Tab({
   const {
     activeValue,
     onChange,
-    keyboardMode,
-    setKeyboardMode,
     tabValues,
     getItemProps,
     registerTabRef,
@@ -220,7 +215,6 @@ export function Tabs({
   // A tab and its panel have to name each other. `useId` gives the pair a
   // prefix that is stable per instance and unique per page.
   const idPrefix = useId();
-  const [keyboardMode, setKeyboardMode] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
@@ -253,7 +247,6 @@ export function Tabs({
       onSelect: (nextIndex) => {
         const nextVal = tabValues[nextIndex];
         if (nextVal) {
-          setKeyboardMode(true);
           onChange(nextVal);
           const el = tabRefs.current.get(nextVal);
           if (el) {
@@ -300,8 +293,6 @@ export function Tabs({
         onChange,
         registerTabRef,
         tabValues,
-        keyboardMode,
-        setKeyboardMode,
         idPrefix: idPrefix,
         getItemProps,
       }}

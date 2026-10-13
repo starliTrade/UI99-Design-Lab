@@ -88,7 +88,8 @@ const CASES: { name: string; note: string; el: React.ReactElement }[] = [
   { name: 'Radio', note: 'انتخاب‌نشده', el: <Radio checked={false} onChange={noop} name="p" value="a" label="گزینه" /> },
   {
     name: 'Tabs', note: 'تبِ غیرفعال',
-    el: <Tabs value="a" onChange={noop} items={[{ value: 'a', label: 'فعال' }, { value: 'b', label: 'غیرفعال' }]} />,
+    // The deviation is on the INACTIVE tab, and the probe reads the first one.
+    el: <Tabs value="b" onChange={noop} items={[{ id: 'a', label: 'غیرفعال' }, { id: 'b', label: 'فعال' }]} />,
   },
   {
     name: 'Table', note: 'ردیفِ انتخاب‌نشده',

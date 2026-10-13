@@ -95,17 +95,14 @@ export function Textarea({
 
   let background = idleSurface;
   const borderColor = resolveBorder({ role: 'control', kind: 'edge', on: host });
-  let border = `1px solid ${borderColor}`;
 
   if (!disabled) {
     if (error) {
-      border = `1px solid ${SEMANTICS.DANGER.border}`;
       const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
       if (baseRim) {
         background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
       }
     } else if (success) {
-      border = `1px solid ${SEMANTICS.SUCCESS.border}`;
       const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
       if (baseRim) {
         background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
