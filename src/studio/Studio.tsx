@@ -45,6 +45,7 @@ function controlsFor(f: ComponentFixture): Control[] {
   const out: Control[] = [];
   if (f.sizes.length) out.push({ name: 'size', values: f.sizes });
   if (f.states.length) out.push({ name: 'state', values: f.states });
+  if (f.variants?.length) out.push({ name: 'variant', values: f.variants });
   return out;
 }
 
@@ -55,6 +56,7 @@ export function Studio() {
   const [selected, setSelected] = useState<string>(FIXTURES[0].name);
   const [size, setSize] = useState<string | undefined>(undefined);
   const [state, setState] = useState<string | undefined>(undefined);
+  const [variant, setVariant] = useState<string | undefined>(undefined);
   const [showCode, setShowCode] = useState(true);
   // Mobile-first: the sidebar is a column on a wide screen and a horizontal
   // strip on a narrow one. A fixed 220px column is what breaks a phone layout,
@@ -66,6 +68,7 @@ export function Studio() {
   const controls = controlsFor(fixture);
   const activeSize = size && fixture.sizes.includes(size) ? size : fixture.sizes[0];
   const activeState = state && fixture.states.includes(state) ? state : fixture.states[0];
+  const activeVariant = variant && fixture.variants?.includes(variant) ? variant : fixture.variants?.[0];
   const cov = coverage(fixture);
   const missing = fixture.expected.filter((s) => !fixture.states.includes(s));
 
@@ -74,9 +77,10 @@ export function Studio() {
     const f = FIXTURES.find((x) => x.name === name)!;
     setSize(f.sizes[0]);
     setState(f.states[0]);
+    setVariant(f.variants?.[0]);
   };
 
-  const rendered = fixture.render(activeState, activeSize);
+  const rendered = fixture.render(activeState, activeSize, activeVariant);
 
   return (
     <div
@@ -153,12 +157,13 @@ export function Studio() {
               <div style={{ fontSize: 11, color: FAINT, marginBottom: 4 }}>{c.name}</div>
               <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                 {c.values.map((v) => {
-                  const on = (c.name === 'size' ? activeSize : activeState) === v;
+                  const current = c.name === 'size' ? activeSize : c.name === 'state' ? activeState : activeVariant;
+                  const on = current === v;
                   return (
                     <button
                       key={v}
                       type="button"
-                      onClick={() => (c.name === 'size' ? setSize(v) : setState(v))}
+                      onClick={() => (c.name === 'size' ? setSize(v) : c.name === 'state' ? setState(v) : setVariant(v))}
                       aria-pressed={on}
                       style={{
                         border: `1px solid ${on ? LADDER[6] : LADDER[3]}`, borderRadius: `${R.chip}px`,
@@ -209,7 +214,7 @@ export function Studio() {
               direction: 'ltr', textAlign: 'left',
             }}
           >
-{`<${fixture.name}${activeSize ? ` size="${activeSize}"` : ''}${activeState && activeState !== 'default' ? ` /* ${activeState} */` : ''} />`}
+{`<${fixture.name}${activeVariant ? ` variant="${activeVariant}"` : ''}${activeSize ? ` size="${activeSize}"` : ''}${activeState && activeState !== 'default' ? ` /* ${activeState} */` : ''} />`}
           </pre>
         )}
 

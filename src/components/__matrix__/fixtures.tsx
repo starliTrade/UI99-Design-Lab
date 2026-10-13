@@ -63,10 +63,18 @@ export interface ComponentFixture {
   sizes: string[];
   /** The states it actually supports. */
   states: string[];
+  /**
+   * The variants it actually supports.
+   *
+   * Missing until a reader asked "does Button have variants?" and the studio
+   * had no way to answer. A component with six variants and a control for none
+   * of them is a component the tool cannot show.
+   */
+  variants?: string[];
   /** The states the system expects every interactive component to have. */
   expected: string[];
   /** One rendered example per state. */
-  render: (state: string, size?: string) => React.ReactElement;
+  render: (state: string, size?: string, variant?: string) => React.ReactElement;
 }
 
 const noop = () => {};
@@ -79,8 +87,9 @@ const FEEDBACK_STATES = ['info', 'success', 'warning', 'danger'];
 export const FIXTURES: ComponentFixture[] = [
   {
     name: 'Button', group: 'اتم‌ها', sizes: ['sm', 'md', 'lg'], states: INTERACTIVE, expected: INTERACTIVE,
-    render: (state, size) => (
-      <Button size={(size ?? 'md') as 'sm'} disabled={state === 'disabled'} variant="primary">
+    variants: ['primary', 'secondary', 'ghost', 'danger', 'outline', 'link'],
+    render: (state, size, variant) => (
+      <Button size={(size ?? 'md') as 'sm'} disabled={state === 'disabled'} variant={(variant ?? 'primary') as 'primary'}>
         {state === 'default' ? 'دکمه' : state}
       </Button>
     ),
@@ -143,6 +152,7 @@ export const FIXTURES: ComponentFixture[] = [
   },
   {
     name: 'Badge', group: 'اتم‌ها', sizes: [], states: ['neutral', 'success', 'warning', 'danger', 'info'], expected: [],
+    variants: ['neutral', 'success', 'warning', 'danger', 'info'],
     render: (state) => <Badge semantic={state === 'neutral' ? undefined : (state as 'success')}>برچسب</Badge>,
   },
   {
@@ -184,6 +194,7 @@ export const FIXTURES: ComponentFixture[] = [
   },
   {
     name: 'Skeleton', group: 'کمکی', sizes: [], states: ['text', 'circle', 'rect'], expected: [],
+    variants: ['text', 'circle', 'rect'],
     render: (state) => <Skeleton variant={state as 'text'} width={160} />,
   },
   {

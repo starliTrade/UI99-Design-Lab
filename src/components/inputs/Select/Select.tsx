@@ -154,7 +154,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     : LiminalColorEngine.BRAND_PRIMARY.hex;
 
   let background = idleSurface;
-  let border = `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}`;
+  const borderColor = resolveBorder({ role: 'control', kind: 'edge', on: host });
+  let border = `1px solid ${borderColor}`;
 
   if (!disabled) {
     if (error) {
@@ -178,6 +179,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     '--liminal-surface-idle': background,
     '--liminal-surface-hover': disabled || error || success ? background : hoverSurface,
     '--liminal-surface-focus': disabled || error || success ? background : focusSurface,
+    '--liminal-border-idle': borderColor,
     '--liminal-border-focus': ringColor,
     display: 'flex',
     alignItems: 'center',
