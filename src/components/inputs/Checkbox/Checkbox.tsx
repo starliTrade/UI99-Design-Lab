@@ -1,4 +1,4 @@
-import { resolveSurface } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import React from 'react';
 import type { CSSProperties, KeyboardEvent, ChangeEvent } from 'react';
@@ -63,10 +63,16 @@ export function Checkbox({
     transition: LiminalMotionEngine.TRANSITION.normal,
     // The layer owns the surface — see data-liminal-surface. An inline
     // background beats the CSS rule, so this line cancelled the hover.
-    '--liminal-surface-idle': boxBg,
-    // A CHECKED box keeps its fill on hover.
-    '--liminal-surface-hover': checked ? boxBg : hoverBg,
-    '--liminal-surface-active': checked ? boxBg : hoverBg,
+    //
+    // A CHECKED box keeps its fill in every state; an unchecked one lifts on
+    // hover and holds that lift while pressed.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: boxBg,
+      hover: checked ? boxBg : hoverBg,
+      active: checked ? boxBg : hoverBg,
+    }),
     border: checked
       ? `1px solid ${SEMANTICS.SUCCESS.border}`
       : offRim

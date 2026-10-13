@@ -11,7 +11,7 @@ import {
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { useDirection, pick } from '../../../engine/liminal-direction';
 import {
@@ -374,9 +374,17 @@ function DayCell({ date, label, ariaLabel, selected, today, onClick, reducedMoti
   const hoverBg = resolveSurface({ role: 'control', on: host }).background;
 
   const cellStyle = {
-    '--liminal-surface-idle': idleBg,
-    '--liminal-surface-hover': hoverBg,
-    '--liminal-surface-active': hoverBg,
+    // A selected cell keeps its raised surface; an unselected one lies flat and
+    // lifts to the control surface on hover. Both states are explicit because
+    // the resting fill is the caller's own — the engine cannot derive a lift
+    // from a colour it did not choose.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: idleBg,
+      hover: hoverBg,
+      active: hoverBg,
+    }),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

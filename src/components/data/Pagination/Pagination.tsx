@@ -10,7 +10,7 @@ import {
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { resolveInteractionVars, resolveBorder } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export interface PaginationProps {
@@ -164,14 +164,15 @@ function PageButton({ page, isCurrent, onClick, reducedMotion }: PageButtonProps
   const CONTROL = LiminalLayoutEngine.CONTROL;
   const host = useHostSurface();
   // Hover is CSS's job now — no setState, no re-render per mouse move.
-  const bg = isCurrent
-    ? resolveSurface({ role: 'control', on: host }).background
-    : 'transparent';
-
   const style = {
-    '--liminal-surface-idle': bg,
-    '--liminal-surface-hover': resolveSurface({ role: 'control', state: 'hover', on: host }).background,
-    '--liminal-surface-active': resolveSurface({ role: 'control', state: 'active', on: host }).background,
+    // The current page sits on the control surface; the others lie flat on the
+    // bar and lift on hover. `idle` is omitted for the current page, which is
+    // the producer's own default.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: isCurrent ? undefined : 'transparent',
+    }),
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',

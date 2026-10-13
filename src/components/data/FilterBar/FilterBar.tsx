@@ -8,7 +8,7 @@ import { getLiminalStyle, getTextStyle, getLadderColor } from '../../../engine/s
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
-import { resolveSurface } from '../../../engine/liminal-surface';
+import { resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export interface ActiveFilter {
@@ -113,9 +113,9 @@ function RemoveFilterButton({ label, onClick, reducedMotion }: RemoveFilterButto
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    '--liminal-surface-idle': 'transparent',
-    '--liminal-surface-hover': resolveSurface({ role: 'control', state: 'hover', on: host }).background,
-    '--liminal-surface-active': resolveSurface({ role: 'control', state: 'active', on: host }).background,
+    // Flat on the host at rest, lifted by the layer on hover, dropped back on
+    // press. The six variables come from the one producer.
+    ...resolveInteractionVars({ role: 'control', on: host, idle: 'transparent' }),
     border: 'none',
     borderRadius: '50%',
     width: `${LiminalLayoutEngine.SPACING[4]}px`,

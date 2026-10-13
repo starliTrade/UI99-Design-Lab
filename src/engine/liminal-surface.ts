@@ -395,14 +395,29 @@ export interface InteractionVarsRequest {
   on?: SurfaceRole;
   /** Freeze the control in one state — a checked box keeps its fill on hover. */
   frozen?: string;
-  /** A caller that needs its own idle fill, such as a brand or semantic colour. */
+  /**
+   * The resting fill, when it is not the engine's control surface: a brand or
+   * semantic colour, a rim gradient, or `transparent` for a control that lies
+   * flat on its host.
+   *
+   * A caller that supplies `idle` should supply `hover` and `active` with it.
+   * The engine derives the two from the level its OWN fill sits at, and it
+   * cannot know what half a step means for a colour it did not choose — a
+   * brand's own hover, or a flat control whose press returns to the host.
+   */
   idle?: string;
+  /** The hover fill, when `idle` is the caller's own. */
+  hover?: string;
+  /** The pressed fill, when `idle` is the caller's own. */
+  active?: string;
   /** A caller that needs its own border colour. */
   border?: string;
+  /** A caller that needs its own focus border — an invalid field turns red. */
+  borderFocus?: string;
 }
 
 export function resolveInteractionVars(request: InteractionVarsRequest): InteractionVars {
-  const { role, on, frozen, idle, border } = request;
+  const { role, on, frozen, idle, hover, active, border, borderFocus } = request;
   const at = (state: SurfaceState) => resolveSurface({ role, state, on }).background;
 
   const idleBg = idle ?? at('idle');
@@ -412,10 +427,10 @@ export function resolveInteractionVars(request: InteractionVarsRequest): Interac
 
   return {
     '--liminal-surface-idle': idleBg,
-    '--liminal-surface-hover': frozen ? frozenBg : at('hover'),
-    '--liminal-surface-active': frozen ? frozenBg : at('active'),
+    '--liminal-surface-hover': hover ?? (frozen ? frozenBg : at('hover')),
+    '--liminal-surface-active': active ?? (frozen ? frozenBg : at('active')),
     '--liminal-surface-focus': frozen ? frozenBg : at('focus'),
     '--liminal-border-idle': border ?? resolveBorder({ role, kind: 'edge', on }),
-    '--liminal-border-focus': FOCUS_RING_COLOR,
+    '--liminal-border-focus': borderFocus ?? FOCUS_RING_COLOR,
   };
 }

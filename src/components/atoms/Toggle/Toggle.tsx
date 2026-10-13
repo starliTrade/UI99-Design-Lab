@@ -4,7 +4,7 @@ import {getDirectionalRim, getLadderColor, SURFACE_TINT, SHADOWS } from '../../.
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
-import { resolveSurface } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 /** The knob's inset from the track edge: a visual decision, so it is named. */
@@ -72,14 +72,20 @@ export function Toggle({
     userSelect: 'none',
     boxSizing: 'border-box',
     border: '1px solid transparent',
-    // The layer owns the surface. The switch publishes its two states and
-    // stops setting `background` itself — an inline background beats the CSS
-    // rule, so the hover the layer would have applied could never arrive.
-    '--liminal-surface-idle': trackBg,
-    // A CHECKED switch keeps its fill on hover: the hover value equals the idle
-    // one. The same rule a selected table row uses.
-    '--liminal-surface-hover': isChecked ? trackBg : hoverBg,
-    '--liminal-surface-active': isChecked ? trackBg : hoverBg,
+    // The layer owns the surface. The switch publishes its states and stops
+    // setting `background` itself — an inline background beats the CSS rule, so
+    // the hover the layer would have applied could never arrive.
+    //
+    // A CHECKED switch keeps its fill in every state: the same rule a selected
+    // table row uses. An unchecked one lifts on hover and holds that lift while
+    // pressed.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: trackBg,
+      hover: isChecked ? trackBg : hoverBg,
+      active: isChecked ? trackBg : hoverBg,
+    }),
     // NO `outline: none` here. It cancelled the layer's :focus-visible ring, so
     // the switch had NO visible focus at all — WCAG 2.4.7. The layer owns focus;
     // `data-liminal-focusable` below opts in.

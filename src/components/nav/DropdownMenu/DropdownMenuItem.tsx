@@ -22,7 +22,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { LiminalIcon, ICON_SIZES } from '../../../engine/liminal-icon-engine';
 import { LiminalComponentEngine } from '../../../engine/liminal-component-engine';
 import { Slot } from '../../../engine/liminal-slot';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars } from '../../../engine/liminal-surface';
 import {
   useDropdownMenuContext,
   RadioGroupContext,
@@ -77,7 +77,6 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
     // Hover and focus are CSS's job now. The item sits ON the menu surface:
     // idle is transparent, and the browser lifts it by a half-step on hover or
     // keyboard focus — never an absolute ladder level.
-    const idleBg = 'transparent';
     const hoverBg = isDanger
       ? LiminalColorEngine.SEMANTICS.DANGER.subtle
       : resolveSurface({ role: 'menu', state: 'hover' }).background;
@@ -86,9 +85,14 @@ export const DropdownMenuItem = forwardRef<HTMLElement, DropdownMenuItemProps>(
       : getTextStyle('primary', 2).color;
 
     const itemStyle = {
-      '--liminal-surface-idle': idleBg,
-      '--liminal-surface-hover': hoverBg,
-      '--liminal-surface-active': hoverBg,
+      // Flat on the menu at rest; the layer lifts it on hover and holds that
+      // lift while pressed.
+      ...resolveInteractionVars({
+        role: 'menu',
+        idle: 'transparent',
+        hover: hoverBg,
+        active: hoverBg,
+      }),
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -216,15 +220,19 @@ export const DropdownMenuCheckboxItem = forwardRef<HTMLElement, DropdownMenuChec
     const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
     // Hover and focus are CSS's job now — see the interaction layer.
-    const idleBg = 'transparent';
     const hoverBg = resolveSurface({ role: 'menu', state: 'hover' }).background;
     const textColor = getTextStyle('primary', 2).color;
 
 
     const itemStyle = {
-      '--liminal-surface-idle': idleBg,
-      '--liminal-surface-hover': hoverBg,
-      '--liminal-surface-active': hoverBg,
+      // Flat on the menu at rest; the layer lifts it on hover and holds that
+      // lift while pressed.
+      ...resolveInteractionVars({
+        role: 'menu',
+        idle: 'transparent',
+        hover: hoverBg,
+        active: hoverBg,
+      }),
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -353,15 +361,19 @@ export const DropdownMenuRadioItem = forwardRef<HTMLElement, DropdownMenuRadioIt
     const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
     // Hover and focus are CSS's job now — see the interaction layer.
-    const idleBg = 'transparent';
     const hoverBg = resolveSurface({ role: 'menu', state: 'hover' }).background;
     const textColor = getTextStyle('primary', 2).color;
 
 
     const itemStyle = {
-      '--liminal-surface-idle': idleBg,
-      '--liminal-surface-hover': hoverBg,
-      '--liminal-surface-active': hoverBg,
+      // Flat on the menu at rest; the layer lifts it on hover and holds that
+      // lift while pressed.
+      ...resolveInteractionVars({
+        role: 'menu',
+        idle: 'transparent',
+        hover: hoverBg,
+        active: hoverBg,
+      }),
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',

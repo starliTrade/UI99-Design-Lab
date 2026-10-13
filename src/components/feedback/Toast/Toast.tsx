@@ -7,6 +7,7 @@ import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
+import { resolveInteractionVars } from '../../../engine/liminal-surface';
 import { CheckCircle, Warning, XCircle, Info, X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 
@@ -184,10 +185,17 @@ export function Toast({
             onClick={action.onClick}
             data-liminal-surface=""
             style={{
-              // The action's surface is the layer's, not state's.
-              '--liminal-surface-idle': 'transparent',
-              '--liminal-surface-hover': SURFACE_TINT.medium,
-              '--liminal-surface-active': SURFACE_TINT.medium,
+              // The action's surface is the layer's, not state's. It lies flat
+              // on the toast and lifts to a tint on hover, which it holds while
+              // pressed — the toast is already the top of the ladder, so there
+              // is no step above it for the engine to derive.
+              ...resolveInteractionVars({
+                role: 'control',
+                on: 'toast',
+                idle: 'transparent',
+                hover: SURFACE_TINT.medium,
+                active: SURFACE_TINT.medium,
+              }),
               // `borderStyle`, not the `border` shorthand: the shorthand claims
               // `borderColor` too, which the layer owns. Saying only what this
               // component means — there is no border — leaves the layer able to

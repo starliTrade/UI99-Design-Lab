@@ -8,6 +8,7 @@ import {
   STATE_SHIFT,
   roleDepthInQuanta,
   resolveBorderHex,
+  resolveBorder,
   resolveInteractionVars,
   type SurfaceRole,
   type SurfaceState,
@@ -442,6 +443,50 @@ describe('the interaction variables have a producer', () => {
   it('a caller can supply its own idle fill', () => {
     const v = resolveInteractionVars({ role: 'control', on: 'work', idle: '#123456' });
     expect(v['--liminal-surface-idle']).toBe('#123456');
+  });
+
+  // The engine derives hover and active from the level ITS OWN fill sits at. A
+  // caller that supplies a fill the engine did not choose — a brand, a rim
+  // gradient, `transparent` for a control lying flat on its host — has to say
+  // what a lift means for it. Fifteen components needed this; the overrides are
+  // what let the migration preserve what was there instead of re-deciding it.
+  it('a caller can supply its own hover and pressed fills', () => {
+    const v = resolveInteractionVars({
+      role: 'control',
+      on: 'work',
+      idle: 'transparent',
+      hover: 'var(--liminal-tint)',
+      active: 'var(--liminal-tint)',
+    });
+    expect(v['--liminal-surface-idle']).toBe('transparent');
+    expect(v['--liminal-surface-hover']).toBe('var(--liminal-tint)');
+    expect(v['--liminal-surface-active']).toBe('var(--liminal-tint)');
+  });
+
+  it('an explicit hover wins over frozen, so a caller can override one state', () => {
+    const v = resolveInteractionVars({
+      role: 'control',
+      on: 'work',
+      frozen: 'var(--liminal-brand)',
+      hover: 'var(--liminal-tint)',
+    });
+    expect(v['--liminal-surface-hover']).toBe('var(--liminal-tint)');
+    expect(v['--liminal-surface-active']).toBe('var(--liminal-brand)');
+  });
+
+  it('a caller can supply its own focus border — an invalid field turns red', () => {
+    const v = resolveInteractionVars({
+      role: 'control',
+      on: 'work',
+      borderFocus: 'var(--liminal-danger)',
+    });
+    expect(v['--liminal-border-focus']).toBe('var(--liminal-danger)');
+  });
+
+  it('the border pair defaults to the engine’s edge and the focus ring', () => {
+    const v = resolveInteractionVars({ role: 'control', on: 'work' });
+    expect(v['--liminal-border-idle']).toBe(resolveBorder({ role: 'control', kind: 'edge', on: 'work' }));
+    expect(v['--liminal-border-focus']).toBe(FOCUS_RING_COLOR);
   });
 
   it('the values are variables, so they follow a theme', () => {

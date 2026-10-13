@@ -22,7 +22,7 @@ import {
   type VariantProps,
 } from '../../../engine/liminal-variants';
 import { Slot } from '../../../engine/liminal-slot';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 // Module-level: the variant table below is module-level too.
@@ -349,9 +349,17 @@ export const Button = createLiminalComponent<ButtonProps>(
       ...variantBase,
       ...staticStyle,
       // The interaction layer reads these; React never recomputes them on hover.
-      '--liminal-surface-idle': idleBg,
-      '--liminal-surface-hover': hoverBg,
-      '--liminal-surface-active': activeBg,
+      //
+      // Every variant resolves its own three fills — a brand's own hover, a
+      // semantic surface, a tint — so all three are explicit here. The producer
+      // still owns the border pair and guarantees none of the six is missing.
+      ...resolveInteractionVars({
+        role: 'control',
+        on: host,
+        idle: idleBg,
+        hover: hoverBg,
+        active: activeBg,
+      }),
       display: fullWidth ? 'flex' : (isIconOnly ? 'inline-flex' : variantBase.display),
       width: isIconOnly
         ? `${iconOnlyDimensions[size]}px`

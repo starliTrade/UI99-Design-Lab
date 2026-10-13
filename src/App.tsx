@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Studio } from './studio/Studio';
 import { getLiminalStyle, getTextStyle, LADDER, LiminalState } from './engine/spec-engine';
-import { resolveBorder, resolveSurface } from './engine/liminal-surface';
+import { resolveBorder, resolveInteractionVars } from './engine/liminal-surface';
 import { LADDER_STEP, LADDER_HUE, HALF } from './engine/liminal-ladder';
 import { SHADOWS } from './engine/spec-engine';
 import { CONTRACT, getContractSections, getContractText, getContractChecklist } from './engine/liminal-contract';
@@ -531,15 +531,10 @@ export function App() {
                           style={
                             {
                               color: getTextStyle('secondary', 4).color,
-                              '--liminal-surface-idle': 'transparent',
-                              '--liminal-surface-hover': resolveSurface({
+                              ...resolveInteractionVars({
                                 role: 'control',
-                                state: 'hover',
-                              }).background,
-                              '--liminal-surface-active': resolveSurface({
-                                role: 'control',
-                                state: 'active',
-                              }).background,
+                                idle: 'transparent',
+                              }),
                             } as React.CSSProperties
                           }
                         >
@@ -555,15 +550,10 @@ export function App() {
                           style={
                             {
                               color: getTextStyle('secondary', 4).color,
-                              '--liminal-surface-idle': 'transparent',
-                              '--liminal-surface-hover': resolveSurface({
+                              ...resolveInteractionVars({
                                 role: 'control',
-                                state: 'hover',
-                              }).background,
-                              '--liminal-surface-active': resolveSurface({
-                                role: 'control',
-                                state: 'active',
-                              }).background,
+                                idle: 'transparent',
+                              }),
                             } as React.CSSProperties
                           }
                         >

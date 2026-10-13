@@ -7,7 +7,7 @@ import {
   getDirectionalRim,
   getTextStyle,
   LiminalState, getLadderColor } from '../../../engine/spec-engine';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
@@ -144,8 +144,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   const fieldId = id ?? autoId;
 
   const idleSurface = resolveSurface({ role: 'control', on: host }).background;
-  const hoverSurface = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
-  const focusSurface = resolveSurface({ role: 'control', state: 'focus', on: host }).background;
 
   const ringColor = error
     ? SEMANTICS.DANGER.solid
@@ -176,11 +174,21 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   // Flex container style (matching Input.tsx):
   // display: flex, alignItems: center, gap: SPACING[2] (8px), padding: SPACING[3] (12px)
   const containerStyle = {
-    '--liminal-surface-idle': background,
-    '--liminal-surface-hover': disabled || error || success ? background : hoverSurface,
-    '--liminal-surface-focus': disabled || error || success ? background : focusSurface,
-    '--liminal-border-idle': borderColor,
-    '--liminal-border-focus': ringColor,
+    // The layer owns the surface AND the border colour — see
+    // data-liminal-surface / data-liminal-focus-within.
+    //
+    // An invalid or successful field keeps its own fill in EVERY state: the
+    // tint is the message, and a hover that washed it out would erase it.
+    // `frozen` also gives the pressed state a value; it had none, so pressing a
+    // field fell through to `transparent`.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: background,
+      frozen: disabled || error || success ? background : undefined,
+      border: borderColor,
+      borderFocus: ringColor,
+    }),
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
@@ -308,10 +316,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
       )}
 
       <div
-        // The wrapper sets `--liminal-surface-hover` and never opted in, so the
-        // layer's hover rule could not reach it: the variable was published and
-        // nothing read it. `data-liminal-focus-within` gives focus; this is what
-        // gives hover and the idle fill.
+        // The wrapper publishes all six variables through the producer.
+        // `data-liminal-surface` gives hover and the idle fill;
+        // `data-liminal-focus-within` gives focus.
         data-liminal-surface=""
         data-liminal-focus-within=""
         data-liminal-disabled={disabled ? "" : undefined}

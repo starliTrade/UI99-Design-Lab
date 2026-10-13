@@ -19,7 +19,7 @@ import {
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useRovingTabIndex } from '../../../engine/liminal-hooks';
-import { resolveSurface } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 /** The gap between tabs: off the spacing scale, so it is named. */
@@ -114,11 +114,16 @@ export function Tab({
     // The surface half of the opt-in. Without these the layer's base rule
     // resolved to nothing and the inline `background` below was the only
     // background — which also cancelled the hover.
-    '--liminal-surface-idle': bg,
-    '--liminal-surface-hover': isActive
-      ? bg
-      : resolveSurface({ role: 'control', state: 'hover', on: host }).background,
-    '--liminal-surface-active': bg,
+    //
+    // An active tab keeps its raised surface; an inactive one lies flat on the
+    // bar, lifts on hover, and returns to the bar while pressed.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: bg,
+      hover: isActive ? bg : undefined,
+      active: bg,
+    }),
     padding: `${SPACING[2]}px ${SPACING[4]}px`,
     borderRadius: `${RADIUS[8]}px`, // 8px
     fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
