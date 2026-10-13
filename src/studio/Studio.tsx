@@ -25,9 +25,10 @@ import type { ComponentFixture } from '../components/__matrix__/fixtures';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
 import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
 import { resolveSurface } from '../engine/liminal-surface';
-import { SYSTEM_THEME, STUDIO_THEME_SCOPE, useStudioTheme, type StudioThemeState } from './theme';
+import { useTheme } from '../docs/theme';
+import { Card } from '../docs/ui';
+import { FORCE_CSS } from '../docs/panels';
 import {
-  Card,
   CodePanel,
   ContractChecks,
   CoveragePanel,
@@ -35,7 +36,7 @@ import {
   ThemeBar,
   readEngineSnapshot,
   type EngineSnapshot,
-} from './panels';
+} from '../docs/panels';
 
 const S = L.SPACING;
 const R = L.RADIUS;
@@ -54,24 +55,6 @@ const FORCED = [
 ] as const;
 type ForcedId = (typeof FORCED)[number]['id'];
 
-/**
- * THE FORCING HARNESS.
- *
- * `:hover`, `:focus-visible` and `:active` cannot be set from JavaScript, and a
- * reviewer cannot hold a mouse over one component while reading another. So the
- * harness applies the LAYER'S OWN DECLARATIONS through a class. Identical
- * declarations — only the trigger differs. It is a harness, not behaviour: the
- * component still does the real thing when you use it.
- */
-const FORCE_CSS = `
-.force-hover [data-liminal-surface] { background: var(--liminal-surface-hover); }
-.force-hover [data-liminal-hover-color] { color: var(--liminal-hover-color); }
-.force-active [data-liminal-surface] { background: var(--liminal-surface-active); transform: translateY(0.5px); }
-.force-focus [data-liminal-surface]:not([data-liminal-focus-within]) { outline: 2px solid var(--liminal-brand, #E9ECF2); outline-offset: 2px; }
-.force-focus [data-liminal-focus-within] { background: var(--liminal-surface-focus, var(--liminal-surface-idle)); border-color: var(--liminal-border-focus, var(--liminal-brand, #E9ECF2)); }
-.force-disabled { opacity: 0.25; pointer-events: none; }
-`;
-
 function controlsFor(f: ComponentFixture): { name: string; values: string[] }[] {
   const out: { name: string; values: string[] }[] = [];
   if (f.sizes.length) out.push({ name: 'size', values: f.sizes });
@@ -82,12 +65,13 @@ function controlsFor(f: ComponentFixture): { name: string; values: string[] }[] 
 
 const pct = (n: number) => Math.round(n * 100);
 
-export function Studio() {
-  const [theme, setTheme] = useState<StudioThemeState>({ ...SYSTEM_THEME });
-  const live = useStudioTheme(theme);
+export function Studio({ initial }: { initial?: string } = {}) {
+  // The theme lives in the docs' provider, so the studio and every page share
+  // one. A studio that kept its own copy would theme itself and nothing else.
+  const { state: theme, theme: live, set: setTheme } = useTheme();
 
   const groups = useMemo(() => [...new Set(FIXTURES.map((f) => f.group))], []);
-  const [selected, setSelected] = useState<string>(FIXTURES[0].name);
+  const [selected, setSelected] = useState<string>(initial ?? FIXTURES[0].name);
   const [size, setSize] = useState<string | undefined>();
   const [state, setState] = useState<string | undefined>();
   const [variant, setVariant] = useState<string | undefined>();
@@ -148,11 +132,8 @@ export function Studio() {
 
   return (
     <div
-      data-liminal-theme={STUDIO_THEME_SCOPE}
       style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, width: '100%', minWidth: 0 }}
     >
-      {/* The generated block, scoped by the attribute above. */}
-      <style>{live.css}</style>
       <style>{FORCE_CSS}</style>
 
       <ThemeBar state={theme} theme={live} onChange={setTheme} />

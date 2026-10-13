@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Studio } from '../Studio';
-import { toJsx } from '../panels';
+import { ThemeProvider } from '../../docs/theme';
+import { toJsx } from '../../docs/ui';
 import { createLiminalTheme } from '../../engine/liminal-theme';
 import { LADDER } from '../../engine/liminal-ladder';
 
@@ -16,19 +17,20 @@ import { LADDER } from '../../engine/liminal-ladder';
  */
 describe('the studio', () => {
   it('renders every panel it promises', () => {
-    render(<Studio />);
+    render(<ThemeProvider><Studio /></ThemeProvider>);
     for (const label of ['تم', 'پیش‌نمایش', 'موتور', 'قرارداد', 'پوشش', 'کد']) {
       expect(screen.getByLabelText(label), label).toBeTruthy();
     }
   });
 
-  it('carries the theme scope the generated block is written for', () => {
-    const { container } = render(<Studio />);
-    expect(container.querySelector('[data-liminal-theme="studio"]')).toBeTruthy();
+  it('reads the theme from the provider instead of keeping its own copy', () => {
+    // A studio with a private theme would theme itself and nothing else.
+    const { container } = render(<ThemeProvider><Studio /></ThemeProvider>);
+    expect(container.querySelector('[data-liminal-theme="liminal"]')).toBeTruthy();
   });
 
   it('offers a control for every kind of choice the fixture table declares', () => {
-    const { container } = render(<Studio />);
+    const { container } = render(<ThemeProvider><Studio /></ThemeProvider>);
     // Button has sizes, states and variants — so three groups of buttons.
     const pressed = container.querySelectorAll('[aria-pressed]');
     expect(pressed.length).toBeGreaterThan(8);

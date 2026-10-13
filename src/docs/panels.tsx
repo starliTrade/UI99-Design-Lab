@@ -16,76 +16,29 @@ import React from 'react';
 import { deriveTextToken, TEXT_ROLE_SPEC, type TextRole } from '../engine/liminal-contrast';
 import { oklchLightness } from '../engine/liminal-color-math';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
+import { Card, Value, MONO, S, R, toJsx } from './ui';
 import { resolveSurface, type SurfaceRole } from '../engine/liminal-surface';
 import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
 import type { LiminalTheme } from '../engine/liminal-theme';
-import { SYSTEM_THEME, isSystemTheme, type StudioThemeState } from './theme';
+import { SYSTEM_THEME, isSystemTheme, type ThemeState } from './theme';
 
-const S = L.SPACING;
-const R = L.RADIUS;
-
-/** The studio's own chrome, declared as roles like everything else. */
-const CHROME = resolveSurface({ role: 'chrome', interactive: false });
-const WORK = resolveSurface({ role: 'work', interactive: false });
-const PANEL = resolveSurface({ role: 'panel', interactive: false });
-const WELL = resolveSurface({ role: 'well', interactive: false });
-
-const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
-
-export function Card({
-  title,
-  note,
-  children,
-  role = 'panel',
-}: {
-  title: string;
-  note?: string;
-  children: React.ReactNode;
-  role?: SurfaceRole;
-}) {
-  const surface = role === 'chrome' ? CHROME : role === 'work' ? WORK : role === 'well' ? WELL : PANEL;
-  return (
-    <section
-      aria-label={title}
-      style={{
-        ...surface.style,
-        borderRadius: `${R.card}px`,
-        padding: `${S[4]}px`,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `${S[3]}px`,
-        minWidth: 0,
-      }}
-    >
-      <header style={{ display: 'flex', alignItems: 'baseline', gap: `${S[2]}px`, flexWrap: 'wrap' }}>
-        <h3 style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>{title}</h3>
-        {note && <span style={{ fontSize: 11, opacity: 0.7 }}>{note}</span>}
-      </header>
-      {children}
-    </section>
-  );
-}
-
-/** A read-only value, monospaced, so two runs can be compared character by character. */
-export function Value({ label, value, tone }: { label: string; value: string; tone?: 'ok' | 'warn' }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', gap: `${S[3]}px`, alignItems: 'baseline', minWidth: 0 }}>
-      <span style={{ fontSize: 11, opacity: 0.7, flexShrink: 0 }}>{label}</span>
-      <code
-        style={{
-          fontFamily: MONO,
-          fontSize: 11,
-          direction: 'ltr',
-          textAlign: 'left',
-          overflowWrap: 'anywhere',
-          color: tone === 'warn' ? 'var(--liminal-danger, #ba4646)' : undefined,
-        }}
-      >
-        {value}
-      </code>
-    </div>
-  );
-}
+/**
+ * THE FORCING HARNESS.
+ *
+ * `:hover`, `:focus-visible` and `:active` cannot be set from JavaScript, and a
+ * reviewer cannot hold a mouse over one component while reading another. So the
+ * harness applies the LAYER'S OWN DECLARATIONS through a class. Identical
+ * declarations — only the trigger differs. It is a harness, not behaviour: the
+ * component still does the real thing when you use it.
+ */
+export const FORCE_CSS = `
+.force-hover [data-liminal-surface] { background: var(--liminal-surface-hover); }
+.force-hover [data-liminal-hover-color] { color: var(--liminal-hover-color); }
+.force-active [data-liminal-surface] { background: var(--liminal-surface-active); transform: translateY(0.5px); }
+.force-focus [data-liminal-surface]:not([data-liminal-focus-within]) { outline: 2px solid var(--liminal-brand, #E9ECF2); outline-offset: 2px; }
+.force-focus [data-liminal-focus-within] { background: var(--liminal-surface-focus, var(--liminal-surface-idle)); border-color: var(--liminal-border-focus, var(--liminal-brand, #E9ECF2)); }
+.force-disabled { opacity: 0.25; pointer-events: none; }
+`;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // THE THEME BAR
@@ -131,9 +84,9 @@ export function ThemeBar({
   theme,
   onChange,
 }: {
-  state: StudioThemeState;
+  state: ThemeState;
   theme: LiminalTheme;
-  onChange: (next: StudioThemeState) => void;
+  onChange: (next: ThemeState) => void;
 }) {
   const system = isSystemTheme(state);
   return (
@@ -405,49 +358,6 @@ export function ContractChecks({ surfaceHex, level }: { surfaceHex: string; leve
 // ─────────────────────────────────────────────────────────────────────────────
 // THE JSX
 // ─────────────────────────────────────────────────────────────────────────────
-
-function isElement(v: unknown): v is React.ReactElement {
-  return React.isValidElement(v);
-}
-
-function prop(name: string, value: unknown): string {
-  if (typeof value === 'string') return `${name}="${value}"`;
-  if (typeof value === 'number') return `${name}={${value}}`;
-  if (typeof value === 'boolean') return value ? name : `${name}={false}`;
-  return `${name}={…}`;
-}
-
-/**
- * The element tree as JSX source, one level deep.
- *
- * Not a string the studio invented: it walks the element the fixture returned,
- * so what you read is what rendered. Children deeper than one level are elided
- * with `…` rather than guessed.
- */
-export function toJsx(el: React.ReactElement, indent = 0, depth = 0): string {
-  const pad = '  '.repeat(indent);
-  // `forwardRef` and `memo` wrap the component in an object, so `type.name` is
-  // undefined and the panel would print "Component" for every one of them.
-  const type = el.type as unknown as { displayName?: string; name?: string; render?: { name?: string } };
-  const name =
-    typeof el.type === 'string'
-      ? el.type
-      : type.displayName ?? type.name ?? type.render?.name ?? 'Component';
-  const p = (el.props ?? {}) as Record<string, unknown>;
-  const attrs = Object.entries(p)
-    .filter(([k]) => k !== 'children')
-    .map(([k, v]) => prop(k, v));
-  const kids = p.children;
-  const selfClosing = kids === undefined || kids === null;
-  const head = `<${name}${attrs.length ? ' ' + attrs.join(' ') : ''}`;
-  if (selfClosing) return `${pad}${head} />`;
-  if (depth >= 1) return `${pad}${head}>…</${name}>`;
-  const childList = Array.isArray(kids) ? kids : [kids];
-  const rendered = childList.map((c) =>
-    isElement(c) ? toJsx(c, indent + 1, depth + 1) : `${pad}  ${typeof c === 'string' ? c : '{…}'}`,
-  );
-  return `${pad}${head}>\n${rendered.join('\n')}\n${pad}</${name}>`;
-}
 
 export function CodePanel({ element }: { element: React.ReactElement }) {
   return (
