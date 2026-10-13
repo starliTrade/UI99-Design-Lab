@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/15</span>
+                <span class='fraction'>15/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">76.47% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/17</span>
+                <span class='fraction'>13/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/15</span>
+                <span class='fraction'>15/15</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -177,35 +177,33 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -222,13 +220,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -263,32 +263,32 @@ export interface AvatarGroupProps {
   style?: CSSProperties;
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >AvatarGroup({</span>
+export function AvatarGroup({
   children,
   max,
-  size = <span class="branch-0 cbranch-no" title="branch not covered" >'md',</span>
-  className = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span>
-  style: customStyle = <span class="branch-0 cbranch-no" title="branch not covered" >{},</span>
+  size = 'md',
+  className = '',
+  style: customStyle = {},
 }: AvatarGroupProps) {
-  const host = <span class="cstat-no" title="statement not covered" >useHostSurface()</span>;
-  const allChildren = <span class="cstat-no" title="statement not covered" >Children.toArray(children).filter(isValidElement) as ReactElement[];</span>
-  const total = <span class="cstat-no" title="statement not covered" >allChildren.length;</span>
+  const host = useHostSurface();
+  const allChildren = Children.toArray(children).filter(isValidElement) as ReactElement[];
+  const total = allChildren.length;
 &nbsp;
-  const showOverflow = <span class="cstat-no" title="statement not covered" >max !== undefined &amp;&amp; total &gt; max;</span>
-  const visibleChildren = <span class="cstat-no" title="statement not covered" >showOverflow ? allChildren.slice(0, max) : allChildren;</span>
-  const overflowCount = <span class="cstat-no" title="statement not covered" >total - (max ?? total);</span>
+  const showOverflow = max !== undefined &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >total &gt; max;</span>
+  const visibleChildren = showOverflow ? <span class="branch-0 cbranch-no" title="branch not covered" >allChildren.slice(0, max) : a</span>llChildren;
+  const overflowCount = total - (max ?? total);
 &nbsp;
-  const canvasBorderColor = <span class="cstat-no" title="statement not covered" >resolveSurface({ role: 'canvas' }).background;</span>
+  const canvasBorderColor = resolveSurface({ role: 'canvas' }).background;
 &nbsp;
-  const sizes: Record&lt;'sm' | 'md' | 'lg', { px: number; fs: number; overlap: number }&gt; = <span class="cstat-no" title="statement not covered" >{</span>
+  const sizes: Record&lt;'sm' | 'md' | 'lg', { px: number; fs: number; overlap: number }&gt; = {
     sm: { px: 24, fs: 10, overlap: -6 },
     md: { px: 32, fs: 11, overlap: -8 },
     lg: { px: 44, fs: 13, overlap: -10 },
   };
 &nbsp;
-  const { px, fs, overlap } = <span class="cstat-no" title="statement not covered" >sizes[size];</span>
+  const { px, fs, overlap } = sizes[size];
 &nbsp;
-  const groupStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
+  const groupStyle: CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
     direction: 'ltr', // Strict LTR for uniform visual overlap
@@ -296,7 +296,7 @@ export function <span class="fstat-no" title="function not covered" >AvatarGroup
     ...customStyle,
   };
 &nbsp;
-  const counterAvatarStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
+  const counterAvatarStyle: CSSProperties = {
     width: `${px}px`,
     height: `${px}px`,
     borderRadius: '50%',
@@ -312,28 +312,28 @@ export function <span class="fstat-no" title="function not covered" >AvatarGroup
     flexShrink: 0,
     userSelect: 'none',
     boxSizing: 'border-box',
-    marginRight: 0,
+    marginInlineEnd: 0,
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;div className={className} style={groupStyle}&gt;
-      {visibleChildren.<span class="fstat-no" title="function not covered" >map((c</span>hild, index) =&gt; {
-        const isLastInVisible = <span class="cstat-no" title="statement not covered" >index === visibleChildren.length - 1 &amp;&amp; !showOverflow;</span>
-        const childElement = <span class="cstat-no" title="statement not covered" >child as React.ReactElement&lt;any&gt;;</span>
+      {visibleChildren.map((child, index) =&gt; {
+        const isLastInVisible = index === visibleChildren.length - 1 &amp;&amp; !showOverflow;
+        const childElement = child as React.ReactElement&lt;any&gt;;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        return cloneElement(childElement, {</span>
-          key: childElement.key || index,
+        return cloneElement(childElement, {
+          key: childElement.key || <span class="branch-1 cbranch-no" title="branch not covered" >index,</span>
           size,
           style: {
             border: `2px solid ${canvasBorderColor}`,
-            marginRight: isLastInVisible ? 0 : `${overlap}px`,
+            marginInlineEnd: isLastInVisible ? 0 : `${overlap}px`,
             ...childElement.props?.style,
           },
         });
       })}
 &nbsp;
       {showOverflow &amp;&amp; (
-        &lt;span style={counterAvatarStyle} title={`${overflowCount} more`}&gt;
+<span class="branch-1 cbranch-no" title="branch not covered" >        &lt;span style={counterAvatarStyle} title={`${overflowCount} more`}&gt;</span>
           +{overflowCount}
         &lt;/span&gt;
       )}
@@ -349,7 +349,7 @@ export default AvatarGroup;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-12T16:51:02.542Z
+                at 2026-10-13T20:49:08.265Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

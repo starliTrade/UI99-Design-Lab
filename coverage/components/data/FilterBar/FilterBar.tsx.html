@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">41.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>5/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>6/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>1/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">41.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>5/12</span>
             </div>
         
             
@@ -245,18 +245,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -264,7 +260,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -365,7 +365,7 @@ import { getLiminalStyle, getTextStyle, getLadderColor } from '../../../engine/s
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
-import { resolveSurface } from '../../../engine/liminal-surface';
+import { resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 &nbsp;
 export interface ActiveFilter {
@@ -383,22 +383,22 @@ export interface FilterBarProps {
   style?: CSSProperties;
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >FilterBar({</span>
-  activeFilters,
+export function FilterBar({
+  activeFilters = [],
   onRemoveFilter,
   onClearAll,
   children,
-  className = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span>
-  style: customStyle = <span class="branch-0 cbranch-no" title="branch not covered" >{},</span>
+  className = '',
+  style: customStyle = {},
 }: FilterBarProps) {
-  const host = <span class="cstat-no" title="statement not covered" >useHostSurface()</span>;
-  const reducedMotion = <span class="cstat-no" title="statement not covered" >useReducedMotion()</span>;
+  const host = useHostSurface();
+  const reducedMotion = useReducedMotion();
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
 &nbsp;
-  const baseStyle = <span class="cstat-no" title="statement not covered" >getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;</span>
+  const baseStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
 &nbsp;
-  const containerStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
+  const containerStyle: CSSProperties = {
     ...baseStyle,
     display: 'flex',
     flexWrap: 'wrap',
@@ -410,7 +410,7 @@ export function <span class="fstat-no" title="function not covered" >FilterBar({
     ...customStyle,
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;div className={className} style={containerStyle} role="region" aria-label="Filter Bar"&gt;
       {/* Filter Inputs / Children */}
       {children &amp;&amp; (
@@ -421,7 +421,7 @@ export function <span class="fstat-no" title="function not covered" >FilterBar({
 &nbsp;
       {/* Active Filters and Clear All */}
       {activeFilters.length &gt; 0 &amp;&amp; (
-        &lt;div className="flex flex-wrap items-center gap-2 ml-auto"&gt;
+<span class="branch-1 cbranch-no" title="branch not covered" >        &lt;div className="flex flex-wrap items-center gap-2 ms-auto"&gt;</span>
           &lt;div className="flex items-center gap-1.5 text-xs" style={{ color: getTextStyle('tertiary', 1).color }}&gt;
             &lt;LiminalIcon icon={Funnel} size="xs" weight="bold" /&gt;
             &lt;span&gt;Active:&lt;/span&gt;
@@ -470,9 +470,9 @@ function <span class="fstat-no" title="function not covered" >RemoveFilterButton
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    '--liminal-surface-idle': 'transparent',
-    '--liminal-surface-hover': resolveSurface({ role: 'control', state: 'hover', on: host }).background,
-    '--liminal-surface-active': resolveSurface({ role: 'control', state: 'active', on: host }).background,
+    // Flat on the host at rest, lifted by the layer on hover, dropped back on
+    // press. The six variables come from the one producer.
+    ...resolveInteractionVars({ role: 'control', on: host, idle: 'transparent' }),
     border: 'none',
     borderRadius: '50%',
     width: `${LiminalLayoutEngine.SPACING[4]}px`,
@@ -508,7 +508,7 @@ export default FilterBar;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-12T16:51:02.542Z
+                at 2026-10-13T20:49:08.265Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">61.53% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>8/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -177,11 +177,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -198,7 +196,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -252,25 +252,25 @@ export interface TopbarProps {
   style?: CSSProperties;
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >Topbar({</span>
+export function Topbar({
   logo,
   children,
   actions,
-  sticky = <span class="branch-0 cbranch-no" title="branch not covered" >true,</span>
-  className = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span>
-  style: customStyle = <span class="branch-0 cbranch-no" title="branch not covered" >{},</span>
+  sticky = true,
+  className = '',
+  style: customStyle = {},
 }: TopbarProps) {
   const SPACING = LiminalLayoutEngine.SPACING;
 &nbsp;
   // rimSide half-step S1.5 (#090A0D) for bottom border (harmonious with Divider)
   // The topbar is chrome: its bottom edge separates it from the work surface.
-  const borderBottomColor = <span class="cstat-no" title="statement not covered" >resolveBorder({ role: 'chrome', kind: 'hairline' });</span>
+  const borderBottomColor = resolveBorder({ role: 'chrome', kind: 'hairline' });
 &nbsp;
-  const topbarStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
-    position: sticky ? 'sticky' : 'relative',
+  const topbarStyle: CSSProperties = {
+    position: sticky ? 'sticky' : <span class="branch-1 cbranch-no" title="branch not covered" >'relative',</span>
     top: 0,
     zIndex: 50,
-    height: '64px',
+    height: `${SPACING[8]}px`,
     padding: `0 ${SPACING[5]}px`, // 24px
     background: VEIL.canvas, // Canvas #060709 with alpha 0.85
     backdropFilter: 'blur(12px)',
@@ -285,7 +285,7 @@ export function <span class="fstat-no" title="function not covered" >Topbar({</s
     ...customStyle,
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;header className={className} style={topbarStyle}&gt;
       {logo &amp;&amp; (
         &lt;div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}&gt;
@@ -294,12 +294,12 @@ export function <span class="fstat-no" title="function not covered" >Topbar({</s
       )}
 &nbsp;
       {children &amp;&amp; (
-        &lt;nav
+<span class="branch-1 cbranch-no" title="branch not covered" >        &lt;nav</span>
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: `${SPACING[3]}px`, // 12px
-            marginRight: 'auto',
+            marginInlineEnd: 'auto',
           }}
         &gt;
           {children}
@@ -307,12 +307,12 @@ export function <span class="fstat-no" title="function not covered" >Topbar({</s
       )}
 &nbsp;
       {actions &amp;&amp; (
-        &lt;div
+<span class="branch-1 cbranch-no" title="branch not covered" >        &lt;div</span>
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: `${SPACING[3]}px`,
-            marginLeft: children ? undefined : 'auto',
+            marginInlineStart: children ? undefined : 'auto',
             flexShrink: 0,
           }}
         &gt;
@@ -331,7 +331,7 @@ export default Topbar;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-12T16:51:02.542Z
+                at 2026-10-13T20:49:08.265Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

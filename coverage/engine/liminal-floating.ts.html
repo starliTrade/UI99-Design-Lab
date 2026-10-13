@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">59.09% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/22</span>
+                <span class='fraction'>13/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/14</span>
+                <span class='fraction'>7/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">25% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>2/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">81.25% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/16</span>
+                <span class='fraction'>13/16</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -173,40 +173,40 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -245,46 +245,46 @@ export interface UseFloatingOptions extends PositionOptions {
  * - Escape key dismissal
  * - Window resize &amp; scroll positioning sync
  */
-export function <span class="fstat-no" title="function not covered" >useFloating(o</span>ptions: UseFloatingOptions = <span class="branch-0 cbranch-no" title="branch not covered" >{}) {</span>
+export function useFloating(options: UseFloatingOptions = {}) {
   const {
-    initialOpen = <span class="branch-0 cbranch-no" title="branch not covered" >false,</span>
-    closeOnClickOutside = <span class="branch-0 cbranch-no" title="branch not covered" >true,</span>
-    closeOnEscape = <span class="branch-0 cbranch-no" title="branch not covered" >true,</span>
+    initialOpen = false,
+    closeOnClickOutside = true,
+    closeOnEscape = true,
     ...positionOptions
-  } = <span class="cstat-no" title="statement not covered" >options;</span>
+  } = options;
 &nbsp;
-  const triggerRef = <span class="cstat-no" title="statement not covered" >useRef&lt;HTMLElement | null&gt;(null);</span>
-  const floatingRef = <span class="cstat-no" title="statement not covered" >useRef&lt;HTMLElement | null&gt;(null);</span>
-  const [isOpen, setIsOpen] = <span class="cstat-no" title="statement not covered" >useState&lt;boolean&gt;(initialOpen);</span>
+  const triggerRef = useRef&lt;HTMLElement | null&gt;(null);
+  const floatingRef = useRef&lt;HTMLElement | null&gt;(null);
+  const [isOpen, setIsOpen] = useState&lt;boolean&gt;(initialOpen);
 &nbsp;
-  const { position, update } = <span class="cstat-no" title="statement not covered" >usePositioning(triggerRef, floatingRef, positionOptions);</span>
+  const { position, update } = usePositioning(triggerRef, floatingRef, positionOptions);
 &nbsp;
-  const open = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >useCallback(() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etIsOpen(true), [</span>]);</span>
-  const close = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >useCallback(() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etIsOpen(false), [</span>]);</span>
-  const toggle = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >useCallback(() =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >s</span>etIsOpen((p</span>rev) =&gt; <span class="cstat-no" title="statement not covered" >!prev)</span>, [</span>]);</span>
+  const open = <span class="fstat-no" title="function not covered" >useCallback(() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etIsOpen(true), [</span>]);
+  const close = <span class="fstat-no" title="function not covered" >useCallback(() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etIsOpen(false), [</span>]);
+  const toggle = <span class="fstat-no" title="function not covered" >useCallback(() =&gt; <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >s</span>etIsOpen((p</span>rev) =&gt; <span class="cstat-no" title="statement not covered" >!prev)</span>, [</span>]);
 &nbsp;
   // Close on outside click
-<span class="cstat-no" title="statement not covered" >  useClickOutside(</span>
+  useClickOutside(
 <span class="fstat-no" title="function not covered" >    floatingRef,</span>
     () =&gt; {
 <span class="cstat-no" title="statement not covered" >      if (closeOnClickOutside) <span class="cstat-no" title="statement not covered" >close();</span></span>
     },
-    isOpen &amp;&amp; closeOnClickOutside
+    isOpen &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >closeOnClickOutside</span>
   );
 &nbsp;
   // Close on Escape
-<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >  useEscapeKey(() =&gt; {</span></span>
+<span class="fstat-no" title="function not covered" >  useEscapeKey(() =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    if (closeOnEscape) <span class="cstat-no" title="statement not covered" >close();</span></span>
-  }, isOpen &amp;&amp; closeOnEscape);
+  }, isOpen &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >closeOnEscape)</span>;
 &nbsp;
   // Recalculate position when opened
-<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >  useEffect(() =&gt; {</span></span>
-<span class="cstat-no" title="statement not covered" >    if (isOpen) {</span>
+  useEffect(() =&gt; {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (isOpen) {
 <span class="cstat-no" title="statement not covered" >      update();</span>
     }
   }, [isOpen, update]);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return {</span>
+  return {
     triggerRef,
     floatingRef,
     position,
@@ -304,7 +304,7 @@ export default useFloating;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-12T16:51:02.542Z
+                at 2026-10-13T20:49:08.265Z
             </div>
         <script src="../prettify.js"></script>
         <script>

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/15</span>
+                <span class='fraction'>10/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -173,7 +173,8 @@
 <a name='L108'></a><a href='#L108'>108</a>
 <a name='L109'></a><a href='#L109'>109</a>
 <a name='L110'></a><a href='#L110'>110</a>
-<a name='L111'></a><a href='#L111'>111</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -202,18 +203,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -222,14 +215,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -299,22 +301,23 @@ export interface PageSectionProps {
   style?: CSSProperties;
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >PageSection({</span>
+export function PageSection({
   title,
   subtitle,
   actions,
-  divider = <span class="branch-0 cbranch-no" title="branch not covered" >false,</span>
+  divider = false,
   children,
-  className = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span>
-  style: customStyle = <span class="branch-0 cbranch-no" title="branch not covered" >{},</span>
+  className = '',
+  style: customStyle = {},
 }: PageSectionProps) {
   const SPACING = LiminalLayoutEngine.SPACING;
+  const BORDER = LiminalLayoutEngine.BORDER;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 &nbsp;
   // rimSide half-step S1.5 (#090A0D) for top divider
-  const rimSideColor = <span class="cstat-no" title="statement not covered" >resolveBorder({ role: 'work', kind: 'hairline' });</span>
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
 &nbsp;
-  const wrapperStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
+  const wrapperStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     gap: `${SPACING[4]}px`, // 16px
@@ -323,8 +326,8 @@ export function <span class="fstat-no" title="function not covered" >PageSection
     ...customStyle,
   };
 &nbsp;
-  const titleStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
-    fontSize: `${TYPOGRAPHY[5].fs}px`, // 23px
+  const titleStyle: CSSProperties = {
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(5), // 23px
     lineHeight: TYPOGRAPHY[5].lh,
     letterSpacing: TYPOGRAPHY[5].ls,
     fontWeight: 600,
@@ -332,21 +335,21 @@ export function <span class="fstat-no" title="function not covered" >PageSection
     margin: 0,
   };
 &nbsp;
-  const subtitleStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+  const subtitleStyle: CSSProperties = {
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: TYPOGRAPHY[2].lh,
     color: getTextStyle('tertiary', 1).color,
     margin: 0,
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;section className={`liminal-page-section ${className}`} style={wrapperStyle}&gt;
       {/* 1. Optional Top Divider */}
       {divider &amp;&amp; (
-        &lt;div
+<span class="branch-1 cbranch-no" title="branch not covered" >        &lt;div</span>
           role="separator"
           style={{
-            height: '1px',
+            height: `${BORDER.hairline}px`,
             background: rimSideColor,
             width: '100%',
             marginBottom: `${SPACING[5]}px`, // 24px
@@ -355,7 +358,7 @@ export function <span class="fstat-no" title="function not covered" >PageSection
       )}
 &nbsp;
       {/* 2. Section Header (if title, subtitle or actions exist) */}
-      {(title || subtitle || actions) &amp;&amp; (
+      {(title || <span class="branch-1 cbranch-no" title="branch not covered" >subtitle || <span class="branch-2 cbranch-no" title="branch not covered" >a</span>ctions) &amp;&amp; (</span>
         &lt;div
           style={{
             display: 'flex',
@@ -368,11 +371,11 @@ export function <span class="fstat-no" title="function not covered" >PageSection
         &gt;
           &lt;div&gt;
             {title &amp;&amp; &lt;h2 style={titleStyle}&gt;{title}&lt;/h2&gt;}
-            {subtitle &amp;&amp; &lt;p style={subtitleStyle}&gt;{subtitle}&lt;/p&gt;}
+            {subtitle &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >&lt;p style={subtitleStyle}&gt;{subtitle}&lt;/p&gt;}</span>
           &lt;/div&gt;
 &nbsp;
           {actions &amp;&amp; (
-            &lt;div
+<span class="branch-1 cbranch-no" title="branch not covered" >            &lt;div</span>
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -400,7 +403,7 @@ export default PageSection;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-12T16:51:02.542Z
+                at 2026-10-13T20:49:08.265Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
