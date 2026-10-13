@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Studio } from './studio/Studio';
-import { getLiminalStyle, getTextStyle, LADDER, LiminalState } from './engine/spec-engine';
+import { getTextStyle, LADDER, LiminalState } from './engine/spec-engine';
 import { resolveBorder, resolveInteractionVars } from './engine/liminal-surface';
 import { LADDER_STEP, LADDER_HUE, HALF } from './engine/liminal-ladder';
 import { SHADOWS } from './engine/spec-engine';
@@ -41,6 +41,7 @@ import {
   Radio,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from './engine/liminal-icon-engine';
+import { resolveSurface } from './engine/liminal-surface';
 
 /**
  * Three demo-only literals with NO engine equivalent.
@@ -122,65 +123,31 @@ export function App() {
   const canvasBg = LADDER[0]; // #060709 (S0)
 
   // S1: Container Cards (Surface 1 #08090b, Rim 1)
-  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true });
+  const containerStyle = resolveSurface({ role: 'chrome', interactive: false });
 
   // S2: Nested Panels (Surface 2 #0a0b10, Rim 1)
-  const panelStyle = getLiminalStyle({ surfaceLevel: 2, isContainer: true });
+  const panelStyle = resolveSurface({ role: 'work', interactive: false });
 
   // Floating Header Bar: Surface 2 (#0a0b10), Rim 1, Elevation E1 Sub-Canvas Shadow
-  const headerBarStyle = getLiminalStyle({
-    surfaceLevel: 2,
-    isFloating: true,
-    elevation: 1,
-    isContainer: true,
-  });
+  const headerBarStyle = resolveSurface({ role: 'work', interactive: false, elevation: 1 });
 
   // Floating Dropdown: Surface 4 (#101114), Rim 2, Elevation E1 Shadow
-  const dropdownComputed = getLiminalStyle({
-    surfaceLevel: 4,
-    isFloating: true,
-    elevation: 1,
-    interactive: true,
-  });
+  const dropdownComputed = resolveSurface({ role: 'control', interactive: true, elevation: 1 });
 
   // Featured Floating Card: Surface 4 (#101114), Rim 2, Elevation E2 Shadow
-  const featuredComputed = getLiminalStyle({
-    surfaceLevel: 4,
-    isFeatured: true,
-  });
+  const featuredComputed = resolveSurface({ role: 'control', elevation: 2 });
 
   // Floating Modal: Surface 5 (#131418), Rim 3, Elevation E3 Shadow
-  const modalComputed = getLiminalStyle({
-    surfaceLevel: 5,
-    isFloating: true,
-    elevation: 3,
-    isContainer: true,
-  });
+  const modalComputed = resolveSurface({ role: 'menu', interactive: false, elevation: 3 });
 
   // Floating Toast: Surface 4 (#101114), Rim 2, Elevation E4 Shadow
-  const toastComputed = getLiminalStyle({
-    surfaceLevel: 4,
-    isFloating: true,
-    elevation: 4,
-    isFeatured: true,
-  });
+  const toastComputed = resolveSurface({ role: 'control', elevation: 4 });
 
   // Interactive Test Control with Liminal States
-  const playgroundComputed = getLiminalStyle({
-    surfaceLevel: 2,
-    containerLevel: 1,
-    interactive: true,
-    state: interactiveState,
-  });
+  const playgroundComputed = resolveSurface({ role: 'control', on: 'chrome', state: interactiveState });
 
   // Input Control with Focus State
-  const inputComputed = getLiminalStyle({
-    surfaceLevel: 2,
-    containerLevel: 1,
-    interactive: true,
-    isInput: true,
-    state: inputFocused ? 'focus' : 'idle',
-  });
+  const inputComputed = resolveSurface({ role: 'control', on: 'chrome', state: inputFocused ? 'focus' : 'idle' });
 
   const triggerToast = () => {
     setToastVisible(true);
@@ -265,7 +232,7 @@ export function App() {
             <div
               className="flex p-1"
               style={{
-                ...getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style,
+                ...resolveSurface({ role: 'chrome', interactive: false }).style,
                 borderRadius: `${RADIUS.control}px`,
               }}
             >
@@ -275,7 +242,7 @@ export function App() {
                 style={{
                   ...(deviceMode === 'mobile'
                     ? {
-                        ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                        ...resolveSurface({ role: 'panel', interactive: true }).style,
                         color: getTextStyle('primary', 3).color,
                         fontWeight: 600,
                       }
@@ -297,7 +264,7 @@ export function App() {
                 style={{
                   ...(deviceMode === 'fluid'
                     ? {
-                        ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                        ...resolveSurface({ role: 'panel', interactive: true }).style,
                         color: getTextStyle('primary', 3).color,
                         fontWeight: 600,
                       }
@@ -319,7 +286,7 @@ export function App() {
               onClick={() => setIsCommandOpen(true)}
               className="px-2 py-1.5 transition-all cursor-pointer flex items-center gap-1"
               style={{
-                ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                ...resolveSurface({ role: 'panel', interactive: true }).style,
                 borderRadius: `${RADIUS.control}px`,
                 color: getTextStyle('primary', 3).color,
               }}
@@ -334,7 +301,7 @@ export function App() {
               onClick={copyFullContract}
               className="p-1.5 transition-all cursor-pointer flex items-center justify-center"
               style={{
-                ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                ...resolveSurface({ role: 'panel', interactive: true }).style,
                 borderRadius: `${RADIUS.control}px`,
                 color: getTextStyle('primary', 3).color,
               }}
@@ -389,8 +356,8 @@ export function App() {
             ].map((tab) => {
               const isSelected = activeTab === tab.id;
               const tabStyle = isSelected
-                ? getLiminalStyle({ surfaceLevel: 3, interactive: true })
-                : getLiminalStyle({ surfaceLevel: 1, interactive: true });
+                ? resolveSurface({ role: 'panel', interactive: true })
+                : resolveSurface({ role: 'control', on: 'canvas' });
 
               return (
                 <button
@@ -448,7 +415,7 @@ export function App() {
                   <div
                     className="w-8 h-8 rounded-lg flex items-center justify-center"
                     style={{
-                      ...getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style,
+                      ...resolveSurface({ role: 'work', interactive: false }).style,
                       borderRadius: `${RADIUS.control}px`,
                     }}
                   >
@@ -495,7 +462,7 @@ export function App() {
                       onClick={() => setActiveDropdown(!activeDropdown)}
                       className="p-1.5 transition-all cursor-pointer flex items-center justify-center"
                       style={{
-                        ...getLiminalStyle({ surfaceLevel: 2, interactive: true }).style,
+                        ...resolveSurface({ role: 'control', on: 'chrome' }).style,
                         borderRadius: `${RADIUS.control}px`,
                         color: getTextStyle('primary', 2).color,
                       }}
@@ -593,6 +560,10 @@ export function App() {
                   style={{
                     ...inputComputed.style,
                     borderRadius: `${RADIUS.control}px`,
+                    // The old resolver took `isInput` and returned a text cursor.
+                    // The surface resolver does not decide what a control holds,
+                    // so the caller says it — the same thing Input.tsx does.
+                    cursor: 'text',
                   }}
                 >
                   <LiminalIcon icon={MagnifyingGlass} size="sm" weight="light" color={DEMO_ONLY.muted} className="shrink-0" />
@@ -633,10 +604,7 @@ export function App() {
                   { id: 'node-gamma', label: 'Failover' },
                 ].map((seg) => {
                   const isSel = selectedSegment === seg.id;
-                  const segStyle = getLiminalStyle({
-                    surfaceLevel: isSel ? 3 : 2,
-                    interactive: true,
-                  });
+                  const segStyle = resolveSurface({ role: 'control', on: isSel ? 'work' : 'chrome' });
                   return (
                     <button
                       key={seg.id}
@@ -755,7 +723,7 @@ export function App() {
                     onClick={() => setBottomDrawerOpen(true)}
                     className="px-3 py-1.5 text-[11px] font-mono cursor-pointer flex items-center gap-1 transition-all"
                     style={{
-                      ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                      ...resolveSurface({ role: 'panel', interactive: true }).style,
                       borderRadius: `${RADIUS.control}px`,
                       color: getTextStyle('primary', 3).color,
                     }}
@@ -797,7 +765,7 @@ export function App() {
                   onClick={() => setBottomDrawerOpen(true)}
                   className="px-4 py-2 text-xs font-mono font-semibold transition-all cursor-pointer flex items-center gap-1.5"
                   style={{
-                    ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                    ...resolveSurface({ role: 'panel', interactive: true }).style,
                     borderRadius: `${RADIUS.control}px`,
                     color: getTextStyle('primary', 3).color,
                   }}
@@ -913,8 +881,8 @@ export function App() {
                 ).map((s) => {
                   const isSel = interactiveState === s.id;
                   const itemStyle = isSel
-                    ? getLiminalStyle({ surfaceLevel: 3, interactive: true })
-                    : getLiminalStyle({ surfaceLevel: 2, interactive: true });
+                    ? resolveSurface({ role: 'panel', interactive: true })
+                    : resolveSurface({ role: 'control', on: 'chrome' });
 
                   return (
                     <button
@@ -957,7 +925,7 @@ export function App() {
                   className="text-xs font-semibold"
                   style={{ color: getTextStyle('primary', 2).color }}
                 >
-                  State: {interactiveState.toUpperCase()} · Color: {playgroundComputed.bg} · Rim {playgroundComputed.rimLevel} {playgroundComputed.isConcave ? '(CONCAVE INVERTED)' : ''}
+                  State: {interactiveState.toUpperCase()} · Color: {playgroundComputed.backgroundHex} · Rim {playgroundComputed.rim} {interactiveState === 'active' ? '(CONCAVE INVERTED)' : ''}
                 </div>
 
                 <div className="pt-2 flex justify-center">
@@ -1049,7 +1017,7 @@ export function App() {
               <div
                 className="w-full h-28 flex items-center justify-center transition-all"
                 style={{
-                  ...getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style,
+                  ...resolveSurface({ role: 'chrome', interactive: false }).style,
                   borderRadius: `${rOuterDemo}px`,
                   padding: `${concentricPadding}px`,
                 }}
@@ -1057,7 +1025,7 @@ export function App() {
                 <div
                   className="w-full h-full flex items-center justify-center transition-all font-mono text-[11px]"
                   style={{
-                    ...getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style,
+                    ...resolveSurface({ role: 'work', interactive: false }).style,
                     borderRadius: `${rInnerDemo}px`,
                     color: getTextStyle('primary', 2).color,
                   }}
@@ -1343,7 +1311,7 @@ export function App() {
                   onClick={copyFullContract}
                   className="px-2.5 py-1 text-[10px] font-mono flex items-center gap-1 cursor-pointer transition-all"
                   style={{
-                    ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                    ...resolveSurface({ role: 'panel', interactive: true }).style,
                     borderRadius: `${RADIUS.chip}px`,
                     color: getTextStyle('primary', 3).color,
                   }}
@@ -1485,7 +1453,7 @@ export function App() {
                   onClick={() => setBottomDrawerOpen(false)}
                   className="w-full sm:w-auto px-4 py-2.5 text-xs font-mono font-semibold cursor-pointer"
                   style={{
-                    ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                    ...resolveSurface({ role: 'panel', interactive: true }).style,
                     borderRadius: `${RADIUS.control}px`,
                     color: getTextStyle('primary', 3).color,
                   }}

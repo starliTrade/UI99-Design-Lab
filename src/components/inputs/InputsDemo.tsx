@@ -8,12 +8,13 @@ import { Textarea } from './Textarea';
 import { Checkbox } from './Checkbox';
 import { Radio } from './Radio';
 import { Toggle } from '../atoms/Toggle';
-import { getLiminalStyle, getTextStyle } from '../../engine/spec-engine';
+import { getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { MagnifyingGlass, Envelope, Lock, User, CheckCircle, Globe, Cpu, HardDrives, ShieldCheck } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
 import { DirProvider } from '../../engine/liminal-direction';
+import { resolveSurface } from '../../engine/liminal-surface';
 
 export function InputsDemo() {
   // Input states
@@ -56,8 +57,8 @@ export function InputsDemo() {
   const [toggle2, setToggle2] = useState<boolean>(false);
   const [toggleDisabled, setToggleDisabled] = useState<boolean>(true);
 
-  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
-  const panelStyle = getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style;
+  const containerStyle = resolveSurface({ role: 'chrome', interactive: false }).style;
+  const panelStyle = resolveSurface({ role: 'work', interactive: false }).style;
 
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const SPACING = LiminalLayoutEngine.SPACING;

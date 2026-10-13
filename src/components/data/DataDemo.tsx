@@ -14,7 +14,6 @@ import { Button } from '../atoms/Button';
 import { Divider } from '../containers/Divider';
 import { Checkbox } from '../inputs/Checkbox';
 import {
-  getLiminalStyle,
   getTextStyle,
 } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
@@ -27,6 +26,7 @@ import {
   DotsThreeVertical,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
+import { resolveSurface } from '../../engine/liminal-surface';
 
 interface UserRecord {
   id: string;
@@ -53,7 +53,7 @@ export function DataDemo() {
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
-  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
+  const containerStyle = resolveSurface({ role: 'chrome', interactive: false }).style;
 
   const users: UserRecord[] = [
     { id: 'u-1', name: 'Kaelen Vos', email: 'kaelen.vos@liminal.gateway', role: 'System Architect', status: 'online' },

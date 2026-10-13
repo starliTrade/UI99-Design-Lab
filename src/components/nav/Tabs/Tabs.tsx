@@ -9,9 +9,7 @@ import React, { useId,
 } from 'react';
 import type { CSSProperties, ReactNode, KeyboardEvent } from 'react';
 import {
-  getLiminalStyle,
   getDirectionalRim,
-  getLadderColor,
   getTextStyle,
   getFocusRing,
   SHADOWS,
@@ -271,12 +269,9 @@ export function Tabs({
   );
 
   // Container: Surface 1 with Rim 1, flat zero shadow
-  const limStyle = getLiminalStyle({
-    surfaceLevel: 1,
-    isContainer: true,
-    interactive: false,
-    state: 'idle',
-  });
+  // A structural surface: the level of the frame around the work, with a quiet
+  // edge, and it does not answer the pointer.
+  const limStyle = resolveSurface({ role: 'chrome', interactive: false });
 
   const containerStyle: CSSProperties = {
     ...limStyle.style,

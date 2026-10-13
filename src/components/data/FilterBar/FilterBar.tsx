@@ -4,11 +4,11 @@ import { X, XCircle, Funnel } from '@phosphor-icons/react';
 import { Badge } from '../../atoms/Badge';
 import { Button } from '../../atoms/Button';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
-import { getLiminalStyle, getTextStyle, getLadderColor } from '../../../engine/spec-engine';
+import { getTextStyle } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
-import { resolveInteractionVars } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 export interface ActiveFilter {
@@ -39,7 +39,9 @@ export function FilterBar({
   const SPACING = LiminalLayoutEngine.SPACING;
   const RADIUS = LiminalLayoutEngine.RADIUS;
 
-  const baseStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
+  // A structural surface: the level of the frame around the work, with a quiet
+  // edge, and it does not answer the pointer.
+  const baseStyle = resolveSurface({ role: 'chrome', interactive: false }).style;
 
   const containerStyle: CSSProperties = {
     ...baseStyle,

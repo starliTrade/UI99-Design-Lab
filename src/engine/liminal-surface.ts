@@ -146,6 +146,20 @@ export interface SurfaceRequest {
   /** Override the shadow elevation for a role that floats. */
   elevation?: 1 | 2 | 3 | 4;
   /**
+   * Whether this surface answers the pointer.
+   *
+   * It decides one thing — the cursor — and the role cannot decide it, because
+   * a role is a DEPTH and a depth can be used either way. `chrome` is the level
+   * the nav frame sits at AND the level a NavItem sits at: one is a container
+   * you cannot click, the other is a control you can. The old resolver took
+   * `interactive` for exactly this reason; without it, migrating the five
+   * structural containers to `role: 'chrome'` would have given the sidebar and
+   * the tab bar a hand cursor.
+   *
+   * Defaults to true for every role except the structural ones.
+   */
+  interactive?: boolean;
+  /**
    * The surface this element sits ON.
    *
    * This is what makes a control behave correctly anywhere. Without it, a
@@ -229,7 +243,7 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
   // ── focus ring: visible on keyboard focus, never on pointer focus ───────
   const outline = state === 'focus' ? `2px solid ${FOCUS_RING_COLOR}` : 'none';
 
-  const interactive = role !== 'canvas' && role !== 'work' && role !== 'panel';
+  const interactive = request.interactive ?? (role !== 'canvas' && role !== 'work' && role !== 'panel');
 
   const style: CSSProperties = {
     background: rimColors ? rimColors.cssBackground : getLadderVar(Math.round(level)),

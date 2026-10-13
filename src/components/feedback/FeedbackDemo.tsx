@@ -9,7 +9,6 @@ import { Badge } from '../atoms/Badge';
 import { Divider } from '../containers/Divider';
 import { Input } from '../inputs/Input';
 import {
-  getLiminalStyle,
   getTextStyle,
 } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
@@ -26,6 +25,7 @@ import {
   Info,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
+import { resolveSurface } from '../../engine/liminal-surface';
 
 export function FeedbackDemo() {
   // Toast triggers
@@ -38,7 +38,7 @@ export function FeedbackDemo() {
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
-  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
+  const containerStyle = resolveSurface({ role: 'chrome', interactive: false }).style;
 
   const triggerToast = (semantic: 'success' | 'warning' | 'danger' | 'info', msg: string) => {
     setToastSemantic(semantic);

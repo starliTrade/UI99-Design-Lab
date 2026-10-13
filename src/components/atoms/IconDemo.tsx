@@ -20,8 +20,9 @@ import {
   type IconWeight,
   ICON_SIZES,
 } from '../../engine/liminal-icon-engine';
-import { getLiminalStyle, getTextStyle } from '../../engine/spec-engine';
+import { getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
+import { resolveSurface } from '../../engine/liminal-surface';
 
 export function IconDemo() {
   const [selectedWeight, setSelectedWeight] = useState<IconWeight>('light');
@@ -45,8 +46,8 @@ export function IconDemo() {
   const sizes: IconSize[] = ['xs', 'sm', 'md', 'lg', 'xl'];
   const weights: IconWeight[] = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'];
 
-  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
-  const panelStyle = getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style;
+  const containerStyle = resolveSurface({ role: 'chrome', interactive: false }).style;
+  const panelStyle = resolveSurface({ role: 'work', interactive: false }).style;
 
   return (
     <div className="space-y-6 font-mono text-xs">
