@@ -186,3 +186,46 @@ export function oklchToHex({ L, C, h }: OKLCH): string {
       .join('')
   );
 }
+
+/**
+ * OKLCH to sRGB.
+ *
+ * The engine could go one way only: it read a hex and told you its lightness,
+ * which is enough to CHECK a palette and not enough to GENERATE one. A theme
+ * changes the hue, and a changed hue has to come back out as a hex.
+ *
+ * The maths is the standard Björn Ottosson conversion. The result is clamped
+ * into gamut rather than rejected: a hue at high chroma can ask for a colour
+ * sRGB cannot show, and the honest answer is the nearest one it can.
+ */
+export function oklchToRgb({ L, C, h }: OKLCH): RGB {
+  const hRad = (h * Math.PI) / 180;
+  const a = C * Math.cos(hRad);
+  const b = C * Math.sin(hRad);
+
+  const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+  const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+  const s_ = L - 0.0894841775 * a - 1.291485548 * b;
+
+  const l = l_ * l_ * l_;
+  const m = m_ * m_ * m_;
+  const s = s_ * s_ * s_;
+
+  const lr = +4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+  const lg = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+  const lb = -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s;
+
+  // linear sRGB to sRGB
+  const gamma = (v: number) => {
+    const c = v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
+    return Math.max(0, Math.min(255, Math.round(c * 255)));
+  };
+
+  return { r: gamma(lr), g: gamma(lg), b: gamma(lb) };
+}
+
+/** The `#rrggbb` form of an RGB triple. */
+export function rgbToHex({ r, g, b }: RGB): string {
+  const h = (v: number) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0');
+  return `#${h(r)}${h(g)}${h(b)}`;
+}
