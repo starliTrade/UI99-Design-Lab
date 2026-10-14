@@ -101,8 +101,11 @@ Density scales spacing, control heights **and radii as one set**, so the concent
 
 ## The components
 
-**71 components, 59 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md), which
-states the ten things a component must have and names the guard that fails when it does not.
+**71 components, all 71 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md),
+which states the ten things a component must have and names the guard that fails when it does not.
+
+The last ten took no component changes at all — they took a check that stopped asking the wrong
+question. See below.
 
 | group | components |
 |---|---|
@@ -122,15 +125,25 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-71 components · 59 complete · 12 short of the standard
-  role       69/71
+71 components · 71 complete · 0 short of the standard
+  role       71/71
   size       16/16  (declaration matches code)
   variant    16/16  (declaration matches code)
   disabled   16/16  (controls only)
   error      13/13  (inputs only)
   tokens     71/71
-  fixture    61/71
+  fixture    71/71
 ```
+
+**A criterion is asked of the population it applies to.** `size`, `variant`, `disabled` and
+`error` are things a CONTROL has. `fixture` asks whether a component is in the table — and ten
+files are not components: `TableHead` and `TableCell` are cells, `DropdownMenu` is the provider
+that owns the state its content reads, `Tooltip` is a re-export. None can render alone, so a row
+for one would be a row that cannot be rendered. And `Divider` and `PageSection`'s separator paint a
+hairline, not a surface.
+
+The check names all twelve, with their reasons, rather than loosening the rule until it says
+nothing.
 
 CI runs this with `--ratchet`: the number may improve and may not walk backwards. A gate demanding
 100% would fail everything and get turned off.

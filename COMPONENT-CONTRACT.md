@@ -174,7 +174,7 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-59 components · 47 complete · 12 short of the standard
+71 components · 71 complete · 0 short of the standard
   role       57/59
   size       11/11  (declaration matches code)
   variant    11/11  (declaration matches code)

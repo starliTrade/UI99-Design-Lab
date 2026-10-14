@@ -1,11 +1,11 @@
 {
-  "role": 69,
+  "role": 71,
   "size": 16,
   "variant": 16,
   "disabled": 16,
   "error": 13,
   "tokens": 71,
-  "fixture": 61,
+  "fixture": 71,
   "components": 71,
-  "complete": 59
+  "complete": 71
 }

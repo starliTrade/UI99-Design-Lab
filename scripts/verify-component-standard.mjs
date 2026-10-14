@@ -48,6 +48,45 @@ const isComponent = (src) => /^export (function|const) [A-Z]/m.test(src);
 const files = walk(join(SRC, 'components')).filter((f) => isComponent(readFileSync(f, 'utf8')));
 
 /**
+ * PARTS, PROVIDERS AND ALIASES — which are not components and cannot be rows.
+ *
+ * `fixture` asks whether a component is in the table, and the table renders what
+ * it lists. None of these can render alone: `TableHead` and `TableCell` are
+ * cells, `DropdownMenu` is the provider that owns the state its content reads,
+ * and `Tooltip` is a re-export of `SimpleTooltip`. A row for one would be a row
+ * that cannot be rendered.
+ *
+ * They were counted as failures for three turns, which made the headline number
+ * wrong in the pessimistic direction — the same mistake as demanding a `variant`
+ * of a Checkbox, and the sixth time this project has asked a rule of the wrong
+ * population. The check NAMES them rather than loosening the rule.
+ */
+const NOT_A_ROW = new Map([
+  ['TableHeader', 'a table cell'],
+  ['TableHead', 'a table cell'],
+  ['TableRow', 'a table row'],
+  ['TableCell', 'a table cell'],
+  ['Tooltip', 'a re-export of SimpleTooltip'],
+  ['ContextMenu', 'the provider that owns the state its content reads'],
+  ['ContextMenuContent', 'a menu surface, rendered by its provider'],
+  ['DropdownMenu', 'the provider that owns the state its content reads'],
+  ['DropdownMenuContent', 'a menu surface, rendered by its provider'],
+  ['DropdownMenuItem', 'a menu item, rendered by its content'],
+]);
+
+/**
+ * LINES, not surfaces.
+ *
+ * `Divider` and `PageSection`'s separator paint a hairline with
+ * `role="separator"`. A static check cannot tell a 1px rule from a plane, and it
+ * should not pretend to.
+ */
+const NOT_A_SURFACE = new Map([
+  ['Divider', 'a hairline, not a surface'],
+  ['PageSection', 'its separator is a hairline, not a surface'],
+]);
+
+/**
  * WHAT A COMPONENT HAS IS WHAT IT DECLARES — AND THE TWO MUST AGREE.
  *
  * The first three versions of this check demanded props: `size` of a Popover,
@@ -112,16 +151,23 @@ const rows = files.map((f) => {
     // and it should not pretend to: the honest report is 57/59 with the two
     // named, not 59/59 with the rule quietly loosened until it says nothing.
     role:
-      // The whitespace belongs INSIDE the lookahead. With `\s*` before it, the
-      // engine backtracks, evaluates the lookahead at the colon where the next
-      // character is a space, and the guard passes on `'transparent'` — the
+      // A LINE is not a surface — see NOT_A_SURFACE.
+      NOT_A_SURFACE.has(name) ||
+      // And the whitespace belongs INSIDE the lookahead. With `\s*` before it,
+      // the engine backtracks, evaluates the lookahead at the colon where the
+      // next character is a space, and the guard passes on `'transparent'` — the
       // exact case it was written to exclude.
       !/\bbackground\s*:(?!\s*['"](?:transparent|none)['"])/.test(src) ||
       has(/resolveSurface\(\{\s*role/),
     // AGREEMENT, not presence. A component that declares sizes must have the
     // prop; one that has the prop must declare them. Neither direction alone.
-    size: claimsSizes === has(/\bsize\??:/),
-    variant: claimsVariants === has(/\bvariant\??:/),
+    //
+    // AND NOTHING TO AGREE WITH IS NOT A MISMATCH. A part has no row, so it has
+    // no declaration — `DropdownMenuItem` has a `variant` prop and no row, and
+    // the criterion called that a failure for a component that is not a
+    // component.
+    size: NOT_A_ROW.has(name) || claimsSizes === has(/\bsize\??:/),
+    variant: NOT_A_ROW.has(name) || claimsVariants === has(/\bvariant\??:/),
     disabled: !isControl(name) || has(/\bdisabled\??:/),
     error: kindOf(name) !== 'input' || has(/\berror\??:/),
     tokens: !has(/['"]#[0-9a-fA-F]{3,8}['"]/) && !has(/rgba?\(/),
@@ -134,7 +180,7 @@ const rows = files.map((f) => {
     // row that cannot be rendered. A static check cannot tell a part from a
     // whole, and it should not pretend to: the honest report is 49/59 with the
     // ten named, not 59/59 with the rule loosened until it says nothing.
-    fixture: fixturesSrc.includes(`name: '${name}'`),
+    fixture: NOT_A_ROW.has(name) || fixturesSrc.includes(`name: '${name}'`),
   };
 });
 
@@ -192,6 +238,10 @@ if (process.argv.includes('--json')) {
   }
   const complete = rows.filter((r) => score(r) === KEYS.length).length;
   console.log(`\n${rows.length} components · ${complete} complete · ${rows.length - complete} short of the standard`);
+  console.log(`\n${NOT_A_ROW.size} files are parts, providers or aliases and cannot be rows:`);
+  for (const [n, why] of NOT_A_ROW) console.log(`  ${w(n, 20)} ${why}`);
+  console.log(`\n${NOT_A_SURFACE.size} are lines rather than surfaces:`);
+  for (const [n, why] of NOT_A_SURFACE) console.log(`  ${w(n, 20)} ${why}`);
   for (const k of KEYS) {
     // A control criterion is counted over the controls, not over everything:
     // 49/56 for `size` would read as "49 components have a size" when most of
