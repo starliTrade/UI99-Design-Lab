@@ -91,6 +91,21 @@ export default tseslint.config(
           selector: 'Literal[value=/rgba?\\(/]',
           message: 'Raw rgb()/rgba() colour. Use the engine (LiminalColorEngine / getTextStyle).',
         },
+        // ── THE BLIND SPOT ────────────────────────────────────────────────────
+        // A template literal is not a `Literal` node: it is a `TemplateLiteral`
+        // with `TemplateElement` quasis. So the two rules above read every plain
+        // string and not one backtick — and three components carried a hard-coded
+        // danger tint inside a template literal while lint reported zero errors.
+        // A guard with a hole is worse than no guard: it is a promise.
+        {
+          selector: 'TemplateElement[value.raw=/#[0-9a-fA-F]{3,8}\\b/]',
+          message:
+            'Raw hex colour in a template literal. Use the engine: getLadderColor(), LiminalColorEngine, or getTextStyle().',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/rgba?\\(/]',
+          message: 'Raw rgb()/rgba() colour in a template literal. Use the engine (LiminalColorEngine / getTextStyle).',
+        },
         // A raw pixel value in a LAYOUT property. The colour ban above covers
         // hex and rgba; this covers the other half, which was slipping through
         // in 88 places — `padding: '6px 12px'`, `minHeight: '44px'`,

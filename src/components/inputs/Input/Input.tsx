@@ -199,12 +199,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     if (error) {
       const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
-        background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
+        // The engine's own subtle tint, not a colour invented here. Two of these
+        // were hand-picked (#e5637a and #34c08b) and copied into four
+        // components — colours that exist nowhere in the engine.
+        background = `linear-gradient(${LiminalColorEngine.SEMANTICS.DANGER.subtle}, ${LiminalColorEngine.SEMANTICS.DANGER.subtle}), ${baseRim.cssBackground}`;
       }
     } else if (success) {
       const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
-        background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
+        background = `linear-gradient(${LiminalColorEngine.SEMANTICS.SUCCESS.subtle}, ${LiminalColorEngine.SEMANTICS.SUCCESS.subtle}), ${baseRim.cssBackground}`;
       }
     }
   }
