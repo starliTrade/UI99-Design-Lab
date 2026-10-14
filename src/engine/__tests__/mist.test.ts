@@ -17,7 +17,7 @@ import {
   mistShadowNearRadius,
 } from '../liminal-mist';
 import { LADDER } from '../liminal-ladder';
-import type { SurfaceRole } from '../liminal-surface';
+import { resolveBorder, type SurfaceRole } from '../liminal-surface';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const mistCss = readFileSync(resolve(here, '../liminal-mist.css'), 'utf8');
@@ -75,10 +75,24 @@ describe('mist — the surface diffuses light, it does not emit it', () => {
     expect(mistCss).toMatch(/linear-gradient\(\s*180deg/);
   });
 
-  it('keeps the seam faint — a hairline, never a bright ring', () => {
+  /**
+   * THE SEAM IS A LADDER LEVEL NOW, AND THE OLD ASSERTION IS WHY IT WAS NOT.
+   *
+   * This test asked for `alpha < 0.12` and passed — while the seam composited to
+   * #1a1c1e over the canvas, and the ladder's ceiling is #15171a. A threshold on
+   * an ALPHA cannot see the thing that matters: what the line composites to. The
+   * seam was above the system's own ceiling on every mist surface, at every
+   * height, and the test that was written to catch a loud ring said it was fine.
+   *
+   * So it asserts the ceiling now, in the ladder's own terms: the seam is a
+   * `resolveBorder` level, which is half a step above the surface it belongs to
+   * and inverts at the ceiling rather than exceeding it.
+   */
+  it('keeps the seam at the engine\'s own edge — never above the ceiling', () => {
     for (const role of ROLES) {
-      const alpha = num(vars(role)['--liminal-mist-seam'].match(/,\s*([\d.]+)\)$/)![1]);
-      expect(alpha, `${role} seam is too loud`).toBeLessThan(0.12);
+      const seam = vars(role)['--liminal-mist-seam'];
+      expect(seam, `${role} seam is not the engine's edge`).toContain('color-mix');
+      expect(seam, `${role} seam does not come from resolveBorder`).toContain(resolveBorder({ role, kind: 'hairline' }));
     }
   });
 });
@@ -163,9 +177,15 @@ describe('mist — a toast is not a menu', () => {
     expect(menu['--liminal-mist-inner-light']).toMatch(/^inset 0 1px 0 rgba\(/);
   });
 
-  it('gives a toast a fainter seam than a menu', () => {
-    const seam = (r: SurfaceRole) => num(vars(r)['--liminal-mist-seam'].match(/,\s*([\d.]+)\)$/)![1]);
-    expect(seam('toast')).toBeLessThan(seam('menu'));
+  it('gives a glass a fainter frame than a fog, and a fog the engine\'s edge', () => {
+    // A window's frame is fainter than a mass's edge — the `fill` option scales
+    // the seam, because a glass keeps a fifth of its own fill and its boundary
+    // has to be read against the PAGE rather than against the surface.
+    const pct = (r: SurfaceRole, fill?: number) =>
+      num(mistCssVars(r, fill === undefined ? {} : { fill })['--liminal-mist-seam'].match(/\s(\d+)%/)![1]);
+    expect(pct('menu')).toBe(100);
+    expect(pct('menu', 0.2)).toBe(20);
+    expect(pct('menu', 0.2)).toBeLessThan(pct('menu'));
   });
 });
 

@@ -24,7 +24,7 @@
  */
 
 import { LADDER, PERCEPTUAL_QUANTUM, getLadderVar } from './liminal-ladder';
-import { ROLE_LEVEL } from './liminal-surface';
+import { ROLE_LEVEL, resolveBorder } from './liminal-surface';
 import type { SurfaceRole } from './liminal-surface';
 
 /** The roles that float above the page, and therefore catch mist. */
@@ -339,8 +339,23 @@ export function mistCssVars(role: SurfaceRole, options: MistOptions = {}): Recor
     '--liminal-mist-shadow-far': `${mistShadowFarRadius(role).toFixed(0)}px`,
     '--liminal-mist-shadow-near-alpha': String(mistShadowNearAlpha(role)),
     '--liminal-mist-shadow-far-alpha': String(mistShadowFarAlpha(role)),
-    // The seam: a faint hairline where the fog meets the page.
-    '--liminal-mist-seam': `rgba(${r}, ${g}, ${b}, ${(isToast ? 0.075 : 0.07 + h * 0.004).toFixed(4)})`,
+    // THE SEAM IS THE ENGINE'S OWN EDGE, and it used to be a hand-tuned alpha
+    // that broke the system's first rule.
+    //
+    // It was `rgba(233,236,242, 0.07 + h * 0.004)`. Composited over the canvas
+    // that lands on #161719 at h=0 and #1a1c1e at h=5 — and the ladder's ceiling
+    // is #15171a. The seam was ABOVE THE CEILING AT EVERY HEIGHT, on every mist
+    // surface in the system: menus, popovers, modals, toasts. A 1px line
+    // brighter than the brightest allowed surface, drawn around a surface that
+    // is supposed to sit at the threshold of perception.
+    //
+    // `resolveBorder` already answers this question for every other edge in the
+    // system: an edge is a LADDER LEVEL half a step above the surface it belongs
+    // to, and at the ceiling it inverts rather than exceeding. The mist uses the
+    // same resolver now, so its seam cannot drift from the rest of the system —
+    // and the `fill` option scales it, because a window's frame is fainter than
+    // a mass's edge.
+    '--liminal-mist-seam': `color-mix(in oklab, ${resolveBorder({ role, kind: 'hairline' })} ${Math.round((options.fill ?? 1) * 100)}%, transparent)`,
     // Opt-in diffusion only.
     '--liminal-mist-blur': `${m.blur}px`,
   };
