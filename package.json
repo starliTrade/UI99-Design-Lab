@@ -1,5 +1,5 @@
 {
-  "name": "ui99-design-lab",
+  "name": "liminal",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -73,5 +73,16 @@
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18"
-  }
+  },
+  "description": "A dark UI engine: every surface, edge, colour and space comes from a rule, and the rule is written as a test.",
+  "license": "MIT",
+  "keywords": [
+    "design-system",
+    "react",
+    "oklch",
+    "dark-ui",
+    "rtl",
+    "accessibility",
+    "design-tokens"
+  ]
 }

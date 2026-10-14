@@ -185,7 +185,7 @@ Recorded rather than hidden:
 - **No performance measurement** — render counts, layout thrash.
 - **12 components short of the standard**, and two of the 71 are flagged for `role` because they
   are lines rather than surfaces.
-- **Not tested in a real Next.js app.** It server-renders, and that is not the same thing.
+- **Not published.** The package is `private`, and publishing is a decision about demand.
 
 ---
 
@@ -213,7 +213,14 @@ bun run test:watch
 bun run gen:css       # regenerate the CSS variables from the engine
 node scripts/verify-component-standard.mjs
 node scripts/verify-hierarchy.mjs
+bash scripts/verify-next-smoke.sh   # packs, installs into a Next.js app, builds it
 ```
+
+`verify-next-smoke.sh` is the one that answers the question a consumer asks. It
+packs a tarball — which applies the `files` list, so it is what npm would publish
+— installs it into a blank Next.js App Router project, builds, and checks the
+server-rendered HTML for the button. The page is a Server Component with no
+`"use client"`, so if the directive did not survive the build it fails there.
 
 The contract is [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md); the plan is
 [`LIMINAL-ROADMAP.md`](./LIMINAL-ROADMAP.md).

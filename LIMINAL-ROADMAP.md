@@ -104,7 +104,13 @@ LIMINAL = سیستم طراحیِ ریاضی‌محورِ dark-native
       اندازه‌گیری شد که **از build جان سالم می‌برد** (Rollup می‌تواند hoist یا حذفش کند) و
       `verify:package` حالا چکش می‌کند. و **هیچ globalِ ماژول‌سطحی و هیچ `useLayoutEffect` نیست** —
       `ssr.test.tsx` نُه کامپوننت را با `renderToStaticMarkup` رندر می‌کند، که DOM ندارد
-- [ ] تست در یک اپ واقعی Next.js (App Router + RSC)
+- [x] **تست در یک اپ واقعی Next.js** — `scripts/verify-next-smoke.sh`. کتابخانه را build می‌کند،
+      با `npm pack` یک **tarball** می‌سازد (که `files` را واقعاً اعمال می‌کند — symlink به ریپو
+      پکیجی را تست می‌کند که هیچ‌کس نصب نمی‌کند)، یک اپِ App Router می‌سازد، از tarball نصب می‌کند،
+      و `next build` می‌گیرد. صفحه یک **Server Component** است که کتابخانه را import می‌کند و
+      `"use client"` ندارد — پس اگر دایرکتیو از build جان سالم نمی‌برد، همان‌جا می‌شکند.
+      **اندازه‌گیری:** `/` به‌صورت static prerender شد، و HTMLِ سرور شاملِ `liminal-button`،
+      `>Save<` و لینکِ استایل است
 - [ ] README حرفه‌ای: نصب، شروع سریع، جدول کامپوننت‌ها، لینک مستندات
 
 **و یک شکاف که همین کار پیدا کرد:** barrelِ موتور **۱۴ ماژول** را صادر نمی‌کرد — از جمله
