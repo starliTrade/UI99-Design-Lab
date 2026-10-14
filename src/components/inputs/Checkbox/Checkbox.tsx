@@ -14,6 +14,14 @@ export interface CheckboxProps {
   disabled?: boolean;
   label?: string;
   description?: string;
+  /**
+   * The validation message.
+   *
+   * A checkbox validates: "you must accept the terms" is a real error, and it
+   * was the one thing the other five inputs had and this did not. It is a
+   * STRING, not a boolean — an error the reader cannot read is a red box.
+   */
+  error?: string;
   id?: string;
   name?: string;
   className?: string;
@@ -26,6 +34,7 @@ export function Checkbox({
   disabled = false,
   label,
   description,
+  error,
   id,
   name,
   className = '',
@@ -41,7 +50,13 @@ export function Checkbox({
 
   const host = useHostSurface();
 
-  const boxBg = checked
+  const errorId = error ? `${id ?? name ?? 'checkbox'}-error` : undefined;
+
+  // An error is a semantic state, not a colour choice: the engine's danger
+  // tint, the same one the other inputs use.
+  const boxBg = error
+    ? SEMANTICS.DANGER.subtle
+    : checked
     ? SEMANTICS.SUCCESS.subtle
     : offRim
     ? offRim.cssBackground
@@ -128,6 +143,8 @@ export function Checkbox({
         checked={checked}
         disabled={disabled}
         onChange={handleChange}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={errorId}
         tabIndex={disabled ? -1 : 0}
         style={{
           position: 'absolute',
@@ -163,10 +180,23 @@ export function Checkbox({
       {label && (
         <span style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={labelStyle}>{label}</span>
-          {description && (
-            <span style={{ ...LiminalLayoutEngine.getTypeStyle(1), color: getTextStyle('tertiary', 1).color, marginTop: `${SPACING[0]}px` }}>
-              {description}
+          {/* The error REPLACES the description: two lines under one control
+              is a paragraph, and the reader needs the one that says what is
+              wrong. */}
+          {error ? (
+            <span
+              id={errorId}
+              role="alert"
+              style={{ ...LiminalLayoutEngine.getTypeStyle(1), color: SEMANTICS.DANGER.text, marginTop: `${SPACING[0]}px` }}
+            >
+              {error}
             </span>
+          ) : (
+            description && (
+              <span style={{ ...LiminalLayoutEngine.getTypeStyle(1), color: getTextStyle('tertiary', 1).color, marginTop: `${SPACING[0]}px` }}>
+                {description}
+              </span>
+            )
           )}
         </span>
       )}

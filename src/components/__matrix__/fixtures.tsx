@@ -152,15 +152,29 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Checkbox', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
+    name: 'Checkbox', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled', 'error'], expected: INTERACTIVE,
     render: (state) => (
-      <Checkbox checked={state === 'checked'} disabled={state === 'disabled'} onChange={noop} label="I accept" />
+      <Checkbox
+        checked={state === 'checked'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'You must accept the terms' : undefined}
+        onChange={noop}
+        label="I accept"
+      />
     ),
   },
   {
-    name: 'Radio', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
+    name: 'Radio', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled', 'error'], expected: INTERACTIVE,
     render: (state) => (
-      <Radio checked={state === 'checked'} disabled={state === 'disabled'} onChange={noop} name="m" value="a" label="Option" />
+      <Radio
+        checked={state === 'checked'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'Choose one' : undefined}
+        onChange={noop}
+        name="m"
+        value="a"
+        label="Option"
+      />
     ),
   },
   {

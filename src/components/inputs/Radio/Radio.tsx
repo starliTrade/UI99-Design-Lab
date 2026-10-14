@@ -13,6 +13,14 @@ export interface RadioProps {
   onChange: () => void;
   disabled?: boolean;
   label?: string;
+  /**
+   * The validation message for the GROUP this radio belongs to.
+   *
+   * A radio validates as a set — "choose a plan" — and the message belongs on
+   * each member so a screen reader meets it wherever the reader is. It is a
+   * STRING, not a boolean: an error the reader cannot read is a red dot.
+   */
+  error?: string;
   name: string;
   value: string;
   id?: string;
@@ -25,6 +33,7 @@ export function Radio({
   onChange,
   disabled = false,
   label,
+  error,
   name,
   value,
   id,
@@ -41,7 +50,11 @@ export function Radio({
   // The fill an unselected control rests in: a named role, not a hand-picked pair.
   const offRim = resolveSurface({ role: 'well' }).rimColors;
 
-  const boxBg = checked
+  const errorId = error ? `${id ?? `${name}-${value}`}-error` : undefined;
+
+  const boxBg = error
+    ? SEMANTICS.DANGER.subtle
+    : checked
     ? SEMANTICS.SUCCESS.subtle
     : offRim
     ? offRim.cssBackground
@@ -133,6 +146,8 @@ export function Radio({
         value={value}
         checked={checked}
         disabled={disabled}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={errorId}
         onChange={handleChange}
         tabIndex={disabled ? -1 : 0}
         style={{
@@ -149,6 +164,16 @@ export function Radio({
       </span>
 
       {label && <span style={labelStyle}>{label}</span>}
+      {/* The message sits with the radio it belongs to, so a screen reader
+          meets it wherever the reader is in the set. A radio validates as a
+          GROUP — "choose a plan" — and the group is the one that should render
+          it once; this is the per-member fallback for a consumer that does
+          not wrap them. */}
+      {error && (
+        <span id={errorId} role="alert" style={{ ...labelStyle, color: SEMANTICS.DANGER.text }}>
+          {error}
+        </span>
+      )}
     </label>
   );
 }
