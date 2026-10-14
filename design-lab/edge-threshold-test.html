@@ -62,7 +62,7 @@
       <li>بعد در هر آزمایش دو پنل می‌بینی. اگر خط را دیدی روی آن پنل کلیک کن.
           <b>و اگر ندیدی، دکمه‌ی «نمی‌بینم» را بزن.</b> این جواب هم داده است — و از حدس زدن
           ارزشمندتر، چون نرخ هشدار اشتباه را هم به ما می‌دهد.</li>
-      <li>۴۳ آزمایش، حدود ۳ دقیقه.</li>
+      <li>۴۸ آزمایش، حدود ۳ دقیقه.</li>
     </ol>
     <div class="row" style="margin-top:20px">
       <button onclick="start()">شروع</button>
@@ -129,7 +129,7 @@ const LEVELS = [
   { hex: '#06080b', reps: 8 },                 // 0.60q  <- the border's offset is 0.57q
   { hex: '#07080a', reps: 7 },                 // 0.71q
 ];
-const CATCH = 5;
+const CATCH = 10;
 
 function srgbToLinear(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
 function hexToRgb(hex) { const h = hex.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
@@ -211,12 +211,23 @@ function finish() {
 
   const points = LEVELS.map(lv => {
     const group = trials.filter(t => !t.catch && t.hex === lv.hex);
-    const hits = group.filter(t => t.answer === lv.side).length;
-    const misses = group.filter(t => t.answer !== 'none' && t.answer !== lv.side).length;
+    // `lv.side` does not exist — the side belongs to the TRIAL. The first
+    // version of this line read `lv.side`, so every hit count was zero while the
+    // anchor check (which used `t.side`) was right. Two lines, one of them
+    // correct, and the wrong one was in the table.
+    const hits = group.filter(t => t.answer === t.side).length;
+    const misses = group.filter(t => t.answer !== 'none' && t.answer !== t.side).length;
     const none = group.filter(t => t.answer === 'none').length;
-    const hitRate = hits / group.length;
-    const dPrime = z(hitRate) - z(faRate);
-    return { hex: lv.hex, dl: lv.dl, q: lv.q, n: group.length, hits, misses, none, hitRate, dPrime };
+    const chose = hits + misses;
+    return {
+      hex: lv.hex, dl: lv.dl, q: lv.q, n: group.length, hits, misses, none,
+      hitRate: hits / group.length,
+      /** Of the trials where a side was chosen at all, how often was it right. */
+      hitRateWhenChosen: chose ? hits / chose : null,
+      /** The criterion-free signal: how often the reader admitted not seeing it. */
+      noneRate: none / group.length,
+      dPrime: z(hits / group.length) - z(faRate),
+    };
   });
 
   const anchors = trials.filter(t => t.anchor);
@@ -227,24 +238,42 @@ function finish() {
   // rather than from a fit — with this many trials a fit would be a shape, not a
   // measurement (the first run's fit hit the edge of its own search grid).
   const sorted = [...points].sort((a, b) => a.dl - b.dl);
-  let crossing = null;
-  for (let i = 1; i < sorted.length; i++) {
-    if (sorted[i].hitRate >= 0.75 && sorted[i - 1].hitRate < 0.75) {
-      const span = sorted[i].dl - sorted[i - 1].dl;
-      const need = 0.75 - sorted[i - 1].hitRate;
-      const gain = sorted[i].hitRate - sorted[i - 1].hitRate;
-      crossing = sorted[i - 1].dl + span * (gain ? need / gain : 0.5);
-      break;
-    }
-  }
+
+  /**
+   * WHERE THE THRESHOLD IS READ FROM.
+   *
+   * Not from the hit rate: with a loose criterion a reader picks a side even
+   * when they see nothing, and the run above had a 60% false-alarm rate — so
+   * "chose a side" was mostly guessing. The criterion-free signal is the
+   * opposite one: HOW OFTEN THE READER ADMITTED NOT SEEING IT. It runs from
+   * 100% at the bottom of the ladder to 0% at the top, and the threshold is
+   * where it crosses 50%.
+   */
+  /**
+   * TWO THRESHOLDS, NOT ONE — and the data from the second run made that clear.
+   *
+   * A forced choice measures DISCRIMINATION: can you tell which side it is on,
+   * even if you are guessing. An opt-out measures CONFIDENCE: are you sure you
+   * saw it. They are different numbers, and the run above had both — 6/6 correct
+   * at 0.71q in the forced version, and 43% "I don't see it" at the same 0.71q
+   * here. Same stimulus, same eye, two questions.
+   *
+   * So the page reports both, and refuses to invent a crossing when the data is
+   * not monotonic — with four to eight trials per level, a single flip is noise
+   * and interpolating through it would be a shape, not a measurement.
+   */
+  const certain = sorted.find(p => p.noneRate <= 0.25) ?? null;   // "I am sure"
+  const mixed = sorted.filter(p => p.noneRate > 0.25 && p.noneRate < 0.75);
+  const crossing = certain ? certain.dl : null;
   const edgeQ = crossing ? crossing / Q : null;
+  const mixedBand = mixed.length ? `${mixed[0].q.toFixed(2)}q تا ${mixed[mixed.length - 1].q.toFixed(2)}q` : null;
   const borderQ = 0.5 * 1.20;      // half a ladder step, the engine's border offset
   const verdict = !valid
     ? `<span class="warn">نشست معتبر نیست.</span> خط‌های واضح را ${anchorHit} از ${anchors.length} بار دیدی.
        مسئله نمایشگر، روشنایی یا فاصله است — نه آستانه‌ی چشم.`
     : edgeQ === null
-      ? `هیچ سطحی به ۷۵٪ نرسید — یعنی آستانه‌ی تو <b>بالاتر</b> از همه‌ی سطح‌های این آزمایش است
-         (بالاترین: ${sorted[sorted.length - 1].q.toFixed(2)}q).`
+      ? `هیچ سطحی به «مطمئنم» نرسید — یعنی آستانه‌ی اطمینان تو <b>بالاتر</b> از همه‌ی سطح‌های این
+         آزمایش است (بالاترین: ${sorted[sorted.length - 1].q.toFixed(2)}q).`
       : edgeQ < borderQ * 0.8
         ? `<span class="ok">چشم تو به خط حساس‌تر است.</span> آستانه‌ی لبه <b>${edgeQ.toFixed(2)}q</b> و مرز
            فعلی موتور <b>${borderQ.toFixed(2)}q</b> — پس مرز <b>بالای</b> آستانه است و دیده می‌شود.`
@@ -259,13 +288,13 @@ function finish() {
       <td><code>${p.hex}</code></td>
       <td><code>${p.q.toFixed(2)}q</code></td>
       <td>${p.hits}</td><td>${p.misses}</td><td>${p.none}</td>
-      <td><code>${(p.hitRate * 100).toFixed(0)}%</code></td>
-      <td><code>${p.dPrime.toFixed(2)}</code></td>
+      <td><code>${(p.noneRate * 100).toFixed(0)}%</code></td>
+      <td><code>${p.hitRateWhenChosen === null ? '—' : (p.hitRateWhenChosen * 100).toFixed(0) + '%'}</code></td>
     </tr>`).join('');
 
   const session = {
     at: new Date().toISOString(), kind: 'edge-3afc',
-    edgeQ, crossing, q: Q, falseAlarmRate: faRate,
+    certainQ: edgeQ, mixedBand, q: Q, falseAlarmRate: faRate,
     anchors: { hit: anchorHit, total: anchors.length, valid },
     points: points.map(p => ({ hex: p.hex, q: p.q, n: p.n, hits: p.hits, none: p.none, dPrime: p.dPrime })),
     seconds: Math.round((Date.now() - startedAt) / 1000),
@@ -276,7 +305,8 @@ function finish() {
 
   el.querySelector('#resultBody').innerHTML = `
     <div class="row" style="gap:32px;align-items:baseline">
-      <div><div class="big">${edgeQ === null ? '—' : edgeQ.toFixed(2) + 'q'}</div><div style="color:var(--faint);font-size:12px">آستانه‌ی لبه (۷۵٪)</div></div>
+      <div><div class="big">${edgeQ === null ? '—' : edgeQ.toFixed(2) + 'q'}</div><div style="color:var(--faint);font-size:12px">آستانه‌ی اطمینان</div></div>
+      <div><div class="big">${mixedBand ?? '—'}</div><div style="color:var(--faint);font-size:12px">باند مبهم (گاهی می‌بینی)</div></div>
       <div><div class="big">${(faRate * 100).toFixed(0)}%</div><div style="color:var(--faint);font-size:12px">هشدار اشتباه (${falseAlarms}/${catches.length})</div></div>
       <div><div class="big">${borderQ.toFixed(2)}q</div><div style="color:var(--faint);font-size:12px">مرز فعلی موتور</div></div>
     </div>
@@ -286,11 +316,13 @@ function finish() {
       ${valid ? '<span class="ok">نشست معتبر است.</span>' : '<span class="warn">نشست معتبر نیست.</span>'}
     </div>
     <table>
-      <thead><tr><th>hex</th><th>در کوانتا</th><th>درست</th><th>اشتباه</th><th>نمی‌بینم</th><th>نرخ تشخیص</th><th>d′</th></tr></thead>
+      <thead><tr><th>hex</th><th>در کوانتا</th><th>درست</th><th>اشتباه</th><th>نمی‌بینم</th><th>نرخ «نمی‌بینم»</th><th>دقت وقتی انتخاب کردی</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
     <p style="color:var(--faint);font-size:12px;margin-top:12px">
-      d′ = z(نرخ تشخیص) − z(نرخ هشدار اشتباه). مقدار ۱ یعنی «قابل تشخیص»، صفر یعنی «حدس».
+      آستانه از <b>نرخ «نمی‌بینم»</b> خوانده می‌شود، نه از نرخ تشخیص — چون با معیار شل،
+      «انتخاب کردم» بیشتر حدس است. نرخ هشدار اشتباه ${(faRate * 100).toFixed(0)}٪ است
+      ${faRate > 0.3 ? '— یعنی معیارت شل بوده و ستون‌های «درست/اشتباه» را با احتیاط بخوان' : '— یعنی معیارت سخت‌گیر بوده'}.
       مدت: ${session.seconds} ثانیه · ${history.length} نشست ذخیره‌شده
     </p>`;
   window.__lastSession = session;
