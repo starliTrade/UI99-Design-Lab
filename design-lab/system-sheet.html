@@ -11,7 +11,7 @@
     --s6:#111316;--s6-5:#121417;--s7:#131518;--s7-5:#141619;--s8:#15171a;
     --w-1:#030406;--w-2:#010203;
     --text:rgba(255,255,255,.89);--dim:rgba(255,255,255,.6);--faint:rgba(255,255,255,.34);
-    --rim:rgba(233,236,242,.07);
+    --rim:rgba(233,236,242,.03);
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--s0);color:var(--text);
@@ -31,7 +31,7 @@
   .sw{width:64px;height:22px;border-radius:6px;border:1px solid var(--rim);display:inline-block;vertical-align:middle}
   .nest{width:92px;height:62px;border-radius:9px;display:flex;align-items:center;justify-content:center}
   .nest i{width:52px;height:34px;border-radius:6px;display:block}
-  .nest i.b{border:1px solid var(--rim)}
+  .nest i.b{/* the colour is set per cell: the engine's own border for that step */}
   .hex{display:block;font-size:9.5px;color:var(--faint);text-align:center;margin-top:3px;font-family:ui-monospace,Menlo,monospace}
   .rimbox{width:92px;height:34px;border-radius:7px;border:1px solid var(--rim);display:inline-block}
   .float{display:flex;gap:26px;flex-wrap:wrap;padding:22px 0 6px}
@@ -100,6 +100,15 @@
     const tier = RIM[n], o = RIM_OFF[tier];
     // at the ceiling a positive offset has nowhere to go, so it inverts
     const up = (d) => (n + d > 8 ? at(8 - d) : at(n + d));
+    // THE ENGINE'S BORDER: half a step above the surface it belongs to, and at
+    // the ceiling it inverts and goes below. The first version of this sheet drew
+    // its own rgba(233,236,242,.07) — measured at 9.16q, NINE times the
+    // threshold — and the reader saw the sheet, not the engine.
+    // The child's border belongs to the CHILD: half a step above the child's own
+    // level, which is a full step above the host. The first version used the
+    // HOST's border, which is the child's own fill — so the border was invisible
+    // against the thing it was drawn on.
+    const childBorder = n + 1 > 8 ? at(8) : at(n + 1);
     return `linear-gradient(180deg, ${up(o.t)} 0%, ${up(o.s)} 55%, ${up(o.b)} 100%)`;
   };
 
@@ -120,6 +129,15 @@
     // is exactly where an offset has nowhere to go, and a table that shows
     // "undefined" there is a table that has not understood its own system.
     const up = (d) => (n + d > 8 ? at(8 - d) : at(n + d));
+    // THE ENGINE'S BORDER: half a step above the surface it belongs to, and at
+    // the ceiling it inverts and goes below. The first version of this sheet drew
+    // its own rgba(233,236,242,.07) — measured at 9.16q, NINE times the
+    // threshold — and the reader saw the sheet, not the engine.
+    // The child's border belongs to the CHILD: half a step above the child's own
+    // level, which is a full step above the host. The first version used the
+    // HOST's border, which is the child's own fill — so the border was invisible
+    // against the thing it was drawn on.
+    const childBorder = n + 1 > 8 ? at(8) : at(n + 1);
     const childPlain = up(1);
     const childHalf  = up(0.5);
     const shadow = FLOATING[n] ? `<code>${FLOATING[n]}</code>` : '—';
@@ -132,7 +150,7 @@
       <td><span class="rimbox" style="background:${rimBg(n)}"></span><span class="hex">R${RIM[n]}</span></td>
       <td><span class="sw" style="background:${n<8?H[n]:H[7]};width:92px;height:34px"></span><span class="hex">${n<8?H[n]:H[7]}</span></td>
       <td><span class="nest" style="background:${hex}"><i style="background:${childPlain}"></i></span><span class="hex">${childPlain}</span></td>
-      <td><span class="nest" style="background:${hex}"><i class="b" style="background:${childHalf}"></i></span><span class="hex">${childHalf}</span></td>
+      <td><span class="nest" style="background:${hex}"><i class="b" style="background:${childHalf};border-color:${childBorder}"></i></span><span class="hex">${childHalf} · مرز ${childBorder}</span></td>
     </tr>`;
   }).join('');
 

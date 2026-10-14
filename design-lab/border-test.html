@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — مرز: نسبت به کدام طرف؟</title>
+<style>
+  :root{
+    --s0:#060709;--s0-5:#07080a;--s1:#07090b;--s1-5:#080a0c;--s2:#090b0d;--s2-5:#0a0c0e;
+    --s3:#0b0d0f;--s3-5:#0c0e10;--s4:#0d0f12;--s4-5:#0e1013;--s5:#0f1114;
+    --text:rgba(255,255,255,.89);--dim:rgba(255,255,255,.6);--faint:rgba(255,255,255,.34);
+    --well:#030406;--rim:rgba(233,236,242,.03);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--s0);color:var(--text);
+    font:14px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;padding:28px 20px 64px;
+    display:flex;flex-direction:column;align-items:center}
+  h1{font-size:20px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--dim);font-size:13px;max-width:78ch;text-align:center;margin-bottom:24px}
+  .q{width:100%;max-width:1060px;background:var(--well);border:1px solid var(--rim);border-radius:16px;padding:20px 22px;margin-bottom:18px}
+  .q h2{font-size:14px;margin:0 0 4px;font-weight:600}
+  .q .why{color:var(--faint);font-size:12px;margin-bottom:20px}
+  .row{display:flex;flex-wrap:wrap;gap:30px;justify-content:center;padding:14px 0 6px}
+  .cell{display:flex;flex-direction:column;gap:9px;align-items:center}
+  .stage{width:180px;height:130px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+  .panel{width:130px;height:84px;border-radius:10px}
+  .cap{font-size:10.5px;color:var(--faint);text-align:center;line-height:1.7}
+  .cap b{color:var(--dim)}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10px}
+  .opt{font:inherit;font-size:12px;padding:8px 14px;border-radius:10px;cursor:pointer;
+    background:transparent;color:var(--dim);border:1px solid var(--rim)}
+  .opt[aria-pressed="true"]{background:#e9ecf2;color:#06070a;border-color:#e9ecf2;font-weight:700}
+  .opts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  button.primary{font:inherit;font-size:13px;font-weight:600;color:#06070a;background:#e9ecf2;
+    border:none;border-radius:10px;padding:11px 22px;cursor:pointer}
+</style>
+</head>
+<body>
+  <h1>مرز — نسبت به کدام طرف؟</h1>
+  <p class="sub">
+    قاعده‌ی فعلی: مرز <b>نیم‌پله بالای سطح خودش</b> است (<code>۰.۵۷q</code>). ولی چشم خط را نسبت به
+    <b>همسایه‌ی تیره‌تر</b> می‌خواند — و آنجا <code>۱.۷q</code> تا <code>۴.۱q</code> است. این صفحه
+    چهار گزینه را کنار هم می‌گذارد. کدام «روی مرز ادراک» است؟
+  </p>
+
+  <div class="q">
+    <h2>۱. پنل روی سطح کار (همسایه نزدیک: ۱ پله)</h2>
+    <div class="why">اینجا مرز فعلی <code>۱.۷۱q</code> نسبت به همسایه است.</div>
+    <div class="row" id="rowA"></div>
+  </div>
+
+  <div class="q">
+    <h2>۲. پنل روی بوم (همسایه دور: ۳ پله)</h2>
+    <div class="why">اینجا مرز فعلی <code>۴.۱۳q</code> نسبت به همسایه است — و همین‌جاست که «زیادی دیده می‌شود».</div>
+    <div class="row" id="rowB"></div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۱ — کدام گزینه در هر ردیف «روی آستانه» است؟</h2>
+    <div class="why">یعنی: دیده می‌شود، ولی خودش را نشان نمی‌دهد.</div>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="A-first">ردیف ۱: گزینه‌ی اول</button>
+      <button class="opt" data-q="1" data-v="A-second">ردیف ۱: گزینه‌ی دوم</button>
+      <button class="opt" data-q="1" data-v="A-third">ردیف ۱: گزینه‌ی سوم</button>
+      <button class="opt" data-q="1" data-v="A-none">ردیف ۱: هیچ‌کدام — بدون مرز بهتر است</button>
+    </div>
+    <div class="opts" id="q1b">
+      <button class="opt" data-q="1b" data-v="B-first">ردیف ۲: گزینه‌ی اول</button>
+      <button class="opt" data-q="1b" data-v="B-second">ردیف ۲: گزینه‌ی دوم</button>
+      <button class="opt" data-q="1b" data-v="B-third">ردیف ۲: گزینه‌ی سوم</button>
+      <button class="opt" data-q="1b" data-v="B-none">ردیف ۲: هیچ‌کدام — بدون مرز بهتر است</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۲ — قاعده‌ی مرز باید نسبت به کدام طرف باشد؟</h2>
+    <div class="why">این تصمیم کل سیستم را عوض می‌کند.</div>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="own">نسبت به <b>سطح خودش</b> — مرز یک نور روی لبه‌ی سطح است (فیزیکی)</button>
+      <button class="opt" data-q="2" data-v="neighbour">نسبت به <b>همسایه‌ی تیره‌تر</b> — مرز یک جداکننده است (ادراکی)</button>
+      <button class="opt" data-q="2" data-v="both">هر دو — هر لایه بر اساس فاصله‌اش از همسایه</button>
+    </div>
+  </div>
+
+  <button class="primary" onclick="copyAnswers()">کپی جواب‌ها</button>
+
+<script>
+  const S={0:'#060709',1:'#07090b',2:'#090b0d',3:'#0b0d0f',4:'#0d0f12',5:'#0f1114',6:'#111316',7:'#131518',8:'#15171a'};
+  const H=['#07080a','#080a0c','#0a0c0e','#0c0e10','#0e1013','#101215','#121417','#141619'];
+  const at=(n)=>Number.isInteger(n)?S[n]:H[Math.floor(n)];
+
+  function cell(host, panelLevel, border, cap){
+    const el=document.createElement('div'); el.className='cell';
+    el.innerHTML=`<div class="stage" style="background:${S[host]}">
+        <div class="panel" style="background:${S[panelLevel]};${border?`border:1px solid ${border};`:''}"></div>
+      </div><div class="cap">${cap}</div>`;
+    return el;
+  }
+
+  // ROW A — a panel (S3) on the work plane (S2)
+  document.getElementById('rowA').appendChild(cell(2,3,at(3.5),
+    `<b>فعلی</b> — نیم‌پله بالای پنل<br><code>${at(3.5)}</code> · ۱.۷۱q از همسایه`));
+  document.getElementById('rowA').appendChild(cell(2,3,at(2.5),
+    `نیم‌پله بالای <b>همسایه</b><br><code>${at(2.5)}</code> · ۰.۵۷q از همسایه`));
+  document.getElementById('rowA').appendChild(cell(2,3,null,
+    `<b>بدون مرز</b><br>فقط اختلاف سطح (۱.۱۴q)`));
+
+  // ROW B — a panel (S3) on the canvas (S0)
+  document.getElementById('rowB').appendChild(cell(0,3,at(3.5),
+    `<b>فعلی</b> — نیم‌پله بالای پنل<br><code>${at(3.5)}</code> · ۴.۱۳q از همسایه`));
+  document.getElementById('rowB').appendChild(cell(0,3,at(0.5),
+    `نیم‌پله بالای <b>همسایه</b><br><code>${at(0.5)}</code> · ۰.۵۷q از همسایه`));
+  document.getElementById('rowB').appendChild(cell(0,3,null,
+    `<b>بدون مرز</b><br>فقط اختلاف سطح (۳.۴۱q)`));
+
+  const answers={};
+  for(const b of document.querySelectorAll('.opt')) b.addEventListener('click',()=>{
+    const q=b.dataset.q;
+    for(const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed','true'); answers[q]=b.dataset.v;
+  });
+  function copyAnswers(){
+    const out={at:new Date().toISOString(),kind:'border-2q',answers};
+    navigator.clipboard?.writeText(JSON.stringify(out,null,2));
+    alert('کپی شد:\n'+JSON.stringify(answers));
+  }
+</script>
+</body>
+</html>
