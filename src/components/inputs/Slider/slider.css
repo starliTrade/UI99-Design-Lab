@@ -1,0 +1,53 @@
+/**
+ * LIMINAL · SLIDER — the two pseudo-elements
+ *
+ * `appearance: none` removes the native track and thumb, and the replacements
+ * can only be reached from CSS: `::-webkit-slider-thumb` and `::-moz-range-thumb`
+ * are not styleable from a style attribute. Everything they need arrives as a
+ * custom property the component sets, so the colours still come from the engine
+ * and the file contains no value of its own.
+ */
+.liminal-slider {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.liminal-slider::-webkit-slider-runnable-track {
+  height: var(--liminal-slider-track-height);
+  border-radius: 999px;
+}
+
+.liminal-slider::-moz-range-track {
+  height: var(--liminal-slider-track-height);
+  border-radius: 999px;
+}
+
+.liminal-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--liminal-slider-thumb-size);
+  height: var(--liminal-slider-thumb-size);
+  border-radius: 999px;
+  background: var(--liminal-slider-thumb);
+  border: none;
+  margin-block-start: calc((var(--liminal-slider-track-height) - var(--liminal-slider-thumb-size)) / 2);
+  transition: transform var(--liminal-slider-duration) ease;
+}
+
+.liminal-slider::-moz-range-thumb {
+  width: var(--liminal-slider-thumb-size);
+  height: var(--liminal-slider-thumb-size);
+  border-radius: 999px;
+  background: var(--liminal-slider-thumb);
+  border: none;
+  transition: transform var(--liminal-slider-duration) ease;
+}
+
+/* The layer's focus ring is on the element; the thumb answers the pointer. */
+.liminal-slider:not(:disabled):hover::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+
+.liminal-slider:not(:disabled):active::-webkit-slider-thumb {
+  transform: scale(0.94);
+}
