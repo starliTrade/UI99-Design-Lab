@@ -16,7 +16,7 @@ import React from 'react';
 import { deriveTextToken, TEXT_ROLE_SPEC, type TextRole } from '../engine/liminal-contrast';
 import { oklchLightness, rgbToHex } from '../engine/liminal-color-math';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
-import { Card, Value, MONO, S, R, toJsx } from './ui';
+import { Card, Value, MONO, S, R, toJsx } from '../site/ui';
 import { resolveSurface } from '../engine/liminal-surface';
 import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
 import { SURFACE_TINT } from '../engine/spec-engine';

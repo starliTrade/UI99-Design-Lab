@@ -4914,6 +4914,12 @@
         "required": false
       },
       {
+        "name": "navLabel",
+        "type": "string",
+        "required": false,
+        "doc": "The name of the navigation landmark. A `<nav>` with no accessible name is fine until there is a second one on the page — and then axe reports `landmark-unique`, because a reader navigating by landmark sees two \"navigation\" entries with nothing to tell them apart. The site has a footer nav, so the top bar names itself."
+      },
+      {
         "name": "children",
         "type": "ReactNode",
         "required": false

@@ -6,24 +6,26 @@ import type { ReactElement } from 'react';
 
 import { ThemeProvider } from '../theme';
 import { DirProvider } from '../../engine/liminal-direction';
-import { DocsApp } from '../DocsApp';
-import { OverviewPage } from '../pages/Overview';
+import { Site } from '../Site';
+import { HomePage } from '../pages/Home';
+import { DocsPage } from '../pages/Docs';
 import { ComponentsPage } from '../pages/Components';
 import { ComponentPage } from '../pages/Component';
-import { TokensPage } from '../pages/Tokens';
-import { ContractPage } from '../pages/Contract';
-import { Studio } from '../../studio/Studio';
+import { BlocksPage } from '../pages/Blocks';
+import { ThemesPage } from '../pages/Themes';
+import { ColorsPage } from '../pages/Colors';
+import { DOCS } from '../routes';
 
 /**
  * THE SITE THAT DOCUMENTS THE STANDARD IS HELD TO IT.
  *
  * The library has been under an axe sweep since the audit found it scanned 7 of
- * 74 components. The APP was not under one — and the app is the part a reader
- * actually uses: a top bar, a sidebar of 74 rows, a search field, a palette, a
- * device frame with an iframe in it.
+ * 74 components. The SITE was not — and the site is the part a reader actually
+ * uses: a top bar, a sidebar of 74 rows, a filter field, a palette, a device
+ * frame with an iframe in it.
  *
- * A docs site that fails the accessibility rules it documents is the worst kind
- * of evidence: it is a demonstration that the standard is optional.
+ * A site that fails the accessibility rules it documents is the worst kind of
+ * evidence: it is a demonstration that the standard is optional.
  *
  * `color-contrast` stays disabled — jsdom has no layout engine, so axe cannot
  * compute rendered colours. Contrast is proven exactly, against the real ladder,
@@ -52,7 +54,7 @@ async function violations(container: HTMLElement) {
        * ONE RULE IS OFF, AND IT IS THE PAGE'S FAULT RATHER THAN A COMPONENT'S.
        *
        * `AppShell`'s content plane is a `<main>` — correct for an app shell —
-       * and the studio renders AppShell as a PREVIEW, inside the docs' own
+       * and the site renders AppShell as a PREVIEW, inside the page's own
        * `<main>`. Two mains, one inside the other, and axe is right to say so.
        *
        * It cannot be fixed from here: the only honest fix is to render previews
@@ -73,16 +75,17 @@ async function violations(container: HTMLElement) {
 }
 
 const PAGES: Array<[string, ReactElement]> = [
-  ['the whole app, as it loads', <DocsApp />],
-  ['Overview', <OverviewPage go={noop} />],
+  ['the whole site, as it loads', <Site />],
+  ['Home', <HomePage go={noop} />],
+  ...DOCS.map((d) => [`Docs — ${d.label}`, <DocsPage key={d.slug} slug={d.slug} go={noop} />] as [string, ReactElement]),
   ['Components', <ComponentsPage go={noop} />],
-  ['one component', <ComponentPage name="Button" />],
-  ['Tokens', <TokensPage />],
-  ['Contract', <ContractPage />],
-  ['Studio', <Studio />],
+  ['one component', <ComponentPage name="Button" go={noop} />],
+  ['Blocks', <BlocksPage />],
+  ['Themes', <ThemesPage />],
+  ['Colors', <ColorsPage />],
 ];
 
-describe('the docs app passes the rules it documents', () => {
+describe('the site passes the rules it documents', () => {
   for (const [name, element] of PAGES) {
     it(`${name} has no axe violation`, async () => {
       const { container } = render(

@@ -20,7 +20,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
-import { getTextStyle } from '../engine/spec-engine';
+import { getTextStyle, SURFACE_TINT } from '../engine/spec-engine';
 import { resolveSurface } from '../engine/liminal-surface';
 import { useTheme } from './theme';
 
@@ -44,12 +44,22 @@ export function DeviceFrame({
   children,
   minHeight = 220,
   note,
+  chrome = 'device',
 }: {
   device: DeviceWidth;
   children: React.ReactNode;
   minHeight?: number;
   /** A caption under the width, when the frame is not the studio's. */
   note?: string;
+  /**
+   * `device` puts the width above the frame, `browser` puts a browser bar in it.
+   *
+   * The landing page shows an app the way a product site does: inside a window
+   * with three dots and an address. That is a different frame from the review
+   * tool's, and it is the same iframe underneath — one implementation, two
+   * costumes, which is the rule this project keeps having to relearn.
+   */
+  chrome?: 'device' | 'browser';
 }) {
   const frameRef = useRef<HTMLIFrameElement | null>(null);
   const [doc, setDoc] = useState<Document | null>(null);
@@ -105,25 +115,61 @@ export function DeviceFrame({
     setDoc(inner);
   }, [device, dir, theme.css]);
 
+  const browserBar = (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: `${L.SPACING[3]}px`,
+        padding: `${L.SPACING[2]}px ${L.SPACING[3]}px`,
+        borderBlockEnd: `${L.BORDER.hairline}px solid ${SURFACE_TINT.subtle}`,
+      }}
+    >
+      <span style={{ display: 'flex', gap: L.SPACING[1] }} aria-hidden>
+        {[0, 1, 2].map((i) => (
+          <span key={i} style={{ width: L.SPACING[1], height: L.SPACING[1], borderRadius: L.RADIUS.full, background: SURFACE_TINT.strong }} />
+        ))}
+      </span>
+      <span
+        style={{
+          flex: 1,
+          minWidth: 0,
+          fontSize: 11,
+          opacity: 0.55,
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {note ?? 'liminal.local'}
+      </span>
+    </div>
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: `${L.SPACING[2]}px`, minWidth: 0 }}>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: `${L.SPACING[2]}px` }}>
-        <span style={{ fontSize: 10, opacity: 0.6 }}>{LABELS[device]}</span>
-        <span style={{ fontSize: 10, opacity: 0.4 }}>
-          {note ?? (width ? 'media queries fire at this width' : 'the width of the page')}
-        </span>
-      </div>
+      {chrome === 'device' && (
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: `${L.SPACING[2]}px` }}>
+          <span style={{ fontSize: 10, opacity: 0.6 }}>{LABELS[device]}</span>
+          <span style={{ fontSize: 10, opacity: 0.4 }}>
+            {note ?? (width ? 'media queries fire at this width' : 'the width of the page')}
+          </span>
+        </div>
+      )}
       <div
         style={{
           ...CHROME.style,
           width: width ? `min(${width}px, 100%)` : '100%',
           borderRadius: `${L.RADIUS.card}px`,
-          padding: `${L.SPACING[3]}px`,
+          padding: chrome === 'browser' ? 0 : `${L.SPACING[3]}px`,
           boxSizing: 'border-box',
           minWidth: 0,
+          overflow: 'hidden',
           transition: 'width 200ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
+        {chrome === 'browser' && browserBar}
         <iframe
           ref={frameRef}
           title="Component preview"

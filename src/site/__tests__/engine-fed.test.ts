@@ -28,7 +28,7 @@ function walk(dir: string): string[] {
   return out;
 }
 
-const APP = [...walk(join(SRC, 'docs')), ...walk(join(SRC, 'studio'))];
+const APP = [...walk(join(SRC, 'site')), ...walk(join(SRC, 'studio'))];
 
 /** Comments are not code — the same lesson the other guards learned. */
 function code(file: string): string {

@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
  * that lies, so the test asserts it found things.
  */
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
-const JSON_PATH = resolve(ROOT, 'src/docs/api.json');
+const JSON_PATH = resolve(ROOT, 'src/site/api.json');
 
 interface Entry {
   component: string;

@@ -23,8 +23,8 @@ import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
 import { Accordion } from '../components/containers/Accordion/Accordion';
 import { Input } from '../components/inputs/Input/Input';
 import { Badge } from '../components/atoms/Badge/Badge';
-import { DeviceFrame, type DeviceWidth } from '../docs/DeviceFrame';
-import { FORCE_CSS } from '../docs/panels';
+import { DeviceFrame, type DeviceWidth } from '../site/DeviceFrame';
+import { FORCE_CSS } from './panels';
 import {
   CodePanel,
   ContractChecks,
@@ -32,9 +32,9 @@ import {
   EngineReadout,
   readEngineSnapshot,
   type EngineSnapshot,
-} from '../docs/panels';
-import { MONO, S, R, WELL, WORK, CHROME, Segmented } from '../docs/ui';
-import { useTheme } from '../docs/theme';
+} from './panels';
+import { MONO, S, R, WELL, WORK, CHROME, Segmented } from '../site/ui';
+import { useTheme } from '../site/theme';
 import { LiminalColorEngine } from '../engine/liminal-color-engine';
 
 /** The semantic roles, from the engine — a colour a reader can name. */

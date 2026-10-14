@@ -6,6 +6,15 @@ import { resolveBorder, resolveSurface } from '../../../engine/liminal-surface';
 
 export interface TopbarProps {
   logo?: ReactNode;
+  /**
+   * The name of the navigation landmark.
+   *
+   * A `<nav>` with no accessible name is fine until there is a second one on
+   * the page — and then axe reports `landmark-unique`, because a reader
+   * navigating by landmark sees two "navigation" entries with nothing to tell
+   * them apart. The site has a footer nav, so the top bar names itself.
+   */
+  navLabel?: string;
   children?: ReactNode;
   actions?: ReactNode;
   sticky?: boolean;
@@ -15,6 +24,7 @@ export interface TopbarProps {
 
 export function Topbar({
   logo,
+  navLabel,
   children,
   actions,
   sticky = true,
@@ -56,6 +66,7 @@ export function Topbar({
 
       {children && (
         <nav
+          aria-label={navLabel}
           style={{
             display: 'flex',
             alignItems: 'center',

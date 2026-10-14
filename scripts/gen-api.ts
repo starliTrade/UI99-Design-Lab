@@ -219,7 +219,7 @@ for (const file of walk(join(SRC, 'components'))) {
 }
 
 entries.sort((a, b) => a.component.localeCompare(b.component));
-const dest = resolve(SRC, 'docs/api.json');
+const dest = resolve(SRC, 'site/api.json');
 writeFileSync(dest, JSON.stringify(entries, null, 2) + '\n');
 const total = entries.reduce((n, e) => n + e.props.length, 0);
 const documented = entries.filter((e) => e.props.some((p) => p.doc)).length;
