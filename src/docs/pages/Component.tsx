@@ -17,6 +17,8 @@ import { FIXTURES, coverage } from '../../components/__matrix__/fixtures';
 import { Section, Prose, Value, Stat, MONO, S, R, Code, WORK, WELL } from '../ui';
 import { Example } from '../Example';
 import API from '../api.json';
+import { SURFACE_TINT } from '../../engine/spec-engine';
+import { LiminalLayoutEngine as L } from '../../engine/liminal-layout-engine';
 
 interface ApiEntry {
   component: string;
@@ -128,7 +130,7 @@ function ApiTable({ name }: { name: string }) {
           </thead>
           <tbody>
             {entry.props.map((p) => (
-              <tr key={p.name} style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <tr key={p.name} style={{ borderTop: `${L.BORDER.hairline}px solid ${SURFACE_TINT.medium}` }}>
                 <td style={{ padding: `${S[2]}px`, verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                   <code style={{ fontFamily: MONO }}>{p.name}</code>
                   {!p.required && <span style={{ opacity: 0.5 }}>?</span>}
@@ -196,7 +198,7 @@ export function ComponentPage({ name }: { name: string }) {
           numbers makes the reader work out what the thing is. */}
       <header style={{ display: 'flex', flexDirection: 'column', gap: `${S[3]}px`, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: `${S[3]}px`, flexWrap: 'wrap' }}>
-          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em' }}>{f.name}</h1>
+          <h1 style={{ margin: 0, ...L.getTypeStyle(6), fontWeight: 600 }}>{f.name}</h1>
           <span style={{ fontSize: 12, opacity: 0.6 }}>{f.group}</span>
         </div>
         {api?.description && (

@@ -155,6 +155,21 @@ export const getLadderColor = (n: number): string => {
 };
 
 /**
+ * THE BRAND'S ACTUAL COLOUR, as a hex.
+ *
+ * `FOCUS_RING_COLOR` is a CSS reference — `var(--liminal-brand, #E9ECF2)` — which
+ * is what a STYLE needs and what arithmetic cannot use. `contrastRatioHex` takes
+ * a hex, and passing it the `var()` string throws
+ * `invalid hex color "var(--liminal-brand, #E9ECF2)"`.
+ *
+ * That is not hypothetical: the docs' contract page and its tokens page both
+ * crashed on it, and nobody saw it because the page that was being looked at was
+ * a different one. Two names for two jobs — a reference and a value — is the fix,
+ * not a cast.
+ */
+export const BRAND_HEX = '#E9ECF2';
+
+/**
  * Focus ring colour.
  * Must stay ≥3:1 (WCAG 2.2 non-text) against every surface in LADDER — it
  * measures 15.2:1–17.0:1 across the ladder. A ladder step (n+1) reads as

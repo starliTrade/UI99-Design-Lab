@@ -7,11 +7,14 @@
  */
 import React from 'react';
 import { FIXTURES, coverage } from '../../components/__matrix__/fixtures';
-import { LADDER, getTextStyle } from '../../engine/spec-engine';
+import { LADDER, getTextStyle, SURFACE_TINT } from '../../engine/spec-engine';
 import { ROLE_LEVEL, ROLE_RIM, ROLE_SHADOW } from '../../engine/liminal-surface';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { LiminalLayoutEngine as L } from '../../engine/liminal-layout-engine';
 import { Section, Stat, Value, Prose, Code, MONO, S, R } from '../ui';
+
+/** The semantic roles, from the engine — a colour a reader can name. */
+const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
 const ROLES = Object.keys(ROLE_LEVEL) as (keyof typeof ROLE_LEVEL)[];
 
@@ -29,7 +32,7 @@ export function OverviewPage({ go }: { go: (name: string) => void }) {
           test. Components do not choose anything. They declare <b>what they are</b>, and the engine
           decides.
         </Prose>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: `${S[4]}px` }}>
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(${L.CELL_MIN * 2}px, 1fr))`, gap: `${S[4]}px` }}>
           <Stat value={String(ROLES.length)} label="Roles in the hierarchy" />
           <Stat value={String(LADDER.length)} label="Ladder steps" />
           <Stat value={String(FIXTURES.length)} label="Components in the matrix" />
@@ -53,7 +56,7 @@ export function OverviewPage({ go }: { go: (name: string) => void }) {
             </thead>
             <tbody>
               {ROLES.map((role) => (
-                <tr key={role} style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <tr key={role} style={{ borderTop: `${L.BORDER.hairline}px solid ${SURFACE_TINT.medium}` }}>
                   <td style={{ padding: `${S[1]}px ${S[2]}px` }}>
                     <code style={{ fontFamily: MONO }}>{role}</code>
                   </td>
@@ -70,7 +73,7 @@ export function OverviewPage({ go }: { go: (name: string) => void }) {
                         height: 16,
                         borderRadius: `${R.chip}px`,
                         background: LADDER[ROLE_LEVEL[role]],
-                        border: '1px solid rgba(255,255,255,0.08)',
+                        border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.subtle}`,
                         verticalAlign: 'middle',
                       }}
                     />
@@ -123,9 +126,9 @@ export function OverviewPage({ go }: { go: (name: string) => void }) {
                   fontSize: 11,
                   padding: `${S[1]}px ${S[2]}px`,
                   borderRadius: `${R.chip}px`,
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.subtle}`,
                   background: 'transparent',
-                  color: missing.length ? 'var(--liminal-danger, #ba4646)' : 'inherit',
+                  color: missing.length ? SEMANTICS.DANGER.text : 'inherit',
                   opacity: c === 100 ? 0.75 : 1,
                   cursor: 'pointer',
                 }}

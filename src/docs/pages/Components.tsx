@@ -9,6 +9,12 @@
 import React from 'react';
 import { FIXTURES, coverage } from '../../components/__matrix__/fixtures';
 import { Section, Prose, MONO, S, R, WORK } from '../ui';
+import { LiminalLayoutEngine as L } from '../../engine/liminal-layout-engine';
+import { LiminalColorEngine } from '../../engine/liminal-color-engine';
+import { SURFACE_TINT } from '../../engine/spec-engine';
+
+/** The semantic roles, from the engine — a colour a reader can name. */
+const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
 const pct = (n: number) => Math.round(n * 100);
 
@@ -37,7 +43,7 @@ export function ComponentsPage({ go }: { go: (name: string) => void }) {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+              gridTemplateColumns: `repeat(auto-fill, minmax(${L.FIELD_MIN}px, 1fr))`,
               gap: `${S[3]}px`,
             }}
           >
@@ -56,7 +62,7 @@ export function ComponentsPage({ go }: { go: (name: string) => void }) {
                     gap: `${S[2]}px`,
                     padding: `${S[3]}px`,
                     borderRadius: `${R.card}px`,
-                    border: '1px solid rgba(255,255,255,0.07)',
+                    border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.medium}`,
                     font: 'inherit',
                     textAlign: 'start',
                     minWidth: 0,
@@ -68,7 +74,7 @@ export function ComponentsPage({ go }: { go: (name: string) => void }) {
                       style={{
                         fontFamily: MONO,
                         fontSize: 10,
-                        color: missing.length ? 'var(--liminal-danger, #ba4646)' : undefined,
+                        color: missing.length ? SEMANTICS.DANGER.text : undefined,
                         opacity: missing.length ? 1 : 0.55,
                       }}
                     >

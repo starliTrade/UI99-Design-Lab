@@ -21,6 +21,12 @@ import { resolveSurface, type SurfaceRole } from '../engine/liminal-surface';
 import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
 import type { LiminalTheme } from '../engine/liminal-theme';
 import { SYSTEM_THEME, isSystemTheme, type ThemeState } from './theme';
+import { SURFACE_TINT } from '../engine/spec-engine';
+import { FOCUS_RING_COLOR } from '../engine/liminal-ladder';
+import { LiminalColorEngine } from '../engine/liminal-color-engine';
+
+/** The semantic roles, from the engine — a colour a reader can name. */
+const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
 /**
  * THE FORCING HARNESS.
@@ -34,9 +40,9 @@ import { SYSTEM_THEME, isSystemTheme, type ThemeState } from './theme';
 export const FORCE_CSS = `
 .force-hover [data-liminal-surface] { background: var(--liminal-surface-hover); }
 .force-hover [data-liminal-hover-color] { color: var(--liminal-hover-color); }
-.force-active [data-liminal-surface] { background: var(--liminal-surface-active); transform: translateY(0.5px); }
-.force-focus [data-liminal-surface]:not([data-liminal-focus-within]) { outline: 2px solid var(--liminal-brand, #E9ECF2); outline-offset: 2px; }
-.force-focus [data-liminal-focus-within] { background: var(--liminal-surface-focus, var(--liminal-surface-idle)); border-color: var(--liminal-border-focus, var(--liminal-brand, #E9ECF2)); }
+.force-active [data-liminal-surface] { background: var(--liminal-surface-active); transform: translateY(${L.BORDER.hairline / 2}px); }
+.force-focus [data-liminal-surface]:not([data-liminal-focus-within]) { outline: ${L.BORDER.emphasis}px solid ${FOCUS_RING_COLOR}; outline-offset: ${L.BORDER.emphasis}px; }
+.force-focus [data-liminal-focus-within] { background: var(--liminal-surface-focus, var(--liminal-surface-idle)); border-color: var(--liminal-border-focus, ${FOCUS_RING_COLOR}); }
 .force-disabled { opacity: 0.25; pointer-events: none; }
 `;
 
@@ -73,7 +79,7 @@ function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        style={{ width: '100%', accentColor: 'var(--liminal-brand, #E9ECF2)' }}
+        style={{ width: '100%', accentColor: FOCUS_RING_COLOR }}
       />
     </label>
   );
@@ -98,7 +104,7 @@ export function ThemeBar({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+          gridTemplateColumns: `repeat(auto-fit, minmax(${L.FIELD_MIN}px, 1fr))`,
           gap: `${S[4]}px`,
         }}
       >
@@ -149,7 +155,7 @@ export function ThemeBar({
           <div
             key={i}
             title={`S${i} ${hex}`}
-            style={{ flex: 1, height: 22, background: hex, border: '1px solid rgba(255,255,255,0.06)' }}
+            style={{ flex: 1, height: 22, background: hex, border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.medium}` }}
           />
         ))}
       </div>
@@ -243,7 +249,7 @@ export function EngineReadout({ snapshot }: { snapshot: EngineSnapshot | null })
       <Value label="box-shadow" value={snapshot.shadow.slice(0, 46)} />
       <Value label="cursor" value={snapshot.cursor} />
       {missing.length > 0 && (
-        <p style={{ margin: 0, fontSize: 11, color: 'var(--liminal-danger, #ba4646)' }}>
+        <p style={{ margin: 0, fontSize: 11, color: SEMANTICS.DANGER.text }}>
           {missing.length} variables not published — a state this control does not have.
         </p>
       )}
@@ -308,10 +314,10 @@ export function ContractChecks({ surfaceHex, level }: { surfaceHex: string; leve
             <React.Fragment key={role}>
               <span>{role}</span>
               <code style={{ fontFamily: MONO }}>{t.alpha.toFixed(3)}</code>
-              <code style={{ fontFamily: MONO, color: wcagOk ? undefined : 'var(--liminal-danger, #ba4646)' }}>
+              <code style={{ fontFamily: MONO, color: wcagOk ? undefined : SEMANTICS.DANGER.text }}>
                 {t.wcag.toFixed(2)} / {spec.wcag}
               </code>
-              <code style={{ fontFamily: MONO, color: apcaOk ? undefined : 'var(--liminal-danger, #ba4646)' }}>
+              <code style={{ fontFamily: MONO, color: apcaOk ? undefined : SEMANTICS.DANGER.text }}>
                 {Math.abs(t.apca).toFixed(0)} / {spec.apca}
               </code>
               <span
@@ -319,7 +325,7 @@ export function ContractChecks({ surfaceHex, level }: { surfaceHex: string; leve
                   gridColumn: '1 / -1',
                   fontSize: 10,
                   opacity: ok ? 0.5 : 0.95,
-                  color: ok ? undefined : 'var(--liminal-danger, #ba4646)',
+                  color: ok ? undefined : SEMANTICS.DANGER.text,
                 }}
               >
                 {ok
@@ -372,7 +378,7 @@ export function CodePanel({ element }: { element: React.ReactElement }) {
             ...resolveSurface({ role: 'control', on: 'panel' }).style,
             font: 'inherit',
             fontSize: 11,
-            padding: `2px ${S[2]}px`,
+            padding: `${S[0]}px ${S[2]}px`,
             borderRadius: `${R.chip}px`,
           }}
         >
@@ -419,12 +425,12 @@ export function CoveragePanel({
   const missing = expected.filter((s) => !has.includes(s));
   return (
     <Card title="Coverage" note={`${name} — ${coveragePercent}%`}>
-      <div style={{ height: 6, borderRadius: 999, background: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+      <div style={{ height: S[1] + 2, borderRadius: R.full, background: SURFACE_TINT.subtle, overflow: 'hidden' }}>
         <div
           style={{
             width: `${coveragePercent}%`,
             height: '100%',
-            background: 'var(--liminal-brand, #E9ECF2)',
+            background: FOCUS_RING_COLOR,
             transition: M.getTransition('width', 'normal'),
           }}
         />
@@ -433,7 +439,7 @@ export function CoveragePanel({
       <Value label="Sizes" value={sizes.join(' · ') || '—'} />
       <Value label="Variants" value={variants.join(' · ') || '—'} />
       {missing.length > 0 ? (
-        <p style={{ margin: 0, fontSize: 11, color: 'var(--liminal-danger, #ba4646)' }}>
+        <p style={{ margin: 0, fontSize: 11, color: SEMANTICS.DANGER.text }}>
           Missing: {missing.join(' · ')}
         </p>
       ) : (

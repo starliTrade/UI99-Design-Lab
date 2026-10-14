@@ -13,6 +13,10 @@ import React from 'react';
 import { resolveSurface, type SurfaceRole } from '../engine/liminal-surface';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
 import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
+import { LiminalColorEngine } from '../engine/liminal-color-engine';
+
+/** The semantic roles, from the engine — a colour a reader can name. */
+const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
 export const S = L.SPACING;
 export const R = L.RADIUS;
@@ -83,7 +87,7 @@ export function Value({ label, value, tone }: { label: string; value: string; to
           direction: 'ltr',
           textAlign: 'left',
           overflowWrap: 'anywhere',
-          color: tone === 'warn' ? 'var(--liminal-danger, #ba4646)' : undefined,
+          color: tone === 'warn' ? SEMANTICS.DANGER.text : undefined,
         }}
       >
         {value}
@@ -101,7 +105,7 @@ export function Stat({ value, label, tone }: { value: string; label: string; ton
           fontSize: 22,
           fontWeight: 600,
           lineHeight: 1.1,
-          color: tone === 'warn' ? 'var(--liminal-danger, #ba4646)' : undefined,
+          color: tone === 'warn' ? SEMANTICS.DANGER.text : undefined,
         }}
       >
         {value}

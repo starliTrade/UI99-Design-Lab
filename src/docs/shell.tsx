@@ -7,6 +7,9 @@
  * is exactly when someone will notice.
  */
 import React from 'react';
+import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
+
+const BP = L.BREAKPOINTS;
 import { Topbar } from '../components/nav/Topbar';
 import { Sidebar, SidebarSection } from '../components/nav/Sidebar';
 import { NavItem } from '../components/nav/NavItem';
@@ -18,6 +21,12 @@ import { S, R, MONO, Btn, WORK, surfaceFor } from './ui';
 import { useMediaQuery } from '../engine/liminal-hooks';
 import { useTheme } from './theme';
 import { PAGES, routeKey, type Route } from './routes';
+import { FOCUS_RING_COLOR } from '../engine/liminal-ladder';
+import { LiminalColorEngine } from '../engine/liminal-color-engine';
+import { getLadderVar } from '../engine/liminal-ladder';
+
+/** The semantic roles, from the engine — a colour a reader can name. */
+const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
 const pct = (n: number) => Math.round(n * 100);
 
@@ -50,7 +59,7 @@ function ThemeControls({
             value={state[s.key]}
             aria-label={s.label}
             onChange={(e) => set({ ...state, [s.key]: Number(e.target.value) })}
-            style={{ width: 78, accentColor: 'var(--liminal-brand, #E9ECF2)' }}
+            style={{ width: 78, accentColor: FOCUS_RING_COLOR }}
           />
         </label>
       ))}
@@ -60,7 +69,7 @@ function ThemeControls({
         ))}
       </div>
       {theme.warnings.length > 0 && (
-        <span style={{ fontSize: 10, color: 'var(--liminal-danger, #ba4646)' }} title={theme.warnings[0].why}>
+        <span style={{ fontSize: 10, color: SEMANTICS.DANGER.text }} title={theme.warnings[0].why}>
           {theme.warnings[0].scale} clamped
         </span>
       )}
@@ -97,7 +106,14 @@ export function DocsShell({
   const [navOpen, setNavOpen] = React.useState(false);
   // The CONTAINER is the page here, so a media query is the right question —
   // unlike the studio, which lives inside the demo's frame.
-  const narrow = useMediaQuery('(max-width: 900px)');
+  // THE ENGINE'S BREAKPOINT, not a device category.
+  //
+  // This was `900px` — and the engine's own comment says the six numbers it
+  // replaced were "device categories wearing numeric costumes". `shellSidebar`
+  // is derived from the content: sidebar + gap + one readable column + padding.
+  // The mobile nav appears there because that is where the layout stops fitting,
+  // not because a phone is a phone.
+  const narrow = useMediaQuery(`(max-width: ${BP.shellSidebar}px)`);
   const groups = React.useMemo(() => [...new Set(FIXTURES.map((f) => f.group))], []);
   const needle = q.trim().toLowerCase();
   const matches = needle
@@ -164,7 +180,7 @@ export function DocsShell({
                         fontSize: 10,
                         flexShrink: 0,
                         opacity: c === 100 ? 0.5 : 0.95,
-                        color: missing.length ? 'var(--liminal-danger, #ba4646)' : undefined,
+                        color: missing.length ? SEMANTICS.DANGER.text : undefined,
                       }}
                     >
                       {c}%
@@ -190,7 +206,7 @@ export function DocsShell({
                   ☰
                 </Btn>
               )}
-              <span style={{ fontWeight: 700, letterSpacing: '0.02em' }}>LIMINAL</span>
+              <span style={{ ...L.getTypeStyle(1, true), fontWeight: 700 }}>LIMINAL</span>
               <Badge>v1.0</Badge>
             </span>
           }
@@ -225,16 +241,21 @@ export function DocsShell({
             top: narrow ? 64 : `${S[8] + S[5]}px`,
             insetInlineStart: narrow ? 0 : undefined,
             zIndex: narrow ? 40 : undefined,
-            maxHeight: narrow ? 'calc(100vh - 64px)' : 'calc(100vh - 140px)',
+            // The chrome above it, from the engine's own scale: the topbar's
+            // control height plus its padding, and the same again for the
+            // in-page header.
+            maxHeight: narrow
+              ? `calc(100vh - ${L.CONTROL.md + L.SPACING[3] * 2}px)`
+              : `calc(100vh - ${L.CONTROL.md + L.SPACING[3] * 2 + L.SPACING[6]}px)`,
             overflowY: 'auto',
             display: narrow && !navOpen ? 'none' : 'block',
             boxSizing: 'border-box',
-            background: narrow ? 'var(--liminal-s1)' : undefined,
-            borderInlineEnd: narrow ? '1px solid var(--liminal-s2)' : undefined,
+            background: narrow ? getLadderVar(1) : undefined,
+            borderInlineEnd: narrow ? `${L.BORDER.hairline}px solid ${getLadderVar(2)}` : undefined,
             padding: narrow ? `${S[3]}px` : undefined,
           }}
         >
-          <Sidebar width={248}>{nav}</Sidebar>
+          <Sidebar width={L.SIDEBAR_W}>{nav}</Sidebar>
         </aside>
 
         {/* THE CONTENT PLANE IS A WORK SURFACE, NOT THE CANVAS.
@@ -250,7 +271,7 @@ export function DocsShell({
         <main
           style={{
             ...WORK.style,
-            flex: '2 1 380px',
+            flex: `2 1 ${L.FIELD_MIN * 2}px`,
             display: 'flex',
             flexDirection: 'column',
             gap: `${S[4]}px`,

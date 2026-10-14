@@ -8,13 +8,18 @@
  * The checks below are computed live, from the same engine the components use.
  */
 import React from 'react';
-import { LADDER } from '../../engine/spec-engine';
-import { PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR } from '../../engine/liminal-ladder';
+import { LADDER, SURFACE_TINT } from '../../engine/spec-engine';
+import { PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR, BRAND_HEX } from '../../engine/liminal-ladder';
 import { oklchLightness, contrastRatioHex } from '../../engine/liminal-color-math';
 import { deriveTextToken, TEXT_ROLE_SPEC, type TextRole } from '../../engine/liminal-contrast';
 import { ROLE_LEVEL } from '../../engine/liminal-surface';
 import { Section, Prose, Value, Stat, MONO, S } from '../ui';
 import { useTheme } from '../theme';
+import { LiminalLayoutEngine as L } from '../../engine/liminal-layout-engine';
+import { LiminalColorEngine } from '../../engine/liminal-color-engine';
+
+/** The semantic roles, from the engine — a colour a reader can name. */
+const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
 const ROLES: TextRole[] = ['primary', 'secondary', 'tertiary', 'quaternary'];
 
@@ -70,7 +75,7 @@ const RULES: Rule[] = [
 function Check({ ok, label, detail }: { ok: boolean; label: string; detail: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'baseline', gap: `${S[2]}px`, minWidth: 0 }}>
-      <span style={{ color: ok ? undefined : 'var(--liminal-danger, #ba4646)', fontSize: 12, flexShrink: 0 }}>
+      <span style={{ color: ok ? undefined : SEMANTICS.DANGER.text, fontSize: 12, flexShrink: 0 }}>
         {ok ? '✓' : '✗'}
       </span>
       <span style={{ fontSize: 12, flexShrink: 0 }}>{label}</span>
@@ -96,7 +101,7 @@ export function ContractPage() {
     }),
   );
   const floorsOk = floors.every((f) => f.ok);
-  const ringOk = contrastRatioHex(FOCUS_RING_COLOR, LADDER[0]) >= 3;
+  const ringOk = contrastRatioHex(BRAND_HEX, LADDER[0]) >= 3;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
@@ -116,7 +121,7 @@ export function ContractPage() {
             </thead>
             <tbody>
               {RULES.map((r) => (
-                <tr key={r.guard + r.rule} style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <tr key={r.guard + r.rule} style={{ borderTop: `${L.BORDER.hairline}px solid ${SURFACE_TINT.medium}` }}>
                   <td style={{ padding: `${S[2]}px`, fontWeight: 600 }}>{r.rule}</td>
                   <td style={{ padding: `${S[2]}px`, opacity: 0.8, lineHeight: 1.9 }}>{r.why}</td>
                   <td style={{ padding: `${S[2]}px` }}>
@@ -130,7 +135,7 @@ export function ContractPage() {
       </Section>
 
       <Section title="Invariants — live" note="Computed now, on the current theme">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: `${S[4]}px` }}>
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(${L.CELL_MIN * 2}px, 1fr))`, gap: `${S[4]}px` }}>
           <Stat value={`${minStep.toFixed(2)}q`} label="Smallest step" tone={minStep < 1 ? 'warn' : undefined} />
           <Stat value={floors.length ? `${floors.length}` : '0'} label="Contrast cells" />
           <Stat value={ringOk ? '✓' : '✗'} label="Focus ring" tone={ringOk ? undefined : 'warn'} />
@@ -140,11 +145,11 @@ export function ContractPage() {
           <Check ok={monotonic} label="The ladder rises" detail={`${theme.ladder.length} steps`} />
           <Check ok={levelsOrdered} label="Roles are ordered" detail={`${levels.length} roles`} />
           <Check ok={floorsOk} label="Every role holds both floors on every surface" detail={`${floors.length} cells`} />
-          <Check ok={ringOk} label="The focus ring is visible on the canvas" detail={`${contrastRatioHex(FOCUS_RING_COLOR, LADDER[0]).toFixed(2)}:1`} />
+          <Check ok={ringOk} label="The focus ring is visible on the canvas" detail={`${contrastRatioHex(BRAND_HEX, LADDER[0]).toFixed(2)}:1`} />
         </div>
         {!floorsOk && (
           <Prose>
-            <b style={{ color: 'var(--liminal-danger, #ba4646)' }}>Cells below the floor:</b>{' '}
+            <b style={{ color: SEMANTICS.DANGER.text }}>Cells below the floor:</b>{' '}
             {floors.filter((f) => !f.ok).map((f) => f.role).join(' · ')}
           </Prose>
         )}

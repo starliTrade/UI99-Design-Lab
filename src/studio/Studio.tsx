@@ -37,6 +37,10 @@ import {
 } from '../docs/panels';
 import { MONO, S, R, WELL, WORK, CHROME } from '../docs/ui';
 import { useTheme } from '../docs/theme';
+import { LiminalColorEngine } from '../engine/liminal-color-engine';
+
+/** The semantic roles, from the engine — a colour a reader can name. */
+const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
 const FORCED = [
   { id: 'none', label: 'free' },
@@ -84,7 +88,7 @@ function Segmented<T extends string>({
               ...(value === o.id ? WORK.style : { background: 'transparent' }),
               font: 'inherit',
               fontSize: 11,
-              padding: `2px ${S[3]}px`,
+              padding: `${S[0]}px ${S[3]}px`,
               borderRadius: `${R.chip}px`,
               border: 'none',
               cursor: 'pointer',
@@ -185,7 +189,7 @@ export function Studio({ initial, showList = true }: { initial?: string; showLis
                       fontSize: 10,
                       flexShrink: 0,
                       opacity: c === 100 ? 0.5 : 0.95,
-                      color: missing.length ? 'var(--liminal-danger, #ba4646)' : undefined,
+                      color: missing.length ? SEMANTICS.DANGER.text : undefined,
                     }}
                   >
                     {c}%
@@ -226,14 +230,14 @@ export function Studio({ initial, showList = true }: { initial?: string; showLis
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[4]}px`, alignItems: 'flex-start', minWidth: 0 }}>
         {/* ── the component list, as an accordion ───────────────────────── */}
         {showList && (
-          <div style={{ flex: '1 1 220px', maxWidth: 260, minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[2]}px` }}>
+          <div style={{ flex: `1 1 ${L.SIDEBAR_W}px`, maxWidth: L.SIDEBAR_W + L.SPACING[6], minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[2]}px` }}>
             <Input size="sm" placeholder="Filter…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter components" />
             <Accordion items={listItems} type="multiple" headingLevel={3} defaultOpen={[fixture.group]} />
           </div>
         )}
 
         {/* ── the work ───────────────────────────────────────────────────── */}
-        <div style={{ flex: '2 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[4]}px` }}>
+        <div style={{ flex: `2 1 ${L.FIELD_MIN * 2}px`, minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[4]}px` }}>
           {/* The prop controls, derived from what the fixture says it HAS. */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[4]}px` }}>
             {(

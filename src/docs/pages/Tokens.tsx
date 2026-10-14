@@ -6,14 +6,18 @@
  * surface, the alpha each text role derives to, and the floor that bound it.
  */
 import React from 'react';
-import { LADDER, getTextStyle } from '../../engine/spec-engine';
-import { WELLS } from '../../engine/liminal-ladder';
+import { LADDER, getTextStyle, SURFACE_TINT } from '../../engine/spec-engine';
+import { WELLS, BRAND_HEX } from '../../engine/liminal-ladder';
 import { PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR } from '../../engine/liminal-ladder';
 import { oklchLightness, contrastRatioHex } from '../../engine/liminal-color-math';
 import { deriveTextToken, TEXT_ROLE_SPEC, type TextRole } from '../../engine/liminal-contrast';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { Section, Prose, Value, Stat, MONO, S, R } from '../ui';
 import { useTheme } from '../theme';
+import { LiminalLayoutEngine as L } from '../../engine/liminal-layout-engine';
+
+/** The semantic roles, from the engine — a colour a reader can name. */
+const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
 const ROLES: TextRole[] = ['primary', 'secondary', 'tertiary', 'quaternary'];
 
@@ -35,7 +39,7 @@ export function TokensPage() {
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: `${S[3]}px` }}>
               <code style={{ fontFamily: MONO, fontSize: 11, width: 24 }}>S{i}</code>
               <span
-                style={{ width: 84, height: 20, background: hex, borderRadius: `${R.chip}px`, border: '1px solid rgba(255,255,255,0.08)' }}
+                style={{ width: 84, height: 20, background: hex, borderRadius: `${R.chip}px`, border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.subtle}` }}
               />
               <code style={{ fontFamily: MONO, fontSize: 11 }}>{hex}</code>
               <code style={{ fontFamily: MONO, fontSize: 11, opacity: 0.7 }}>
@@ -46,7 +50,7 @@ export function TokensPage() {
                   style={{
                     fontFamily: MONO,
                     fontSize: 11,
-                    color: (steps[i] as number) < 1 ? 'var(--liminal-danger, #ba4646)' : undefined,
+                    color: (steps[i] as number) < 1 ? SEMANTICS.DANGER.text : undefined,
                     opacity: (steps[i] as number) < 1 ? 1 : 0.7,
                   }}
                 >
@@ -58,7 +62,7 @@ export function TokensPage() {
         </div>
         {theme.warnings.length > 0 && (
           <Prose>
-            <b style={{ color: 'var(--liminal-danger, #ba4646)' }}>{theme.warnings.length} warnings:</b>{' '}
+            <b style={{ color: SEMANTICS.DANGER.text }}>{theme.warnings.length} warnings:</b>{' '}
             {theme.warnings.map((w) => `${w.scale} clamped to ${w.used}`).join(' · ')}
           </Prose>
         )}
@@ -86,7 +90,7 @@ export function TokensPage() {
                 const spec = TEXT_ROLE_SPEC[role];
                 const t = deriveTextToken(role, theme.ladder[3]);
                 return (
-                  <tr key={role} style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <tr key={role} style={{ borderTop: `${L.BORDER.hairline}px solid ${SURFACE_TINT.medium}` }}>
                     <td style={{ padding: `${S[1]}px ${S[2]}px` }}>
                       <code style={{ fontFamily: MONO }}>{role}</code>
                     </td>
@@ -102,7 +106,7 @@ export function TokensPage() {
             </tbody>
           </table>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: `${S[3]}px` }}>
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(${L.CELL_MIN * 2}px, 1fr))`, gap: `${S[3]}px` }}>
           {ROLES.map((role) => {
             const t = deriveTextToken(role, theme.ladder[3]);
             return (
@@ -125,7 +129,7 @@ export function TokensPage() {
         <div style={{ display: 'flex', gap: `${S[3]}px`, flexWrap: 'wrap' }}>
           {Object.entries(WELLS).map(([name, hex]) => (
             <div key={name} style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px` }}>
-              <span style={{ width: 96, height: 28, background: hex, borderRadius: `${R.chip}px`, border: '1px solid rgba(255,255,255,0.08)' }} />
+              <span style={{ width: 96, height: 28, background: hex, borderRadius: `${R.chip}px`, border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.subtle}` }} />
               <code style={{ fontFamily: MONO, fontSize: 11 }}>
                 {name} {hex}
               </code>
@@ -144,7 +148,7 @@ export function TokensPage() {
                   height: 26,
                   background: LiminalColorEngine.SEMANTICS[k].solid,
                   borderRadius: `${R.chip}px`,
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.subtle}`,
                 }}
               />
               <code style={{ fontFamily: MONO, fontSize: 10 }}>{String(k)}</code>
@@ -163,7 +167,7 @@ export function TokensPage() {
             style={{
               padding: `${S[2]}px ${S[4]}px`,
               borderRadius: `${R.control}px`,
-              outline: `2px solid ${FOCUS_RING_COLOR}`,
+              outline: `${L.BORDER.emphasis}px solid ${FOCUS_RING_COLOR}`,
               outlineOffset: 2,
               fontSize: 12,
             }}
@@ -173,7 +177,7 @@ export function TokensPage() {
           <Value label="Colour" value={FOCUS_RING_COLOR} />
           <Value
             label="Contrast on S0"
-            value={`${contrastRatioHex(FOCUS_RING_COLOR, LADDER[0]).toFixed(2)}:1`}
+            value={`${contrastRatioHex(BRAND_HEX, LADDER[0]).toFixed(2)}:1`}
           />
         </div>
       </Section>
