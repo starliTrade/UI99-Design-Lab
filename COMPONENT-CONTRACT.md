@@ -174,15 +174,29 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-59 components · 23 complete · 36 short of the standard
+59 components · 29 complete · 30 short of the standard
   role       37/59
-  size        2/9   (controls only)
-  variant     1/9   (controls only)
+  size        9/9   (declaration matches code)
+  variant     9/9   (declaration matches code)
   disabled    9/9   (controls only)
-  error       7/9   (controls only)
+  error       5/7   (inputs only)
   tokens     58/59
   fixture    46/59
 ```
+
+**`size` and `variant` are AGREEMENT, not presence.** A Checkbox does not need
+a `variant`, and a check that demands one pushes components to invent props —
+which is the failure this contract exists to prevent. What a component must not
+do is CLAIM a size in the fixture and not have it, or have one and not say so.
+So the criterion is the declaration against the source, and it reads the real
+fixture table rather than parsing it: the first version used a pattern that
+wanted `sizes` on the same line as `name` and a literal array for `states`, and
+Button's `variants` is on the next line while Input's `states` is a constant. It
+reported eight mismatches that did not exist. **A check that misreads the
+declaration reports the wrong thing about the right component.**
+
+And the one it found that IS real: `Checkbox` and `Radio` have no `error` prop,
+while the other five inputs do.
 
 **A criterion is asked of the population it applies to.** The fixture declares
 which kind of thing a component is, and the check reads that declaration rather

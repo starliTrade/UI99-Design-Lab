@@ -45,7 +45,7 @@ jobs:
         # today: 55 components, 0 complete. A gate demanding 55/55 would fail
         # everything and get turned off, so this is a RATCHET: the number may
         # improve and may not walk backwards.
-        run: node scripts/verify-component-standard.mjs --ratchet
+        run: bun scripts/verify-component-standard.mjs --ratchet
 
       - name: Build
         run: bun run build

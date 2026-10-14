@@ -17,6 +17,15 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { resolve, join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+// The REAL fixture table, imported — not a regex over its source.
+//
+// The first version parsed the file with a pattern that wanted `sizes` on the
+// same line as `name` and a literal array for `states`. Button's `variants` is
+// on the next line and Input's `states` is a constant, so both were read as
+// "declares nothing" and reported as mismatches. A check that misreads the
+// declaration reports the wrong thing about the right component.
+// Run this with `bun`, which can import a .tsx.
+import { FIXTURES } from '../src/components/__matrix__/fixtures.tsx';
 
 // `import.meta.dir` is a Bun extension; this has to run under plain node too.
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -39,29 +48,21 @@ const isComponent = (src) => /^export (function|const) [A-Z]/m.test(src);
 const files = walk(join(SRC, 'components')).filter((f) => isComponent(readFileSync(f, 'utf8')));
 
 /**
- * IS IT A CONTROL?
+ * WHAT A COMPONENT HAS IS WHAT IT DECLARES — AND THE TWO MUST AGREE.
  *
- * `size`, `variant`, `disabled` and `error` are CONTROL criteria. A Popover
- * sized by its content, or a Grid with a `variant`, would be a prop with no
- * meaning — and demanding one would push components to invent it.
+ * The first three versions of this check demanded props: `size` of a Popover,
+ * `error` of a Button, `variant` of a Checkbox. Each was a question asked of the
+ * wrong population, and each would have pushed a component to invent a prop with
+ * no meaning — which is the exact failure the contract warns about.
  *
- * The FIXTURE says so, not the source. Reading the source for
- * `resolveSurface({ role: 'control' })` looked right and was wrong: a Drawer
- * renders a control for its handle, so the guess called the Drawer a control and
- * then demanded a `variant` prop it should not have. A component that CONTAINS
- * a control is not one.
+ * A Checkbox does not need a `variant`. What it must not do is CLAIM one in the
+ * fixture and not have it, or have one and not say so. So the criterion is
+ * agreement, not presence: the fixture's declaration against the source.
  */
-const declaredKind = (() => {
-  const src = readFileSync(resolve(SRC, 'components/__matrix__/fixtures.tsx'), 'utf8');
-  const out = new Map();
-  for (const m of src.matchAll(/name: '([A-Za-z]+)',(?:\s*kind: '(input|action|surface)',)?/g)) {
-    out.set(m[1], m[2] ?? 'surface');
-  }
-  return out;
-})();
-const kindOf = (name) => declaredKind.get(name) ?? 'surface';
+const kindOf = (name) => FIXTURES.find((f) => f.name === name)?.kind ?? 'surface';
 /** A control is something the reader operates — typed into, picked, or pressed. */
 const isControl = (name) => kindOf(name) === 'input' || kindOf(name) === 'action';
+void isControl;
 
 /**
  * Comments are not code.
@@ -74,34 +75,45 @@ const isControl = (name) => kindOf(name) === 'input' || kindOf(name) === 'action
  */
 const code = (src) => src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
 
+const fixturesSrc = readFileSync(resolve(SRC, 'components/__matrix__/fixtures.tsx'), 'utf8');
+const declared = new Map(FIXTURES.map((f) => [f.name, f]));
+
 const rows = files.map((f) => {
   const src = code(readFileSync(f, 'utf8'));
   const name = f.replace(SRC + '/components/', '').replace(/\.tsx$/, '').split('/').pop();
   const has = (re) => re.test(src);
-  const control = isControl(name);
+  const claim = declared.get(name);
+  const claimsSizes = (claim?.sizes?.length ?? 0) > 0;
+  const claimsVariants = (claim?.variants?.length ?? 0) > 0;
   return {
     name,
     path: f.replace(SRC + '/', ''),
-    control,
+    control: isControl(name),
     role: has(/resolveSurface\(\{\s*role/),
-    // Not applicable is not the same as missing: a non-control is neither, and
-    // an `error` on a Button is a prop with no meaning.
-    size: !control || has(/\bsize\??:/),
-    variant: !control || has(/\bvariant\??:/),
-    disabled: !control || has(/\bdisabled\??:/),
+    // AGREEMENT, not presence. A component that declares sizes must have the
+    // prop; one that has the prop must declare them. Neither direction alone.
+    size: claimsSizes === has(/\bsize\??:/),
+    variant: claimsVariants === has(/\bvariant\??:/),
+    disabled: !isControl(name) || has(/\bdisabled\??:/),
     error: kindOf(name) !== 'input' || has(/\berror\??:/),
     tokens: !has(/['"]#[0-9a-fA-F]{3,8}['"]/) && !has(/rgba?\(/),
-    fixture: readFileSync(resolve(SRC, 'components/__matrix__/fixtures.tsx'), 'utf8').includes(`name: '${name}'`),
+    fixture: fixturesSrc.includes(`name: '${name}'`),
   };
 });
 
 const KEYS = ['role', 'size', 'variant', 'disabled', 'error', 'tokens', 'fixture'];
 const CONTROL_KEYS = ['size', 'variant', 'disabled', 'error'];
+/** `error` is a criterion for something the reader types into, and only that. */
+const INPUT_KEYS = ['error'];
 const score = (r) => KEYS.filter((k) => r[k]).length;
 
 const counts = Object.fromEntries(
   KEYS.map((k) => {
-    const scope = CONTROL_KEYS.includes(k) ? rows.filter((r) => r.control) : rows;
+    const scope = INPUT_KEYS.includes(k)
+      ? rows.filter((r) => kindOf(r.name) === 'input')
+      : CONTROL_KEYS.includes(k)
+      ? rows.filter((r) => r.control)
+      : rows;
     return [k, scope.filter((r) => r[k]).length];
   }),
 );
@@ -147,8 +159,20 @@ if (process.argv.includes('--json')) {
     // A control criterion is counted over the controls, not over everything:
     // 49/56 for `size` would read as "49 components have a size" when most of
     // them are containers that correctly have none.
-    const scope = CONTROL_KEYS.includes(k) ? rows.filter((r) => r.control) : rows;
+    const scope = INPUT_KEYS.includes(k)
+      ? rows.filter((r) => kindOf(r.name) === 'input')
+      : CONTROL_KEYS.includes(k)
+      ? rows.filter((r) => r.control)
+      : rows;
     const n = scope.filter((r) => r[k]).length;
-    console.log(`  ${w(k, 10)} ${n}/${scope.length}${CONTROL_KEYS.includes(k) ? '  (controls only)' : ''}`);
+    const note =
+      k === 'size' || k === 'variant'
+        ? '  (declaration matches code)'
+        : INPUT_KEYS.includes(k)
+        ? '  (inputs only)'
+        : CONTROL_KEYS.includes(k)
+        ? '  (controls only)'
+        : '';
+    console.log(`  ${w(k, 10)} ${n}/${scope.length}${note}`);
   }
 }
