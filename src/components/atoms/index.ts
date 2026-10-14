@@ -9,3 +9,4 @@ export * from './IconDemo';
 export * from './Spinner';
 export * from './Kbd';
 export * from './Label';
+export * from './Typography';

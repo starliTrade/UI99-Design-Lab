@@ -101,7 +101,7 @@ Density scales spacing, control heights **and radii as one set**, so the concent
 
 ## The components
 
-**77 components, all 77 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md),
+**78 components, all 78 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md),
 which states the ten things a component must have and names the guard that fails when it does not.
 
 The last ten took no component changes at all — they took a check that stopped asking the wrong
@@ -109,7 +109,7 @@ question. See below.
 
 | group | components |
 |---|---|
-| **Atoms** | Badge · Button · Kbd · Label · Mist · Spinner · Tag · Toggle |
+| **Atoms** | Badge · Button · Kbd · Label · Mist · Spinner · Tag · Toggle · Typography |
 | **Inputs** | Checkbox · Combobox · FileUpload · Input · MultiSelect · NumberInput · OTP · Radio · Rating · Select · Slider · Textarea · ToggleGroup |
 | **Containers** | Accordion · Card · Collapsible · Divider · Drawer · HoverCard · Modal · Panel · Popover · Sheet |
 | **Feedback** | Alert · AlertDialog · Toast · Tooltip |
@@ -125,14 +125,14 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-77 components · 77 complete · 0 short of the standard
-  role       77/77
+78 components · 78 complete · 0 short of the standard
+  role       78/78
   size       16/16  (declaration matches code)
   variant    16/16  (declaration matches code)
   disabled   16/16  (controls only)
   error      13/13  (inputs only)
-  tokens     77/77
-  fixture    77/77
+  tokens     78/78
+  fixture    78/78
 ```
 
 **A criterion is asked of the population it applies to.** `size`, `variant`, `disabled` and
@@ -166,7 +166,7 @@ A rule with no guard is a habit. Nine guards, each banning one pattern:
 | `engine-barrel` | a module a consumer cannot import |
 | `event-forwarding` | an event handler a component swallows |
 
-**839 tests across 59 files.** `verify` runs typecheck, lint, tests, the app build, the library
+**846 tests across 60 files.** `verify` runs typecheck, lint, tests, the app build, the library
 build and a package-coherence check.
 
 ---

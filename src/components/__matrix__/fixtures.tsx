@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '../atoms/Button/Button';
 import { Badge } from '../atoms/Badge/Badge';
 import { Tag } from '../atoms/Tag/Tag';
+import { Text, Heading } from '../atoms/Typography/Typography';
 import { Toggle } from '../atoms/Toggle/Toggle';
 import { ToggleGroup } from '../inputs/ToggleGroup/ToggleGroup';
 import { Spinner } from '../atoms/Spinner/Spinner';
@@ -340,6 +341,15 @@ export const FIXTURES: ComponentFixture[] = [
     name: 'Badge', group: 'Atoms', sizes: [], states: ['neutral', 'success', 'warning', 'danger', 'info'], expected: [],
     variants: ['neutral', 'success', 'warning', 'danger', 'info'],
     render: (state) => <Badge semantic={state === 'neutral' ? undefined : (state as 'success')}>Badge</Badge>,
+  },
+  {
+    name: 'Typography', group: 'Atoms', sizes: ['1', '3', '5', '7'], states: ['default'], expected: [],
+    render: (_s, size) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <Heading level={2}>A heading</Heading>
+        <Text level={(Number(size) || 3) as 1} tone="secondary">Body copy at the chosen step.</Text>
+      </div>
+    ),
   },
   {
     name: 'Tag', group: 'Atoms', sizes: [], states: ['default'], expected: [],

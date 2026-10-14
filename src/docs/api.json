@@ -1909,6 +1909,50 @@
     ]
   },
   {
+    "component": "Heading",
+    "path": "components/atoms/Typography/Typography.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "level",
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
+        "required": false,
+        "doc": "The DOCUMENT level, which decides the element: 1 is `<h1>`. It is not the visual size. `size` is."
+      },
+      {
+        "name": "size",
+        "type": "1 | 2 | 3 | 4 | 5 | 6 | 7 | 8",
+        "required": false,
+        "doc": "The VISUAL size, as a step on the engine's scale. Omitted, it follows the document level — `h1` is level 7, `h2` is 6, and so on down to level 4. Given, it overrides, because a card's heading is structurally an `h3` and visually whatever the card needs."
+      },
+      {
+        "name": "tone",
+        "type": "TextRole",
+        "required": false
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "doc": "Truncate to one line."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
     "component": "HoverCard",
     "path": "components/containers/HoverCard/HoverCard.tsx",
     "props": [
@@ -4080,6 +4124,57 @@
         "name": "children",
         "type": "ReactNode",
         "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Text",
+    "path": "components/atoms/Typography/Typography.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "level",
+        "type": "1 | 2 | 3 | 4 | 5 | 6 | 7 | 8",
+        "required": false,
+        "doc": "A step on the engine's scale, 1–8."
+      },
+      {
+        "name": "tone",
+        "type": "TextRole",
+        "required": false,
+        "doc": "The text role, which decides the alpha AND the floor it has to meet."
+      },
+      {
+        "name": "as",
+        "type": "ElementType",
+        "required": false,
+        "doc": "The element. Independent of `level` — see above."
+      },
+      {
+        "name": "caps",
+        "type": "boolean",
+        "required": false,
+        "doc": "Small caps with the tracking the scale declares for it."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "required": false,
+        "doc": "Truncate to one line."
       },
       {
         "name": "className",
