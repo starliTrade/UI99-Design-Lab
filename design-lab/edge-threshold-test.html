@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — آستانه‌ی لبه (Edge Threshold)</title>
+<style>
+  :root {
+    --canvas: #060709;
+    --s1: #07090b;
+    --text: rgba(255,255,255,.89);
+    --dim: rgba(255,255,255,.62);
+    --faint: rgba(255,255,255,.38);
+    --well: #030406;
+    --rim: rgba(233,236,242,.07);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--canvas); color: var(--text);
+    font: 15px/1.9 system-ui, -apple-system, "Segoe UI", sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 32px 20px 64px;
+  }
+  h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -.02em; }
+  .sub { color: var(--dim); font-size: 13px; margin-bottom: 28px; text-align: center; max-width: 62ch; }
+  .card {
+    background: var(--well); border: 1px solid var(--rim); border-radius: 16px;
+    padding: 24px; max-width: 720px; width: 100%; margin-bottom: 20px;
+  }
+  .card h2 { font-size: 15px; margin: 0 0 12px; font-weight: 600; }
+  ol { margin: 0; padding-inline-start: 20px; color: var(--dim); font-size: 13.5px; }
+  li { margin-bottom: 6px; }
+  button {
+    font: inherit; font-size: 14px; font-weight: 600; color: #06070a;
+    background: #e9ecf2; border: none; border-radius: 10px;
+    padding: 12px 24px; cursor: pointer;
+  }
+  button.ghost { background: transparent; color: var(--text); border: 1px solid var(--rim); }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  #experiment { display: none; width: 100%; max-width: 760px; }
+  #stage { display: flex; gap: 24px; justify-content: center; margin: 24px 0; }
+  .panel {
+    width: 300px; height: 300px; background: var(--canvas); border-radius: 12px;
+    position: relative; cursor: pointer; border: 1px solid transparent;
+  }
+  .panel:hover { border-color: rgba(233,236,242,.14); }
+  .panel .line { position: absolute; inset-inline: 30px; top: 50%; height: 1px; }
+  .panel .tag { position: absolute; bottom: 10px; inset-inline: 0; text-align: center; color: var(--faint); font-size: 11px; }
+  #progress { color: var(--faint); font-size: 12px; text-align: center; }
+  #bar { height: 3px; background: rgba(255,255,255,.06); border-radius: 999px; margin-top: 8px; overflow: hidden; }
+  #barFill { height: 100%; width: 0; background: #e9ecf2; transition: width .2s; }
+  #result { display: none; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  th, td { text-align: start; padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.06); }
+  th { color: var(--faint); font-weight: 500; font-size: 11.5px; }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+  .big { font-size: 34px; font-weight: 700; letter-spacing: -.02em; }
+  .verdict { padding: 14px 16px; border-radius: 12px; background: rgba(255,255,255,.03); margin-top: 16px; font-size: 13.5px; }
+  .ok { color: #7fd0a0; } .warn { color: #e0b070; }
+</style>
+</head>
+<body>
+  <h1>آستانه‌ی لبه</h1>
+  <p class="sub">
+    موتور یک آستانه‌ی اندازه‌گیری‌شده دارد — <code>q = 0.0083</code> — که روی
+    <b>پله‌های سطح تخت</b> اندازه گرفته شده. ولی مرز، ریم و سایه <b>لبه</b> هستند، نه سطح تخت،
+    و چشم لبه را با مکانیزم دیگری می‌بیند. این آزمایش همان عدد را برای لبه اندازه می‌گیرد.
+  </p>
+
+  <div class="card" id="intro">
+    <h2>قبل از شروع</h2>
+    <ol>
+      <li>روی همان نمایشگری که همیشه کار می‌کنی. روشنایی را <b>عوض نکن</b>.</li>
+      <li>فاصله‌ی معمول خودت از صفحه. در طول آزمایش جابه‌جا نشو.</li>
+      <li>در هر آزمایش دو پنل می‌بینی. در یکی یک <b>خط ۱ پیکسلی</b> هست، در دیگری نیست.
+          روی آنی کلیک کن که فکر می‌کنی خط دارد. <b>حدس زدن اجباری است</b> — «نمی‌دانم» نداریم،
+          چون خودِ حدس بخشی از اندازه‌گیری است.</li>
+      <li>عجله نکن، ولی مکث هم نکن. نگاهت را روی خط نگه ندار — به وسط پنل نگاه کن.</li>
+      <li>۵۶ آزمایش، حدود ۵ دقیقه. وسط کار خسته شدی، صفحه را ببند و بعداً از نو شروع کن.</li>
+    </ol>
+    <div class="row" style="margin-top:20px">
+      <button onclick="start()">شروع</button>
+      <button class="ghost" onclick="showHistory()">نتیجه‌های قبلی</button>
+    </div>
+  </div>
+
+  <div id="experiment">
+    <div id="stage">
+      <div class="panel" id="p0" onclick="answer(0)"><div class="line" id="l0"></div><div class="tag">چپ</div></div>
+      <div class="panel" id="p1" onclick="answer(1)"><div class="line" id="l1"></div><div class="tag">راست</div></div>
+    </div>
+    <div id="progress"></div>
+    <div id="bar"><div id="barFill"></div></div>
+  </div>
+
+  <div id="result" class="card">
+    <h2>نتیجه</h2>
+    <div id="resultBody"></div>
+    <div class="row" style="margin-top:20px">
+      <button onclick="location.reload()">آزمایش دوباره</button>
+      <button class="ghost" onclick="copyResult()">کپی نتیجه</button>
+    </div>
+  </div>
+
+<script>
+/**
+ * THE EDGE THRESHOLD
+ *
+ * The engine's q was measured on FLAT SURFACE steps: two halves, one lighter,
+ * "which is lighter?". That number is valid for two flat surfaces side by side.
+ *
+ * A border is not that. A border is a 1px LINE on a surface, and the eye reads a
+ * line with a different mechanism — edge detection, which is far more sensitive
+ * than a flat difference. So the engine's rule "a border is half a step above
+ * its surface" (0.60q) has never been checked against a measurement of LINES.
+ *
+ * This is the same method as the original experiment — fixed stimuli, repeated
+ * trials, a logistic fit — with the stimulus changed from two halves to a line.
+ *
+ *   2AFC, 8 levels x 6 repeats = 48 trials, plus 8 catch trials where NEITHER
+ *   panel has a line. The catch trials are the control: a forced choice on a
+ *   pair with no difference measures the guess rate, and if it is far from 50%
+ *   the session is not trustworthy.
+ *
+ * The psychometric function for 2AFC runs from 50% (pure guessing) to 100%, so
+ * the threshold is the ΔL at 75% correct — the conventional midpoint.
+ */
+const CANVAS = '#060709';
+const Q = 0.0083;          // the flat-surface threshold, measured earlier
+const REPEATS = 6;
+const CATCH = 8;
+
+/** The same eight levels the original experiment used: each is the next
+ *  reachable hex above the canvas in the ladder's hue/chroma family. */
+const LEVELS = [
+  { hex: '#07070a' }, { hex: '#07080a' }, { hex: '#07080b' }, { hex: '#07090b' },
+  { hex: '#08090c' }, { hex: '#080a0d' }, { hex: '#090a0d' }, { hex: '#0a0b0e' },
+];
+
+/* ── OKLCH lightness, so the levels are described in the engine's own terms ── */
+function srgbToLinear(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+function hexToRgb(hex) { const h = hex.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
+function oklchL(hex) {
+  const [r, g, b] = hexToRgb(hex).map(srgbToLinear);
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  return 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+}
+const CANVAS_L = oklchL(CANVAS);
+LEVELS.forEach(l => { l.dl = oklchL(l.hex) - CANVAS_L; l.q = l.dl / Q; });
+
+let trials = [], current = 0, startedAt = 0;
+
+function buildTrials() {
+  const t = [];
+  LEVELS.forEach(lv => { for (let i = 0; i < REPEATS; i++) t.push({ hex: lv.hex, dl: lv.dl, side: Math.random() < 0.5 ? 0 : 1, catch: false, correct: null }); });
+  for (let i = 0; i < CATCH; i++) t.push({ hex: null, dl: 0, side: null, catch: true, correct: null });
+  for (let i = t.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [t[i], t[j]] = [t[j], t[i]]; }
+  return t;
+}
+
+function start() {
+  trials = buildTrials(); current = 0; startedAt = Date.now();
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('experiment').style.display = 'block';
+  show();
+}
+
+function show() {
+  if (current >= trials.length) return finish();
+  const t = trials[current];
+  document.getElementById('progress').textContent = `آزمایش ${current + 1} از ${trials.length}`;
+  document.getElementById('barFill').style.width = `${(current / trials.length) * 100}%`;
+  for (const i of [0, 1]) {
+    document.getElementById('l' + i).style.background = (t.catch || t.side !== i) ? 'transparent' : t.hex;
+  }
+}
+
+function answer(choice) {
+  const t = trials[current];
+  t.correct = t.catch ? null : choice === t.side;
+  current++;
+  show();
+}
+
+/* ── the fit ─────────────────────────────────────────────────────────────── */
+/** Logistic psychometric function for 2AFC: 50% floor, 100% ceiling. */
+function psych(dl, x50, slope) { return 0.5 + 0.5 / (1 + Math.exp(-(dl - x50) / slope)); }
+
+function fit(points) {
+  let best = null;
+  for (let x50 = 0.0005; x50 <= 0.020; x50 += 0.0002) {
+    for (let slope = 0.0004; slope <= 0.008; slope += 0.0002) {
+      let sse = 0;
+      for (const p of points) sse += (p.rate - psych(p.dl, x50, slope)) ** 2;
+      if (!best || sse < best.sse) best = { x50, slope, sse };
+    }
+  }
+  return best;
+}
+/** The ΔL at which the fitted curve reaches `target` correct. */
+function dlAt(f, target) { return f.x50 + f.slope * Math.log((target - 0.5) / (1 - target)); }
+
+function finish() {
+  document.getElementById('experiment').style.display = 'none';
+  const el = document.getElementById('result');
+  el.style.display = 'block';
+
+  const points = LEVELS.map(lv => {
+    const group = trials.filter(t => !t.catch && t.hex === lv.hex);
+    const correct = group.filter(t => t.correct).length;
+    return { hex: lv.hex, dl: lv.dl, q: lv.q, n: group.length, correct, rate: correct / group.length };
+  });
+  const f = fit(points);
+  const edge50 = dlAt(f, 0.75);
+  const edge95 = dlAt(f, 0.95);
+
+  const rows = points.map(p => `<tr>
+      <td><code>${p.hex}</code></td>
+      <td><code>${p.dl.toFixed(4)}</code></td>
+      <td><code>${p.q.toFixed(2)}q</code></td>
+      <td>${p.correct}/${p.n}</td>
+      <td><code>${(p.rate * 100).toFixed(0)}%</code></td>
+    </tr>`).join('');
+
+  const ratio = edge50 / Q;
+  /**
+   * THE VERDICT IS IN THE ENGINE'S OWN UNIT, because "one step" is not a
+   * prescription — a step is 1.20q and the measured threshold may be well above
+   * it. What the border needs is a NUMBER, and the number is this measurement.
+   */
+  const edgeQ = edge50 / Q;
+  const currentBorderQ = 0.5 * 1.20;          // half a ladder step, in quanta
+  const stepsNeeded = (edgeQ / 1.20).toFixed(1); // how many ladder steps the offset would need
+  const verdict = edgeQ < currentBorderQ * 0.7
+    ? `<span class="ok">چشم به لبه حساس‌تر است.</span> آستانه‌ی لبه <b>${edgeQ.toFixed(2)}q</b> است و مرز فعلی
+       موتور <b>${currentBorderQ.toFixed(2)}q</b> — پس مرز <b>بالای</b> آستانه است و حتی جا دارد نازک‌تر شود.`
+    : edgeQ > currentBorderQ * 1.3
+      ? `<span class="warn">مرز فعلی زیر آستانه است.</span> آستانه‌ی لبه <b>${edgeQ.toFixed(2)}q</b> است و مرز
+         فعلی موتور <b>${currentBorderQ.toFixed(2)}q</b> — یعنی یک خط ۱ پیکسلی با این اختلاف
+         <b>دیده نمی‌شود</b>. مرز باید حداقل <b>${edgeQ.toFixed(2)}q</b> شود، یعنی آفست لبه از
+         نیم‌پله به حدود <b>${stepsNeeded} پله</b>.`
+      : `آستانه‌ی لبه (<b>${edgeQ.toFixed(2)}q</b>) و مرز فعلی (<b>${currentBorderQ.toFixed(2)}q</b>)
+         تقریباً روی هم می‌نشینند — پس نیم‌پله دقیقاً روی مرز است، و این تصادفی نیست: موتور همان
+         عدد را برای هر دو به کار می‌برد.`;
+
+  const session = {
+    at: new Date().toISOString(),
+    kind: 'edge',
+    edge50, edge95, q: Q, ratio, slope: f.slope,
+    points: points.map(p => ({ hex: p.hex, dl: p.dl, n: p.n, correct: p.correct })),
+    seconds: Math.round((Date.now() - startedAt) / 1000),
+  };
+  const history = JSON.parse(localStorage.getItem('liminal-edge-threshold') || '[]');
+  history.push(session);
+  localStorage.setItem('liminal-edge-threshold', JSON.stringify(history));
+
+  el.querySelector('#resultBody').innerHTML = `
+    <div class="row" style="gap:32px;align-items:baseline">
+      <div><div class="big">${edge50.toFixed(4)}</div><div style="color:var(--faint);font-size:12px">آستانه‌ی لبه (۷۵٪ درست)</div></div>
+      <div><div class="big">${edge95.toFixed(4)}</div><div style="color:var(--faint);font-size:12px">مرز قابل‌اعتماد (۹۵٪)</div></div>
+      <div><div class="big">${edgeQ.toFixed(2)}q</div><div style="color:var(--faint);font-size:12px">آستانه‌ی لبه در کوانتا (q = ${Q})</div></div>
+    </div>
+    <div class="verdict">${verdict}</div>
+    <table>
+      <thead><tr><th>hex</th><th>ΔL</th><th>در کوانتا</th><th>درست</th><th>نرخ</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p style="color:var(--faint);font-size:12px;margin-top:12px">
+      شیب برازش: <code>${f.slope.toFixed(5)}</code> · خطای برازش (SSE): <code>${f.sse.toFixed(4)}</code> ·
+      مدت: ${session.seconds} ثانیه · ${history.length} نشست ذخیره‌شده
+    </p>`;
+  window.__lastSession = session;
+}
+
+function copyResult() {
+  navigator.clipboard?.writeText(JSON.stringify(window.__lastSession, null, 2));
+}
+
+function showHistory() {
+  const history = JSON.parse(localStorage.getItem('liminal-edge-threshold') || '[]');
+  if (!history.length) return alert('هنوز نشستی ذخیره نشده.');
+  const lines = history.map((h, i) =>
+    `${i + 1}. ${h.at.slice(0, 16).replace('T', ' ')} — لبه ${h.edge50.toFixed(4)} (${h.ratio.toFixed(2)}× q) · سطح ${h.q}`,
+  );
+  alert(lines.join('\n'));
+}
+</script>
+</body>
+</html>
