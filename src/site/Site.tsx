@@ -20,6 +20,7 @@ import { DirProvider, type Direction } from '../engine/liminal-direction';
 import { CommandPalette } from '../components/nav/CommandPalette';
 import { Sidebar } from '../components/nav/Sidebar';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
+import { BRAND_HEX } from '../engine/liminal-ladder';
 import { useMediaQuery } from '../engine/liminal-hooks';
 import { FIXTURES } from '../components/__matrix__/fixtures';
 import { S, R, Btn, surfaceFor } from './ui';
@@ -143,8 +144,33 @@ export function Site() {
   return (
     <ThemeProvider>
       <DirProvider dir={dir}>
+        {/* THE LIGHT THE GLASS HAS TO DIFFUSE.
+         *
+         * A backdrop blur is only visible when there is something behind it with
+         * EDGES. Blurring a smooth gradient changes nothing — which is why the
+         * engine's own note says the diffusion was "invisible on the near-uniform
+         * dark backgrounds this system actually uses", and why the fill was
+         * raised to 84% in the first place.
+         *
+         * So the page carries a light source at its top: the brand at a low
+         * alpha, falling off before the first band. It is light, not a surface —
+         * the ladder's ceiling still governs every surface below it — and it is
+         * the thing the floating bar reads against.
+         */}
+        <div
+          aria-hidden
+          style={{
+            position: 'fixed',
+            insetBlockStart: 0,
+            insetInline: 0,
+            height: S[8] * 3,
+            zIndex: 0,
+            pointerEvents: 'none',
+            background: `radial-gradient(70% 100% at 50% 0%, color-mix(in oklab, ${BRAND_HEX} 7%, transparent) 0%, transparent 72%)`,
+          }}
+        />
         {/* The bar FLOATS over the page, so the page has to start below it. */}
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', minWidth: 0, paddingBlockStart: `${NAV_CLEARANCE}px`, boxSizing: 'border-box' }}>
+        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', minWidth: 0, paddingBlockStart: `${NAV_CLEARANCE}px`, boxSizing: 'border-box' }}>
           <TopNav
             route={route}
             go={go}

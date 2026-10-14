@@ -219,6 +219,29 @@ export function mistRingAlpha(role: SurfaceRole): number {
 export interface MistOptions {
   /** Re-enable the backdrop blur. Only worth it over busy or colourful content. */
   diffuse?: boolean;
+  /**
+   * HOW MUCH OF THE SURFACE'S OWN FILL TO KEEP, 0–1. Default 1.
+   *
+   * A FOG IS A MASS; A GLASS IS A WINDOW, and they are the same surface with
+   * different amounts of the page let through.
+   *
+   * The fog keeps its fill: it is a body lighter than the page, and you read it
+   * as an object sitting in front of the content. Measured, that fill is ~84%
+   * opaque — which is right for a menu, a popover or a modal, because those
+   * carry text that has to stay legible over whatever is behind them.
+   *
+   * A glass keeps almost none of it. Measured on a product page in the wild, its
+   * floating nav is `rgba(255,255,255,0.03)` with `blur(12px)` — three percent
+   * of its own fill, and everything you see through it is the page, diffused.
+   * That is not a better fog; it is a different object.
+   *
+   * AND A GLASS NEEDS LIGHT BEHIND IT. Over the near-uniform dark this system
+   * actually uses, a blur has nothing to show — the engine's own note on v2 says
+   * so, and it is why the fill was raised in the first place. So `fill` is only
+   * worth lowering where something bright passes under the surface: a hero
+   * image, a photograph, a page with a light source at its top.
+   */
+  fill?: number;
 }
 
 export interface MistSpec {
@@ -247,6 +270,8 @@ export interface MistSpec {
   edgeStops: Array<{ pos: number; alpha: number }>;
   /** Whether the expensive backdrop diffusion is on. */
   diffuse: boolean;
+  /** The fraction of the role's own fill that is kept. 1 is a fog, ~0.2 a glass. */
+  fillScale: number;
 }
 
 export function resolveMist(role: SurfaceRole, options: MistOptions = {}): MistSpec {
@@ -273,6 +298,7 @@ export function resolveMist(role: SurfaceRole, options: MistOptions = {}): MistS
     edgeGlow: mistEdgeGlow(role),
     edgeStops: mistEdgeStops(role),
     diffuse: options.diffuse === true,
+    fillScale: options.fill ?? 1,
   };
 }
 
@@ -300,8 +326,10 @@ export function mistCssVars(role: SurfaceRole, options: MistOptions = {}): Recor
     // The fog: a vertical gradient INSIDE the surface. Nothing radiates.
     '--liminal-mist-fill-top': stops.top,
     '--liminal-mist-fill-bottom': stops.bottom,
-    '--liminal-mist-fill-top-alpha': String(isToast ? 0.94 : stops.topAlpha),
-    '--liminal-mist-fill-bottom-alpha': String(isToast ? 0.94 : stops.bottomAlpha),
+    // The fill, scaled by how much of the page is allowed through. A toast is
+    // never scaled: it is a notification and has to be legible first.
+    '--liminal-mist-fill-top-alpha': String(isToast ? 0.94 : stops.topAlpha * (options.fill ?? 1)),
+    '--liminal-mist-fill-bottom-alpha': String(isToast ? 0.94 : stops.bottomAlpha * (options.fill ?? 1)),
     // The light that lands on the top edge - one hairline, never a halo.
     '--liminal-mist-inner-light': isToast
       ? 'inset 0 0 0 rgba(0, 0, 0, 0)'

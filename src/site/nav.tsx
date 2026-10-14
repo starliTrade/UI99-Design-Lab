@@ -65,7 +65,19 @@ export function TopNav({
   onDir: (d: 'ltr' | 'rtl') => void;
 }) {
   const narrow = useMediaQuery(`(max-width: ${BP.shellSidebar}px)`);
-  const mist = mistCssVars('menu');
+  /**
+   * A GLASS, NOT A FOG — and the difference is two numbers.
+   *
+   * Measured on the reference: its pill is `rgba(255,255,255,0.03)` with
+   * `blur(12px)`. Ours was the menu fog at 84% fill with the same blur — the
+   * diffusion was on and there was nothing to see through it, because 84% of
+   * what you looked at was the surface itself.
+   *
+   * `fill: 0.2` keeps a fifth of the fog and lets the page through the rest,
+   * diffused. The seam and the top hairline are untouched, so the pill still
+   * has an edge — a window has a frame.
+   */
+  const mist = mistCssVars('menu', { diffuse: true, fill: 0.2 });
 
   return (
     <div
