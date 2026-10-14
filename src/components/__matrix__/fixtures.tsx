@@ -43,6 +43,7 @@ import { MultiSelect } from '../inputs/MultiSelect/MultiSelect';
 import { CommandPalette } from '../nav/CommandPalette/CommandPalette';
 import { Table, TableHeader, TableRow, TableHead, TableCell } from '../data/Table';
 import { Calendar } from '../data/Calendar/Calendar';
+import { TreeView } from '../data/TreeView/TreeView';
 import { FilterBar } from '../data/FilterBar/FilterBar';
 import { AppShell } from '../layout/AppShell/AppShell';
 import { Footer } from '../layout/Footer/Footer';
@@ -471,6 +472,27 @@ export const FIXTURES: ComponentFixture[] = [
         <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
         <tbody><TableRow><TableCell>Starli</TableCell><TableCell>Active</TableCell></TableRow></tbody>
       </Table>
+    ),
+  },
+  {
+    name: 'TreeView', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default', 'expanded'], expected: [],
+    render: (state, size) => (
+      <TreeView
+        label="Files"
+        size={(size ?? 'md') as 'sm'}
+        expanded={state === 'expanded' ? ['src'] : []}
+        nodes={[
+          {
+            id: 'src',
+            label: 'src',
+            children: [
+              { id: 'engine', label: 'engine' },
+              { id: 'components', label: 'components' },
+            ],
+          },
+          { id: 'readme', label: 'README.md' },
+        ]}
+      />
     ),
   },
   {
