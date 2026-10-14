@@ -3,16 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>LIMINAL — آستانه‌ی لبه (Edge Threshold)</title>
+<title>LIMINAL — آستانه‌ی لبه</title>
 <style>
   :root {
-    --canvas: #060709;
-    --s1: #07090b;
-    --text: rgba(255,255,255,.89);
-    --dim: rgba(255,255,255,.62);
-    --faint: rgba(255,255,255,.38);
-    --well: #030406;
-    --rim: rgba(233,236,242,.07);
+    --canvas: #060709; --text: rgba(255,255,255,.89); --dim: rgba(255,255,255,.62);
+    --faint: rgba(255,255,255,.38); --well: #030406; --rim: rgba(233,236,242,.07);
   }
   * { box-sizing: border-box; }
   body {
@@ -23,30 +18,21 @@
   }
   h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -.02em; }
   .sub { color: var(--dim); font-size: 13px; margin-bottom: 28px; text-align: center; max-width: 62ch; }
-  .card {
-    background: var(--well); border: 1px solid var(--rim); border-radius: 16px;
-    padding: 24px; max-width: 720px; width: 100%; margin-bottom: 20px;
-  }
+  .card { background: var(--well); border: 1px solid var(--rim); border-radius: 16px; padding: 24px; max-width: 760px; width: 100%; margin-bottom: 20px; }
   .card h2 { font-size: 15px; margin: 0 0 12px; font-weight: 600; }
   ol { margin: 0; padding-inline-start: 20px; color: var(--dim); font-size: 13.5px; }
   li { margin-bottom: 6px; }
-  button {
-    font: inherit; font-size: 14px; font-weight: 600; color: #06070a;
-    background: #e9ecf2; border: none; border-radius: 10px;
-    padding: 12px 24px; cursor: pointer;
-  }
+  button { font: inherit; font-size: 14px; font-weight: 600; color: #06070a; background: #e9ecf2; border: none; border-radius: 10px; padding: 12px 24px; cursor: pointer; }
   button.ghost { background: transparent; color: var(--text); border: 1px solid var(--rim); }
   .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
   #experiment { display: none; width: 100%; max-width: 760px; }
-  #stage { display: flex; gap: 24px; justify-content: center; margin: 24px 0; }
-  .panel {
-    width: 300px; height: 300px; background: var(--canvas); border-radius: 12px;
-    position: relative; cursor: pointer; border: 1px solid transparent;
-  }
+  #stage { display: flex; gap: 24px; justify-content: center; margin: 20px 0 16px; }
+  .panel { width: 300px; height: 300px; background: var(--canvas); border-radius: 12px; position: relative; cursor: pointer; border: 1px solid transparent; }
   .panel:hover { border-color: rgba(233,236,242,.14); }
   .panel .line { position: absolute; inset-inline: 30px; top: 50%; height: 1px; }
   .panel .tag { position: absolute; bottom: 10px; inset-inline: 0; text-align: center; color: var(--faint); font-size: 11px; }
-  #progress { color: var(--faint); font-size: 12px; text-align: center; }
+  #none { display: block; margin: 0 auto; background: transparent; color: var(--text); border: 1px solid var(--rim); }
+  #progress { color: var(--faint); font-size: 12px; text-align: center; margin-top: 16px; }
   #bar { height: 3px; background: rgba(255,255,255,.06); border-radius: 999px; margin-top: 8px; overflow: hidden; }
   #barFill { height: 100%; width: 0; background: #e9ecf2; transition: width .2s; }
   #result { display: none; }
@@ -54,29 +40,29 @@
   th, td { text-align: start; padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.06); }
   th { color: var(--faint); font-weight: 500; font-size: 11.5px; }
   code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
-  .big { font-size: 34px; font-weight: 700; letter-spacing: -.02em; }
-  .verdict { padding: 14px 16px; border-radius: 12px; background: rgba(255,255,255,.03); margin-top: 16px; font-size: 13.5px; }
+  .big { font-size: 32px; font-weight: 700; letter-spacing: -.02em; }
+  .verdict { padding: 14px 16px; border-radius: 12px; background: rgba(255,255,255,.03); margin-top: 12px; font-size: 13.5px; }
   .ok { color: #7fd0a0; } .warn { color: #e0b070; }
 </style>
 </head>
 <body>
   <h1>آستانه‌ی لبه</h1>
   <p class="sub">
-    موتور یک آستانه‌ی اندازه‌گیری‌شده دارد — <code>q = 0.0083</code> — که روی
-    <b>پله‌های سطح تخت</b> اندازه گرفته شده. ولی مرز، ریم و سایه <b>لبه</b> هستند، نه سطح تخت،
-    و چشم لبه را با مکانیزم دیگری می‌بیند. این آزمایش همان عدد را برای لبه اندازه می‌گیرد.
+    موتور یک آستانه دارد — <code>q = 0.0083</code> — که روی <b>سطح تخت</b> اندازه گرفته شده،
+    ولی مرز یک <b>خط ۱ پیکسلی</b> است و چشم خط را با مکانیزم دیگری می‌بیند. این آزمایش همان
+    عدد را برای خط اندازه می‌گیرد.
   </p>
 
   <div class="card" id="intro">
     <h2>قبل از شروع</h2>
     <ol>
-      <li>روی همان نمایشگری که همیشه کار می‌کنی. روشنایی را <b>عوض نکن</b>.</li>
-      <li>فاصله‌ی معمول خودت از صفحه. در طول آزمایش جابه‌جا نشو.</li>
-      <li>در هر آزمایش دو پنل می‌بینی. در یکی یک <b>خط ۱ پیکسلی</b> هست، در دیگری نیست.
-          روی آنی کلیک کن که فکر می‌کنی خط دارد. <b>حدس زدن اجباری است</b> — «نمی‌دانم» نداریم،
-          چون خودِ حدس بخشی از اندازه‌گیری است.</li>
-      <li>عجله نکن، ولی مکث هم نکن. نگاهت را روی خط نگه ندار — به وسط پنل نگاه کن.</li>
-      <li>۷۲ آزمایش، حدود ۶ دقیقه. وسط کار خسته شدی، صفحه را ببند و بعداً از نو شروع کن.</li>
+      <li>روی همان نمایشگر همیشگی، با همان روشنایی. در طول آزمایش عوض نکن.</li>
+      <li>فاصله‌ی معمول خودت. جابه‌جا نشو.</li>
+      <li>اول یک خط <b>واضح</b> نشانت می‌دهم که فقط ببینی چه شکلی است.</li>
+      <li>بعد در هر آزمایش دو پنل می‌بینی. اگر خط را دیدی روی آن پنل کلیک کن.
+          <b>و اگر ندیدی، دکمه‌ی «نمی‌بینم» را بزن.</b> این جواب هم داده است — و از حدس زدن
+          ارزشمندتر، چون نرخ هشدار اشتباه را هم به ما می‌دهد.</li>
+      <li>۴۳ آزمایش، حدود ۳ دقیقه.</li>
     </ol>
     <div class="row" style="margin-top:20px">
       <button onclick="start()">شروع</button>
@@ -89,6 +75,7 @@
       <div class="panel" id="p0" onclick="answer(0)"><div class="line" id="l0"></div><div class="tag">چپ</div></div>
       <div class="panel" id="p1" onclick="answer(1)"><div class="line" id="l1"></div><div class="tag">راست</div></div>
     </div>
+    <button id="none" onclick="answer('none')">نمی‌بینم</button>
     <div id="progress"></div>
     <div id="bar"><div id="barFill"></div></div>
   </div>
@@ -104,71 +91,46 @@
 
 <script>
 /**
- * THE EDGE THRESHOLD
+ * THE EDGE THRESHOLD — second design.
  *
- * The engine's q was measured on FLAT SURFACE steps: two halves, one lighter,
- * "which is lighter?". That number is valid for two flat surfaces side by side.
+ * The first design was a forced-choice 2AFC: two panels, pick the one with the
+ * line, no way to say "I don't see one". Two things were wrong with it, and the
+ * reader found both before I did:
  *
- * A border is not that. A border is a 1px LINE on a surface, and the eye reads a
- * line with a different mechanism — edge detection, which is far more sensitive
- * than a flat difference. So the engine's rule "a border is half a step above
- * its surface" (0.60q) has never been checked against a measurement of LINES.
+ *   THE STIMULUS WAS INVISIBLE AND THERE WAS NO ANCHOR. Every level sat inside
+ *   the transition band, so the task had no reference point at all.
  *
- * This is the same method as the original experiment — fixed stimuli, repeated
- * trials, a logistic fit — with the stimulus changed from two halves to a line.
+ *   FORCING A CHOICE AT THE THRESHOLD ADDS NOISE. When the line is at or below
+ *   the threshold, a forced pick is a coin flip, and a coin flip is not data.
  *
- *   2AFC, 5 levels x 8-14 repeats = 60 trials, plus 8 catch trials where NEITHER
- *   panel has a line. The catch trials are the control: a forced choice on a
- *   pair with no difference measures the guess rate, and if it is far from 50%
- *   the session is not trustworthy.
+ * So there is a third answer — «نمی‌بینم» — and it makes the design BETTER, not
+ * just easier. With a "no" option the catch trials (where neither panel has a
+ * line) stop being forced guesses and become a real measurement: the FALSE ALARM
+ * rate. Hit rate and false-alarm rate together give d', the standard
+ * signal-detection measure of sensitivity, which is what a threshold actually is.
  *
- * The psychometric function for 2AFC runs from 50% (pure guessing) to 100%, so
- * the threshold is the ΔL at 75% correct — the conventional midpoint.
+ *   hit          chose the correct side
+ *   false alarm  chose a side when neither panel had a line
+ *   d' = z(hit) - z(false alarm)
+ *
+ * And the trials are fewer: 43 instead of 80, because 80 was a number I picked
+ * for resolution without asking how long it takes to sit and stare at nothing.
  */
 const CANVAS = '#060709';
-const Q = 0.0083;          // the flat-surface threshold, measured earlier
-const CATCH = 8;
+const Q = 0.0083;
 
-/**
- * THE LEVELS ARE WHERE THE TRANSITION IS, NOT WHERE THE SURFACE ONE WAS.
- *
- * The first run used the original experiment's eight levels, which were spaced
- * for the SURFACE threshold (0.15q .. 2.6q). The edge threshold turned out to be
- * about half of that, so the entire transition fell between the two LOWEST
- * levels and the measurement had no resolution where it mattered.
- *
- * So the levels were re-derived from the reachable grid. Every hex in the
- * ladder's hue/chroma family between 0.15q and 1.10q, computed by walking L and
- * quantising:
- *
- *     #06080a   0.53q
- *     #06080b   0.60q
- *     #07080b   0.77q
- *
- * THREE values. Between 0.25q and 0.71q the 8-bit grid offers nothing else — so
- * this is not a choice of levels, it is the entire population of them. The band
- * the eye's edge threshold falls in is a band the colour space can barely write.
- *
- * Five levels, twelve repeats each: 60 trials, and the two that matter (#06080a
- * and #06080b) get the most looks.
- */
 const LEVELS = [
-  // ── the anchors: CLEARLY VISIBLE. If you miss these, the session is invalid,
-  //    and they are the reference that tells you what you are looking for.
-  { hex: '#0a0b0e', reps: 6, anchor: true },   // 2.62q
-  { hex: '#08090c', reps: 6, anchor: true },   // 1.43q
-
-  // ── the transition band: the three values the 8-bit grid can write here
-  { hex: '#07070a', reps: 10 },                // 0.25q
-  { hex: '#06080a', reps: 14 },                // 0.53q
-  { hex: '#06080b', reps: 14 },                // 0.60q  <- the border's own offset is 0.57q
-  { hex: '#07080a', reps: 12 },                // 0.71q
-
-  // ── just above the band
-  { hex: '#07080b', reps: 10 },                // 0.77q
+  // the anchors: clearly visible, and the validity check
+  { hex: '#0a0b0e', reps: 4, anchor: true },   // 2.62q
+  { hex: '#08090c', reps: 4, anchor: true },   // 1.43q
+  // the band: the four values the 8-bit grid can write where the threshold is
+  { hex: '#07070a', reps: 7 },                 // 0.25q
+  { hex: '#06080a', reps: 8 },                 // 0.53q
+  { hex: '#06080b', reps: 8 },                 // 0.60q  <- the border's offset is 0.57q
+  { hex: '#07080a', reps: 7 },                 // 0.71q
 ];
+const CATCH = 5;
 
-/* ── OKLCH lightness, so the levels are described in the engine's own terms ── */
 function srgbToLinear(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
 function hexToRgb(hex) { const h = hex.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
 function oklchL(hex) {
@@ -181,17 +143,19 @@ function oklchL(hex) {
 const CANVAS_L = oklchL(CANVAS);
 LEVELS.forEach(l => { l.dl = oklchL(l.hex) - CANVAS_L; l.q = l.dl / Q; });
 
-let trials = [], current = 0, startedAt = 0;
+let trials = [], current = 0, startedAt = 0, calibrating = true;
 
 function buildTrials() {
   const t = [];
-  LEVELS.forEach(lv => { for (let i = 0; i < lv.reps; i++) t.push({ hex: lv.hex, dl: lv.dl, anchor: !!lv.anchor, side: Math.random() < 0.5 ? 0 : 1, catch: false, correct: null }); });
-  for (let i = 0; i < CATCH; i++) t.push({ hex: null, dl: 0, side: null, catch: true, correct: null });
+  LEVELS.forEach(lv => {
+    for (let i = 0; i < lv.reps; i++) {
+      t.push({ hex: lv.hex, dl: lv.dl, q: lv.q, anchor: !!lv.anchor, side: Math.random() < 0.5 ? 0 : 1, catch: false, answer: null });
+    }
+  });
+  for (let i = 0; i < CATCH; i++) t.push({ hex: null, dl: 0, q: 0, anchor: false, side: null, catch: true, answer: null });
   for (let i = t.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [t[i], t[j]] = [t[j], t[i]]; }
   return t;
 }
-
-let calibrating = true;
 
 function start() {
   trials = buildTrials(); current = 0; startedAt = Date.now(); calibrating = true;
@@ -200,20 +164,8 @@ function start() {
   show();
 }
 
-/**
- * THE CALIBRATION TRIAL.
- *
- * The first version of this experiment put every level inside the transition
- * band — the band where NOTHING is visible — and gave the reader no reference at
- * all. The result was predictable and it was my fault: "I seriously see nothing."
- *
- * So one trial comes first with a line at 2.62q, which is unmistakable. It is
- * not scored. Its job is to show what a line looks like on this display, at this
- * brightness, at this distance — and to prove the task is doable before asking
- * anyone to do it 68 times.
- */
 function showCalibration() {
-  document.getElementById('progress').textContent = 'کالیبراسیون — این خط واضح است، فقط نگاه کن';
+  document.getElementById('progress').textContent = 'کالیبراسیون — این خط واضح است، فقط نگاه کن و کلیک کن';
   document.getElementById('barFill').style.width = '0%';
   document.getElementById('l0').style.background = '#0a0b0e';
   document.getElementById('l1').style.background = 'transparent';
@@ -231,89 +183,91 @@ function show() {
 }
 
 function answer(choice) {
-  if (calibrating) {
-    calibrating = false;
-    document.getElementById('progress').textContent = `آزمایش ۱ از ${trials.length}`;
-    show();
-    return;
-  }
-  const t = trials[current];
-  t.correct = t.catch ? null : choice === t.side;
+  if (calibrating) { calibrating = false; show(); return; }
+  trials[current].answer = choice;
   current++;
   show();
 }
 
-/* ── the fit ─────────────────────────────────────────────────────────────── */
-/** Logistic psychometric function for 2AFC: 50% floor, 100% ceiling. */
-function psych(dl, x50, slope) { return 0.5 + 0.5 / (1 + Math.exp(-(dl - x50) / slope)); }
-
-function fit(points) {
-  let best = null;
-  for (let x50 = 0.0005; x50 <= 0.020; x50 += 0.0002) {
-    for (let slope = 0.0004; slope <= 0.008; slope += 0.0002) {
-      let sse = 0;
-      for (const p of points) sse += (p.rate - psych(p.dl, x50, slope)) ** 2;
-      if (!best || sse < best.sse) best = { x50, slope, sse };
-    }
-  }
-  return best;
+/* ── analysis ───────────────────────────────────────────────────────────── */
+/** Inverse normal CDF (Abramowitz & Stegun 26.2.23), for d'. */
+function z(p) {
+  if (p <= 0) p = 1 / (2 * 100 + 2);
+  if (p >= 1) p = 1 - 1 / (2 * 100 + 2);
+  const t = Math.sqrt(-2 * Math.log(p < 0.5 ? p : 1 - p));
+  const c = [2.515517, 0.802853, 0.010328], d = [1.432788, 0.189269, 0.001308];
+  const v = t - (c[0] + c[1] * t + c[2] * t * t) / (1 + d[0] * t + d[1] * t * t + d[2] * t * t * t);
+  return p < 0.5 ? -v : v;
 }
-/** The ΔL at which the fitted curve reaches `target` correct. */
-function dlAt(f, target) { return f.x50 + f.slope * Math.log((target - 0.5) / (1 - target)); }
 
 function finish() {
   document.getElementById('experiment').style.display = 'none';
   const el = document.getElementById('result');
   el.style.display = 'block';
 
+  const catches = trials.filter(t => t.catch);
+  const falseAlarms = catches.filter(t => t.answer === 0 || t.answer === 1).length;
+  const faRate = falseAlarms / catches.length;
+
   const points = LEVELS.map(lv => {
     const group = trials.filter(t => !t.catch && t.hex === lv.hex);
-    const correct = group.filter(t => t.correct).length;
-    return { hex: lv.hex, dl: lv.dl, q: lv.q, n: group.length, correct, rate: correct / group.length };
+    const hits = group.filter(t => t.answer === lv.side).length;
+    const misses = group.filter(t => t.answer !== 'none' && t.answer !== lv.side).length;
+    const none = group.filter(t => t.answer === 'none').length;
+    const hitRate = hits / group.length;
+    const dPrime = z(hitRate) - z(faRate);
+    return { hex: lv.hex, dl: lv.dl, q: lv.q, n: group.length, hits, misses, none, hitRate, dPrime };
   });
-  const f = fit(points);
-  const edge50 = dlAt(f, 0.75);
-  const edge95 = dlAt(f, 0.95);
 
   const anchors = trials.filter(t => t.anchor);
-  const anchorHit = anchors.filter(t => t.correct).length;
+  const anchorHit = anchors.filter(t => t.answer !== 'none' && t.answer === t.side).length;
   const valid = anchorHit / anchors.length >= 0.75;
+
+  // The threshold: the ΔL where the hit rate crosses 75%, read from the data
+  // rather than from a fit — with this many trials a fit would be a shape, not a
+  // measurement (the first run's fit hit the edge of its own search grid).
+  const sorted = [...points].sort((a, b) => a.dl - b.dl);
+  let crossing = null;
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i].hitRate >= 0.75 && sorted[i - 1].hitRate < 0.75) {
+      const span = sorted[i].dl - sorted[i - 1].dl;
+      const need = 0.75 - sorted[i - 1].hitRate;
+      const gain = sorted[i].hitRate - sorted[i - 1].hitRate;
+      crossing = sorted[i - 1].dl + span * (gain ? need / gain : 0.5);
+      break;
+    }
+  }
+  const edgeQ = crossing ? crossing / Q : null;
+  const borderQ = 0.5 * 1.20;      // half a ladder step, the engine's border offset
+  const verdict = !valid
+    ? `<span class="warn">نشست معتبر نیست.</span> خط‌های واضح را ${anchorHit} از ${anchors.length} بار دیدی.
+       مسئله نمایشگر، روشنایی یا فاصله است — نه آستانه‌ی چشم.`
+    : edgeQ === null
+      ? `هیچ سطحی به ۷۵٪ نرسید — یعنی آستانه‌ی تو <b>بالاتر</b> از همه‌ی سطح‌های این آزمایش است
+         (بالاترین: ${sorted[sorted.length - 1].q.toFixed(2)}q).`
+      : edgeQ < borderQ * 0.8
+        ? `<span class="ok">چشم تو به خط حساس‌تر است.</span> آستانه‌ی لبه <b>${edgeQ.toFixed(2)}q</b> و مرز
+           فعلی موتور <b>${borderQ.toFixed(2)}q</b> — پس مرز <b>بالای</b> آستانه است و دیده می‌شود.`
+        : edgeQ > borderQ * 1.2
+          ? `<span class="warn">مرز فعلی برای چشم تو زیر آستانه است.</span> آستانه‌ی لبه
+             <b>${edgeQ.toFixed(2)}q</b> و مرز فعلی <b>${borderQ.toFixed(2)}q</b> — یعنی یک خط ۱ پیکسلی
+             با این اختلاف دیده نمی‌شود و آفست مرز باید بالاتر برود.`
+          : `آستانه‌ی لبه (<b>${edgeQ.toFixed(2)}q</b>) و مرز فعلی (<b>${borderQ.toFixed(2)}q</b>) تقریباً
+             روی هم می‌نشینند — پس نیم‌پله دقیقاً روی مرز است.`;
 
   const rows = points.map(p => `<tr>
       <td><code>${p.hex}</code></td>
-      <td><code>${p.dl.toFixed(4)}</code></td>
       <td><code>${p.q.toFixed(2)}q</code></td>
-      <td>${p.correct}/${p.n}</td>
-      <td><code>${(p.rate * 100).toFixed(0)}%</code></td>
+      <td>${p.hits}</td><td>${p.misses}</td><td>${p.none}</td>
+      <td><code>${(p.hitRate * 100).toFixed(0)}%</code></td>
+      <td><code>${p.dPrime.toFixed(2)}</code></td>
     </tr>`).join('');
 
-  const ratio = edge50 / Q;
-  /**
-   * THE VERDICT IS IN THE ENGINE'S OWN UNIT, because "one step" is not a
-   * prescription — a step is 1.20q and the measured threshold may be well above
-   * it. What the border needs is a NUMBER, and the number is this measurement.
-   */
-  const edgeQ = edge50 / Q;
-  const currentBorderQ = 0.5 * 1.20;          // half a ladder step, in quanta
-  const stepsNeeded = (edgeQ / 1.20).toFixed(1); // how many ladder steps the offset would need
-  const verdict = edgeQ < currentBorderQ * 0.7
-    ? `<span class="ok">چشم به لبه حساس‌تر است.</span> آستانه‌ی لبه <b>${edgeQ.toFixed(2)}q</b> است و مرز فعلی
-       موتور <b>${currentBorderQ.toFixed(2)}q</b> — پس مرز <b>بالای</b> آستانه است و حتی جا دارد نازک‌تر شود.`
-    : edgeQ > currentBorderQ * 1.3
-      ? `<span class="warn">مرز فعلی زیر آستانه است.</span> آستانه‌ی لبه <b>${edgeQ.toFixed(2)}q</b> است و مرز
-         فعلی موتور <b>${currentBorderQ.toFixed(2)}q</b> — یعنی یک خط ۱ پیکسلی با این اختلاف
-         <b>دیده نمی‌شود</b>. مرز باید حداقل <b>${edgeQ.toFixed(2)}q</b> شود، یعنی آفست لبه از
-         نیم‌پله به حدود <b>${stepsNeeded} پله</b>.`
-      : `آستانه‌ی لبه (<b>${edgeQ.toFixed(2)}q</b>) و مرز فعلی (<b>${currentBorderQ.toFixed(2)}q</b>)
-         تقریباً روی هم می‌نشینند — پس نیم‌پله دقیقاً روی مرز است، و این تصادفی نیست: موتور همان
-         عدد را برای هر دو به کار می‌برد.`;
-
   const session = {
-    at: new Date().toISOString(),
-    kind: 'edge',
-    edge50, edge95, q: Q, ratio, slope: f.slope,
-    points: points.map(p => ({ hex: p.hex, dl: p.dl, n: p.n, correct: p.correct })),
+    at: new Date().toISOString(), kind: 'edge-3afc',
+    edgeQ, crossing, q: Q, falseAlarmRate: faRate,
     anchors: { hit: anchorHit, total: anchors.length, valid },
+    points: points.map(p => ({ hex: p.hex, q: p.q, n: p.n, hits: p.hits, none: p.none, dPrime: p.dPrime })),
     seconds: Math.round((Date.now() - startedAt) / 1000),
   };
   const history = JSON.parse(localStorage.getItem('liminal-edge-threshold') || '[]');
@@ -322,37 +276,31 @@ function finish() {
 
   el.querySelector('#resultBody').innerHTML = `
     <div class="row" style="gap:32px;align-items:baseline">
-      <div><div class="big">${edge50.toFixed(4)}</div><div style="color:var(--faint);font-size:12px">آستانه‌ی لبه (۷۵٪ درست)</div></div>
-      <div><div class="big">${edge95.toFixed(4)}</div><div style="color:var(--faint);font-size:12px">مرز قابل‌اعتماد (۹۵٪)</div></div>
-      <div><div class="big">${edgeQ.toFixed(2)}q</div><div style="color:var(--faint);font-size:12px">آستانه‌ی لبه در کوانتا (q = ${Q})</div></div>
+      <div><div class="big">${edgeQ === null ? '—' : edgeQ.toFixed(2) + 'q'}</div><div style="color:var(--faint);font-size:12px">آستانه‌ی لبه (۷۵٪)</div></div>
+      <div><div class="big">${(faRate * 100).toFixed(0)}%</div><div style="color:var(--faint);font-size:12px">هشدار اشتباه (${falseAlarms}/${catches.length})</div></div>
+      <div><div class="big">${borderQ.toFixed(2)}q</div><div style="color:var(--faint);font-size:12px">مرز فعلی موتور</div></div>
     </div>
     <div class="verdict">${verdict}</div>
     <div class="verdict" style="border:1px solid ${valid ? 'rgba(127,208,160,.3)' : 'rgba(224,176,112,.4)'}">
       <b>کنترل اعتبار:</b> خط‌های واضح (۱.۴۳q و ۲.۶۲q) را ${anchorHit} از ${anchors.length} بار دیدی —
-      ${valid ? '<span class="ok">نشست معتبر است.</span>' : '<span class="warn">نشست معتبر نیست:</span> اگر خط واضح را نمی‌بینی، مسئله نمایشگر یا فاصله است، نه آستانه‌ی چشم.'}
+      ${valid ? '<span class="ok">نشست معتبر است.</span>' : '<span class="warn">نشست معتبر نیست.</span>'}
     </div>
     <table>
-      <thead><tr><th>hex</th><th>ΔL</th><th>در کوانتا</th><th>درست</th><th>نرخ</th></tr></thead>
+      <thead><tr><th>hex</th><th>در کوانتا</th><th>درست</th><th>اشتباه</th><th>نمی‌بینم</th><th>نرخ تشخیص</th><th>d′</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
     <p style="color:var(--faint);font-size:12px;margin-top:12px">
-      شیب برازش: <code>${f.slope.toFixed(5)}</code> · خطای برازش (SSE): <code>${f.sse.toFixed(4)}</code> ·
+      d′ = z(نرخ تشخیص) − z(نرخ هشدار اشتباه). مقدار ۱ یعنی «قابل تشخیص»، صفر یعنی «حدس».
       مدت: ${session.seconds} ثانیه · ${history.length} نشست ذخیره‌شده
     </p>`;
   window.__lastSession = session;
 }
 
-function copyResult() {
-  navigator.clipboard?.writeText(JSON.stringify(window.__lastSession, null, 2));
-}
-
+function copyResult() { navigator.clipboard?.writeText(JSON.stringify(window.__lastSession, null, 2)); }
 function showHistory() {
   const history = JSON.parse(localStorage.getItem('liminal-edge-threshold') || '[]');
   if (!history.length) return alert('هنوز نشستی ذخیره نشده.');
-  const lines = history.map((h, i) =>
-    `${i + 1}. ${h.at.slice(0, 16).replace('T', ' ')} — لبه ${h.edge50.toFixed(4)} (${h.ratio.toFixed(2)}× q) · سطح ${h.q}`,
-  );
-  alert(lines.join('\n'));
+  alert(history.map((h, i) => `${i + 1}. ${h.at.slice(0, 16).replace('T', ' ')} — لبه ${h.edgeQ === null ? '—' : h.edgeQ.toFixed(2) + 'q'} · هشدار اشتباه ${(h.falseAlarmRate * 100).toFixed(0)}%`).join('\n'));
 }
 </script>
 </body>
