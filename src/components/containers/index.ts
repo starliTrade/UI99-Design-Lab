@@ -7,3 +7,4 @@ export * from './Popover';
 export * from './HoverCard';
 export * from './Drawer';
 export * from './ContainersDemo';
+export * from './Collapsible';

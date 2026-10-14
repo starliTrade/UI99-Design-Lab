@@ -1,0 +1,9 @@
+/**
+ * LIMINAL · SPINNER — the rotation
+ *
+ * A keyframe cannot be reached from a style attribute. The duration is the
+ * engine's, passed by the component; the file carries no value of its own.
+ */
+@keyframes liminal-spin {
+  to { transform: rotate(360deg); }
+}

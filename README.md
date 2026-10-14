@@ -101,7 +101,7 @@ Density scales spacing, control heights **and radii as one set**, so the concent
 
 ## The components
 
-**71 components, all 71 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md),
+**75 components, all 75 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md),
 which states the ten things a component must have and names the guard that fails when it does not.
 
 The last ten took no component changes at all — they took a check that stopped asking the wrong
@@ -109,9 +109,9 @@ question. See below.
 
 | group | components |
 |---|---|
-| **Atoms** | Badge · Button · Mist · Tag · Toggle |
+| **Atoms** | Badge · Button · Kbd · Label · Mist · Spinner · Tag · Toggle |
 | **Inputs** | Checkbox · Combobox · FileUpload · Input · MultiSelect · NumberInput · OTP · Radio · Rating · Select · Slider · Textarea |
-| **Containers** | Card · Divider · Drawer · HoverCard · Modal · Panel · Popover · Sheet |
+| **Containers** | Card · Collapsible · Divider · Drawer · HoverCard · Modal · Panel · Popover · Sheet |
 | **Feedback** | Alert · AlertDialog · Toast · Tooltip |
 | **Data** | Avatar · AvatarGroup · Calendar · DatePicker · FilterBar · Pagination · Progress · Stat · Table · TreeView |
 | **Navigation** | Breadcrumb · CommandPalette · ContextMenu · DropdownMenu · NavItem · Sidebar · Stepper · Tabs · Topbar |
@@ -125,14 +125,14 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-71 components · 71 complete · 0 short of the standard
-  role       71/71
+75 components · 75 complete · 0 short of the standard
+  role       75/75
   size       16/16  (declaration matches code)
   variant    16/16  (declaration matches code)
   disabled   16/16  (controls only)
   error      13/13  (inputs only)
-  tokens     71/71
-  fixture    71/71
+  tokens     75/75
+  fixture    75/75
 ```
 
 **A criterion is asked of the population it applies to.** `size`, `variant`, `disabled` and
@@ -166,7 +166,7 @@ A rule with no guard is a habit. Nine guards, each banning one pattern:
 | `engine-barrel` | a module a consumer cannot import |
 | `event-forwarding` | an event handler a component swallows |
 
-**801 tests across 55 files.** `verify` runs typecheck, lint, tests, the app build, the library
+**818 tests across 57 files.** `verify` runs typecheck, lint, tests, the app build, the library
 build and a package-coherence check.
 
 ---

@@ -634,6 +634,54 @@
     ]
   },
   {
+    "component": "Collapsible",
+    "path": "components/containers/Collapsible/Collapsible.tsx",
+    "props": [
+      {
+        "name": "title",
+        "type": "string",
+        "required": true,
+        "doc": "The trigger's label."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "doc": "Controlled open state. Omit for uncontrolled."
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onOpenChange",
+        "type": "(open: boolean) => void",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
     "component": "Combobox",
     "path": "components/inputs/Combobox/Combobox.tsx",
     "props": [
@@ -2090,6 +2138,82 @@
     ]
   },
   {
+    "component": "Kbd",
+    "path": "components/atoms/Kbd/Kbd.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "keys",
+        "type": "string[]",
+        "required": false,
+        "doc": "The key combination, when it is more than one key. Rendered as separate caps."
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Label",
+    "path": "components/atoms/Label/Label.tsx",
+    "props": [
+      {
+        "name": "htmlFor",
+        "type": "string",
+        "required": true,
+        "doc": "The id of the control this names. Required — see above."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false,
+        "doc": "Marks it as required. The marker is visual; the input carries the ARIA."
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false,
+        "doc": "Explains what is wrong. Rendered as the danger role, and announced."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
     "component": "Mist",
     "path": "components/atoms/Mist/Mist.tsx",
     "props": [
@@ -3385,6 +3509,39 @@
         "name": "name",
         "type": "string",
         "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Spinner",
+    "path": "components/atoms/Spinner/Spinner.tsx",
+    "props": [
+      {
+        "name": "label",
+        "type": "string",
+        "required": true,
+        "doc": "What is loading. Required — \"loading\" alone tells the reader nothing."
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "labelHidden",
+        "type": "boolean",
+        "required": false,
+        "doc": "Hide the label visually but keep it for a screen reader."
       },
       {
         "name": "className",

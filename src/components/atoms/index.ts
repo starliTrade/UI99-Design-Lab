@@ -6,3 +6,6 @@ export * from './Mist';
 export * from './AtomsDemo';
 export * from './MotionDemo';
 export * from './IconDemo';
+export * from './Spinner';
+export * from './Kbd';
+export * from './Label';

@@ -3,6 +3,10 @@ import { Button } from '../atoms/Button/Button';
 import { Badge } from '../atoms/Badge/Badge';
 import { Tag } from '../atoms/Tag/Tag';
 import { Toggle } from '../atoms/Toggle/Toggle';
+import { Spinner } from '../atoms/Spinner/Spinner';
+import { Kbd } from '../atoms/Kbd/Kbd';
+import { Label } from '../atoms/Label/Label';
+import { Collapsible } from '../containers/Collapsible/Collapsible';
 import { Mist } from '../atoms/Mist/Mist';
 import { Input } from '../inputs/Input/Input';
 import { Textarea } from '../inputs/Textarea/Textarea';
@@ -261,6 +265,35 @@ export const FIXTURES: ComponentFixture[] = [
         value="a"
         label="Option"
       />
+    ),
+  },
+  {
+    name: 'Spinner', group: 'Atoms', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    render: (_s, size) => <Spinner label="Loading projects" size={(size ?? 'md') as 'sm'} />,
+  },
+  {
+    name: 'Kbd', group: 'Atoms', sizes: ['sm', 'md'], states: ['default'], expected: [],
+    render: (_s, size) => <Kbd keys={['⌘', 'K']} size={(size ?? 'md') as 'sm'} />,
+  },
+  {
+    name: 'Label', group: 'Atoms', sizes: [], states: ['default', 'required', 'error', 'disabled'], expected: [],
+    render: (state) => (
+      <Label
+        htmlFor="demo-field"
+        required={state === 'required'}
+        error={state === 'error' ? 'That name is taken' : undefined}
+        disabled={state === 'disabled'}
+      >
+        Project name
+      </Label>
+    ),
+  },
+  {
+    name: 'Collapsible', group: 'Containers', sizes: [], states: ['closed', 'open'], expected: [],
+    render: (state) => (
+      <Collapsible title="Advanced settings" defaultOpen={state === 'open'}>
+        <span>Nothing here yet.</span>
+      </Collapsible>
     ),
   },
   {
