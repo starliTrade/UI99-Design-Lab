@@ -76,7 +76,7 @@
           روی آنی کلیک کن که فکر می‌کنی خط دارد. <b>حدس زدن اجباری است</b> — «نمی‌دانم» نداریم،
           چون خودِ حدس بخشی از اندازه‌گیری است.</li>
       <li>عجله نکن، ولی مکث هم نکن. نگاهت را روی خط نگه ندار — به وسط پنل نگاه کن.</li>
-      <li>۶۸ آزمایش، حدود ۶ دقیقه. وسط کار خسته شدی، صفحه را ببند و بعداً از نو شروع کن.</li>
+      <li>۷۲ آزمایش، حدود ۶ دقیقه. وسط کار خسته شدی، صفحه را ببند و بعداً از نو شروع کن.</li>
     </ol>
     <div class="row" style="margin-top:20px">
       <button onclick="start()">شروع</button>
@@ -153,11 +153,19 @@ const CATCH = 8;
  * and #06080b) get the most looks.
  */
 const LEVELS = [
-  { hex: '#07070a', reps: 8 },   // 0.25q — the floor of the previous run
-  { hex: '#06080a', reps: 14 },  // 0.53q
-  { hex: '#06080b', reps: 14 },  // 0.60q  <- the border's own offset is 0.57q
-  { hex: '#07080a', reps: 12 },  // 0.71q
-  { hex: '#07080b', reps: 12 },  // 0.77q
+  // ── the anchors: CLEARLY VISIBLE. If you miss these, the session is invalid,
+  //    and they are the reference that tells you what you are looking for.
+  { hex: '#0a0b0e', reps: 6, anchor: true },   // 2.62q
+  { hex: '#08090c', reps: 6, anchor: true },   // 1.43q
+
+  // ── the transition band: the three values the 8-bit grid can write here
+  { hex: '#07070a', reps: 10 },                // 0.25q
+  { hex: '#06080a', reps: 14 },                // 0.53q
+  { hex: '#06080b', reps: 14 },                // 0.60q  <- the border's own offset is 0.57q
+  { hex: '#07080a', reps: 12 },                // 0.71q
+
+  // ── just above the band
+  { hex: '#07080b', reps: 10 },                // 0.77q
 ];
 
 /* ── OKLCH lightness, so the levels are described in the engine's own terms ── */
@@ -177,20 +185,42 @@ let trials = [], current = 0, startedAt = 0;
 
 function buildTrials() {
   const t = [];
-  LEVELS.forEach(lv => { for (let i = 0; i < lv.reps; i++) t.push({ hex: lv.hex, dl: lv.dl, side: Math.random() < 0.5 ? 0 : 1, catch: false, correct: null }); });
+  LEVELS.forEach(lv => { for (let i = 0; i < lv.reps; i++) t.push({ hex: lv.hex, dl: lv.dl, anchor: !!lv.anchor, side: Math.random() < 0.5 ? 0 : 1, catch: false, correct: null }); });
   for (let i = 0; i < CATCH; i++) t.push({ hex: null, dl: 0, side: null, catch: true, correct: null });
   for (let i = t.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [t[i], t[j]] = [t[j], t[i]]; }
   return t;
 }
 
+let calibrating = true;
+
 function start() {
-  trials = buildTrials(); current = 0; startedAt = Date.now();
+  trials = buildTrials(); current = 0; startedAt = Date.now(); calibrating = true;
   document.getElementById('intro').style.display = 'none';
   document.getElementById('experiment').style.display = 'block';
   show();
 }
 
+/**
+ * THE CALIBRATION TRIAL.
+ *
+ * The first version of this experiment put every level inside the transition
+ * band — the band where NOTHING is visible — and gave the reader no reference at
+ * all. The result was predictable and it was my fault: "I seriously see nothing."
+ *
+ * So one trial comes first with a line at 2.62q, which is unmistakable. It is
+ * not scored. Its job is to show what a line looks like on this display, at this
+ * brightness, at this distance — and to prove the task is doable before asking
+ * anyone to do it 68 times.
+ */
+function showCalibration() {
+  document.getElementById('progress').textContent = 'کالیبراسیون — این خط واضح است، فقط نگاه کن';
+  document.getElementById('barFill').style.width = '0%';
+  document.getElementById('l0').style.background = '#0a0b0e';
+  document.getElementById('l1').style.background = 'transparent';
+}
+
 function show() {
+  if (calibrating) return showCalibration();
   if (current >= trials.length) return finish();
   const t = trials[current];
   document.getElementById('progress').textContent = `آزمایش ${current + 1} از ${trials.length}`;
@@ -201,6 +231,12 @@ function show() {
 }
 
 function answer(choice) {
+  if (calibrating) {
+    calibrating = false;
+    document.getElementById('progress').textContent = `آزمایش ۱ از ${trials.length}`;
+    show();
+    return;
+  }
   const t = trials[current];
   t.correct = t.catch ? null : choice === t.side;
   current++;
@@ -239,6 +275,10 @@ function finish() {
   const edge50 = dlAt(f, 0.75);
   const edge95 = dlAt(f, 0.95);
 
+  const anchors = trials.filter(t => t.anchor);
+  const anchorHit = anchors.filter(t => t.correct).length;
+  const valid = anchorHit / anchors.length >= 0.75;
+
   const rows = points.map(p => `<tr>
       <td><code>${p.hex}</code></td>
       <td><code>${p.dl.toFixed(4)}</code></td>
@@ -273,6 +313,7 @@ function finish() {
     kind: 'edge',
     edge50, edge95, q: Q, ratio, slope: f.slope,
     points: points.map(p => ({ hex: p.hex, dl: p.dl, n: p.n, correct: p.correct })),
+    anchors: { hit: anchorHit, total: anchors.length, valid },
     seconds: Math.round((Date.now() - startedAt) / 1000),
   };
   const history = JSON.parse(localStorage.getItem('liminal-edge-threshold') || '[]');
@@ -286,6 +327,10 @@ function finish() {
       <div><div class="big">${edgeQ.toFixed(2)}q</div><div style="color:var(--faint);font-size:12px">آستانه‌ی لبه در کوانتا (q = ${Q})</div></div>
     </div>
     <div class="verdict">${verdict}</div>
+    <div class="verdict" style="border:1px solid ${valid ? 'rgba(127,208,160,.3)' : 'rgba(224,176,112,.4)'}">
+      <b>کنترل اعتبار:</b> خط‌های واضح (۱.۴۳q و ۲.۶۲q) را ${anchorHit} از ${anchors.length} بار دیدی —
+      ${valid ? '<span class="ok">نشست معتبر است.</span>' : '<span class="warn">نشست معتبر نیست:</span> اگر خط واضح را نمی‌بینی، مسئله نمایشگر یا فاصله است، نه آستانه‌ی چشم.'}
+    </div>
     <table>
       <thead><tr><th>hex</th><th>ΔL</th><th>در کوانتا</th><th>درست</th><th>نرخ</th></tr></thead>
       <tbody>${rows}</tbody>
