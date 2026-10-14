@@ -3,6 +3,7 @@ import { Button } from '../atoms/Button/Button';
 import { Badge } from '../atoms/Badge/Badge';
 import { Tag } from '../atoms/Tag/Tag';
 import { Toggle } from '../atoms/Toggle/Toggle';
+import { ToggleGroup } from '../inputs/ToggleGroup/ToggleGroup';
 import { Spinner } from '../atoms/Spinner/Spinner';
 import { Kbd } from '../atoms/Kbd/Kbd';
 import { Label } from '../atoms/Label/Label';
@@ -308,6 +309,25 @@ export const FIXTURES: ComponentFixture[] = [
       <Collapsible title="Advanced settings" defaultOpen={state === 'open'}>
         <span>Nothing here yet.</span>
       </Collapsible>
+    ),
+  },
+  {
+    name: 'ToggleGroup', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'chosen', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state, size) => (
+      <ToggleGroup
+        label="View"
+        type="single"
+        size={(size ?? 'md') as 'sm'}
+        disabled={state === 'disabled'}
+        value={state === 'chosen' ? 'grid' : ''}
+        error={state === 'error' ? 'Choose a view' : undefined}
+        onChange={noop}
+        items={[
+          { value: 'list', label: 'List' },
+          { value: 'grid', label: 'Grid' },
+          { value: 'board', label: 'Board' },
+        ]}
+      />
     ),
   },
   {

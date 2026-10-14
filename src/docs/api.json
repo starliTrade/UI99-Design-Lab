@@ -4312,6 +4312,65 @@
     ]
   },
   {
+    "component": "ToggleGroup",
+    "path": "components/inputs/ToggleGroup/ToggleGroup.tsx",
+    "props": [
+      {
+        "name": "items",
+        "type": "ToggleGroupItem[]",
+        "required": true
+      },
+      {
+        "name": "type",
+        "type": "'single' | 'multiple'",
+        "required": false
+      },
+      {
+        "name": "value",
+        "type": "string | string[]",
+        "required": true,
+        "doc": "A string for `single`, an array for `multiple`."
+      },
+      {
+        "name": "onChange",
+        "type": "(value: string | string[]) => void",
+        "required": true
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": true,
+        "doc": "Required: a group of controls with no name is a group a reader cannot describe."
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false,
+        "doc": "The validation message. A single-select group is a required choice — \"pick a view\" — and the fixture declared the state before the component had it. The agreement criterion is what caught that, which is what it is for."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
     "component": "Topbar",
     "path": "components/nav/Topbar/Topbar.tsx",
     "props": [
