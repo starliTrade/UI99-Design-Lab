@@ -53,7 +53,10 @@ function Page({ route, go }: { route: Route; go: (r: Route) => void }) {
     case 'contract':
       return <ContractPage />;
     case 'studio':
-      return <Studio />;
+      // `showList={false}`: the docs' own sidebar IS the list. Two lists on one
+      // screen is the same components twice, one of them scrolling inside the
+      // other — which is exactly the kind of clutter this rebuild is removing.
+      return <Studio showList={false} />;
     case 'examples':
       return <ExamplesPage />;
     default:

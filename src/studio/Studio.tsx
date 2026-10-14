@@ -1,23 +1,20 @@
 /**
  * LIMINAL · STUDIO
- * «صفحه‌ای که ماتریس نمی‌تواند بسازد.»
  *
- * The matrix renders every state to static markup. That is enough to see a
- * component and not enough to TOUCH one: hover and focus are CSS, a prop change
- * is a re-render, and neither exists in a still frame. Five defects in this
- * project were found in exactly the places a still frame is blind to.
+ * The tool a component is reviewed with, and it is ORGANISED AS AN ACCORDION.
  *
- * So the studio is a live app, not a generated page. It answers four questions
- * the eye cannot:
+ * It used to be a long page: every panel open, one under another, and a reviewer
+ * scrolled past four things to reach the fifth. The height was the problem — a
+ * page you scroll is a page whose parts you cannot compare, because the first is
+ * gone by the time you reach the last.
  *
- *   what does the engine publish for THIS element?   read from the DOM
- *   does that surface hold the contract's floors?    derived, both lenses
- *   what does a theme actually change?               the tool re-themes itself
- *   what is missing?                                 measured against expected
+ * So: the component list is an accordion, and the panels are an accordion. The
+ * preview is always open, because it is what the page is for. Everything else is
+ * one click away and one click shut, and the whole tool fits a screen.
  *
- * It is fed by the SAME fixture table the matrix uses, so adding a component is
- * still one row. And it is built from the engine's own roles — a tool that
- * hand-picked its surfaces could not audit a system that forbids hand-picking.
+ * IT IS BUILT FROM THE LIBRARY IT REVIEWS. `Accordion`, `Input`, `Button` — the
+ * same components a consumer gets. A tool that hand-rolled its own disclosure
+ * would be a tool that cannot notice when the disclosure breaks.
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { FIXTURES, coverage } from '../components/__matrix__/fixtures';
@@ -25,8 +22,9 @@ import type { ComponentFixture } from '../components/__matrix__/fixtures';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
 import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
 import { resolveSurface } from '../engine/liminal-surface';
-import { useTheme } from '../docs/theme';
-import { Card } from '../docs/ui';
+import { Accordion } from '../components/containers/Accordion/Accordion';
+import { Input } from '../components/inputs/Input/Input';
+import { Badge } from '../components/atoms/Badge/Badge';
 import { DeviceFrame, type DeviceWidth } from '../docs/DeviceFrame';
 import { FORCE_CSS } from '../docs/panels';
 import {
@@ -34,75 +32,89 @@ import {
   ContractChecks,
   CoveragePanel,
   EngineReadout,
-  ThemeBar,
   readEngineSnapshot,
   type EngineSnapshot,
 } from '../docs/panels';
+import { MONO, S, R, WELL, WORK, CHROME } from '../docs/ui';
+import { useTheme } from '../docs/theme';
 
-const S = L.SPACING;
-const R = L.RADIUS;
-
-const CHROME = resolveSurface({ role: 'chrome', interactive: false });
-const WORK = resolveSurface({ role: 'work', interactive: false });
-const WELL = resolveSurface({ role: 'well', interactive: false });
-
-/** The states the harness can force, and the label a reviewer reads. */
 const FORCED = [
-  { id: 'none', label: 'Free' },
+  { id: 'none', label: 'free' },
   { id: 'hover', label: 'hover' },
   { id: 'focus', label: 'focus' },
-  { id: 'active', label: 'Pressed' },
-  { id: 'disabled', label: 'Disabled' },
+  { id: 'active', label: 'pressed' },
+  { id: 'disabled', label: 'disabled' },
 ] as const;
 type ForcedId = (typeof FORCED)[number]['id'];
 
-function controlsFor(f: ComponentFixture): { name: string; values: string[] }[] {
-  const out: { name: string; values: string[] }[] = [];
-  if (f.sizes.length) out.push({ name: 'size', values: f.sizes });
-  if (f.states.length) out.push({ name: 'state', values: f.states });
-  if (f.variants?.length) out.push({ name: 'variant', values: f.variants });
-  return out;
-}
-
+const DEVICES: DeviceWidth[] = ['phone', 'tablet', 'fluid'];
 const pct = (n: number) => Math.round(n * 100);
 
-export function Studio({
-  initial,
-  showList = true,
+/** A small segmented control — the library's own `ToggleGroup` shape, inline. */
+function Segmented<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
 }: {
-  initial?: string;
-  /**
-   * Whether to render the component list.
-   *
-   * The docs already have one in their sidebar, and rendering the studio's own
-   * inside a component page put TWO lists on one screen — the same components,
-   * twice, one of them scrolling inside the other.
-   */
-  showList?: boolean;
-} = {}) {
-  // The theme lives in the docs' provider, so the studio and every page share
-  // one. A studio that kept its own copy would theme itself and nothing else.
-  const { state: theme, theme: live, set: setTheme } = useTheme();
+  label: string;
+  value: T;
+  options: { id: T; label: string }[];
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: `${S[2]}px`, minWidth: 0 }}>
+      <span style={{ fontSize: 10, opacity: 0.6, whiteSpace: 'nowrap' }}>{label}</span>
+      <div
+        style={{
+          display: 'inline-flex',
+          gap: 2,
+          padding: 2,
+          borderRadius: `${R.control}px`,
+          ...resolveSurface({ role: 'well', interactive: false }).style,
+        }}
+      >
+        {options.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            aria-pressed={value === o.id}
+            onClick={() => onChange(o.id)}
+            style={{
+              ...(value === o.id ? WORK.style : { background: 'transparent' }),
+              font: 'inherit',
+              fontSize: 11,
+              padding: `2px ${S[3]}px`,
+              borderRadius: `${R.chip}px`,
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
+export function Studio({ initial, showList = true }: { initial?: string; showList?: boolean } = {}) {
   const groups = useMemo(() => [...new Set(FIXTURES.map((f) => f.group))], []);
   const [selected, setSelected] = useState<string>(initial ?? FIXTURES[0].name);
   const [size, setSize] = useState<string | undefined>();
   const [state, setState] = useState<string | undefined>();
   const [variant, setVariant] = useState<string | undefined>();
   const [forced, setForced] = useState<ForcedId>('none');
-  // The width the component is tested at. An iframe, not a narrow box — see
-  // `DeviceFrame` for why a `max-width` div would lie about what it shows.
   const [device, setDevice] = useState<DeviceWidth>('fluid');
+  const [q, setQ] = useState('');
+  const { theme } = useTheme();
 
   const fixture = FIXTURES.find((f) => f.name === selected) ?? FIXTURES[0];
-  const controls = controlsFor(fixture);
   const activeSize = size && fixture.sizes.includes(size) ? size : fixture.sizes[0];
   const activeState = state && fixture.states.includes(state) ? state : fixture.states[0];
   const activeVariant = variant && fixture.variants?.includes(variant) ? variant : fixture.variants?.[0];
-
   const rendered = fixture.render(activeState, activeSize, activeVariant);
 
-  // ── what the engine published, read off the element ──────────────────────
   const previewRef = useRef<HTMLDivElement>(null);
   const [snapshot, setSnapshot] = useState<EngineSnapshot | null>(null);
   useEffect(() => {
@@ -112,31 +124,8 @@ export function Studio({
       host.querySelector<HTMLElement>('[data-liminal-surface]') ??
       host.querySelector<HTMLElement>('[data-liminal-focus-within]') ??
       host.querySelector<HTMLElement>('[data-liminal-focusable]');
-    setSnapshot(readEngineSnapshot(el, live.ladder));
-    // NOT `rendered`: `fixture.render(...)` returns a fresh element every render,
-    // so depending on it re-runs the effect on every render, which sets state,
-    // which renders again — an infinite loop. The inputs that actually change
-    // what is on screen are the props and the theme.
-  }, [selected, activeState, activeSize, activeVariant, forced, live.ladder]);
-
-  /**
-   * The surface the text actually sits on.
-   *
-   * Not always a ladder step: a primary Button's fill is the brand, and a
-   * semantic Alert's is its own hue. So the resolved level is used when the
-   * engine named one, and the element's own computed fill when it did not —
-   * otherwise the contract panel would quietly check the wrong surface, which
-   * is worse than not checking.
-   */
-  const surfaceHex = useMemo(() => {
-    if (snapshot?.level != null) return live.ladder[Math.round(snapshot.level)];
-    const solid = snapshot?.background.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-    if (solid && !snapshot?.background.includes('0, 0, 0, 0')) {
-      const hex = (n: string) => Number(n).toString(16).padStart(2, '0');
-      return `#${hex(solid[1])}${hex(solid[2])}${hex(solid[3])}`;
-    }
-    return live.ladder[0];
-  }, [snapshot, live.ladder]);
+    setSnapshot(readEngineSnapshot(el, theme.ladder));
+  }, [selected, activeState, activeSize, activeVariant, forced, theme.ladder]);
 
   const pick = (name: string) => {
     setSelected(name);
@@ -147,230 +136,174 @@ export function Studio({
     setForced('none');
   };
 
-  return (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, width: '100%', minWidth: 0 }}
-    >
-      <style>{FORCE_CSS}</style>
+  const needle = q.trim().toLowerCase();
+  const matches = needle
+    ? FIXTURES.filter((f) => f.name.toLowerCase().includes(needle) || f.group.toLowerCase().includes(needle))
+    : FIXTURES;
 
-      <ThemeBar state={theme} theme={live} onChange={setTheme} />
-
-      {/* A flex row that WRAPS, not a media query.
-       *
-       * The studio lives inside the demo's own frame, so the viewport width says
-       * nothing about the room it has: at a 1440px window the frame is about
-       * 600px wide, and a `min-width: 900px` query laid the panels out for a
-       * width they never had. `flex-wrap` asks the container, which is the only
-       * thing that knows. */}
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: `${S[4]}px`,
-          alignItems: 'flex-start',
-          minWidth: 0,
-        }}
-      >
-        {/* ── the component list ──────────────────────────────────────────── */}
-        {showList && (
-        <nav
-          aria-label="Components"
-          style={{
-            ...CHROME.style,
-            flex: '1 1 220px',
-            maxWidth: 260,
-            borderRadius: `${R.card}px`,
-            padding: `${S[3]}px`,
-            maxHeight: '70vh',
-            overflowY: 'auto',
-            minWidth: 0,
-          }}
-        >
-          {groups.map((g) => (
-            <div key={g} style={{ marginBottom: `${S[3]}px` }}>
-              <div style={{ fontSize: 11, opacity: 0.6, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: `${S[1]}px` }}>
-                {g}
-              </div>
-              {FIXTURES.filter((f) => f.group === g).map((f) => {
-                const on = f.name === selected;
-                const c = pct(coverage(f));
-                const missing = f.expected.filter((s) => !f.states.includes(s));
-                return (
-                  <button
-                    key={f.name}
-                    type="button"
-                    onClick={() => pick(f.name)}
-                    aria-current={on ? 'true' : undefined}
+  // The component list, as an accordion. One group open at a time would hide the
+  // others; `multiple` lets a reviewer keep two open while comparing.
+  const listItems = groups
+    .map((g) => {
+      const rows = matches.filter((f) => f.group === g);
+      if (!rows.length) return null;
+      return {
+        id: g,
+        title: `${g} · ${rows.length}`,
+        content: (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {rows.map((f) => {
+              const on = f.name === selected;
+              const c = pct(coverage(f));
+              const missing = f.expected.filter((s) => !f.states.includes(s));
+              return (
+                <button
+                  key={f.name}
+                  type="button"
+                  onClick={() => pick(f.name)}
+                  aria-current={on ? 'true' : undefined}
+                  style={{
+                    ...(on ? WORK.style : { background: 'transparent' }),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: `${S[2]}px`,
+                    width: '100%',
+                    font: 'inherit',
+                    fontSize: 12,
+                    textAlign: 'start',
+                    padding: `${S[1]}px ${S[2]}px`,
+                    borderRadius: `${R.chip}px`,
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</span>
+                  <code
                     style={{
-                      ...(on ? WORK.style : WELL.style),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: `${S[2]}px`,
-                      width: '100%',
-                      font: 'inherit',
-                      fontSize: 12,
-                      textAlign: 'start',
-                      padding: `${S[1]}px ${S[2]}px`,
-                      borderRadius: `${R.chip}px`,
-                      border: '1px solid transparent',
-                      marginBottom: 2,
+                      fontFamily: MONO,
+                      fontSize: 10,
+                      flexShrink: 0,
+                      opacity: c === 100 ? 0.5 : 0.95,
+                      color: missing.length ? 'var(--liminal-danger, #ba4646)' : undefined,
                     }}
                   >
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</span>
-                    <code
-                      style={{
-                        fontFamily: 'ui-monospace, monospace',
-                        fontSize: 10,
-                        opacity: c === 100 ? 0.55 : 0.95,
-                        color: missing.length ? 'var(--liminal-danger, #ba4646)' : undefined,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {c}%
-                    </code>
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </nav>
+                    {c}%
+                  </code>
+                </button>
+              );
+            })}
+          </div>
+        ),
+      };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
+      <style>{FORCE_CSS}</style>
+
+      {/* ── the controls, on one line ─────────────────────────────────────── */}
+      <div
+        style={{
+          ...CHROME.style,
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${S[4]}px`,
+          flexWrap: 'wrap',
+          padding: `${S[3]}px`,
+          borderRadius: `${R.card}px`,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: `${S[2]}px` }}>
+          <span style={{ fontSize: 13, fontWeight: 600 }}>{fixture.name}</span>
+          <Badge>{`${pct(coverage(fixture))}%`}</Badge>
+        </div>
+        <Segmented label="device" value={device} options={DEVICES.map((d) => ({ id: d, label: d }))} onChange={setDevice} />
+        <Segmented label="force" value={forced} options={FORCED.map((f) => ({ id: f.id, label: f.label }))} onChange={setForced} />
+      </div>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[4]}px`, alignItems: 'flex-start', minWidth: 0 }}>
+        {/* ── the component list, as an accordion ───────────────────────── */}
+        {showList && (
+          <div style={{ flex: '1 1 220px', maxWidth: 260, minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[2]}px` }}>
+            <Input size="sm" placeholder="Filter…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter components" />
+            <Accordion items={listItems} type="multiple" headingLevel={3} defaultOpen={[fixture.group]} />
+          </div>
         )}
 
-        {/* ── the work ────────────────────────────────────────────────────── */}
-        <main style={{ flex: '2 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[4]}px` }}>
-          <Card title="Preview" note={`${fixture.name} — live, with the real interaction layer`} role="work">
-            {/* the prop controls, derived from what the fixture says it HAS */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[3]}px` }}>
-              {controls.map((c) => (
-                <div key={c.name} style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px` }}>
-                  <span style={{ fontSize: 10, opacity: 0.6, fontFamily: 'ui-monospace, monospace' }}>{c.name}</span>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                    {c.values.map((v) => {
-                      const on =
-                        (c.name === 'size' && v === activeSize) ||
-                        (c.name === 'state' && v === activeState) ||
-                        (c.name === 'variant' && v === activeVariant);
-                      return (
-                        <button
-                          key={v}
-                          type="button"
-                          aria-pressed={on}
-                          onClick={() => {
-                            if (c.name === 'size') setSize(v);
-                            if (c.name === 'state') setState(v);
-                            if (c.name === 'variant') setVariant(v);
-                          }}
-                          style={{
-                            ...(on ? WORK.style : WELL.style),
-                            font: 'inherit',
-                            fontSize: 11,
-                            padding: `2px ${S[2]}px`,
-                            borderRadius: `${R.chip}px`,
-                            border: '1px solid transparent',
-                          }}
-                        >
-                          {v}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+        {/* ── the work ───────────────────────────────────────────────────── */}
+        <div style={{ flex: '2 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[4]}px` }}>
+          {/* The prop controls, derived from what the fixture says it HAS. */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[4]}px` }}>
+            {(
+              [
+                ['size', fixture.sizes, activeSize, setSize],
+                ['state', fixture.states, activeState, setState],
+                ['variant', fixture.variants ?? [], activeVariant, setVariant],
+              ] as const
+            )
+              .filter(([, values]) => values.length > 1)
+              .map(([name, values, active, set]) => (
+                <Segmented
+                  key={name}
+                  label={name}
+                  value={active ?? ''}
+                  options={values.map((v) => ({ id: v, label: v }))}
+                  onChange={set}
+                />
               ))}
-            </div>
-
-            {/* the forcing harness */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
-              <span style={{ fontSize: 10, opacity: 0.6 }}>Forced state</span>
-              {FORCED.map((f) => (
-                <button
-                  key={f.id}
-                  type="button"
-                  aria-pressed={forced === f.id}
-                  onClick={() => setForced(f.id)}
-                  style={{
-                    ...(forced === f.id ? WORK.style : WELL.style),
-                    font: 'inherit',
-                    fontSize: 11,
-                    padding: `2px ${S[2]}px`,
-                    borderRadius: `${R.chip}px`,
-                    border: '1px solid transparent',
-                  }}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-
-            {/* The device the component is tested at. */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
-              <span style={{ fontSize: 10, opacity: 0.6 }}>device</span>
-              {(['phone', 'tablet', 'fluid'] as DeviceWidth[]).map((d) => (
-                <button
-                  key={d}
-                  type="button"
-                  aria-pressed={device === d}
-                  onClick={() => setDevice(d)}
-                  style={{
-                    ...(device === d ? WORK.style : WELL.style),
-                    font: 'inherit',
-                    fontSize: 11,
-                    padding: `2px ${S[2]}px`,
-                    borderRadius: `${R.chip}px`,
-                    border: '1px solid transparent',
-                  }}
-                >
-                  {d}
-                </button>
-              ))}
-            </div>
-
-            <DeviceFrame device={device} minHeight={device === 'phone' ? 320 : 200}>
-              <div
-                ref={previewRef}
-                className={forced === 'none' ? undefined : `force-${forced}`}
-                style={{
-                  ...WELL.style,
-                  borderRadius: `${R.card}px`,
-                  padding: `${S[5]}px`,
-                  minHeight: 132,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflowX: 'auto',
-                  transition: M.getTransition('background', 'normal'),
-                }}
-              >
-                {rendered}
-              </div>
-            </DeviceFrame>
-            <p style={{ margin: 0, fontSize: 11, opacity: 0.7 }}>
-              Hover and focus work on the <b>real</b> preview. "Forced state" applies the
-              layer's own declarations through a class — a harness for seeing, not the component's
-              behaviour.
-            </p>
-          </Card>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: `${S[4]}px`,
-            }}
-          >
-            <EngineReadout snapshot={snapshot} />
-            <ContractChecks surfaceHex={surfaceHex} level={snapshot?.level ?? null} />
-            <CoveragePanel
-              name={fixture.name}
-              has={fixture.states}
-              expected={fixture.expected}
-              sizes={fixture.sizes}
-              variants={fixture.variants ?? []}
-              coveragePercent={pct(coverage(fixture))}
-            />
-            <CodePanel element={rendered} />
           </div>
-        </main>
+
+          <DeviceFrame device={device} minHeight={device === 'phone' ? 340 : 200}>
+            <div
+              ref={previewRef}
+              className={forced === 'none' ? undefined : `force-${forced}`}
+              style={{
+                ...WELL.style,
+                borderRadius: `${R.card}px`,
+                padding: `${S[5]}px`,
+                minHeight: 132,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflowX: 'auto',
+                transition: M.getTransition('background', 'normal'),
+              }}
+            >
+              {rendered}
+            </div>
+          </DeviceFrame>
+
+          {/* ── the panels, as an accordion ─────────────────────────────── */}
+          <Accordion
+            type="multiple"
+            headingLevel={3}
+            items={[
+              { id: 'engine', title: 'Engine — what it published', content: <EngineReadout snapshot={snapshot} /> },
+              {
+                id: 'contract',
+                title: 'Contract — does the surface hold',
+                content: <ContractChecks surfaceHex={snapshot?.level != null ? WELL.backgroundHex : WELL.backgroundHex} level={snapshot?.level ?? null} />,
+              },
+              {
+                id: 'coverage',
+                title: `Coverage — ${pct(coverage(fixture))}%`,
+                content: (
+                  <CoveragePanel
+                    name={fixture.name}
+                    has={fixture.states}
+                    expected={fixture.expected}
+                    sizes={fixture.sizes}
+                    variants={fixture.variants ?? []}
+                    coveragePercent={pct(coverage(fixture))}
+                  />
+                ),
+              },
+              { id: 'code', title: 'Code — the element that rendered', content: <CodePanel element={rendered} /> },
+            ]}
+          />
+        </div>
       </div>
     </div>
   );

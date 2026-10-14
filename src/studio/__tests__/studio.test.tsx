@@ -16,11 +16,20 @@ import { LADDER } from '../../engine/liminal-ladder';
  * theme function it uses is the engine's own.
  */
 describe('the studio', () => {
-  it('renders every panel it promises', () => {
+  it('offers every panel it promises, as an accordion', () => {
+    // The panels are ACCORDION TRIGGERS now, not open cards. The page used to be
+    // one long scroll where a reviewer passed four things to reach the fifth;
+    // the height was the problem, so the panels are one click away and one click
+    // shut. What the test can assert is that the doors exist.
     render(<ThemeProvider><Studio /></ThemeProvider>);
-    for (const label of ['Theme', 'Preview', 'Engine', 'Contract', 'Coverage', 'Code']) {
-      expect(screen.getByLabelText(label), label).toBeTruthy();
+    for (const label of [/Engine/, /Contract/, /Coverage/, /Code/]) {
+      expect(screen.getByRole('button', { name: label }), String(label)).toBeTruthy();
     }
+  });
+
+  it('the preview is ALWAYS open, because it is what the page is for', () => {
+    const { container } = render(<ThemeProvider><Studio /></ThemeProvider>);
+    expect(container.querySelector('[data-liminal-surface]')).toBeTruthy();
   });
 
   it('reads the theme from the provider instead of keeping its own copy', () => {
