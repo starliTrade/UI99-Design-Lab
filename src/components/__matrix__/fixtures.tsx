@@ -14,6 +14,7 @@ import { Panel } from '../containers/Panel/Panel';
 import { Divider } from '../containers/Divider/Divider';
 import { Popover } from '../containers/Popover/Popover';
 import { HoverCard } from '../containers/HoverCard/HoverCard';
+import { AlertDialog } from '../feedback/AlertDialog/AlertDialog';
 import { Avatar } from '../data/Avatar/Avatar';
 import { Stat } from '../data/Stat/Stat';
 import { Progress } from '../data/Progress/Progress';
@@ -268,6 +269,19 @@ export const FIXTURES: ComponentFixture[] = [
   {
     name: 'Sheet', kind: 'control', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
     render: (_s, size) => <Sheet open title="Sheet" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Sheet>,
+  },
+  {
+    name: 'AlertDialog', group: 'Feedback', sizes: [], states: ['closed', 'open'], expected: [],
+    render: (state) => (
+      <AlertDialog
+        open={state === 'open'}
+        title="Delete this project?"
+        description="This cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        destructive
+      />
+    ),
   },
   {
     name: 'Toast', group: 'Feedback', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,

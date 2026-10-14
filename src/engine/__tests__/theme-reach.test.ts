@@ -62,6 +62,7 @@ describe('a surface follows a theme', () => {
     // Portals cannot be server-rendered; the list is asserted so it cannot grow
     // quietly into "the guard stopped looking at half the kit".
     expect([...new Set(skipped.map((s) => s.split(' (')[0]))].sort()).toEqual([
+      'AlertDialog',
       'CommandPalette',
       'HoverCard',
       'Modal',

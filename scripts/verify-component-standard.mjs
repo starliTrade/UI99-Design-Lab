@@ -48,8 +48,19 @@ const files = walk(join(SRC, 'components')).filter((f) => isComponent(readFileSy
  */
 const isControl = (src) => /resolveSurface\(\{\s*role:\s*'control'/.test(src);
 
+/**
+ * Comments are not code.
+ *
+ * The `tokens` rule matched its own documentation: the AlertDialog's comment
+ * explaining which hand-picked value it had REPLACED contained the value, and
+ * the check reported the component as still carrying it. A guard that reads
+ * prose is a guard that lies — and it lies in the direction of "everything is
+ * broken", which is how a guard gets ignored.
+ */
+const code = (src) => src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+
 const rows = files.map((f) => {
-  const src = readFileSync(f, 'utf8');
+  const src = code(readFileSync(f, 'utf8'));
   const name = f.replace(SRC + '/components/', '').replace(/\.tsx$/, '').split('/').pop();
   const has = (re) => re.test(src);
   const control = isControl(src);
