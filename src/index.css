@@ -379,29 +379,36 @@
 @layer base {
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: #030406;
-    color: #eef0f3;
+    background-color: var(--liminal-s-minus-1);
+    color: var(--liminal-text-primary);
   }
 
   code, pre, .font-mono {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 }
 
 /* Custom delicate scrollbars */
+/* A selection is an alpha overlay on whatever it sits on — which is exactly
+   what the engine's tint scale is, so it is a tint and not a colour. */
+::selection {
+  background: var(--liminal-tint-strong);
+  color: var(--liminal-text-primary);
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #030406;
+  background: var(--liminal-s-minus-1);
 }
 ::-webkit-scrollbar-thumb {
-  background: #151922;
-  border-radius: 9999px;
+  background: var(--liminal-tint-medium);
+  border-radius: var(--liminal-radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #232a38;
+  background: var(--liminal-tint-strong);
 }
 
 /* Hide scrollbar for horizontal mobile rails */
