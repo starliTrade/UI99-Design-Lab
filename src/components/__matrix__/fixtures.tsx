@@ -12,6 +12,7 @@ import { Select } from '../inputs/Select/Select';
 import { Card } from '../containers/Card/Card';
 import { Panel } from '../containers/Panel/Panel';
 import { Divider } from '../containers/Divider/Divider';
+import { Popover } from '../containers/Popover/Popover';
 import { Avatar } from '../data/Avatar/Avatar';
 import { Stat } from '../data/Stat/Stat';
 import { Progress } from '../data/Progress/Progress';
@@ -57,6 +58,18 @@ import { Form, Field } from '../composites/Form/Form';
 export interface ComponentFixture {
   /** The component's name, as a consumer would say it. */
   name: string;
+  /**
+   * WHICH KIND OF THING IT IS.
+   *
+   * `size`, `variant`, `disabled` and `error` are CONTROL criteria. A Popover
+   * sized by its content, or a Grid with a `variant`, would be a prop with no
+   * meaning — and a tool that demands one pushes components to invent it. The
+   * kind is what tells the difference; without it the docs asked a reviewer to
+   * look for sizes on a popover.
+   *
+   * Defaults to 'surface', so only the controls have to say so.
+   */
+  kind?: 'control' | 'surface';
   /** The category, for grouping on the page. */
   group: string;
   /** The sizes the component actually supports. Empty means it has none. */
@@ -86,7 +99,7 @@ const FEEDBACK_STATES = ['info', 'success', 'warning', 'danger'];
 
 export const FIXTURES: ComponentFixture[] = [
   {
-    name: 'Button', group: 'Atoms', sizes: ['sm', 'md', 'lg'], states: INTERACTIVE, expected: INTERACTIVE,
+    name: 'Button', kind: 'control', group: 'Atoms', sizes: ['sm', 'md', 'lg'], states: INTERACTIVE, expected: INTERACTIVE,
     variants: ['primary', 'secondary', 'ghost', 'danger', 'outline', 'link'],
     render: (state, size, variant) => (
       <Button size={(size ?? 'md') as 'sm'} disabled={state === 'disabled'} variant={(variant ?? 'primary') as 'primary'}>
@@ -95,7 +108,7 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: INPUT_STATES, expected: INPUT_STATES,
+    name: 'Input', kind: 'control', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: INPUT_STATES, expected: INPUT_STATES,
     render: (state, size) => (
       <Input
         size={(size ?? 'md') as 'sm'}
@@ -111,7 +124,7 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Textarea', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'Textarea', kind: 'control', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
       <Textarea
         label="About"
@@ -122,7 +135,7 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Select', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'Select', kind: 'control', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
       <Select
         label="Route"
@@ -166,13 +179,13 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Progress', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default', 'success', 'warning', 'danger'], expected: [],
+    name: 'Progress', kind: 'control', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default', 'success', 'warning', 'danger'], expected: [],
     render: (state, size) => (
       <Progress value={62} label="Upload" size={(size ?? 'md') as 'sm'} semantic={state === 'default' ? undefined : (state as 'success')} />
     ),
   },
   {
-    name: 'Avatar', group: 'Data', // Avatar has three sizes, not the icon engine's five. Recorded as-is.
+    name: 'Avatar', kind: 'control', group: 'Data', // Avatar has three sizes, not the icon engine's five. Recorded as-is.
     sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
     render: (_s, size) => <Avatar name="Starli Trade" size={(size ?? 'md') as 'md'} />,
   },
@@ -220,11 +233,26 @@ export const FIXTURES: ComponentFixture[] = [
   },
   // ── the rest of the library ──────────────────────────────────────────────
   {
-    name: 'Modal', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    name: 'Modal', kind: 'control', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
     render: (_s, size) => <Modal open title="Dialog" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Modal>,
   },
   {
-    name: 'Sheet', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    name: 'Popover', group: 'Containers', sizes: [], states: ['closed', 'open'], expected: [],
+    render: (state) => (
+      // The closed state is UNCONTROLLED, so a reader can actually open it.
+      // Passing `open={false}` would make the preview a picture of a popover
+      // that cannot be opened — and the studio's whole job is that you can.
+      <Popover
+        trigger={<Button variant="secondary">Open</Button>}
+        {...(state === 'open' ? { open: true } : {})}
+        aria-label="Details"
+      >
+        <span>Popover content</span>
+      </Popover>
+    ),
+  },
+  {
+    name: 'Sheet', kind: 'control', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
     render: (_s, size) => <Sheet open title="Sheet" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Sheet>,
   },
   {

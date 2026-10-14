@@ -38,27 +38,46 @@ const isComponent = (src) => /^export (function|const) [A-Z]/m.test(src);
 
 const files = walk(join(SRC, 'components')).filter((f) => isComponent(readFileSync(f, 'utf8')));
 
+/**
+ * IS IT A CONTROL?
+ *
+ * `size`, `variant`, `disabled` and `error` are CONTROL criteria. A Popover
+ * sized by its content, or a Grid with a `variant`, would be a prop with no
+ * meaning — and demanding one would push components to invent it. The role the
+ * component declares is the honest discriminator: it says what the thing IS.
+ */
+const isControl = (src) => /resolveSurface\(\{\s*role:\s*'control'/.test(src);
+
 const rows = files.map((f) => {
   const src = readFileSync(f, 'utf8');
   const name = f.replace(SRC + '/components/', '').replace(/\.tsx$/, '').split('/').pop();
   const has = (re) => re.test(src);
+  const control = isControl(src);
   return {
     name,
     path: f.replace(SRC + '/', ''),
+    control,
     role: has(/resolveSurface\(\{\s*role/),
-    size: has(/\bsize\??:/),
-    variant: has(/\bvariant\??:/),
-    disabled: has(/\bdisabled\??:/),
-    error: has(/\berror\??:/),
+    // Not applicable is not the same as missing: a non-control is neither.
+    size: !control || has(/\bsize\??:/),
+    variant: !control || has(/\bvariant\??:/),
+    disabled: !control || has(/\bdisabled\??:/),
+    error: !control || has(/\berror\??:/),
     tokens: !has(/['"]#[0-9a-fA-F]{3,8}['"]/) && !has(/rgba?\(/),
     fixture: readFileSync(resolve(SRC, 'components/__matrix__/fixtures.tsx'), 'utf8').includes(`name: '${name}'`),
   };
 });
 
 const KEYS = ['role', 'size', 'variant', 'disabled', 'error', 'tokens', 'fixture'];
+const CONTROL_KEYS = ['size', 'variant', 'disabled', 'error'];
 const score = (r) => KEYS.filter((k) => r[k]).length;
 
-const counts = Object.fromEntries(KEYS.map((k) => [k, rows.filter((r) => r[k]).length]));
+const counts = Object.fromEntries(
+  KEYS.map((k) => {
+    const scope = CONTROL_KEYS.includes(k) ? rows.filter((r) => r.control) : rows;
+    return [k, scope.filter((r) => r[k]).length];
+  }),
+);
 counts.components = rows.length;
 counts.complete = rows.filter((r) => score(r) === KEYS.length).length;
 
@@ -98,7 +117,11 @@ if (process.argv.includes('--json')) {
   const complete = rows.filter((r) => score(r) === KEYS.length).length;
   console.log(`\n${rows.length} components · ${complete} complete · ${rows.length - complete} short of the standard`);
   for (const k of KEYS) {
-    const n = rows.filter((r) => r[k]).length;
-    console.log(`  ${w(k, 10)} ${n}/${rows.length}`);
+    // A control criterion is counted over the controls, not over everything:
+    // 49/56 for `size` would read as "49 components have a size" when most of
+    // them are containers that correctly have none.
+    const scope = CONTROL_KEYS.includes(k) ? rows.filter((r) => r.control) : rows;
+    const n = scope.filter((r) => r[k]).length;
+    console.log(`  ${w(k, 10)} ${n}/${scope.length}${CONTROL_KEYS.includes(k) ? '  (controls only)' : ''}`);
   }
 }

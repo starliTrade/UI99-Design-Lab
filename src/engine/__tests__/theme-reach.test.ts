@@ -64,6 +64,7 @@ describe('a surface follows a theme', () => {
     expect([...new Set(skipped.map((s) => s.split(' (')[0]))].sort()).toEqual([
       'CommandPalette',
       'Modal',
+      'Popover',
       'Sheet',
       'Toast',
     ]);

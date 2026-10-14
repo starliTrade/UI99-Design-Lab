@@ -17,13 +17,20 @@ import { resolveSurface } from '../../engine/liminal-surface';
 
 const pct = (n: number) => Math.round(n * 100);
 
-/** What a reviewer should check by eye. Not a checklist for the machine. */
+/**
+ * What a reviewer should check by eye. Not a checklist for the machine.
+ *
+ * `size` and `variant` are CONTROL criteria. Telling a reviewer that a Popover
+ * "needs sizes" is telling them to ask for a prop with no meaning — the same
+ * bluntness the standard check had, and the same fix: ask what the thing IS.
+ */
 function EyeNotes({ name }: { name: string }) {
   const f = FIXTURES.find((x) => x.name === name);
   if (!f) return null;
+  const control = f.kind === 'control';
   const notes: string[] = [];
-  if (!f.sizes.length) notes.push('No sizes — if it is a control, it needs them');
-  if (!f.variants?.length) notes.push('No variants');
+  if (control && !f.sizes.length) notes.push('No sizes — a control needs them');
+  if (control && !f.variants?.length) notes.push('No variants');
   const missing = f.expected.filter((s) => !f.states.includes(s));
   if (missing.length) notes.push(`Missing states: ${missing.join(' · ')}`);
   if (!notes.length) notes.push('Structurally complete — judge it by eye');
@@ -71,7 +78,7 @@ export function ComponentPage({ name }: { name: string }) {
       </Section>
 
       {/* The workbench. Same component the studio renders. */}
-      <Studio initial={f.name} />
+      <Studio initial={f.name} showList={false} />
 
       <Section title="The fixture table" note="One row — and the studio, the matrix and the a11y sweep pick it up">
         <Prose>

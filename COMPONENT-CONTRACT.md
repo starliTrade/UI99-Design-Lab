@@ -5,7 +5,8 @@
 
 This is the standard a component meets before it is called done. It exists
 because the components were written **before** the engine settled: measured
-today, **55 components, 0 complete**.
+today, **56 components, 18 complete** — and the 18 are the containers, which
+have no sizes to have.
 
 The engine is not the problem. The engine is finished. The components are the
 distance between what the engine can express and what they currently declare.
@@ -173,17 +174,24 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-55 components · 0 complete · 55 short of the standard
-  role       33/55
-  size        8/55
-  variant     4/55
-  disabled   16/55
-  error       6/55
-  tokens     52/55
-  fixture    42/55
+56 components · 18 complete · 38 short of the standard
+  role       34/56
+  size        6/13  (controls only)
+  variant     2/13  (controls only)
+  disabled    7/13  (controls only)
+  error       4/13  (controls only)
+  tokens     53/56
+  fixture    43/56
 ```
 
-`Input` and `Button` are at 6/7. The rest are the work.
+**A control criterion is counted over the controls.** `size`, `variant`,
+`disabled` and `error` are things a CONTROL has; a Popover sized by its content,
+or a Grid with a `variant`, would be a prop with no meaning — and demanding one
+would push components to invent it. The role a component declares is the honest
+discriminator: it says what the thing IS.
+
+`Popover` is the first at 7/7. `Input` and `Button` are at 6/7. The rest are the
+work.
 
 ---
 

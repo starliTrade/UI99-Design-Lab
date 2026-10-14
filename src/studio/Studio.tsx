@@ -65,7 +65,20 @@ function controlsFor(f: ComponentFixture): { name: string; values: string[] }[] 
 
 const pct = (n: number) => Math.round(n * 100);
 
-export function Studio({ initial }: { initial?: string } = {}) {
+export function Studio({
+  initial,
+  showList = true,
+}: {
+  initial?: string;
+  /**
+   * Whether to render the component list.
+   *
+   * The docs already have one in their sidebar, and rendering the studio's own
+   * inside a component page put TWO lists on one screen — the same components,
+   * twice, one of them scrolling inside the other.
+   */
+  showList?: boolean;
+} = {}) {
   // The theme lives in the docs' provider, so the studio and every page share
   // one. A studio that kept its own copy would theme itself and nothing else.
   const { state: theme, theme: live, set: setTheme } = useTheme();
@@ -155,6 +168,7 @@ export function Studio({ initial }: { initial?: string } = {}) {
         }}
       >
         {/* ── the component list ──────────────────────────────────────────── */}
+        {showList && (
         <nav
           aria-label="Components"
           style={{
@@ -217,6 +231,7 @@ export function Studio({ initial }: { initial?: string } = {}) {
             </div>
           ))}
         </nav>
+        )}
 
         {/* ── the work ────────────────────────────────────────────────────── */}
         <main style={{ flex: '2 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[4]}px` }}>
