@@ -139,10 +139,18 @@ export default tseslint.config(
         // which the layer does not own — a false positive is a guard nobody
         // keeps.
         {
+          // BACKGROUND ONLY, for `data-liminal-surface`.
+          //
+          // The layer's rule for this attribute sets `background` and nothing
+          // else, so an inline `border` does not conflict with it — and the
+          // FileUpload's dashed drop zone needs one. The rule flagged it, and a
+          // guard that fires on a correct line is a guard someone turns off.
+          // `border` belongs in the `focus-within` rule below, because THAT
+          // layer rule does set `border-color`.
           selector:
-            "JSXOpeningElement:has(JSXAttribute[name.name='data-liminal-surface']) JSXAttribute[name.name='style'] Property[key.name=/^(background|backgroundColor|border|borderColor)$/]",
+            "JSXOpeningElement:has(JSXAttribute[name.name='data-liminal-surface']) JSXAttribute[name.name='style'] Property[key.name=/^(background|backgroundColor)$/]",
           message:
-            'This element opts into data-liminal-surface AND sets background or border inline. An inline style beats the layer\'s rule. Set --liminal-surface-idle instead and remove this line.',
+            'This element opts into data-liminal-surface AND sets a background inline. An inline style beats the layer\'s rule. Set --liminal-surface-idle instead and remove this line.',
         },
         {
           selector:

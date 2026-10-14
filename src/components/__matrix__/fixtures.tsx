@@ -10,6 +10,7 @@ import { Slider } from '../inputs/Slider/Slider';
 import { NumberInput } from '../inputs/NumberInput/NumberInput';
 import { OTP } from '../inputs/OTP/OTP';
 import { Rating } from '../inputs/Rating/Rating';
+import { FileUpload } from '../inputs/FileUpload/FileUpload';
 import { Checkbox } from '../inputs/Checkbox/Checkbox';
 import { Radio } from '../inputs/Radio/Radio';
 import { Select } from '../inputs/Select/Select';
@@ -139,6 +140,20 @@ export const FIXTURES: ComponentFixture[] = [
         disabled={state === 'disabled'}
         readOnly={state === 'readonly'}
         defaultValue={state === 'default' ? '' : 'starli'}
+      />
+    ),
+  },
+  {
+    name: 'FileUpload', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'filled', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state, size) => (
+      <FileUpload
+        files={state === 'filled' ? [new File(['x'], 'report.pdf')] : []}
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'That file is too large' : undefined}
+        label="Attachment"
+        hint="PDF, up to 10MB"
       />
     ),
   },

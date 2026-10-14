@@ -64,4 +64,33 @@ describe('the interaction variables have ONE producer', () => {
       expect(offenders, `opted into ${attr} with no producer`).toEqual([]);
     });
   }
+
+  /**
+   * AND THE OTHER DIRECTION, which was unguarded and cost two components.
+   *
+   * The guard above catches a component that opts in without publishing. The
+   * reverse is just as broken and harder to see: a component that PUBLISHES and
+   * never opts in leaves a variable nothing reads. The element renders with no
+   * background at all — not a wrong colour, no colour — and it looks like the
+   * component failed to load.
+   *
+   * The Slider's track and the FileUpload's drop zone both shipped that way.
+   * Every unit test passed; the eye test caught both.
+   *
+   * The check is coarse on purpose: it asks whether the file contains the
+   * opt-in ANYWHERE, because a component may publish for a child it renders.
+   * Coarse and true beats precise and silent.
+   */
+  it('no component publishes the variables without opting in somewhere', () => {
+    const offenders: string[] = [];
+    let publishers = 0;
+    for (const file of COMPONENT_FILES) {
+      const text = readFileSync(file, 'utf8');
+      if (!text.includes('resolveInteractionVars')) continue;
+      publishers++;
+      if (!text.includes('data-liminal-surface')) offenders.push(file.replace(SRC + '/', ''));
+    }
+    expect(publishers, 'components publishing the variables').toBeGreaterThan(0);
+    expect(offenders, 'published the variables and never opted in — a variable nothing reads').toEqual([]);
+  });
 });
