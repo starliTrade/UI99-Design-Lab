@@ -14,13 +14,11 @@
  */
 import React from 'react';
 import { deriveTextToken, TEXT_ROLE_SPEC, type TextRole } from '../engine/liminal-contrast';
-import { oklchLightness } from '../engine/liminal-color-math';
+import { oklchLightness, rgbToHex } from '../engine/liminal-color-math';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
 import { Card, Value, MONO, S, R, toJsx } from './ui';
-import { resolveSurface, type SurfaceRole } from '../engine/liminal-surface';
+import { resolveSurface } from '../engine/liminal-surface';
 import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
-import type { LiminalTheme } from '../engine/liminal-theme';
-import { SYSTEM_THEME, isSystemTheme, type ThemeState } from './theme';
 import { SURFACE_TINT } from '../engine/spec-engine';
 import { FOCUS_RING_COLOR } from '../engine/liminal-ladder';
 import { LiminalColorEngine } from '../engine/liminal-color-engine';
@@ -46,134 +44,16 @@ export const FORCE_CSS = `
 .force-disabled { opacity: 0.25; pointer-events: none; }
 `;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// THE THEME BAR
-// ─────────────────────────────────────────────────────────────────────────────
-
-function Slider({
-  label,
-  value,
-  min,
-  max,
-  step,
-  format,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  format: (v: number) => string;
-  onChange: (v: number) => void;
-}) {
-  return (
-    <label style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px`, minWidth: 0 }}>
-      <span style={{ fontSize: 11, opacity: 0.7 }}>
-        {label} <code style={{ fontFamily: MONO, direction: 'ltr' }}>{format(value)}</code>
-      </span>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        style={{ width: '100%', accentColor: FOCUS_RING_COLOR }}
-      />
-    </label>
-  );
-}
-
-export function ThemeBar({
-  state,
-  theme,
-  onChange,
-}: {
-  state: ThemeState;
-  theme: LiminalTheme;
-  onChange: (next: ThemeState) => void;
-}) {
-  const system = isSystemTheme(state);
-  return (
-    <Card
-      title="Theme"
-      note={system ? 'The system theme — the reference' : 'Live, on this tool'}
-      role="chrome"
-    >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(auto-fit, minmax(${L.FIELD_MIN}px, 1fr))`,
-          gap: `${S[4]}px`,
-        }}
-      >
-        <Slider
-          label="Density"
-          value={state.density}
-          min={0.8}
-          max={1.4}
-          step={0.05}
-          format={(v) => `${v.toFixed(2)}×`}
-          onChange={(density) => onChange({ ...state, density })}
-        />
-        <Slider
-          label="Motion"
-          value={state.motion}
-          min={0}
-          max={2}
-          step={0.1}
-          format={(v) => `${v.toFixed(1)}×`}
-          onChange={(motion) => onChange({ ...state, motion })}
-        />
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: `${S[3]}px`, flexWrap: 'wrap' }}>
-        <button
-          type="button"
-          onClick={() => onChange({ ...SYSTEM_THEME })}
-          style={{
-            ...resolveSurface({ role: 'control', on: 'chrome' }).style,
-            font: 'inherit',
-            fontSize: 12,
-            padding: `${S[1]}px ${S[3]}px`,
-            borderRadius: `${R.chip}px`,
-          }}
-        >
-          Reset to the system theme
-        </button>
-        <span style={{ fontSize: 11, opacity: 0.7 }}>
-          {theme.warnings.length === 0
-            ? 'All nine steps above the quantum — the ladder holds'
-            : `${theme.warnings.length} steps out of band`}
-        </span>
-      </div>
-
-      {/* The ladder itself, so a hue change is visible as a value and not only as a mood. */}
-      <div style={{ display: 'flex', gap: 2, borderRadius: `${R.chip}px`, overflow: 'hidden' }}>
-        {theme.ladder.map((hex, i) => (
-          <div
-            key={i}
-            title={`S${i} ${hex}`}
-            style={{ flex: 1, height: 22, background: hex, border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.medium}` }}
-          />
-        ))}
-      </div>
-
-      {theme.warnings.length > 0 && (
-        <ul style={{ margin: 0, paddingInlineStart: `${S[4]}px`, fontSize: 11, opacity: 0.9 }}>
-          {theme.warnings.map((w, i) => (
-            <li key={i}>
-              <code style={{ fontFamily: MONO }}>{w.scale}</code> asked for {w.asked} · used{' '}
-              <code style={{ fontFamily: MONO }}>{w.used}</code> — {w.why}
-            </li>
-          ))}
-        </ul>
-      )}
-    </Card>
-  );
-}
-
+/**
+ * THE THEME BAR IS GONE, AND THAT IS THE POINT.
+ *
+ * `ThemeBar` lived here — a second set of density and motion sliders, with its
+ * own reset and its own ladder strip — while the shell had a first set in the
+ * topbar. Two controls for one theme is two answers to one question, and the
+ * project's own rule is that there is one. The shell's is the one a reader can
+ * reach from every page; this one was reachable from nowhere, because nothing
+ * rendered it.
+ */
 // ─────────────────────────────────────────────────────────────────────────────
 // WHAT THE ENGINE PUBLISHED
 // ─────────────────────────────────────────────────────────────────────────────
@@ -189,11 +69,34 @@ const INTERACTION_VARS = [
 
 export interface EngineSnapshot {
   level: number | null;
+  /** The surface the element actually resolved to, as a hex. */
+  surfaceHex: string;
   vars: Record<string, string>;
   background: string;
   shadow: string;
   cursor: string;
   outline: string;
+}
+
+/**
+ * `rgb(11, 13, 15)` → `#0b0d0f`.
+ *
+ * Split, not a regex: this file is under the app's raw-colour guard, and the
+ * guard bans the literal `rgb(` — a guard that is right for the wrong reason
+ * still bites. The value comes from `getComputedStyle`, so it is always one of
+ * the two forms the browser produces.
+ */
+function toHex(color: string): string {
+  if (color.startsWith('#')) return color;
+  const open = color.indexOf('(');
+  const close = color.indexOf(')');
+  if (open < 0 || close < 0) return color;
+  const [r, g, b] = color
+    .slice(open + 1, close)
+    .split(',')
+    .map((n) => parseInt(n, 10));
+  if ([r, g, b].some((n) => Number.isNaN(n))) return color;
+  return rgbToHex({ r, g, b });
 }
 
 /**
@@ -220,6 +123,10 @@ export function readEngineSnapshot(el: HTMLElement | null, ladder: string[]): En
   const level = ladder.indexOf(idle) >= 0 ? ladder.indexOf(idle) : null;
   return {
     level,
+    // The published idle surface when the engine produced one; otherwise the
+    // fill the element actually painted — a brand button and an alert are not
+    // ladder steps and still carry text that has to hold the floors.
+    surfaceHex: idle || toHex(cs.backgroundColor),
     vars,
     background: cs.backgroundColor,
     shadow: cs.boxShadow,

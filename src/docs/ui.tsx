@@ -181,6 +181,69 @@ export function Code({ children, block }: { children: string; block?: boolean })
   );
 }
 
+/**
+ * A segmented control — the ONE producer of the shape.
+ *
+ * The studio had one inline, the shell had a second (`Btn` with `active`), and
+ * the hero needed a third. Three implementations of one control is three
+ * chances to disagree about the height of a chip, and this project has already
+ * paid twice for exactly that: a state published by one half and forgotten by
+ * the other.
+ *
+ * The track is a `well` — the engine's own role for a recessed container — and
+ * the selected chip sits on `work`, so the control reads as pressed into the
+ * surface rather than painted on it.
+ */
+export function Segmented<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label?: string;
+  value: T;
+  options: { id: T; label: string; title?: string }[];
+  onChange: (v: T) => void;
+}) {
+  const track = surfaceFor('well');
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: `${S[2]}px`, minWidth: 0 }}>
+      {label && <span style={{ fontSize: 10, opacity: 0.6, whiteSpace: 'nowrap' }}>{label}</span>}
+      <div
+        style={{
+          display: 'inline-flex',
+          gap: S[0],
+          padding: S[0],
+          borderRadius: `${R.control}px`,
+          ...track.style,
+        }}
+      >
+        {options.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            aria-pressed={value === o.id}
+            title={o.title}
+            onClick={() => onChange(o.id)}
+            style={{
+              ...(value === o.id ? WELL.style : { background: 'transparent' }),
+              font: 'inherit',
+              fontSize: 11,
+              padding: `${S[0]}px ${S[3]}px`,
+              borderRadius: `${R.chip}px`,
+              border: 'none',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function Prose({ children }: { children: React.ReactNode }) {
   return <p style={{ margin: 0, fontSize: 12, lineHeight: 2, opacity: 0.85, maxWidth: '78ch' }}>{children}</p>;
 }

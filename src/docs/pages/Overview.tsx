@@ -12,6 +12,8 @@ import { ROLE_LEVEL, ROLE_RIM, ROLE_SHADOW } from '../../engine/liminal-surface'
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { LiminalLayoutEngine as L } from '../../engine/liminal-layout-engine';
 import { Section, Stat, Value, Prose, Code, MONO, S, R } from '../ui';
+import { AppFrame } from '../AppFrame';
+import { Heading, Text } from '../../components/atoms/Typography';
 
 /** The semantic roles, from the engine — a colour a reader can name. */
 const SEMANTICS = LiminalColorEngine.SEMANTICS;
@@ -26,12 +28,22 @@ export function OverviewPage({ go }: { go: (name: string) => void }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
       <Section title="LIMINAL" note="A mathematically derived dark system — an engine, not a token file" role="panel">
-        <Prose>
-          This is not a component library with a CSS file. It is an <b>engine</b>: every surface,
-          every edge, every colour and every space comes from a rule — and the rule is written as a
-          test. Components do not choose anything. They declare <b>what they are</b>, and the engine
-          decides.
-        </Prose>
+        {/* THE HERO: the claim, and then the product — not a table of numbers.
+            «یک اپِ واقعی در قابِ دستگاه.» The first thing a visitor should see is
+            the system carrying a whole app, at a width they can change. */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[3]}px`, maxWidth: '78ch' }}>
+          <Heading level={1} size={8}>
+            The component declares. The engine decides.
+          </Heading>
+          <Text level={4} tone="secondary">
+            LIMINAL is not a component library with a stylesheet. It is a <b>perceptual engine</b>:
+            a measured quantum, a generated ladder, a rim that knows which way the light falls —
+            and {FIXTURES.length} components that are not allowed to choose a single number.
+          </Text>
+        </div>
+
+        <AppFrame />
+
         <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(${L.CELL_MIN * 2}px, 1fr))`, gap: `${S[4]}px` }}>
           <Stat value={String(ROLES.length)} label="Roles in the hierarchy" />
           <Stat value={String(LADDER.length)} label="Ladder steps" />

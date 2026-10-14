@@ -16,12 +16,10 @@
  * same components a consumer gets. A tool that hand-rolled its own disclosure
  * would be a tool that cannot notice when the disclosure breaks.
  */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FIXTURES, coverage } from '../components/__matrix__/fixtures';
-import type { ComponentFixture } from '../components/__matrix__/fixtures';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
 import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
-import { resolveSurface } from '../engine/liminal-surface';
 import { Accordion } from '../components/containers/Accordion/Accordion';
 import { Input } from '../components/inputs/Input/Input';
 import { Badge } from '../components/atoms/Badge/Badge';
@@ -35,7 +33,7 @@ import {
   readEngineSnapshot,
   type EngineSnapshot,
 } from '../docs/panels';
-import { MONO, S, R, WELL, WORK, CHROME } from '../docs/ui';
+import { MONO, S, R, WELL, WORK, CHROME, Segmented } from '../docs/ui';
 import { useTheme } from '../docs/theme';
 import { LiminalColorEngine } from '../engine/liminal-color-engine';
 
@@ -54,54 +52,6 @@ type ForcedId = (typeof FORCED)[number]['id'];
 const DEVICES: DeviceWidth[] = ['phone', 'tablet', 'fluid'];
 const pct = (n: number) => Math.round(n * 100);
 
-/** A small segmented control — the library's own `ToggleGroup` shape, inline. */
-function Segmented<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: T;
-  options: { id: T; label: string }[];
-  onChange: (v: T) => void;
-}) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: `${S[2]}px`, minWidth: 0 }}>
-      <span style={{ fontSize: 10, opacity: 0.6, whiteSpace: 'nowrap' }}>{label}</span>
-      <div
-        style={{
-          display: 'inline-flex',
-          gap: 2,
-          padding: 2,
-          borderRadius: `${R.control}px`,
-          ...resolveSurface({ role: 'well', interactive: false }).style,
-        }}
-      >
-        {options.map((o) => (
-          <button
-            key={o.id}
-            type="button"
-            aria-pressed={value === o.id}
-            onClick={() => onChange(o.id)}
-            style={{
-              ...(value === o.id ? WORK.style : { background: 'transparent' }),
-              font: 'inherit',
-              fontSize: 11,
-              padding: `${S[0]}px ${S[3]}px`,
-              borderRadius: `${R.chip}px`,
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            {o.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function Studio({ initial, showList = true }: { initial?: string; showList?: boolean } = {}) {
   const groups = useMemo(() => [...new Set(FIXTURES.map((f) => f.group))], []);
   const [selected, setSelected] = useState<string>(initial ?? FIXTURES[0].name);
@@ -119,17 +69,42 @@ export function Studio({ initial, showList = true }: { initial?: string; showLis
   const activeVariant = variant && fixture.variants?.includes(variant) ? variant : fixture.variants?.[0];
   const rendered = fixture.render(activeState, activeSize, activeVariant);
 
-  const previewRef = useRef<HTMLDivElement>(null);
+  /**
+   * The preview is STATE, not a ref.
+   *
+   * A ref is null on the first pass — the frame portals the preview into the
+   * iframe, and a portal mounts one render after the frame's own effect — so an
+   * effect that reads `previewRef.current` finds nothing, returns, and never
+   * runs again, because its dependencies did not change. The panels then said
+   * "no element with data-liminal-surface in the preview" for every component
+   * in the library, on every fresh load.
+   *
+   * A callback ref turns "the node exists" into a state change, and the effect
+   * that reads the engine runs when there is something to read.
+   */
+  const [preview, setPreview] = useState<HTMLDivElement | null>(null);
   const [snapshot, setSnapshot] = useState<EngineSnapshot | null>(null);
   useEffect(() => {
-    const host = previewRef.current;
-    if (!host) return;
-    const el =
-      host.querySelector<HTMLElement>('[data-liminal-surface]') ??
-      host.querySelector<HTMLElement>('[data-liminal-focus-within]') ??
-      host.querySelector<HTMLElement>('[data-liminal-focusable]');
-    setSnapshot(readEngineSnapshot(el, theme.ladder));
-  }, [selected, activeState, activeSize, activeVariant, forced, theme.ladder]);
+    if (!preview) return;
+    const read = () => {
+      const el =
+        preview.querySelector<HTMLElement>('[data-liminal-surface]') ??
+        preview.querySelector<HTMLElement>('[data-liminal-focus-within]') ??
+        preview.querySelector<HTMLElement>('[data-liminal-focusable]');
+      setSnapshot(readEngineSnapshot(el, theme.ladder));
+    };
+    read();
+    /**
+     * And it is read again when the preview's CONTENT changes: switching the
+     * forced state or the fixture replaces the element the engine published, and
+     * the question is about the element that is there now. Attributes are NOT
+     * observed — a hover changes an inline style, and re-reading on every
+     * attribute change would be a render loop for a value that did not change.
+     */
+    const observer = new MutationObserver(read);
+    observer.observe(preview, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [preview, selected, activeState, activeSize, activeVariant, forced, theme.ladder]);
 
   const pick = (name: string) => {
     setSelected(name);
@@ -261,7 +236,7 @@ export function Studio({ initial, showList = true }: { initial?: string; showLis
 
           <DeviceFrame device={device} minHeight={device === 'phone' ? 340 : 200}>
             <div
-              ref={previewRef}
+              ref={setPreview}
               className={forced === 'none' ? undefined : `force-${forced}`}
               style={{
                 ...WELL.style,
@@ -288,7 +263,20 @@ export function Studio({ initial, showList = true }: { initial?: string; showLis
               {
                 id: 'contract',
                 title: 'Contract — does the surface hold',
-                content: <ContractChecks surfaceHex={snapshot?.level != null ? WELL.backgroundHex : WELL.backgroundHex} level={snapshot?.level ?? null} />,
+                // THE COMPONENT'S OWN SURFACE, not the well it sits on.
+                //
+                // This was `snapshot?.level != null ? WELL.backgroundHex :
+                // WELL.backgroundHex` — a ternary whose two branches are the
+                // same expression. It read as a decision and was a constant, so
+                // the panel measured the text hierarchy against the preview
+                // well for every component in the library: the one number it
+                // reported was about a surface the component had not painted.
+                content: (
+                  <ContractChecks
+                    surfaceHex={snapshot?.surfaceHex ?? WELL.backgroundHex}
+                    level={snapshot?.level ?? null}
+                  />
+                ),
               },
               {
                 id: 'coverage',
