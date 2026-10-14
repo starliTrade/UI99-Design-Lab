@@ -100,7 +100,7 @@ export function ContractPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title="Contract" note="Every rule, and the guard that holds it" role="work">
+      <Section title="Contract" note="Every rule, and the guard that holds it" role="panel">
         <Prose>
           A rule with no guard is a habit. This project watched one defect appear <b>seven
           times</b> — so every rule here names the test that goes red when it is broken.

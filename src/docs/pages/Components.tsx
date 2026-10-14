@@ -25,7 +25,7 @@ export function ComponentsPage({ go }: { go: (name: string) => void }) {
   const groups = [...new Set(FIXTURES.map((f) => f.group))];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title="Components" note={`${FIXTURES.length} components, live`} role="work">
+      <Section title="Components" note={`${FIXTURES.length} components, live`} role="panel">
         <Prose>
           Every card IS the component, not a picture of it. The percentage is state coverage:
           what the system expects against what exists. A red number means something is missing.

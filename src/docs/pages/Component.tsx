@@ -40,7 +40,7 @@ export function ComponentPage({ name }: { name: string }) {
   const f = FIXTURES.find((x) => x.name === name);
   if (!f) {
     return (
-      <Section title="Not found" note={name} role="work">
+      <Section title="Not found" note={name} role="panel">
         <Prose>This component is not in the fixture table — so the studio, the matrix and the a11y sweep do not know it either.</Prose>
       </Section>
     );
@@ -51,7 +51,7 @@ export function ComponentPage({ name }: { name: string }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title={f.name} note={`${f.group} — ${c}% coverage`} role="work">
+      <Section title={f.name} note={`${f.group} — ${c}% coverage`} role="panel">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: `${S[4]}px` }}>
           <Stat value={String(f.states.length)} label="States" />
           <Stat value={String(f.sizes.length)} label="Sizes" />

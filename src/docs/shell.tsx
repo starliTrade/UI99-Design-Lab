@@ -14,7 +14,7 @@ import { Button } from '../components/atoms/Button';
 import { Input } from '../components/inputs/Input';
 import { Badge } from '../components/atoms/Badge';
 import { FIXTURES, coverage } from '../components/__matrix__/fixtures';
-import { S, R, MONO, Btn, surfaceFor } from './ui';
+import { S, R, MONO, Btn, WORK, surfaceFor } from './ui';
 import { useMediaQuery } from '../engine/liminal-hooks';
 import { useTheme } from './theme';
 import { PAGES, routeKey, type Route } from './routes';
@@ -237,7 +237,29 @@ export function DocsShell({
           <Sidebar width={248}>{nav}</Sidebar>
         </aside>
 
-        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, boxSizing: 'border-box' }}>
+        {/* THE CONTENT PLANE IS A WORK SURFACE, NOT THE CANVAS.
+         *
+         * The engine's rule: a `panel` is a surface NESTED INSIDE the work
+         * surface, and the structural roles define the hierarchy rather than
+         * sit inside it. So a panel belongs on work, not on the canvas.
+         *
+         * The docs put their panels straight on the canvas: measured, a panel
+         * sat 3.56q above it and the work plane (S2) was never built. The panel
+         * was at the right level and in the wrong place — nothing hosted it.
+         * Now something does. */}
+        <main
+          style={{
+            ...WORK.style,
+            flex: '2 1 380px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: `${S[4]}px`,
+            minWidth: 0,
+            boxSizing: 'border-box',
+            borderRadius: `${R.card}px`,
+            padding: `${S[4]}px`,
+          }}
+        >
           {children}
         </main>
       </div>

@@ -25,7 +25,7 @@ export function TokensPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title="The ladder" note={`${theme.ladder.length} steps · quantum ${PERCEPTUAL_QUANTUM}`} role="work">
+      <Section title="The ladder" note={`${theme.ladder.length} steps · quantum ${PERCEPTUAL_QUANTUM}`} role="panel">
         <Prose>
           Each step sits one <b>perceptual quantum</b> from the one below — not an arbitrary
           percentage. A green number means the step is in band; red means this hue cannot hold it.

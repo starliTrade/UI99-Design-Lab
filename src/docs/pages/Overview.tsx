@@ -22,7 +22,7 @@ export function OverviewPage({ go }: { go: (name: string) => void }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
-      <Section title="LIMINAL" note="A mathematically derived dark system — an engine, not a token file" role="work">
+      <Section title="LIMINAL" note="A mathematically derived dark system — an engine, not a token file" role="panel">
         <Prose>
           This is not a component library with a CSS file. It is an <b>engine</b>: every surface,
           every edge, every colour and every space comes from a rule — and the rule is written as a
