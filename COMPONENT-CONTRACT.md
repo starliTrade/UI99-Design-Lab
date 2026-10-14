@@ -174,8 +174,8 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-59 components · 29 complete · 30 short of the standard
-  role       37/59
+59 components · 43 complete · 16 short of the standard
+  role       57/59
   size        9/9   (declaration matches code)
   variant     9/9   (declaration matches code)
   disabled    9/9   (controls only)
@@ -183,6 +183,19 @@ node scripts/verify-component-standard.mjs
   tokens     58/59
   fixture    46/59
 ```
+
+**`role` is CONDITIONAL too.** It used to be "declares a role", asked of all
+59 — twenty-two failed, and most were right to: `TableHead`, `TableCell`,
+`DropdownMenu` (the provider), `Grid`, `Form` do not own a surface, they are
+parts of one. The honest question is conditional: **if it paints a background,
+it must come from the engine and name a role.** A component with no background
+has nothing to declare.
+
+Two remain flagged and both are LINES, not surfaces — `Divider` and
+`PageSection`'s separator, each a hairline with `role="separator"`. A static
+check cannot tell a 1px rule from a plane, and it should not pretend to. The
+honest report is 57/59 with the two named, not 59/59 with the rule loosened
+until it says nothing.
 
 **`size` and `variant` are AGREEMENT, not presence.** A Checkbox does not need
 a `variant`, and a check that demands one pushes components to invent props —

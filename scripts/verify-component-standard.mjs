@@ -89,7 +89,35 @@ const rows = files.map((f) => {
     name,
     path: f.replace(SRC + '/', ''),
     control: isControl(name),
-    role: has(/resolveSurface\(\{\s*role/),
+    /**
+     * A component that PAINTS A SURFACE must declare what that surface is.
+     *
+     * The criterion used to be "declares a role", asked of all 59. Twenty-two
+     * failed — and most of them were right to: `TableHead`, `TableCell`,
+     * `DropdownMenu` (the provider), `Grid`, `Form` do not own a surface, they
+     * are parts of one. Demanding a role of them is the same mistake as
+     * demanding a `variant` of a Checkbox.
+     *
+     * The honest question is conditional: IF it sets a background, it must come
+     * from the engine and name a role. A component with no background has
+     * nothing to declare.
+     */
+    // `transparent` and `none` are not surfaces. Without this the rule flagged
+    // Alert, Breadcrumb, Footer and TableHead for setting a background to
+    // nothing — which is the opposite of painting one.
+    //
+    // KNOWN LIMIT: two components remain flagged and both are LINES, not
+    // surfaces — `Divider` and `PageSection`'s separator, each a hairline with
+    // `role="separator"`. A static check cannot tell a 1px rule from a plane,
+    // and it should not pretend to: the honest report is 57/59 with the two
+    // named, not 59/59 with the rule quietly loosened until it says nothing.
+    role:
+      // The whitespace belongs INSIDE the lookahead. With `\s*` before it, the
+      // engine backtracks, evaluates the lookahead at the colon where the next
+      // character is a space, and the guard passes on `'transparent'` — the
+      // exact case it was written to exclude.
+      !/\bbackground\s*:(?!\s*['"](?:transparent|none)['"])/.test(src) ||
+      has(/resolveSurface\(\{\s*role/),
     // AGREEMENT, not presence. A component that declares sizes must have the
     // prop; one that has the prop must declare them. Neither direction alone.
     size: claimsSizes === has(/\bsize\??:/),
