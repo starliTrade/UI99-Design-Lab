@@ -36,6 +36,8 @@ import { Tabs } from '../nav/Tabs/Tabs';
 import { Stepper } from '../nav/Stepper/Stepper';
 import { Avatar } from '../data/Avatar/Avatar';
 import { Stat } from '../data/Stat/Stat';
+import { Item } from '../data/Item/Item';
+import { Marker } from '../atoms/Marker/Marker';
 import { Progress } from '../data/Progress/Progress';
 import { Alert } from '../feedback/Alert/Alert';
 import { Skeleton } from '../composites/Skeleton/Skeleton';
@@ -355,6 +357,14 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
+    name: 'Marker', group: 'Atoms', sizes: [], states: ['default', 'muted', 'semantic'], expected: [],
+    render: (state) => (
+      <Marker muted={state === 'muted'} semantic={state === 'semantic' ? 'danger' : undefined}>
+        {state === 'semantic' ? '3 failed' : '12'}
+      </Marker>
+    ),
+  },
+  {
     name: 'Tag', group: 'Atoms', sizes: [], states: ['default'], expected: [],
     render: () => <Tag>Design</Tag>,
   },
@@ -418,6 +428,25 @@ export const FIXTURES: ComponentFixture[] = [
     name: 'Avatar', group: 'Data', // Avatar has three sizes, not the icon engine's five. Recorded as-is.
     sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
     render: (_s, size) => <Avatar name="Starli Trade" size={(size ?? 'md') as 'md'} />,
+  },
+  {
+    name: 'Item', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default', 'selected', 'disabled'], expected: [],
+    render: (state, size) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, width: 240 }}>
+        <Item
+          size={(size ?? 'md') as 'sm'}
+          selected={state === 'selected' ? 'option' : 'none'}
+          disabled={state === 'disabled'}
+          onClick={noop}
+          start={<span aria-hidden>◆</span>}
+          end={<Marker muted>12</Marker>}
+          description="Everything assigned to you"
+        >
+          Inbox
+        </Item>
+        <Item onClick={noop}>Drafts</Item>
+      </div>
+    ),
   },
   {
     name: 'Stat', group: 'Data', sizes: [], states: ['default'], expected: [],

@@ -2341,6 +2341,73 @@
     ]
   },
   {
+    "component": "Item",
+    "path": "components/data/Item/Item.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "start",
+        "type": "ReactNode",
+        "required": false,
+        "doc": "Rendered before the label."
+      },
+      {
+        "name": "end",
+        "type": "ReactNode",
+        "required": false,
+        "doc": "Rendered after the label, at the far edge."
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": false,
+        "doc": "A second line under the label."
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false,
+        "doc": "Renders an `<a>`."
+      },
+      {
+        "name": "onClick",
+        "type": "() => void",
+        "required": false,
+        "doc": "Renders a `<button>`."
+      },
+      {
+        "name": "selected",
+        "type": "'option' | 'page' | 'none'",
+        "required": false,
+        "doc": "How to announce \"this is the chosen one\". `option` for a listbox, `page` for navigation, `none` for a row that is merely highlighted. It is a prop because the answer is about the CONTEXT, and the component cannot see it."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
     "component": "Kbd",
     "path": "components/atoms/Kbd/Kbd.tsx",
     "props": [
@@ -2403,6 +2470,39 @@
         "name": "disabled",
         "type": "boolean",
         "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Marker",
+    "path": "components/atoms/Marker/Marker.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "semantic",
+        "type": "'success' | 'warning' | 'danger' | 'info'",
+        "required": false,
+        "doc": "The semantic colour, when the marker carries meaning rather than a count."
+      },
+      {
+        "name": "muted",
+        "type": "boolean",
+        "required": false,
+        "doc": "Dimmer, for a count that is context rather than the point."
       },
       {
         "name": "className",

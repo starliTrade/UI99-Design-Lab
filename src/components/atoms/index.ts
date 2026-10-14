@@ -10,3 +10,4 @@ export * from './Spinner';
 export * from './Kbd';
 export * from './Label';
 export * from './Typography';
+export * from './Marker';

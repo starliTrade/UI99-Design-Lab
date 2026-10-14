@@ -101,7 +101,7 @@ Density scales spacing, control heights **and radii as one set**, so the concent
 
 ## The components
 
-**81 components, all 81 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md),
+**83 components, all 83 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md),
 which states the ten things a component must have and names the guard that fails when it does not.
 
 The last ten took no component changes at all — they took a check that stopped asking the wrong
@@ -109,11 +109,11 @@ question. See below.
 
 | group | components |
 |---|---|
-| **Atoms** | Badge · Button · Kbd · Label · Mist · Spinner · Tag · Toggle · Typography |
+| **Atoms** | Badge · Button · Kbd · Label · Marker · Mist · Spinner · Tag · Toggle · Typography |
 | **Inputs** | Checkbox · Combobox · FileUpload · Input · InputGroup · MultiSelect · NumberInput · OTP · Radio · Rating · Select · Slider · Textarea · ToggleGroup |
 | **Containers** | Accordion · ButtonGroup · Card · Collapsible · Divider · Drawer · HoverCard · Modal · Panel · Popover · Sheet |
 | **Feedback** | Alert · AlertDialog · Toast · Tooltip |
-| **Data** | Avatar · AvatarGroup · Calendar · DatePicker · FilterBar · Pagination · Progress · Stat · Table · TreeView |
+| **Data** | Avatar · AvatarGroup · Calendar · DatePicker · FilterBar · Item · Pagination · Progress · Stat · Table · TreeView |
 | **Navigation** | Breadcrumb · CommandPalette · ContextMenu · DropdownMenu · NavItem · Sidebar · Stepper · Tabs · Topbar |
 | **Layout** | AppShell · AspectRatio · FocusScope · Footer · Grid · PageHeader · PageSection · ScrollArea · Stack · VisuallyHidden |
 | **Composites** | EmptyState · ErrorPage · Form · FormLayout · Message · Skeleton |
@@ -125,14 +125,14 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-81 components · 81 complete · 0 short of the standard
-  role       81/81
+83 components · 83 complete · 0 short of the standard
+  role       83/83
   size       16/16  (declaration matches code)
   variant    16/16  (declaration matches code)
   disabled   16/16  (controls only)
   error      13/13  (inputs only)
-  tokens     81/81
-  fixture    81/81
+  tokens     83/83
+  fixture    83/83
 ```
 
 **A criterion is asked of the population it applies to.** `size`, `variant`, `disabled` and
@@ -166,7 +166,7 @@ A rule with no guard is a habit. Nine guards, each banning one pattern:
 | `engine-barrel` | a module a consumer cannot import |
 | `event-forwarding` | an event handler a component swallows |
 
-**860 tests across 62 files.** `verify` runs typecheck, lint, tests, the app build, the library
+**871 tests across 63 files.** `verify` runs typecheck, lint, tests, the app build, the library
 build and a package-coherence check.
 
 ---
