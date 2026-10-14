@@ -190,14 +190,14 @@ export const Button = createLiminalComponent<ButtonProps>(
       className = '',
       style: customStyle = {},
       ref,
-      onMouseEnter,
-      onMouseLeave,
-      onMouseDown,
-      onMouseUp,
-      onFocus,
-      onBlur,
-      onKeyDown,
-      onKeyUp,
+      // NOT destructured, on purpose.
+      //
+      // These eight were pulled out of props and then never used — the
+      // component's interaction is CSS, so there was nothing to protect them
+      // from. The effect was that a consumer's `onFocus` was silently dropped,
+      // which is how a HoverCard built on top of a Button could not open on
+      // focus. An event handler a component does not use is an event handler it
+      // must forward.
       ...restProps
     } = props;
 

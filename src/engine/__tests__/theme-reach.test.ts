@@ -63,6 +63,7 @@ describe('a surface follows a theme', () => {
     // quietly into "the guard stopped looking at half the kit".
     expect([...new Set(skipped.map((s) => s.split(' (')[0]))].sort()).toEqual([
       'CommandPalette',
+      'HoverCard',
       'Modal',
       'Popover',
       'Sheet',

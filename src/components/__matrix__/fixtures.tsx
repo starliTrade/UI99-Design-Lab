@@ -13,6 +13,7 @@ import { Card } from '../containers/Card/Card';
 import { Panel } from '../containers/Panel/Panel';
 import { Divider } from '../containers/Divider/Divider';
 import { Popover } from '../containers/Popover/Popover';
+import { HoverCard } from '../containers/HoverCard/HoverCard';
 import { Avatar } from '../data/Avatar/Avatar';
 import { Stat } from '../data/Stat/Stat';
 import { Progress } from '../data/Progress/Progress';
@@ -249,6 +250,19 @@ export const FIXTURES: ComponentFixture[] = [
       >
         <span>Popover content</span>
       </Popover>
+    ),
+  },
+  {
+    name: 'HoverCard', group: 'Containers', sizes: [], states: ['closed', 'open'], expected: [],
+    render: (state) => (
+      // Uncontrolled when closed, so a reader can actually hover it open.
+      <HoverCard
+        trigger={<Button variant="secondary">Hover me</Button>}
+        {...(state === 'open' ? { open: true } : {})}
+        aria-label="Details"
+      >
+        <span>Hover card content</span>
+      </HoverCard>
     ),
   },
   {
