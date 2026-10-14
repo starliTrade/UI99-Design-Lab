@@ -125,6 +125,15 @@ const rows = files.map((f) => {
     disabled: !isControl(name) || has(/\bdisabled\??:/),
     error: kindOf(name) !== 'input' || has(/\berror\??:/),
     tokens: !has(/['"]#[0-9a-fA-F]{3,8}['"]/) && !has(/rgba?\(/),
+    // KNOWN LIMIT: a PART is not a component.
+    //
+    // Ten files remain outside the table and every one of them is a part, a
+    // provider or an alias — `TableHead`, `TableCell`, `DropdownMenuContent`,
+    // `DropdownMenuItem`, `ContextMenu` (the provider), `Tooltip` (a re-export
+    // of `SimpleTooltip`). None can render alone, so a row for one would be a
+    // row that cannot be rendered. A static check cannot tell a part from a
+    // whole, and it should not pretend to: the honest report is 49/59 with the
+    // ten named, not 59/59 with the rule loosened until it says nothing.
     fixture: fixturesSrc.includes(`name: '${name}'`),
   };
 });

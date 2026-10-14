@@ -18,6 +18,13 @@ export interface DatePickerProps {
   onSelectDate?: (date: Date | [Date, Date | null] | null) => void;
   placeholder?: string;
   label?: string;
+  /**
+   * The validation message. A date can be invalid — out of range, in the past,
+   * not a working day — and the Input underneath has carried an `error` all
+   * along. The wrapper simply never passed it through, which is the same defect
+   * as the Button's swallowed handlers: a prop that stops one layer short.
+   */
+  error?: string;
   disabled?: boolean;
   className?: string;
   style?: CSSProperties;
@@ -31,6 +38,7 @@ export function DatePicker({
   onSelectDate,
   placeholder = 'Select date',
   label,
+  error,
   disabled = false,
   className = '',
   style: customStyle = {},
@@ -83,6 +91,7 @@ export function DatePicker({
           value={formatDate(selected)}
           placeholder={placeholder}
           label={label}
+          error={error}
           disabled={disabled}
           readOnly
           aria-expanded={isOpen}

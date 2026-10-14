@@ -174,15 +174,29 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-59 components · 43 complete · 16 short of the standard
+59 components · 46 complete · 13 short of the standard
   role       57/59
-  size        9/9   (declaration matches code)
-  variant     9/9   (declaration matches code)
-  disabled    9/9   (controls only)
-  error       5/7   (inputs only)
+  size       11/11  (declaration matches code)
+  variant    11/11  (declaration matches code)
+  disabled   11/11  (controls only)
+  error       8/8   (inputs only)
   tokens     58/59
-  fixture    46/59
+  fixture    49/59
 ```
+
+**`fixture` has the same limit.** Ten files remain outside the table and every
+one is a PART, a provider or an alias — `TableHead`, `TableCell`,
+`DropdownMenuContent`, `DropdownMenuItem`, `ContextMenu` (the provider),
+`Tooltip` (a re-export of `SimpleTooltip`). None can render alone, so a row for
+one would be a row that cannot be rendered. The check names them rather than
+loosening the rule until it says nothing.
+
+Three real gaps it found and closed: `DatePicker`, `Tabs` and `AvatarGroup` were
+whole components missing from the table, which meant the studio, the matrix and
+the axe sweep could not see them. And `DatePicker` was wrapping an `Input` that
+has carried an `error` prop all along — the wrapper simply never passed it
+through, the same defect as the Button's swallowed handlers: **a prop that stops
+one layer short.**
 
 **`role` is CONDITIONAL too.** It used to be "declares a role", asked of all
 59 — twenty-two failed, and most were right to: `TableHead`, `TableCell`,

@@ -16,6 +16,9 @@ import { Popover } from '../containers/Popover/Popover';
 import { HoverCard } from '../containers/HoverCard/HoverCard';
 import { Drawer } from '../containers/Drawer/Drawer';
 import { AlertDialog } from '../feedback/AlertDialog/AlertDialog';
+import { DatePicker } from '../data/Calendar/DatePicker';
+import { AvatarGroup } from '../data/AvatarGroup/AvatarGroup';
+import { Tabs } from '../nav/Tabs/Tabs';
 import { Avatar } from '../data/Avatar/Avatar';
 import { Stat } from '../data/Stat/Stat';
 import { Progress } from '../data/Progress/Progress';
@@ -191,6 +194,36 @@ export const FIXTURES: ComponentFixture[] = [
   {
     name: 'Tag', group: 'Atoms', sizes: [], states: ['default'], expected: [],
     render: () => <Tag>Design</Tag>,
+  },
+  {
+    name: 'AvatarGroup', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    render: (_s, size) => (
+      <AvatarGroup size={(size ?? 'md') as 'sm'}>
+        <Avatar name="Starli" />
+        <Avatar name="Trade" />
+      </AvatarGroup>
+    ),
+  },
+  {
+    name: 'DatePicker', kind: 'input', group: 'Data', sizes: [], states: ['default', 'disabled', 'error'], expected: [],
+    render: (state) => (
+      <DatePicker
+        label="Date"
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'Pick a date' : undefined}
+      />
+    ),
+  },
+  {
+    name: 'Tabs', kind: 'action', group: 'Navigation', sizes: ['sm', 'md'], states: ['default'], expected: [],
+    render: (_s, size) => (
+      <Tabs
+        value="a"
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        items={[{ id: 'a', label: 'Overview' }, { id: 'b', label: 'Settings' }]}
+      />
+    ),
   },
   {
     name: 'Alert', group: 'Feedback', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
