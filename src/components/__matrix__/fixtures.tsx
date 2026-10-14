@@ -534,8 +534,18 @@ export const FIXTURES: ComponentFixture[] = [
   },
   // ── the rest of the library ──────────────────────────────────────────────
   {
-    name: 'Modal', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
-    render: (_s, size) => <Modal open title="Dialog" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Modal>,
+    // CLOSED FIRST, like Popover, Drawer, HoverCard and AlertDialog.
+    //
+    // A fixture is rendered by four tools, and three of them render `states[0]`:
+    // the Components index, the matrix and the studio. With `['default']` and
+    // `open` hard-coded, the index rendered a MODAL — a full-screen overlay with
+    // a backdrop — over the grid of every component, so the page that is meant
+    // to show all 74 of them showed one. The four overlays that already had
+    // `['closed', 'open']` were the ones that behaved.
+    name: 'Modal', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['closed', 'open'], expected: [],
+    render: (state, size) => (
+      <Modal open={state === 'open'} title="Dialog" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Modal>
+    ),
   },
   {
     name: 'Popover', group: 'Containers', sizes: [], states: ['closed', 'open'], expected: [],
@@ -574,8 +584,10 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Sheet', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
-    render: (_s, size) => <Sheet open title="Sheet" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Sheet>,
+    name: 'Sheet', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['closed', 'open'], expected: [],
+    render: (state, size) => (
+      <Sheet open={state === 'open'} title="Sheet" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Sheet>
+    ),
   },
   {
     name: 'AlertDialog', group: 'Feedback', sizes: [], states: ['closed', 'open'], expected: [],
@@ -591,8 +603,19 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Toast', group: 'Feedback', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
-    render: (state) => <Toast open title={state} message="Message" semantic={state as 'info'} onClose={noop} />,
+    // A toast is shown or it is not, and it is PORTALLED: four of them rendered
+    // open floated over the Components index in the corner of the page, above
+    // the grid they were supposed to be part of.
+    name: 'Toast', group: 'Feedback', sizes: [], states: ['closed', ...FEEDBACK_STATES], expected: FEEDBACK_STATES,
+    render: (state) => (
+      <Toast
+        open={state !== 'closed'}
+        title={state === 'closed' ? 'info' : state}
+        message="Message"
+        semantic={(state === 'closed' ? 'info' : state) as 'info'}
+        onClose={noop}
+      />
+    ),
   },
   {
     name: 'SimpleTooltip', group: 'Feedback', sizes: [], states: ['default'], expected: [],
@@ -613,8 +636,14 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'CommandPalette', group: 'Navigation', sizes: [], states: ['default'], expected: [],
-    render: () => <CommandPalette isOpen onClose={noop} groups={[{ title: 'Commands', items: [{ id: 'a', label: 'Save', action: noop }] }]} />,
+    name: 'CommandPalette', group: 'Navigation', sizes: [], states: ['closed', 'open'], expected: [],
+    render: (state) => (
+      <CommandPalette
+        isOpen={state === 'open'}
+        onClose={noop}
+        groups={[{ title: 'Commands', items: [{ id: 'a', label: 'Save', action: noop }] }]}
+      />
+    ),
   },
   {
     name: 'Table', group: 'Data', sizes: [], states: ['default'], expected: [],

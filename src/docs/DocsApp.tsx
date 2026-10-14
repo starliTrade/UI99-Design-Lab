@@ -43,7 +43,9 @@ function ExamplesPage() {
           nothing else. A whole app is a better test than a showcase: a component that survives a
           real page survives a display case. Change the width and the app's own breakpoints answer.
         </Prose>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px` }}>
+        {/* A measure, not the full width: a label and its value 900px apart are
+            two things a reader has to join by eye. */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[1]}px`, maxWidth: '78ch' }}>
           <Value label="Dashboard" value="a table, stats, a sidebar and a breadcrumb" />
           <Value label="Project" value="a detail page with tabs and a tree" />
           <Value label="Login" value="a form, a field and the auth gate" />

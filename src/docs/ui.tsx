@@ -215,6 +215,13 @@ export function Segmented<T extends string>({
           gap: S[0],
           padding: S[0],
           borderRadius: `${R.control}px`,
+          // A rail, not a clip. Six variants are wider than a phone, and the
+          // track cannot wrap — a segmented control that wraps is not
+          // segmented. So it scrolls, and the last option stays reachable
+          // instead of being cut off at the edge of the column.
+          maxWidth: '100%',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
           ...track.style,
         }}
       >
