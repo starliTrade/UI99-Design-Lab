@@ -1,116 +1,221 @@
-# UI99 Design Lab
+# LIMINAL
 
-Research environment for deriving UI99's mathematical/perceptual design rules before integrating them into the production token engine.
+**A dark UI engine, not a component collection.**
 
-## Current sprint
+Most design systems ship a token file and a set of components that read it. LIMINAL ships the
+arithmetic that produces the tokens, the rules that decide how components may use them, and the
+guards that fail when they do not.
 
-**Sprint 01 — Surface & Separation**
+The difference is not philosophical. It is measurable: **every surface, edge, colour and space in
+this library comes from a rule, and the rule is written as a test.** A component declares *what it
+is* — a role — and the engine decides the rest.
 
-Research loop:
+```
+npm install liminal
+```
 
-`Experiment → Measure → Derive → Validate → Integrate`
+```tsx
+import { Button, Card, Input, resolveSurface } from 'liminal';
+import 'liminal/styles.css';
 
-### Rules
+export function Panel() {
+  return (
+    <Card>
+      <Input label="Name" />
+      <Button>Save</Button>
+    </Card>
+  );
+}
+```
 
-- Experimental formulas are not production tokens.
-- No master-engine changes happen from visual intuition alone.
-- Every proposed relation must have a valid range and known failure cases.
-- Visual validation and mathematical validation are both required.
-
-## Open experiments
-
-1. Dark surface hierarchy
-2. Border necessity and strength
-3. Shadow vs surface separation
-4. Nested radius relations
-
-## Status
-
-**Sprint 01 initialized.**
+Requires React 18 or later. Server-renderable; `"use client"` is on the entry.
 
 ---
 
-## فارسی و RTL
+## What makes it an engine
 
-سیستم از ابتدا دوجهته است، نه با وصله. چهار قاعده، و هر چهار از داده مشتق شده‌اند نه از سلیقه:
+### The ladder is a luminance ramp, measured
 
-### ۱. محور، نه سمت
+Nine surfaces, each **one perceptual quantum** from the one below — not a percentage someone
+picked. The quantum is empirical: `q = 0.0083`, measured across three sessions with a spread of
+`0.0010`.
 
-کامپوننت‌ها با ویژگی‌های **منطقی** نوشته می‌شوند: `marginInlineStart`، `insetInlineEnd`، `textAlign: 'start'`.
-`DirProvider` مقدار `dir` را روی عنصر سند می‌گذارد — جایی که portalها هم می‌بینند.
+```
+S0 #060709   S1 #07090b   S2 #090b0d   S3 #0b0d0f   S4 #0d0f12
+S5 #0f1114   S6 #111316   S7 #131518   S8 #15171a
+```
+
+The step is `1.07q–1.21q`. That is *on* the boundary — felt, not seen.
+
+### A state change is felt; a target is seen
+
+This is the rule the whole system is built around, and it has a corollary that is easy to get
+wrong:
+
+> **"Felt, not seen" governs a STATE CHANGE. A target — a box, a fill, a star — must be SEEN.**
+
+A hover moves half a step (`~0.6q`). A slider's fill, an OTP's boxes, a rating's stars are
+*targets*, and they use the brand or a full edge, because a target that is felt but not seen is one
+the reader cannot find. Four components shipped invisible before that distinction was written down.
+
+### Text alphas are derived, not chosen
+
+Each text role declares its **use**, and the floor follows from it — then both lenses are computed
+and the stricter one wins.
+
+| role | use | WCAG | APCA |
+|---|---|---|---|
+| `primary` | body, preferred | 4.5 | 90 |
+| `secondary` | body, minimum | 4.5 | 75 |
+| `tertiary` | body, minimum | 4.5 | 75 |
+| `quaternary` | non-text marks | 3 | 30 |
+
+`secondary` and `tertiary` share an alpha (`0.788`). Their hierarchy is size and weight, not
+colour — which is what the measurement said, and what the eye agreed with.
+
+### A component declares a role, not a level
 
 ```tsx
-<DirProvider dir="rtl">
-  <App />
-</DirProvider>
+resolveSurface({ role: 'panel' })          // ✓ what it is
+getDirectionalRim(3, 2, false)             // ✗ a level, hand-picked
+LADDER[3]                                  // ✗ the ladder, indexed directly
 ```
 
-> **تنظیم فقط یکی از این دو، چیدمانی نیمه‌آینه می‌سازد — که از آینه‌نشده بدتر است.**
+Ten roles, from `canvas` to `toast`. A control is defined by its **relationship** to its host:
+`resolveSurface({ role: 'control', on: 'work' })`. Two components that declare the same role cannot
+disagree about depth — which is a thing a hand-picked number cannot promise.
 
-### ۲. موقعیت‌یابی
+### The identity is not a setting
 
-`left`/`right` **فیزیکی**‌اند و در هر جهت فیزیکی می‌مانند. برای سمت منطقی از `inline-start`/`inline-end` استفاده کن.
+The ladder is monochrome — chroma `0.0069` — and locked. A theme is **two scales**, not a colour:
 
-پسوند `-start`/`-end` بسته به سمت، محور متفاوتی دارد — و این قرارداد Radix است:
+```tsx
+createLiminalTheme({ density: 1.2, motion: 0.8 })
+```
 
-| | |
+Density scales spacing, control heights **and radii as one set**, so the concentric law
+(`r_inner = max(4, r_outer − padding)`) survives. A density that would take `CONTROL.md` below the
+44px touch floor is **refused**, not warned about.
+
+---
+
+## The components
+
+**71 components, 59 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md), which
+states the ten things a component must have and names the guard that fails when it does not.
+
+| group | components |
 |---|---|
-| `bottom-start` | محور **inline** — لبه‌های شروع به هم می‌رسند (در RTL لبه‌های راست) |
-| `left-start` | محور **block** — لبه‌های بالا به هم می‌رسند، در هر جهت |
+| **Atoms** | Badge · Button · Mist · Tag · Toggle |
+| **Inputs** | Checkbox · Combobox · FileUpload · Input · MultiSelect · NumberInput · OTP · Radio · Rating · Select · Slider · Textarea |
+| **Containers** | Card · Divider · Drawer · HoverCard · Modal · Panel · Popover · Sheet |
+| **Feedback** | Alert · AlertDialog · Toast · Tooltip |
+| **Data** | Avatar · AvatarGroup · Calendar · DatePicker · FilterBar · Pagination · Progress · Stat · Table · TreeView |
+| **Navigation** | Breadcrumb · CommandPalette · ContextMenu · DropdownMenu · NavItem · Sidebar · Stepper · Tabs · Topbar |
+| **Layout** | AppShell · AspectRatio · FocusScope · Footer · Grid · PageHeader · PageSection · ScrollArea · Stack · VisuallyHidden |
+| **Composites** | EmptyState · ErrorPage · Form · FormLayout · Skeleton |
 
-### ۳. تایپوگرافی فارسی
+### The standard, measured
 
-دو واقعیت درباره خط، و هیچ‌کدام سلیقه نیست:
-
-**خط پیوسته است.** فاصله‌گذاری مثبت حروف، اتصال‌ها را می‌شکند. tracking فارسی در هر سطح `0` است.
-
-**فارسی بلندتر روی خط می‌نشیند.** متریک‌های واقعی Vazirmatn: `unitsPerEm 2048 · ascender 2100 · descender −1100 · lineGap 0` → فاصله طبیعی خط `1.5625`.
-
-مقیاس لاتین از ۱.۱۰ تا ۱.۶۰ می‌رود، پس **هفت سطح از هشت سطح زیر آنچه فونت لازم دارد می‌نشینند** و متن فارسی بریده می‌شود. قاعده `max(طراحی‌شده، کف)` است.
-
-### ۴. تقویم جلالی
-
-از `Intl` می‌آید — یعنی پیاده‌سازی خود پلتفرم، که با تعریف نجومی واقعی نگه‌داری می‌شود. الگوریتم چرخه ۳۳ ساله در هر قرن چند سال غلط است و اینجا استفاده نمی‌شود.
-
-```ts
-toJalali(new Date('2026-03-21'))   // { year: 1405, month: 1, day: 1 } — نوروز
-formatJalali(new Date())            // «۲۱ مهر ۱۴۰۵»
-toPersianDigits(1234)               // «۱۲۳۴»
+```
+node scripts/verify-component-standard.mjs
 ```
 
-هفته از **شنبه** شروع می‌شود، و رقم‌ها `U+06F0` هستند نه `U+0660` عربی.
-
-### bidi
-
-`dir="rtl"` جهت پایه را درست می‌کند؛ **runهای داخلش** را نه — و آنجاست که می‌شکند. یک کلمه لاتین در جمله فارسی، نقطه‌گذاری بعدش را می‌کشد.
-
-```html
-<span class="liminal-bidi-isolate">config.json</span>
-<code class="liminal-bidi-code">npm run dev</code>
+```
+71 components · 59 complete · 12 short of the standard
+  role       69/71
+  size       16/16  (declaration matches code)
+  variant    16/16  (declaration matches code)
+  disabled   16/16  (controls only)
+  error      13/13  (inputs only)
+  tokens     71/71
+  fixture    61/71
 ```
 
-### بارگذاری فونت
+CI runs this with `--ratchet`: the number may improve and may not walk backwards. A gate demanding
+100% would fail everything and get turned off.
 
-`font-display: swap` — نه `block`. متن فارسی در فونت جانشین خوانده می‌شود؛ قفل‌کردن رندر برای فونت درست، یک تأخیر دیدنی را با یک فریم اول کمی بهتر عوض می‌کند.
+---
 
-**پیش‌فرض از CDN می‌آید تا سیستم بدون تنظیم کار کند.** برای production، فونت را محلی کن:
+## Everything is guarded
 
-```bash
-node scripts/fetch-font.mjs
+A rule with no guard is a habit. Nine guards, each banning one pattern:
+
+| guard | what it prevents |
+|---|---|
+| `no-raw-numbers` | a hand-picked level, or an indexed ladder |
+| `one-resolver` | a second way to resolve a surface |
+| `interaction-vars` | publishing state variables without opting in — **and the reverse** |
+| `theme-reach` | a baked colour a theme cannot reach |
+| `perceptual-boundary` | a state change that is invisible or a full quantum away |
+| `contrast` | a text alpha below its declared floor |
+| `a11y-sweep` | an axe violation, across 45 components |
+| `engine-barrel` | a module a consumer cannot import |
+| `event-forwarding` | an event handler a component swallows |
+
+**801 tests across 55 files.** `verify` runs typecheck, lint, tests, the app build, the library
+build and a package-coherence check.
+
+---
+
+## The package
+
+```
+esm  387.7 kB   (≈87 kB gzipped)
+cjs  278.0 kB
+css    1.7 kB
 ```
 
-فونت را در `public/fonts/` می‌گذارد، **متریک‌هایش را با قراردادی که کف line-height از آن مشتق شده تطبیق می‌دهد**، و `liminal-fonts-selfhosted.css` را می‌سازد. تنها تغییر، عوض‌کردن یک import است:
+React is a peer dependency and is **not** bundled — a library that ships its own React breaks the
+consumer's hooks. `verify:package` checks that, along with every path the manifest promises, the
+reachability of the stylesheet, and whether `"use client"` survived the build.
 
-```diff
-- @import "./engine/liminal-fonts.css";
-+ @import "./engine/liminal-fonts-selfhosted.css";
+**The package is `private`.** Making something publishable is not publishing it, and this project
+publishes when there is demand.
+
+---
+
+## What is not done
+
+Recorded rather than hidden:
+
+- **No bundle budget.** The measurement exists; the budget is a decision, not a measurement.
+- **No Storybook.** The docs app serves the purpose for now.
+- **No per-component API table.**
+- **No performance measurement** — render counts, layout thrash.
+- **12 components short of the standard**, and two of the 71 are flagged for `role` because they
+  are lines rather than surfaces.
+- **Not tested in a real Next.js app.** It server-renders, and that is not the same thing.
+
+---
+
+## The docs app
+
+```
+bun install
+bun run dev          # http://localhost:3000
 ```
 
-> اگر فونت عوض شود، متریک‌ها عوض می‌شوند و **کف باید دوباره مشتق شود**. اسکریپت این را بررسی می‌کند و اگر تطبیق ندهد با خطا بیرون می‌آید.
+Six pages: the engine in one screen, every component live, one page per component, the tokens with
+their arithmetic, the contract with live invariants, and a studio that reads the engine rather than
+describing it. Plus the examples — a whole app built from these components.
 
-### تأیید
+An LTR/RTL switch in the topbar flips the document, because the engine's direction work has no
+other way to be seen.
 
-```bash
-bun run verify          # ۴۳۶ تست، شامل ۱۶ تست فارسی و ۲۰ تست جلالی
-node scripts/verify-rtl.mjs   # ۵ بررسی در مرورگر واقعی
+---
+
+## Development
+
 ```
+bun run verify        # typecheck · lint · test · build · build:lib · verify:package
+bun run test:watch
+bun run gen:css       # regenerate the CSS variables from the engine
+node scripts/verify-component-standard.mjs
+node scripts/verify-hierarchy.mjs
+```
+
+The contract is [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md); the plan is
+[`LIMINAL-ROADMAP.md`](./LIMINAL-ROADMAP.md).
+
+MIT.
