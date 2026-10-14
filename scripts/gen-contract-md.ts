@@ -90,7 +90,7 @@ const BLOCKS: Record<string, () => string> = {
     `**پایه‌ی شناور:** \`${L.TYPE_BASE_CSS}\`\n\n` +
     `| سطح | نقش | ضریب | اندازه در پایه‌ی مرجع (${L.TYPE_BASE_REF}px) | line-height | letter-spacing | وزن |\n` +
     `|---|---|---|---|---|---|---|\n` +
-    [1, 2, 3, 4, 5, 6, 7, 8].map((lvl) => {
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => {
       const t = L.TYPOGRAPHY[lvl];
       return `| ${lvl} | ${t.role} | ${L.typeScale(lvl).toFixed(6)} | ${t.fs}px | ${t.lh} | ${t.ls} | ${t.weight} |`;
     }).join('\n'),

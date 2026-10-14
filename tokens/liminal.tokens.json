@@ -872,6 +872,56 @@
         "$value": "display",
         "$type": "string"
       }
+    },
+    "9": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 2.985984)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.08,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "-0.028em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 700,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "display-lg",
+        "$type": "string"
+      }
+    },
+    "10": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 3.583181)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.05,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "-0.03em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 700,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "display-xl",
+        "$type": "string"
+      }
     }
   },
   "motion": {

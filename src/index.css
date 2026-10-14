@@ -162,6 +162,12 @@
   --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
   --liminal-lh-8: 1.1; /* unitless multiplier */
   --liminal-weight-8: 700;
+  --liminal-fs-9: calc(var(--liminal-type-base) * 2.985984);
+  --liminal-lh-9: 1.08; /* unitless multiplier */
+  --liminal-weight-9: 700;
+  --liminal-fs-10: calc(var(--liminal-type-base) * 3.583181);
+  --liminal-lh-10: 1.05; /* unitless multiplier */
+  --liminal-weight-10: 700;
 
   /* ── 12b. FONTS ──────────────────────────────────────────────── */
   --liminal-font-en: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -343,6 +349,12 @@
   --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
   --liminal-lh-8: 1.1; /* unitless multiplier */
   --liminal-weight-8: 700;
+  --liminal-fs-9: calc(var(--liminal-type-base) * 2.985984);
+  --liminal-lh-9: 1.08; /* unitless multiplier */
+  --liminal-weight-9: 700;
+  --liminal-fs-10: calc(var(--liminal-type-base) * 3.583181);
+  --liminal-lh-10: 1.05; /* unitless multiplier */
+  --liminal-weight-10: 700;
 
   /* ── 12b. FONTS ──────────────────────────────────────────────── */
   --liminal-font-en: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;

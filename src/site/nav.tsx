@@ -10,6 +10,7 @@ import { Topbar } from '../components/nav/Topbar';
 import { SidebarSection } from '../components/nav/Sidebar';
 import { NavItem } from '../components/nav/NavItem';
 import { Badge } from '../components/atoms/Badge';
+import { Button } from '../components/atoms/Button';
 import { FIXTURES, coverage } from '../components/__matrix__/fixtures';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../engine/liminal-color-engine';
@@ -132,6 +133,14 @@ export function TopNav({
             {dir.toUpperCase()}
           </Btn>
           <ThemeControls compact={narrow} />
+          {/* THE BAR ENDS IN AN ACTION.
+              Measured on a product page in the wild: its nav is 52px and its
+              last item is "Try for free" — the links say where you can go and
+              the last thing says what you can DO. A nav that ends in a slider
+              leaves the reader to find the door. */}
+          <Button size="sm" variant="primary" onClick={() => go({ page: 'docs', slug: 'installation' })}>
+            {narrow ? 'Start' : 'Get started'}
+          </Button>
         </>
       }
     >

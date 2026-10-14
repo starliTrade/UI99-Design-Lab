@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import type { CSSProperties, ElementType, ReactNode } from 'react';
-import { LiminalLayoutEngine as L } from '../../../engine/liminal-layout-engine';
+import { LiminalLayoutEngine as L, type TypeLevelIndex } from '../../../engine/liminal-layout-engine';
 import { getTextStyle } from '../../../engine/spec-engine';
 import type { TextRole } from '../../../engine/liminal-contrast';
 
@@ -28,8 +28,8 @@ import type { TextRole } from '../../../engine/liminal-contrast';
  */
 export interface TextProps {
   children?: ReactNode;
-  /** A step on the engine's scale, 1–8. */
-  level?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  /** A step on the engine's scale, 1–10. 9 and 10 are the headline band. */
+  level?: TypeLevelIndex;
   /** The text role, which decides the alpha AND the floor it has to meet. */
   tone?: TextRole;
   /** The element. Independent of `level` — see above. */
@@ -76,9 +76,10 @@ export interface HeadingProps {
    *
    * Omitted, it follows the document level — `h1` is level 7, `h2` is 6, and so
    * on down to level 4. Given, it overrides, because a card's heading is
-   * structurally an `h3` and visually whatever the card needs.
+   * structurally an `h3` and visually whatever the card needs — including the
+   * headline band (9 and 10), which is what a page's own claim uses.
    */
-  size?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  size?: TypeLevelIndex;
   tone?: TextRole;
   /** Truncate to one line. */
   truncate?: boolean;
@@ -87,7 +88,7 @@ export interface HeadingProps {
 }
 
 /** The scale step a document level defaults to. */
-const DEFAULT_SIZE: Record<number, 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8> = { 1: 7, 2: 6, 3: 5, 4: 4, 5: 4, 6: 4 };
+const DEFAULT_SIZE: Record<number, TypeLevelIndex> = { 1: 7, 2: 6, 3: 5, 4: 4, 5: 4, 6: 4 };
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Heading(
   { children, level = 2, size, tone = 'primary', truncate = false, className, style: customStyle },

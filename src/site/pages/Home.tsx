@@ -172,7 +172,12 @@ export function HomePage({ go }: { go: (r: Route) => void }) {
             {FIXTURES.length} components · {ROLES.length} roles · MIT
           </span>
 
-          <Heading level={1} size={8} style={{ maxWidth: '20ch' }}>
+          {/* THE HEADLINE BAND, not the display step. Measured against a
+              product page in the wild: its headline is 84px at weight 700 with
+              -0.01em tracking. The engine's scale now reaches 59px at the
+              reference base — and being fluid, it is 50px on a phone rather
+              than the same 84px shrunk into a column. */}
+          <Heading level={1} size={10} style={{ maxWidth: '18ch' }}>
             The component declares. The engine decides.
           </Heading>
 
@@ -224,7 +229,7 @@ export function HomePage({ go }: { go: (r: Route) => void }) {
       {/* ── THE STATEMENT ──────────────────────────────────────────────────── */}
       <section style={{ ...WRAP, padding: `${S[8]}px ${PAD} 0` }} aria-label="The problem">
         <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, maxWidth: '34ch' }}>
-          <Heading level={2} size={8}>
+          <Heading level={2} size={9}>
             A chosen number drifts. A derived number cannot.
           </Heading>
           <Text level={4} tone="secondary" style={{ maxWidth: '60ch' }}>

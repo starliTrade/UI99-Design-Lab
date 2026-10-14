@@ -2040,9 +2040,9 @@
       },
       {
         "name": "size",
-        "type": "1 | 2 | 3 | 4 | 5 | 6 | 7 | 8",
+        "type": "TypeLevelIndex",
         "required": false,
-        "doc": "The VISUAL size, as a step on the engine's scale. Omitted, it follows the document level — `h1` is level 7, `h2` is 6, and so on down to level 4. Given, it overrides, because a card's heading is structurally an `h3` and visually whatever the card needs."
+        "doc": "The VISUAL size, as a step on the engine's scale. Omitted, it follows the document level — `h1` is level 7, `h2` is 6, and so on down to level 4. Given, it overrides, because a card's heading is structurally an `h3` and visually whatever the card needs — including the headline band (9 and 10), which is what a page's own claim uses."
       },
       {
         "name": "tone",
@@ -4586,9 +4586,9 @@
       },
       {
         "name": "level",
-        "type": "1 | 2 | 3 | 4 | 5 | 6 | 7 | 8",
+        "type": "TypeLevelIndex",
         "required": false,
-        "doc": "A step on the engine's scale, 1–8."
+        "doc": "A step on the engine's scale, 1–10. 9 and 10 are the headline band."
       },
       {
         "name": "tone",

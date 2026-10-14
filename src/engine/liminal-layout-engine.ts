@@ -5,6 +5,9 @@ import type { CSSProperties } from 'react';
  * Layout, Geometry, and Typography Engine.
  */
 
+/** The steps of the type scale. 1–8 are the interface; 9–10 are the headline band. */
+export type TypeLevelIndex = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
 export interface TypeLevel {
   fs: number; // font-size (px)
   lh: number; // line-height multiplier
@@ -168,21 +171,48 @@ export class LiminalLayoutEngine {
   }
 
   /** The scale at the reference base — for docs, previews and static renders. */
+  /**
+   * THE SCALE HAS TEN LEVELS, AND THE TOP TWO ARE THE HEADLINE BAND.
+   *
+   * It had eight. Eight is the whole of an interface — meta, label, body, lead,
+   * h3, h2, h1, display — and the largest of them is 41px at the reference base.
+   * That is right for a product UI and it is not enough for a page that has to
+   * state its claim in one line: a headline at 41px is a heading, not a
+   * statement.
+   *
+   * So the scale continues. The RATIO does not change — 1.2, the same ratio
+   * every other level uses — and nothing below moves by a single pixel. Two
+   * levels are added where the scale already pointed:
+   *
+   *   9   display-lg   48px at the reference base
+   *   10  display-xl   59px
+   *
+   * Measured against a reference in the wild: a product page's headline is 84px
+   * at weight 700 with -0.01em tracking and a 1.1 line-height. Level 10 is 59px
+   * and level 12 would be 85px — the band is here, and the site takes what its
+   * sentence needs rather than what a number looked like.
+   */
   static readonly TYPOGRAPHY: Record<number, TypeLevel> = (() => {
-    const lh: Record<number, number> = { 1: 1.45, 2: 1.5, 3: 1.6, 4: 1.35, 5: 1.25, 6: 1.2, 7: 1.15, 8: 1.1 };
+    const lh: Record<number, number> = {
+      1: 1.45, 2: 1.5, 3: 1.6, 4: 1.35, 5: 1.25, 6: 1.2, 7: 1.15, 8: 1.1,
+      9: 1.08, 10: 1.05,
+    };
     const ls: Record<number, string> = {
       1: '+0.04em', 2: '+0.01em', 3: '0', 4: '-0.005em',
       5: '-0.01em', 6: '-0.015em', 7: '-0.02em', 8: '-0.025em',
+      9: '-0.028em', 10: '-0.03em',
     };
     const weight: Record<number, 400 | 500 | 600 | 700> = {
       1: 400, 2: 500, 3: 400, 4: 600, 5: 600, 6: 600, 7: 600, 8: 700,
+      9: 700, 10: 700,
     };
     const role: Record<number, string> = {
       1: 'meta, quaternary', 2: 'label, tertiary', 3: 'body, secondary',
       4: 'lead, h4', 5: 'h3', 6: 'h2', 7: 'h1', 8: 'display',
+      9: 'display-lg', 10: 'display-xl',
     };
     const out: Record<number, TypeLevel> = {};
-    for (let n = 1; n <= 8; n++) {
+    for (let n = 1; n <= 10; n++) {
       out[n] = {
         fs: Math.round(this.TYPE_BASE_REF * this.typeScale(n) * 100) / 100,
         lh: lh[n],
@@ -195,7 +225,7 @@ export class LiminalLayoutEngine {
     return out;
   })();
 
-  static getTypeStyle(level: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8, isCaps: boolean = false): CSSProperties {
+  static getTypeStyle(level: TypeLevelIndex, isCaps: boolean = false): CSSProperties {
     const t = this.TYPOGRAPHY[level];
     return {
       // Derived from the fluid base so inline styles respond to the viewport too.

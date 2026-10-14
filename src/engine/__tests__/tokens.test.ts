@@ -216,7 +216,7 @@ describe('LIMINAL contract — text hierarchy contrast', () => {
 });
 
 describe('LIMINAL contract — type scale is derived, not hand-picked', () => {
-  const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+  const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
   it('every level is exactly ratio^(n − base) times the base', () => {
     // The ratio is the design; if a level drifts from it, the scale stops
@@ -233,7 +233,7 @@ describe('LIMINAL contract — type scale is derived, not hand-picked', () => {
   });
 
   it('the scale is monotonic — each level is larger than the last', () => {
-    for (let n = 1; n < 8; n++) {
+    for (let n = 1; n < 10; n++) {
       expect(LiminalLayoutEngine.typeScale(n + 1)).toBeGreaterThan(LiminalLayoutEngine.typeScale(n));
     }
   });
