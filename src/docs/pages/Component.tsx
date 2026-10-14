@@ -27,10 +27,11 @@ const pct = (n: number) => Math.round(n * 100);
 function EyeNotes({ name }: { name: string }) {
   const f = FIXTURES.find((x) => x.name === name);
   if (!f) return null;
-  const control = f.kind === 'control';
+  const control = f.kind === 'input' || f.kind === 'action';
   const notes: string[] = [];
   if (control && !f.sizes.length) notes.push('No sizes — a control needs them');
   if (control && !f.variants?.length) notes.push('No variants');
+  if (f.kind === 'input' && !f.states.includes('error')) notes.push('No error state — an input that validates needs one');
   const missing = f.expected.filter((s) => !f.states.includes(s));
   if (missing.length) notes.push(`Missing states: ${missing.join(' · ')}`);
   if (!notes.length) notes.push('Structurally complete — judge it by eye');

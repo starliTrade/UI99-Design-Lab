@@ -174,24 +174,34 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-56 components · 18 complete · 38 short of the standard
-  role       34/56
-  size        6/13  (controls only)
-  variant     2/13  (controls only)
-  disabled    7/13  (controls only)
-  error       4/13  (controls only)
-  tokens     53/56
-  fixture    43/56
+59 components · 23 complete · 36 short of the standard
+  role       37/59
+  size        2/9   (controls only)
+  variant     1/9   (controls only)
+  disabled    9/9   (controls only)
+  error       7/9   (controls only)
+  tokens     58/59
+  fixture    46/59
 ```
 
-**A control criterion is counted over the controls.** `size`, `variant`,
-`disabled` and `error` are things a CONTROL has; a Popover sized by its content,
-or a Grid with a `variant`, would be a prop with no meaning — and demanding one
-would push components to invent it. The role a component declares is the honest
-discriminator: it says what the thing IS.
+**A criterion is asked of the population it applies to.** The fixture declares
+which kind of thing a component is, and the check reads that declaration rather
+than guessing:
 
-`Popover` is the first at 7/7. `Input` and `Button` are at 6/7. The rest are the
-work.
+| kind | criteria |
+|---|---|
+| `input` | size · variant · disabled · error |
+| `action` | size · variant · disabled |
+| `surface` | role · tokens · fixture |
+
+An `error` prop on a Button is a prop with no meaning, and demanding one pushes
+components to invent it. The first version of this check read the SOURCE for
+`resolveSurface({ role: 'control' })` — which called a Drawer a control, because
+a Drawer renders a control for its handle. **A component that contains a control
+is not one.**
+
+`Popover`, `HoverCard`, `AlertDialog` and `Drawer` are at 7/7. The controls are
+the work: `size` is 2/9 and `variant` is 1/9.
 
 ---
 

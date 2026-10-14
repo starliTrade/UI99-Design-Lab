@@ -54,12 +54,14 @@ const files = walk(join(SRC, 'components')).filter((f) => isComponent(readFileSy
 const declaredKind = (() => {
   const src = readFileSync(resolve(SRC, 'components/__matrix__/fixtures.tsx'), 'utf8');
   const out = new Map();
-  for (const m of src.matchAll(/name: '([A-Za-z]+)',(?:\s*kind: '(control|surface)',)?/g)) {
+  for (const m of src.matchAll(/name: '([A-Za-z]+)',(?:\s*kind: '(input|action|surface)',)?/g)) {
     out.set(m[1], m[2] ?? 'surface');
   }
   return out;
 })();
-const isControl = (name) => declaredKind.get(name) === 'control';
+const kindOf = (name) => declaredKind.get(name) ?? 'surface';
+/** A control is something the reader operates — typed into, picked, or pressed. */
+const isControl = (name) => kindOf(name) === 'input' || kindOf(name) === 'action';
 
 /**
  * Comments are not code.
@@ -82,11 +84,12 @@ const rows = files.map((f) => {
     path: f.replace(SRC + '/', ''),
     control,
     role: has(/resolveSurface\(\{\s*role/),
-    // Not applicable is not the same as missing: a non-control is neither.
+    // Not applicable is not the same as missing: a non-control is neither, and
+    // an `error` on a Button is a prop with no meaning.
     size: !control || has(/\bsize\??:/),
     variant: !control || has(/\bvariant\??:/),
     disabled: !control || has(/\bdisabled\??:/),
-    error: !control || has(/\berror\??:/),
+    error: kindOf(name) !== 'input' || has(/\berror\??:/),
     tokens: !has(/['"]#[0-9a-fA-F]{3,8}['"]/) && !has(/rgba?\(/),
     fixture: readFileSync(resolve(SRC, 'components/__matrix__/fixtures.tsx'), 'utf8').includes(`name: '${name}'`),
   };

@@ -64,15 +64,18 @@ export interface ComponentFixture {
   /**
    * WHICH KIND OF THING IT IS.
    *
-   * `size`, `variant`, `disabled` and `error` are CONTROL criteria. A Popover
-   * sized by its content, or a Grid with a `variant`, would be a prop with no
-   * meaning — and a tool that demands one pushes components to invent it. The
-   * kind is what tells the difference; without it the docs asked a reviewer to
-   * look for sizes on a popover.
+   * WHICH KIND OF THING IT IS, and therefore which criteria apply.
+   *
+   *   input    something the reader types into or picks with.
+   *            size · variant · disabled · error
+   *   action   something the reader presses.
+   *            size · variant · disabled — an `error` on a Button is a prop
+   *            with no meaning, and demanding one pushes components to invent it
+   *   surface  a container. role · tokens · fixture
    *
    * Defaults to 'surface', so only the controls have to say so.
    */
-  kind?: 'control' | 'surface';
+  kind?: 'input' | 'action' | 'surface';
   /** The category, for grouping on the page. */
   group: string;
   /** The sizes the component actually supports. Empty means it has none. */
@@ -102,7 +105,7 @@ const FEEDBACK_STATES = ['info', 'success', 'warning', 'danger'];
 
 export const FIXTURES: ComponentFixture[] = [
   {
-    name: 'Button', kind: 'control', group: 'Atoms', sizes: ['sm', 'md', 'lg'], states: INTERACTIVE, expected: INTERACTIVE,
+    name: 'Button', kind: 'action', group: 'Atoms', sizes: ['sm', 'md', 'lg'], states: INTERACTIVE, expected: INTERACTIVE,
     variants: ['primary', 'secondary', 'ghost', 'danger', 'outline', 'link'],
     render: (state, size, variant) => (
       <Button size={(size ?? 'md') as 'sm'} disabled={state === 'disabled'} variant={(variant ?? 'primary') as 'primary'}>
@@ -111,7 +114,7 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Input', kind: 'control', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: INPUT_STATES, expected: INPUT_STATES,
+    name: 'Input', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: INPUT_STATES, expected: INPUT_STATES,
     render: (state, size) => (
       <Input
         size={(size ?? 'md') as 'sm'}
@@ -127,7 +130,7 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Textarea', kind: 'control', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'Textarea', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
       <Textarea
         label="About"
@@ -138,7 +141,7 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Select', kind: 'control', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'Select', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
       <Select
         label="Route"
@@ -149,19 +152,19 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Checkbox', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
+    name: 'Checkbox', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
     render: (state) => (
       <Checkbox checked={state === 'checked'} disabled={state === 'disabled'} onChange={noop} label="I accept" />
     ),
   },
   {
-    name: 'Radio', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
+    name: 'Radio', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
     render: (state) => (
       <Radio checked={state === 'checked'} disabled={state === 'disabled'} onChange={noop} name="m" value="a" label="Option" />
     ),
   },
   {
-    name: 'Toggle', group: 'Atoms', sizes: [], states: ['off', 'on', 'disabled'], expected: INTERACTIVE,
+    name: 'Toggle', kind: 'action', group: 'Atoms', sizes: [], states: ['off', 'on', 'disabled'], expected: INTERACTIVE,
     render: (state) => (
       <Toggle checked={state === 'on'} disabled={state === 'disabled'} onChange={noop} aria-label="Enabled" />
     ),
@@ -182,13 +185,13 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Progress', kind: 'control', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default', 'success', 'warning', 'danger'], expected: [],
+    name: 'Progress', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default', 'success', 'warning', 'danger'], expected: [],
     render: (state, size) => (
       <Progress value={62} label="Upload" size={(size ?? 'md') as 'sm'} semantic={state === 'default' ? undefined : (state as 'success')} />
     ),
   },
   {
-    name: 'Avatar', kind: 'control', group: 'Data', // Avatar has three sizes, not the icon engine's five. Recorded as-is.
+    name: 'Avatar', group: 'Data', // Avatar has three sizes, not the icon engine's five. Recorded as-is.
     sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
     render: (_s, size) => <Avatar name="Starli Trade" size={(size ?? 'md') as 'md'} />,
   },
@@ -236,7 +239,7 @@ export const FIXTURES: ComponentFixture[] = [
   },
   // ── the rest of the library ──────────────────────────────────────────────
   {
-    name: 'Modal', kind: 'control', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    name: 'Modal', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
     render: (_s, size) => <Modal open title="Dialog" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Modal>,
   },
   {
@@ -276,7 +279,7 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Sheet', kind: 'control', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    name: 'Sheet', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
     render: (_s, size) => <Sheet open title="Sheet" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Sheet>,
   },
   {
@@ -301,14 +304,14 @@ export const FIXTURES: ComponentFixture[] = [
     render: () => <SimpleTooltip content="Tooltip"><Button>Hover me</Button></SimpleTooltip>,
   },
   {
-    name: 'Combobox', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'Combobox', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
       <Combobox label="City" options={[{ value: 'a', label: 'Tehran' }]} onChange={noop}
         error={state === 'error' ? 'Choose one' : undefined} disabled={state === 'disabled'} />
     ),
   },
   {
-    name: 'MultiSelect', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'MultiSelect', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
       <MultiSelect label="Labels" options={[{ value: 'a', label: 'Design' }]} onChange={noop}
         error={state === 'error' ? 'Choose one' : undefined} disabled={state === 'disabled'} />
