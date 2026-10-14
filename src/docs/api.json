@@ -1,0 +1,4206 @@
+[
+  {
+    "component": "Alert",
+    "path": "components/feedback/Alert/Alert.tsx",
+    "props": [
+      {
+        "name": "semantic",
+        "type": "'success' | 'warning' | 'danger' | 'info'",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "closable",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onClose",
+        "type": "() => void",
+        "required": false
+      },
+      {
+        "name": "icon",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "AlertDialog",
+    "path": "components/feedback/AlertDialog/AlertDialog.tsx",
+    "props": [
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true,
+        "doc": "The question. Required — an alert dialog without one is a wall. */"
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": false,
+        "doc": "What happens if they agree. Not decoration: this is the consequence. */"
+      },
+      {
+        "name": "confirmLabel",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "cancelLabel",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "destructive",
+        "type": "boolean",
+        "required": false,
+        "doc": "Whether confirming DESTROYS something. It changes which action is safe, and therefore which one takes focus — and it colours the confirm button. It does not change the layout, because a destructive question is not a different shape."
+      },
+      {
+        "name": "onConfirm",
+        "type": "() => void",
+        "required": false
+      },
+      {
+        "name": "onCancel",
+        "type": "() => void",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "AppShell",
+    "path": "components/layout/AppShell/AppShell.tsx",
+    "props": [
+      {
+        "name": "topbar",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "sidebar",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "footer",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "mobileNav",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "maxWidth",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "AspectRatio",
+    "path": "components/layout/AspectRatio/AspectRatio.tsx",
+    "extends": "Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "ratio",
+        "type": "number",
+        "required": false,
+        "doc": "Width over height: `16 / 9`, `1`, `4 / 3`. */"
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Avatar",
+    "path": "components/data/Avatar/Avatar.tsx",
+    "props": [
+      {
+        "name": "src",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "hue",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "status",
+        "type": "'online' | 'offline' | 'away' | 'busy'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "AvatarGroup",
+    "path": "components/data/AvatarGroup/AvatarGroup.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Badge",
+    "path": "components/atoms/Badge/Badge.tsx",
+    "props": [
+      {
+        "name": "semantic",
+        "type": "BadgeSemantic",
+        "required": false
+      },
+      {
+        "name": "variant",
+        "type": "BadgeSemantic",
+        "required": false,
+        "doc": "Alias of `semantic`, kept for the call sites that already use it. */"
+      },
+      {
+        "name": "hue",
+        "type": "number",
+        "required": false,
+        "doc": "A spectrum hue instead of a semantic role. There is no glyph for a hue — a hue is not a meaning — so this path shows the label alone."
+      },
+      {
+        "name": "host",
+        "type": "SurfaceRole",
+        "required": false,
+        "doc": "Override the host surface. By default it is read from context. */"
+      },
+      {
+        "name": "role",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "aria-selected",
+        "type": "boolean | 'true' | 'false'",
+        "required": false
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Breadcrumb",
+    "path": "components/nav/Breadcrumb/Breadcrumb.tsx",
+    "props": [
+      {
+        "name": "items",
+        "type": "BreadcrumbItem[]",
+        "required": false
+      },
+      {
+        "name": "separator",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Button",
+    "path": "components/atoms/Button/Button.tsx",
+    "extends": "Omit<LiminalComponentProps<'button'>, 'onClick'>, VariantProps<typeof buttonVariants>",
+    "props": [
+      {
+        "name": "asChild",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "variant",
+        "type": "ButtonVariant",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "ButtonSize",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "forcedState",
+        "type": "LiminalState",
+        "required": false
+      },
+      {
+        "name": "icon",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "iconRight",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "onClick",
+        "type": "(e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void",
+        "required": false
+      },
+      {
+        "name": "type",
+        "type": "'button' | 'submit' | 'reset'",
+        "required": false
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "iconOnly",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "ariaLabel",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "target",
+        "type": "'_blank' | '_self' | '_parent' | '_top'",
+        "required": false
+      },
+      {
+        "name": "rel",
+        "type": "string",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Calendar",
+    "path": "components/data/Calendar/Calendar.tsx",
+    "props": [
+      {
+        "name": "calendar",
+        "type": "'gregorian' | 'jalali'",
+        "required": false,
+        "doc": "Which calendar to lay out. `jalali` is the Solar Hijri calendar, and it is not a formatting option: its months are 31/30/29 days, its year starts on the March equinox, and its week starts on Saturday. A Gregorian grid with Persian month names would be wrong eight days out of twelve."
+      },
+      {
+        "name": "lang",
+        "type": "'en' | 'fa'",
+        "required": false,
+        "doc": "The language for the month, weekday and day labels. */"
+      },
+      {
+        "name": "mode",
+        "type": "'single' | 'range'",
+        "required": false
+      },
+      {
+        "name": "selectedDate",
+        "type": "Date | [Date, Date | null] | null",
+        "required": false
+      },
+      {
+        "name": "onSelectDate",
+        "type": "(date: Date | [Date, Date | null] | null) => void",
+        "required": false
+      },
+      {
+        "name": "month",
+        "type": "Date",
+        "required": false
+      },
+      {
+        "name": "onMonthChange",
+        "type": "(date: Date) => void",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Card",
+    "path": "components/containers/Card/Card.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "padding",
+        "type": "'sm' | 'md' | 'lg' | string",
+        "required": false
+      },
+      {
+        "name": "title",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "subtitle",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "action",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "footer",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "elevation",
+        "type": "1 | 2 | 3 | 4",
+        "required": false
+      },
+      {
+        "name": "isFeatured",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "surface",
+        "type": "Extract<SurfaceRole, 'chrome' | 'work' | 'panel'>",
+        "required": false,
+        "doc": "What this card IS in the hierarchy, not which ladder step it wants. It used to be `surfaceLevel?: 1 | 2 | 3 | 4` — a raw depth, and a raw depth cannot be checked: at level 3 the old resolver still drew a rim of 1, which the contract says belongs to chrome and work, not to a surface three steps up. `chrome` is the level the card has always sat at."
+      },
+      {
+        "name": "radius",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Checkbox",
+    "path": "components/inputs/Checkbox/Checkbox.tsx",
+    "props": [
+      {
+        "name": "checked",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(checked: boolean) => void",
+        "required": true
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false,
+        "doc": "The validation message. A checkbox validates: \"you must accept the terms\" is a real error, and it was the one thing the other five inputs had and this did not. It is a STRING, not a boolean — an error the reader cannot read is a red box."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Combobox",
+    "path": "components/inputs/Combobox/Combobox.tsx",
+    "props": [
+      {
+        "name": "options",
+        "type": "ComboboxOption[]",
+        "required": true
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "defaultValue",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "onChange",
+        "type": "(val: string) => void",
+        "required": false
+      },
+      {
+        "name": "onSelect",
+        "type": "(option: ComboboxOption) => void",
+        "required": false
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "success",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "helperText",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "prefix",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "suffix",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "clearable",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "emptyText",
+        "type": "string",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "CommandPalette",
+    "path": "components/nav/CommandPalette/CommandPalette.tsx",
+    "props": [
+      {
+        "name": "isOpen",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "onClose",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "groups",
+        "type": "CommandPaletteGroup[]",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "ContextMenu",
+    "path": "components/nav/ContextMenu/ContextMenu.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onOpenChange",
+        "type": "(open: boolean) => void",
+        "required": false
+      },
+      {
+        "name": "placement",
+        "type": "Placement",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "ContextMenuContent",
+    "path": "components/nav/ContextMenu/ContextMenuContent.tsx",
+    "extends": "HTMLAttributes<HTMLDivElement>",
+    "props": [
+      {
+        "name": "asChild",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      },
+      {
+        "name": "minWidth",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "loop",
+        "type": "boolean",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "ContextMenuTrigger",
+    "path": "components/nav/ContextMenu/ContextMenu.tsx",
+    "extends": "HTMLAttributes<HTMLElement>",
+    "props": [
+      {
+        "name": "asChild",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DatePicker",
+    "path": "components/data/Calendar/DatePicker.tsx",
+    "props": [
+      {
+        "name": "mode",
+        "type": "'single' | 'range'",
+        "required": false
+      },
+      {
+        "name": "value",
+        "type": "Date | [Date, Date | null] | null",
+        "required": false
+      },
+      {
+        "name": "selectedDate",
+        "type": "Date | [Date, Date | null] | null",
+        "required": false
+      },
+      {
+        "name": "onChange",
+        "type": "(date: Date | [Date, Date | null] | null) => void",
+        "required": false
+      },
+      {
+        "name": "onSelectDate",
+        "type": "(date: Date | [Date, Date | null] | null) => void",
+        "required": false
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false,
+        "doc": "The validation message. A date can be invalid — out of range, in the past, not a working day — and the Input underneath has carried an `error` all along. The wrapper simply never passed it through, which is the same defect as the Button's swallowed handlers: a prop that stops one layer short."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Divider",
+    "path": "components/containers/Divider/Divider.tsx",
+    "props": [
+      {
+        "name": "orientation",
+        "type": "'horizontal' | 'vertical'",
+        "required": false
+      },
+      {
+        "name": "spacing",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Drawer",
+    "path": "components/containers/Drawer/Drawer.tsx",
+    "props": [
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "onClose",
+        "type": "() => void",
+        "required": false
+      },
+      {
+        "name": "side",
+        "type": "DrawerSide",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "dragThreshold",
+        "type": "number",
+        "required": false,
+        "doc": "How far the handle must be dragged before it counts as a dismissal. */"
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DropdownMenu",
+    "path": "components/nav/DropdownMenu/DropdownMenu.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onOpenChange",
+        "type": "(open: boolean) => void",
+        "required": false
+      },
+      {
+        "name": "placement",
+        "type": "Placement",
+        "required": false
+      },
+      {
+        "name": "offset",
+        "type": "{ x?: number; y?: number }",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DropdownMenuCheckboxItem",
+    "path": "components/nav/DropdownMenu/DropdownMenuItem.tsx",
+    "extends": "HTMLAttributes<HTMLElement>",
+    "props": [
+      {
+        "name": "asChild",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "checked",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "onCheckedChange",
+        "type": "(checked: boolean) => void",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "shortcut",
+        "type": "string",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DropdownMenuContent",
+    "path": "components/nav/DropdownMenu/DropdownMenuContent.tsx",
+    "extends": "HTMLAttributes<HTMLDivElement>",
+    "props": [
+      {
+        "name": "asChild",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      },
+      {
+        "name": "minWidth",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "loop",
+        "type": "boolean",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DropdownMenuItem",
+    "path": "components/nav/DropdownMenu/DropdownMenuItem.tsx",
+    "extends": "Omit<HTMLAttributes<HTMLElement>, 'onSelect'>",
+    "props": [
+      {
+        "name": "asChild",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "variant",
+        "type": "'default' | 'danger'",
+        "required": false
+      },
+      {
+        "name": "icon",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "shortcut",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "onSelect",
+        "type": "(e: Event) => void",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DropdownMenuLabel",
+    "path": "components/nav/DropdownMenu/DropdownMenuItem.tsx",
+    "extends": "HTMLAttributes<HTMLDivElement>",
+    "props": [
+      {
+        "name": "asChild",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DropdownMenuRadioGroup",
+    "path": "components/nav/DropdownMenu/DropdownMenu.tsx",
+    "props": [
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "onValueChange",
+        "type": "(value: string) => void",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DropdownMenuRadioItem",
+    "path": "components/nav/DropdownMenu/DropdownMenuItem.tsx",
+    "extends": "HTMLAttributes<HTMLElement>",
+    "props": [
+      {
+        "name": "asChild",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "shortcut",
+        "type": "string",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DropdownMenuSeparator",
+    "path": "components/nav/DropdownMenu/DropdownMenuItem.tsx",
+    "extends": "HTMLAttributes<HTMLDivElement>",
+    "props": [
+      {
+        "name": "asChild",
+        "type": "boolean",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DropdownMenuShortcut",
+    "path": "components/nav/DropdownMenu/DropdownMenuItem.tsx",
+    "extends": "HTMLAttributes<HTMLSpanElement>",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "DropdownMenuTrigger",
+    "path": "components/nav/DropdownMenu/DropdownMenu.tsx",
+    "extends": "HTMLAttributes<HTMLElement>",
+    "props": [
+      {
+        "name": "asChild",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "EmptyState",
+    "path": "components/composites/EmptyState/EmptyState.tsx",
+    "props": [
+      {
+        "name": "icon",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "ErrorPage",
+    "path": "components/composites/ErrorPage/ErrorPage.tsx",
+    "props": [
+      {
+        "name": "code",
+        "type": "'404' | '500' | '403' | '401' | string",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "primaryAction",
+        "type": "{ label: string",
+        "required": false
+      },
+      {
+        "name": "secondaryAction",
+        "type": "{ label: string",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Field",
+    "path": "components/composites/Form/Form.tsx",
+    "props": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "doc": "The field's name, which is also the key its validator is registered under. */"
+      },
+      {
+        "name": "label",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "React.ReactElement",
+        "required": true
+      },
+      {
+        "name": "hint",
+        "type": "string",
+        "required": false,
+        "doc": "A hint under the label. Announced, and replaced by the error when there is one. */"
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false,
+        "doc": "Mark the field required, and say so to a screen reader. */"
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "FileUpload",
+    "path": "components/inputs/FileUpload/FileUpload.tsx",
+    "props": [
+      {
+        "name": "files",
+        "type": "File[]",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(files: File[]) => void",
+        "required": true
+      },
+      {
+        "name": "accept",
+        "type": "string",
+        "required": false,
+        "doc": "Passed to the input, so the platform can filter the picker. */"
+      },
+      {
+        "name": "multiple",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "hint",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "FilterBar",
+    "path": "components/data/FilterBar/FilterBar.tsx",
+    "props": [
+      {
+        "name": "activeFilters",
+        "type": "ActiveFilter[]",
+        "required": true
+      },
+      {
+        "name": "onRemoveFilter",
+        "type": "(id: string) => void",
+        "required": true
+      },
+      {
+        "name": "onClearAll",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "FocusScope",
+    "path": "components/layout/FocusScope/FocusScope.tsx",
+    "extends": "Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "active",
+        "type": "boolean",
+        "required": false,
+        "doc": "Whether the trap is armed. A scope that is always on is a prison. */"
+      },
+      {
+        "name": "onEscape",
+        "type": "() => void",
+        "required": false,
+        "doc": "Called when the reader presses Escape. A trap MUST have an exit. If this is not given, the component still lets Escape through to the document — it does not swallow it, because swallowing the only key that could free the reader is worse than not trapping."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Footer",
+    "path": "components/layout/Footer/Footer.tsx",
+    "props": [
+      {
+        "name": "left",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Form",
+    "path": "components/composites/Form/Form.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "onSubmit",
+        "type": "(values: FieldValues, event: FormEvent<HTMLFormElement>) => void",
+        "required": false,
+        "doc": "Called with the values only when every field passes. A form that submits with invalid data is a form that lost the argument with itself."
+      },
+      {
+        "name": "onInvalid",
+        "type": "(errors: FieldErrors) => void",
+        "required": false,
+        "doc": "Called on every submit attempt, valid or not. */"
+      },
+      {
+        "name": "validators",
+        "type": "Record<string, Validator>",
+        "required": false,
+        "doc": "Per-field validators, keyed by field name. */"
+      },
+      {
+        "name": "defaultValues",
+        "type": "FieldValues",
+        "required": false,
+        "doc": "The values the form starts with. */"
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      },
+      {
+        "name": "noValidate",
+        "type": "boolean",
+        "required": false,
+        "doc": "Turn the browser's own validation off — this one is better and it is ours. */"
+      }
+    ]
+  },
+  {
+    "component": "FormActions",
+    "path": "components/composites/FormLayout/FormLayout.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "FormField",
+    "path": "components/composites/FormLayout/FormLayout.tsx",
+    "props": [
+      {
+        "name": "label",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "hint",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "FormLayout",
+    "path": "components/composites/FormLayout/FormLayout.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "onSubmit",
+        "type": "(e: FormEvent<HTMLFormElement>) => void",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "FormRow",
+    "path": "components/composites/FormLayout/FormLayout.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "cols",
+        "type": "2 | 3",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "FormSection",
+    "path": "components/composites/FormLayout/FormLayout.tsx",
+    "props": [
+      {
+        "name": "title",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Grid",
+    "path": "components/layout/Grid/Grid.tsx",
+    "props": [
+      {
+        "name": "gap",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "GridCol",
+    "path": "components/layout/Grid/Grid.tsx",
+    "props": [
+      {
+        "name": "col",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "md",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "sm",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "HoverCard",
+    "path": "components/containers/HoverCard/HoverCard.tsx",
+    "props": [
+      {
+        "name": "trigger",
+        "type": "React.ReactElement<Record<string, unknown>>",
+        "required": true,
+        "doc": "The element the reader lingers on. Receives the ARIA wiring. */"
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "placement",
+        "type": "Placement",
+        "required": false
+      },
+      {
+        "name": "openDelay",
+        "type": "number",
+        "required": false,
+        "doc": "How long the pointer must rest before it opens. */"
+      },
+      {
+        "name": "closeDelay",
+        "type": "number",
+        "required": false,
+        "doc": "How long it waits before closing, so the pointer can travel into it. */"
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "doc": "Controlled open state. Omit for uncontrolled. */"
+      },
+      {
+        "name": "onOpenChange",
+        "type": "(open: boolean) => void",
+        "required": false
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Input",
+    "path": "components/inputs/Input/Input.tsx",
+    "extends": "NativeInputProps",
+    "props": [
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false,
+        "doc": "The control height. `md` is the default AND the accessible minimum — the engine's `CONTROL.md` and `TARGET.min` are the same number, so the default is not a compromise. It was missing: `minHeight` was hardcoded to `CONTROL.md`, so every input was 44px and there was no way to ask for a denser one."
+      },
+      {
+        "name": "type",
+        "type": "'text' | 'email' | 'password' | 'search' | 'number' | 'tel' | 'url'",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "defaultValue",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "onChange",
+        "type": "(e: ChangeEvent<HTMLInputElement>) => void",
+        "required": false
+      },
+      {
+        "name": "onFocus",
+        "type": "(e: FocusEvent<HTMLInputElement>) => void",
+        "required": false
+      },
+      {
+        "name": "onBlur",
+        "type": "(e: FocusEvent<HTMLInputElement>) => void",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "success",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "helperText",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "prefix",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "suffix",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "leftIcon",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "rightIcon",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "togglePassword",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "maxLength",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "showCount",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "clearable",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "allowClear",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onClear",
+        "type": "() => void",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "autoComplete",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "readOnly",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "autoFocus",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onKeyDown",
+        "type": "(e: KeyboardEvent<HTMLInputElement>) => void",
+        "required": false
+      },
+      {
+        "name": "role",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "ariaExpanded",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "ariaHasPopup",
+        "type": "boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'",
+        "required": false
+      },
+      {
+        "name": "ariaControls",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "ariaActiveDescendant",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "ariaAutocomplete",
+        "type": "'none' | 'inline' | 'list' | 'both'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "InsetWell",
+    "path": "components/containers/Card/Card.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "padding",
+        "type": "'sm' | 'md'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Mist",
+    "path": "components/atoms/Mist/Mist.tsx",
+    "props": [
+      {
+        "name": "as",
+        "type": "'button' | 'div'",
+        "required": false
+      },
+      {
+        "name": "role",
+        "type": "Extract<SurfaceRole, 'menu' | 'popover' | 'modal' | 'toast'>",
+        "required": false,
+        "doc": "Which floating surface this is. The mist derives its blur, halo, shadow and fill from this role's ladder level — a toast floats higher than a menu, so it diffuses more and casts a larger shadow."
+      },
+      {
+        "name": "tier",
+        "type": "'hero' | 'quiet'",
+        "required": false,
+        "doc": "'hero' is the single allowed emphasised mist in an app; 'quiet' is the rest. */"
+      },
+      {
+        "name": "radius",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "onClick",
+        "type": "(e: MouseEvent<HTMLElement>) => void",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "type",
+        "type": "'button' | 'submit' | 'reset'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Modal",
+    "path": "components/containers/Modal/Modal.tsx",
+    "props": [
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "isOpen",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onClose",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "footer",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "maxWidth",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "closeOnBackdrop",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "closeOnEscape",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "MultiSelect",
+    "path": "components/inputs/MultiSelect/MultiSelect.tsx",
+    "props": [
+      {
+        "name": "options",
+        "type": "MultiSelectOption[]",
+        "required": true
+      },
+      {
+        "name": "value",
+        "type": "string[]",
+        "required": false
+      },
+      {
+        "name": "defaultValue",
+        "type": "string[]",
+        "required": false
+      },
+      {
+        "name": "onChange",
+        "type": "(vals: string[]) => void",
+        "required": false
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "success",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "helperText",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "prefix",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "clearable",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "emptyText",
+        "type": "string",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "NavItem",
+    "path": "components/nav/NavItem/NavItem.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "icon",
+        "type": "PhosphorIcon | ReactNode",
+        "required": false
+      },
+      {
+        "name": "active",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onClick",
+        "type": "(e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void",
+        "required": false
+      },
+      {
+        "name": "href",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "NumberInput",
+    "path": "components/inputs/NumberInput/NumberInput.tsx",
+    "props": [
+      {
+        "name": "value",
+        "type": "number | ''",
+        "required": true,
+        "doc": "An empty string is a legitimate value: an empty field is not zero. */"
+      },
+      {
+        "name": "onChange",
+        "type": "(value: number | '') => void",
+        "required": true
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "step",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "helperText",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "readOnly",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "OTP",
+    "path": "components/inputs/OTP/OTP.tsx",
+    "props": [
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(value: string) => void",
+        "required": true
+      },
+      {
+        "name": "length",
+        "type": "number",
+        "required": false,
+        "doc": "How many digits. Also the input's maxLength. */"
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onComplete",
+        "type": "(value: string) => void",
+        "required": false,
+        "doc": "Called when the last digit arrives, so a consumer does not poll. */"
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "autoFocus",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "PageHeader",
+    "path": "components/layout/PageHeader/PageHeader.tsx",
+    "props": [
+      {
+        "name": "breadcrumb",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "subtitle",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "PageSection",
+    "path": "components/layout/PageSection/PageSection.tsx",
+    "props": [
+      {
+        "name": "title",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "subtitle",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "divider",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Pagination",
+    "path": "components/data/Pagination/Pagination.tsx",
+    "props": [
+      {
+        "name": "currentPage",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "totalPages",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "onPageChange",
+        "type": "(page: number) => void",
+        "required": true
+      },
+      {
+        "name": "siblingCount",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Panel",
+    "path": "components/containers/Panel/Panel.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "padding",
+        "type": "'md' | 'lg' | number",
+        "required": false
+      },
+      {
+        "name": "parentRadius",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "radius",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "surface",
+        "type": "Extract<SurfaceRole, 'work' | 'panel'>",
+        "required": false,
+        "doc": "What this panel IS in the hierarchy, not which ladder step it wants. It used to be `surfaceLevel?: number` — a raw depth. A component that names a number cannot be checked against the contract, and two components at the same depth could disagree. `work` is the level the panel has always sat at."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Popover",
+    "path": "components/containers/Popover/Popover.tsx",
+    "props": [
+      {
+        "name": "trigger",
+        "type": "React.ReactElement<Record<string, unknown>>",
+        "required": true,
+        "doc": "The element that opens it. Receives the ARIA wiring. */"
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "placement",
+        "type": "Placement",
+        "required": false,
+        "doc": "Where the engine should try to put it, before collision handling. */"
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "doc": "Controlled open state. Omit for uncontrolled. */"
+      },
+      {
+        "name": "onOpenChange",
+        "type": "(open: boolean) => void",
+        "required": false
+      },
+      {
+        "name": "modal",
+        "type": "boolean",
+        "required": false,
+        "doc": "Whether the content traps focus. A popover holding a form wants the trap; one holding a paragraph does not, and trapping focus for a paragraph is a trap the reader has to escape."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "doc": "An accessible name for the surface. Required when it has no heading. */"
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Progress",
+    "path": "components/data/Progress/Progress.tsx",
+    "props": [
+      {
+        "name": "value",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "semantic",
+        "type": "'success' | 'warning' | 'danger' | 'info'",
+        "required": false
+      },
+      {
+        "name": "color",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "ariaLabel",
+        "type": "string",
+        "required": false,
+        "doc": "The progressbar's accessible name, when there is no visible label. */"
+      },
+      {
+        "name": "showLabel",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "showValue",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Radio",
+    "path": "components/inputs/Radio/Radio.tsx",
+    "props": [
+      {
+        "name": "checked",
+        "type": "boolean",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false,
+        "doc": "The validation message for the GROUP this radio belongs to. A radio validates as a set — \"choose a plan\" — and the message belongs on each member so a screen reader meets it wherever the reader is. It is a STRING, not a boolean: an error the reader cannot read is a red dot."
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Rating",
+    "path": "components/inputs/Rating/Rating.tsx",
+    "props": [
+      {
+        "name": "value",
+        "type": "number",
+        "required": true,
+        "doc": "0 means nothing chosen. */"
+      },
+      {
+        "name": "onChange",
+        "type": "(value: number) => void",
+        "required": true
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "readOnly",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "showValue",
+        "type": "boolean",
+        "required": false,
+        "doc": "Show \"3 of 5\" beside the stars. */"
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "ScrollArea",
+    "path": "components/layout/ScrollArea/ScrollArea.tsx",
+    "extends": "Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "maxHeight",
+        "type": "SpaceStep",
+        "required": false,
+        "doc": "The height it scrolls within, as a STEP IN THE SCALE. It accepted a number too, and that was ambiguous: `maxHeight={6}` could mean six pixels or step six, and the component silently chose pixels. The contract's first rule is that a value becomes a token and a selection becomes a name — so this takes a NAME. A consumer who wants pixels has `style`."
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false,
+        "doc": "An accessible name. Required when it scrolls, because it becomes a stop. */"
+      },
+      {
+        "name": "axis",
+        "type": "'y' | 'x' | 'both'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Select",
+    "path": "components/inputs/Select/Select.tsx",
+    "props": [
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "options",
+        "type": "SelectOption[]",
+        "required": false
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "defaultValue",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "onChange",
+        "type": "(value: string) => void",
+        "required": false,
+        "doc": "ONE signature. It used to accept either `(value: string)` or `(event)`, and tried to tell them apart with `try { onChange(value) } catch { onChange(e) }` — which cannot work: calling an event-style handler with a string does not throw, so the catch never fired and the caller silently received a string where it expected an event. Nothing used the event form, so it is gone."
+      },
+      {
+        "name": "onFocus",
+        "type": "(e: FocusEvent<HTMLSelectElement>) => void",
+        "required": false
+      },
+      {
+        "name": "onBlur",
+        "type": "(e: FocusEvent<HTMLSelectElement>) => void",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "success",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "helperText",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "prefix",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "suffix",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "caretPosition",
+        "type": "'start' | 'end'",
+        "required": false,
+        "doc": "Which END of the field the caret sits at. `end` is the default. */"
+      }
+    ]
+  },
+  {
+    "component": "Sheet",
+    "path": "components/containers/Sheet/Sheet.tsx",
+    "props": [
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "isOpen",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onClose",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "title",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "subtitle",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "footer",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "position",
+        "type": "'bottom' | 'right'",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg' | 'half' | 'full'",
+        "required": false
+      },
+      {
+        "name": "showHandle",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "closeOnBackdrop",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "closeOnEscape",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Sidebar",
+    "path": "components/nav/Sidebar/Sidebar.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "sticky",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "SidebarSection",
+    "path": "components/nav/Sidebar/Sidebar.tsx",
+    "props": [
+      {
+        "name": "label",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "SimpleTooltip",
+    "path": "components/feedback/Tooltip/SimpleTooltip.tsx",
+    "props": [
+      {
+        "name": "content",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "placement",
+        "type": "Placement",
+        "required": false
+      },
+      {
+        "name": "position",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "delay",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Skeleton",
+    "path": "components/composites/Skeleton/Skeleton.tsx",
+    "props": [
+      {
+        "name": "variant",
+        "type": "'text' | 'title' | 'circle' | 'card' | 'custom'",
+        "required": false
+      },
+      {
+        "name": "width",
+        "type": "string | number",
+        "required": false
+      },
+      {
+        "name": "height",
+        "type": "string | number",
+        "required": false
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "borderRadius",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Slider",
+    "path": "components/inputs/Slider/Slider.tsx",
+    "props": [
+      {
+        "name": "value",
+        "type": "number",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(value: number) => void",
+        "required": true
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "step",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false,
+        "doc": "The validation message. A number can be out of range. */"
+      },
+      {
+        "name": "showValue",
+        "type": "boolean",
+        "required": false,
+        "doc": "Show the current value beside the label. */"
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Stack",
+    "path": "components/layout/Stack/Stack.tsx",
+    "extends": "Omit<React.HTMLAttributes<HTMLElement>, 'children'>",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "gap",
+        "type": "keyof typeof L.SPACING",
+        "required": false,
+        "doc": "The gap, as a STEP IN THE SCALE — not a number of pixels. */"
+      },
+      {
+        "name": "direction",
+        "type": "'row' | 'column'",
+        "required": false
+      },
+      {
+        "name": "align",
+        "type": "'start' | 'center' | 'end' | 'stretch'",
+        "required": false
+      },
+      {
+        "name": "justify",
+        "type": "'start' | 'center' | 'end' | 'between'",
+        "required": false
+      },
+      {
+        "name": "wrap",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "as",
+        "type": "ElementType",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Stat",
+    "path": "components/data/Stat/Stat.tsx",
+    "props": [
+      {
+        "name": "label",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "value",
+        "type": "string | number",
+        "required": true
+      },
+      {
+        "name": "trend",
+        "type": "{ direction?: 'up' | 'down' | 'neutral'",
+        "required": false
+      },
+      {
+        "name": "change",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "changeType",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "meta",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "icon",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "subtitle",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "prefix",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Stepper",
+    "path": "components/nav/Stepper/Stepper.tsx",
+    "props": [
+      {
+        "name": "steps",
+        "type": "StepperStep[]",
+        "required": true
+      },
+      {
+        "name": "current",
+        "type": "string",
+        "required": false,
+        "doc": "Which step is current, by id. Wins over a per-step `state`. */"
+      },
+      {
+        "name": "orientation",
+        "type": "'horizontal' | 'vertical'",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Tab",
+    "path": "components/nav/Tabs/Tabs.tsx",
+    "props": [
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Table",
+    "path": "components/data/Table/Table.tsx",
+    "props": [
+      {
+        "name": "columns",
+        "type": "TableColumn[]",
+        "required": false
+      },
+      {
+        "name": "data",
+        "type": "Array<Record<string, any>>",
+        "required": false
+      },
+      {
+        "name": "selectable",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "keyExtractor",
+        "type": "(item: any) => string | number",
+        "required": false
+      },
+      {
+        "name": "onRowClick",
+        "type": "(row: Record<string, any>, index: number) => void",
+        "required": false
+      },
+      {
+        "name": "selectedRows",
+        "type": "number[]",
+        "required": false
+      },
+      {
+        "name": "onSelectRow",
+        "type": "(index: number, selected: boolean) => void",
+        "required": false
+      },
+      {
+        "name": "onSelectAll",
+        "type": "(selected: boolean) => void",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "TableCell",
+    "path": "components/data/Table/TableCell.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "isPrimary",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "align",
+        "type": "'left' | 'right' | 'center'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      },
+      {
+        "name": "onClick",
+        "type": "(e?: any) => void",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "TableHead",
+    "path": "components/data/Table/TableHead.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "sortDirection",
+        "type": "'asc' | 'desc' | 'none'",
+        "required": false
+      },
+      {
+        "name": "onSort",
+        "type": "() => void",
+        "required": false
+      },
+      {
+        "name": "align",
+        "type": "'left' | 'right' | 'center'",
+        "required": false
+      },
+      {
+        "name": "width",
+        "type": "string | number",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "TableHeader",
+    "path": "components/data/Table/TableHeader.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "TableRow",
+    "path": "components/data/Table/TableRow.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "isSelected",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onSelect",
+        "type": "() => void",
+        "required": false
+      },
+      {
+        "name": "onClick",
+        "type": "(e: MouseEvent<HTMLTableRowElement>) => void",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "TabPanel",
+    "path": "components/nav/Tabs/Tabs.tsx",
+    "props": [
+      {
+        "name": "value",
+        "type": "string",
+        "required": true,
+        "doc": "Must match the `value` of the tab it belongs to. */"
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Tabs",
+    "path": "components/nav/Tabs/Tabs.tsx",
+    "props": [
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "onChange",
+        "type": "(value: string) => void",
+        "required": true
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "items",
+        "type": "TabItem[]",
+        "required": false
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Tag",
+    "path": "components/atoms/Tag/Tag.tsx",
+    "props": [
+      {
+        "name": "hue",
+        "type": "number",
+        "required": false,
+        "doc": "A spectrum hue. Tag is Badge's sibling but not its twin: Badge carries a STATUS and needs a glyph that survives colour blindness, because colour alone collapses under every form of it. Tag carries a CATEGORY, and the label itself says which one — so the hue is decoration, not information, and no glyph is needed."
+      },
+      {
+        "name": "host",
+        "type": "SurfaceRole",
+        "required": false,
+        "doc": "Override the host surface. By default it is read from context. */"
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Textarea",
+    "path": "components/inputs/Textarea/Textarea.tsx",
+    "props": [
+      {
+        "name": "label",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "placeholder",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "defaultValue",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "onChange",
+        "type": "(e: ChangeEvent<HTMLTextAreaElement>) => void",
+        "required": false
+      },
+      {
+        "name": "onFocus",
+        "type": "(e: FocusEvent<HTMLTextAreaElement>) => void",
+        "required": false
+      },
+      {
+        "name": "onBlur",
+        "type": "(e: FocusEvent<HTMLTextAreaElement>) => void",
+        "required": false
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "error",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "success",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "helperText",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "maxLength",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "showCount",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "rows",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Toast",
+    "path": "components/feedback/Toast/Toast.tsx",
+    "props": [
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "isOpen",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onClose",
+        "type": "() => void",
+        "required": true
+      },
+      {
+        "name": "semantic",
+        "type": "'success' | 'warning' | 'danger' | 'info'",
+        "required": false
+      },
+      {
+        "name": "message",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "action",
+        "type": "{ label: string",
+        "required": false
+      },
+      {
+        "name": "duration",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "position",
+        "type": "'bottom-center' | 'top-center'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Toggle",
+    "path": "components/atoms/Toggle/Toggle.tsx",
+    "props": [
+      {
+        "name": "checked",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "value",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "on",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "onChange",
+        "type": "(value: boolean) => void",
+        "required": true
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Topbar",
+    "path": "components/nav/Topbar/Topbar.tsx",
+    "props": [
+      {
+        "name": "logo",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "actions",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "sticky",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "TreeView",
+    "path": "components/data/TreeView/TreeView.tsx",
+    "props": [
+      {
+        "name": "nodes",
+        "type": "TreeNode[]",
+        "required": true
+      },
+      {
+        "name": "expanded",
+        "type": "string[]",
+        "required": false,
+        "doc": "Controlled expansion. Omit for uncontrolled. */"
+      },
+      {
+        "name": "onExpandedChange",
+        "type": "(ids: string[]) => void",
+        "required": false
+      },
+      {
+        "name": "selected",
+        "type": "string | null",
+        "required": false,
+        "doc": "The selected node, or null. */"
+      },
+      {
+        "name": "onSelect",
+        "type": "(id: string) => void",
+        "required": false
+      },
+      {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "VisuallyHidden",
+    "path": "components/layout/VisuallyHidden/VisuallyHidden.tsx",
+    "extends": "Omit<React.HTMLAttributes<HTMLElement>, 'children'>",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "as",
+        "type": "ElementType",
+        "required": false,
+        "doc": "Render as something other than a span — a heading, a label, a div. */"
+      },
+      {
+        "name": "focusable",
+        "type": "boolean",
+        "required": false,
+        "doc": "Show it when it takes focus. For skip links, which must become visible. */"
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  }
+]

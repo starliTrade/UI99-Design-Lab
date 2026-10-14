@@ -13,6 +13,7 @@ import React from 'react';
 import { Studio } from '../../studio/Studio';
 import { FIXTURES, coverage } from '../../components/__matrix__/fixtures';
 import { Section, Prose, Value, Stat, MONO, S, R } from '../ui';
+import API from '../api.json';
 import { resolveSurface } from '../../engine/liminal-surface';
 
 const pct = (n: number) => Math.round(n * 100);
@@ -41,6 +42,75 @@ function EyeNotes({ name }: { name: string }) {
         <li key={i}>{n}</li>
       ))}
     </ul>
+  );
+}
+
+/**
+ * The props, read from the `…Props` interface the component is already written
+ * in — generated, not typed here, because a hand-written table has a
+ * documentation bug on the day a prop changes.
+ *
+ * The JSDoc column is the interesting one: in this repo the comment above a prop
+ * is where the REASON lives, not a description of the name.
+ */
+function ApiTable({ name }: { name: string }) {
+  const entry = (API as { component: string; path: string; extends?: string; props: { name: string; type: string; required: boolean; doc?: string }[] }[]).find(
+    (e) => e.component === name,
+  );
+  if (!entry) {
+    return (
+      <Section title="API" note={`${name} has no exported props interface`}>
+        <Prose>
+          Either it takes no props, or its interface is not named <code style={{ fontFamily: MONO }}>{name}Props</code>.
+        </Prose>
+      </Section>
+    );
+  }
+  const documented = entry.props.filter((p) => p.doc).length;
+  return (
+    <Section
+      title="API"
+      note={`${entry.props.length} props · ${documented} with a reason · read from ${entry.path}`}
+    >
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          <thead>
+            <tr style={{ opacity: 0.65 }}>
+              <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>prop</th>
+              <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>type</th>
+              <th style={{ textAlign: 'start', padding: `${S[1]}px ${S[2]}px` }}>why it exists</th>
+            </tr>
+          </thead>
+          <tbody>
+            {entry.props.map((p) => (
+              <tr key={p.name} style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <td style={{ padding: `${S[1]}px ${S[2]}px`, verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                  <code style={{ fontFamily: MONO }}>{p.name}</code>
+                  {!p.required && <span style={{ opacity: 0.5 }}>?</span>}
+                </td>
+                <td style={{ padding: `${S[1]}px ${S[2]}px`, verticalAlign: 'top' }}>
+                  <code style={{ fontFamily: MONO, fontSize: 11, direction: 'ltr', display: 'inline-block' }}>{p.type}</code>
+                </td>
+                <td style={{ padding: `${S[1]}px ${S[2]}px`, verticalAlign: 'top', opacity: p.doc ? 0.85 : 0.45, lineHeight: 1.8 }}>
+                  {p.doc ?? '—'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {entry.extends && (
+        <Prose>
+          <b>extends</b> <code style={{ fontFamily: MONO, fontSize: 11 }}>{entry.extends}</code>
+        </Prose>
+      )}
+      {documented < entry.props.length && (
+        <Prose>
+          {entry.props.length - documented} of {entry.props.length} props have no reason written above them. In this
+          repo that is a gap rather than a style: the comment is where the reason lives.
+        </Prose>
+      )}
+    </Section>
   );
 }
 
@@ -77,6 +147,9 @@ export function ComponentPage({ name }: { name: string }) {
         </Prose>
         <EyeNotes name={f.name} />
       </Section>
+
+      {/* The API, read from the types rather than written by hand. */}
+      <ApiTable name={f.name} />
 
       {/* The workbench. Same component the studio renders. */}
       <Studio initial={f.name} showList={false} />
