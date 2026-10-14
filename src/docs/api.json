@@ -63,13 +63,13 @@
         "name": "title",
         "type": "string",
         "required": true,
-        "doc": "The question. Required — an alert dialog without one is a wall. */"
+        "doc": "The question. Required — an alert dialog without one is a wall."
       },
       {
         "name": "description",
         "type": "string",
         "required": false,
-        "doc": "What happens if they agree. Not decoration: this is the consequence. */"
+        "doc": "What happens if they agree. Not decoration: this is the consequence."
       },
       {
         "name": "confirmLabel",
@@ -174,7 +174,7 @@
         "name": "ratio",
         "type": "number",
         "required": false,
-        "doc": "Width over height: `16 / 9`, `1`, `4 / 3`. */"
+        "doc": "Width over height: `16 / 9`, `1`, `4 / 3`."
       },
       {
         "name": "className",
@@ -273,7 +273,7 @@
         "name": "variant",
         "type": "BadgeSemantic",
         "required": false,
-        "doc": "Alias of `semantic`, kept for the call sites that already use it. */"
+        "doc": "Alias of `semantic`, kept for the call sites that already use it."
       },
       {
         "name": "hue",
@@ -285,7 +285,7 @@
         "name": "host",
         "type": "SurfaceRole",
         "required": false,
-        "doc": "Override the host surface. By default it is read from context. */"
+        "doc": "Override the host surface. By default it is read from context."
       },
       {
         "name": "role",
@@ -358,42 +358,50 @@
       {
         "name": "asChild",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "doc": "Render the child element instead of a `<button>`, keeping its styles."
       },
       {
         "name": "variant",
         "type": "ButtonVariant",
-        "required": false
+        "required": false,
+        "doc": "The name of a decision, not a colour. `danger` is a role; `red` would be a value pretending to be a choice, and it breaks the moment the theme moves."
       },
       {
         "name": "size",
         "type": "ButtonSize",
-        "required": false
+        "required": false,
+        "doc": "The control height, from `CONTROL`. `md` is the default AND the accessible minimum — `CONTROL.md` and `TARGET.min` are the same number, so the default is not a compromise."
       },
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "doc": "Inert: not focusable, not pressable, and it says so to a screen reader."
       },
       {
         "name": "forcedState",
         "type": "LiminalState",
-        "required": false
+        "required": false,
+        "doc": "Force a state for a screenshot or a test. The interaction is CSS, so a still frame cannot show hover or press. This applies the layer's own declarations through a class — a harness for looking, not a second implementation of the state."
       },
       {
         "name": "icon",
         "type": "ReactNode",
-        "required": false
+        "required": false,
+        "doc": "A glyph before the label."
       },
       {
         "name": "iconRight",
         "type": "ReactNode",
-        "required": false
+        "required": false,
+        "doc": "A glyph after the label."
       },
       {
         "name": "fullWidth",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "doc": "Fill the container. For a form's primary action, not for a toolbar."
       },
       {
         "name": "children",
@@ -408,27 +416,32 @@
       {
         "name": "type",
         "type": "'button' | 'submit' | 'reset'",
-        "required": false
+        "required": false,
+        "doc": "Defaults to `button`, because a button inside a form that submits by accident is a bug the platform will happily commit for you."
       },
       {
         "name": "loading",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "doc": "Busy. The label stays, so the button does not change width mid-press."
       },
       {
         "name": "iconOnly",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "doc": "No visible label. Requires `ariaLabel` — an icon-only button with no name is a button a screen reader cannot describe."
       },
       {
         "name": "ariaLabel",
         "type": "string",
-        "required": false
+        "required": false,
+        "doc": "The accessible name when there is no visible one."
       },
       {
         "name": "href",
         "type": "string",
-        "required": false
+        "required": false,
+        "doc": "Renders an `<a>` instead of a `<button>`. A link that navigates is a link, and a screen reader announces it differently."
       },
       {
         "name": "target",
@@ -438,7 +451,8 @@
       {
         "name": "rel",
         "type": "string",
-        "required": false
+        "required": false,
+        "doc": "Required with `target=\"_blank\"`: without it the new tab can reach back through `window.opener`."
       }
     ]
   },
@@ -456,7 +470,7 @@
         "name": "lang",
         "type": "'en' | 'fa'",
         "required": false,
-        "doc": "The language for the month, weekday and day labels. */"
+        "doc": "The language for the month, weekday and day labels."
       },
       {
         "name": "mode",
@@ -972,7 +986,7 @@
         "name": "dragThreshold",
         "type": "number",
         "required": false,
-        "doc": "How far the handle must be dragged before it counts as a dismissal. */"
+        "doc": "How far the handle must be dragged before it counts as a dismissal."
       },
       {
         "name": "className",
@@ -1339,7 +1353,7 @@
         "name": "name",
         "type": "string",
         "required": true,
-        "doc": "The field's name, which is also the key its validator is registered under. */"
+        "doc": "The field's name, which is also the key its validator is registered under."
       },
       {
         "name": "label",
@@ -1355,13 +1369,13 @@
         "name": "hint",
         "type": "string",
         "required": false,
-        "doc": "A hint under the label. Announced, and replaced by the error when there is one. */"
+        "doc": "A hint under the label. Announced, and replaced by the error when there is one."
       },
       {
         "name": "required",
         "type": "boolean",
         "required": false,
-        "doc": "Mark the field required, and say so to a screen reader. */"
+        "doc": "Mark the field required, and say so to a screen reader."
       },
       {
         "name": "className",
@@ -1393,7 +1407,7 @@
         "name": "accept",
         "type": "string",
         "required": false,
-        "doc": "Passed to the input, so the platform can filter the picker. */"
+        "doc": "Passed to the input, so the platform can filter the picker."
       },
       {
         "name": "multiple",
@@ -1497,7 +1511,7 @@
         "name": "active",
         "type": "boolean",
         "required": false,
-        "doc": "Whether the trap is armed. A scope that is always on is a prison. */"
+        "doc": "Whether the trap is armed. A scope that is always on is a prison."
       },
       {
         "name": "onEscape",
@@ -1562,19 +1576,19 @@
         "name": "onInvalid",
         "type": "(errors: FieldErrors) => void",
         "required": false,
-        "doc": "Called on every submit attempt, valid or not. */"
+        "doc": "Called on every submit attempt, valid or not."
       },
       {
         "name": "validators",
         "type": "Record<string, Validator>",
         "required": false,
-        "doc": "Per-field validators, keyed by field name. */"
+        "doc": "Per-field validators, keyed by field name."
       },
       {
         "name": "defaultValues",
         "type": "FieldValues",
         "required": false,
-        "doc": "The values the form starts with. */"
+        "doc": "The values the form starts with."
       },
       {
         "name": "className",
@@ -1590,7 +1604,7 @@
         "name": "noValidate",
         "type": "boolean",
         "required": false,
-        "doc": "Turn the browser's own validation off — this one is better and it is ours. */"
+        "doc": "Turn the browser's own validation off — this one is better and it is ours."
       }
     ]
   },
@@ -1799,7 +1813,7 @@
         "name": "trigger",
         "type": "React.ReactElement<Record<string, unknown>>",
         "required": true,
-        "doc": "The element the reader lingers on. Receives the ARIA wiring. */"
+        "doc": "The element the reader lingers on. Receives the ARIA wiring."
       },
       {
         "name": "children",
@@ -1815,19 +1829,19 @@
         "name": "openDelay",
         "type": "number",
         "required": false,
-        "doc": "How long the pointer must rest before it opens. */"
+        "doc": "How long the pointer must rest before it opens."
       },
       {
         "name": "closeDelay",
         "type": "number",
         "required": false,
-        "doc": "How long it waits before closing, so the pointer can travel into it. */"
+        "doc": "How long it waits before closing, so the pointer can travel into it."
       },
       {
         "name": "open",
         "type": "boolean",
         "required": false,
-        "doc": "Controlled open state. Omit for uncontrolled. */"
+        "doc": "Controlled open state. Omit for uncontrolled."
       },
       {
         "name": "onOpenChange",
@@ -2094,7 +2108,7 @@
         "name": "tier",
         "type": "'hero' | 'quiet'",
         "required": false,
-        "doc": "'hero' is the single allowed emphasised mist in an app; 'quiet' is the rest. */"
+        "doc": "'hero' is the single allowed emphasised mist in an app; 'quiet' is the rest."
       },
       {
         "name": "radius",
@@ -2364,7 +2378,7 @@
         "name": "value",
         "type": "number | ''",
         "required": true,
-        "doc": "An empty string is a legitimate value: an empty field is not zero. */"
+        "doc": "An empty string is a legitimate value: an empty field is not zero."
       },
       {
         "name": "onChange",
@@ -2461,7 +2475,7 @@
         "name": "length",
         "type": "number",
         "required": false,
-        "doc": "How many digits. Also the input's maxLength. */"
+        "doc": "How many digits. Also the input's maxLength."
       },
       {
         "name": "size",
@@ -2487,7 +2501,7 @@
         "name": "onComplete",
         "type": "(value: string) => void",
         "required": false,
-        "doc": "Called when the last digit arrives, so a consumer does not poll. */"
+        "doc": "Called when the last digit arrives, so a consumer does not poll."
       },
       {
         "name": "id",
@@ -2689,7 +2703,7 @@
         "name": "trigger",
         "type": "React.ReactElement<Record<string, unknown>>",
         "required": true,
-        "doc": "The element that opens it. Receives the ARIA wiring. */"
+        "doc": "The element that opens it. Receives the ARIA wiring."
       },
       {
         "name": "children",
@@ -2700,13 +2714,13 @@
         "name": "placement",
         "type": "Placement",
         "required": false,
-        "doc": "Where the engine should try to put it, before collision handling. */"
+        "doc": "Where the engine should try to put it, before collision handling."
       },
       {
         "name": "open",
         "type": "boolean",
         "required": false,
-        "doc": "Controlled open state. Omit for uncontrolled. */"
+        "doc": "Controlled open state. Omit for uncontrolled."
       },
       {
         "name": "onOpenChange",
@@ -2723,7 +2737,7 @@
         "name": "aria-label",
         "type": "string",
         "required": false,
-        "doc": "An accessible name for the surface. Required when it has no heading. */"
+        "doc": "An accessible name for the surface. Required when it has no heading."
       },
       {
         "name": "className",
@@ -2770,7 +2784,7 @@
         "name": "ariaLabel",
         "type": "string",
         "required": false,
-        "doc": "The progressbar's accessible name, when there is no visible label. */"
+        "doc": "The progressbar's accessible name, when there is no visible label."
       },
       {
         "name": "showLabel",
@@ -2869,7 +2883,7 @@
         "name": "value",
         "type": "number",
         "required": true,
-        "doc": "0 means nothing chosen. */"
+        "doc": "0 means nothing chosen."
       },
       {
         "name": "onChange",
@@ -2910,7 +2924,7 @@
         "name": "showValue",
         "type": "boolean",
         "required": false,
-        "doc": "Show \"3 of 5\" beside the stars. */"
+        "doc": "Show \"3 of 5\" beside the stars."
       },
       {
         "name": "id",
@@ -2954,7 +2968,7 @@
         "name": "label",
         "type": "string",
         "required": false,
-        "doc": "An accessible name. Required when it scrolls, because it becomes a stop. */"
+        "doc": "An accessible name. Required when it scrolls, because it becomes a stop."
       },
       {
         "name": "axis",
@@ -3082,7 +3096,7 @@
         "name": "caretPosition",
         "type": "'start' | 'end'",
         "required": false,
-        "doc": "Which END of the field the caret sits at. `end` is the default. */"
+        "doc": "Which END of the field the caret sits at. `end` is the default."
       }
     ]
   },
@@ -3354,13 +3368,13 @@
         "name": "error",
         "type": "string",
         "required": false,
-        "doc": "The validation message. A number can be out of range. */"
+        "doc": "The validation message. A number can be out of range."
       },
       {
         "name": "showValue",
         "type": "boolean",
         "required": false,
-        "doc": "Show the current value beside the label. */"
+        "doc": "Show the current value beside the label."
       },
       {
         "name": "id",
@@ -3398,7 +3412,7 @@
         "name": "gap",
         "type": "keyof typeof L.SPACING",
         "required": false,
-        "doc": "The gap, as a STEP IN THE SCALE — not a number of pixels. */"
+        "doc": "The gap, as a STEP IN THE SCALE — not a number of pixels."
       },
       {
         "name": "direction",
@@ -3511,7 +3525,7 @@
         "name": "current",
         "type": "string",
         "required": false,
-        "doc": "Which step is current, by id. Wins over a per-step `state`. */"
+        "doc": "Which step is current, by id. Wins over a per-step `state`."
       },
       {
         "name": "orientation",
@@ -3769,7 +3783,7 @@
         "name": "value",
         "type": "string",
         "required": true,
-        "doc": "Must match the `value` of the tab it belongs to. */"
+        "doc": "Must match the `value` of the tab it belongs to."
       },
       {
         "name": "children",
@@ -3848,7 +3862,7 @@
         "name": "host",
         "type": "SurfaceRole",
         "required": false,
-        "doc": "Override the host surface. By default it is read from context. */"
+        "doc": "Override the host surface. By default it is read from context."
       },
       {
         "name": "children",
@@ -4041,22 +4055,26 @@
       {
         "name": "checked",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "doc": "Whether it is on. The one name this should have had."
       },
       {
         "name": "value",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "doc": "Deprecated: An alias of `checked`. Three names for one boolean is three things a consumer has to learn and three ways to be inconsistent — the component reads all of them, and the API table is what made that visible."
       },
       {
         "name": "on",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "doc": "Deprecated: An alias of `checked`. Use `checked`."
       },
       {
         "name": "onChange",
         "type": "(value: boolean) => void",
-        "required": true
+        "required": true,
+        "doc": "Reports the NEXT value, not the event. A switch is a boolean, not a DOM node, and every consumer was writing `e.target.checked` to get here."
       },
       {
         "name": "disabled",
@@ -4076,7 +4094,8 @@
       {
         "name": "aria-label",
         "type": "string",
-        "required": false
+        "required": false,
+        "doc": "Required when there is no visible label."
       }
     ]
   },
@@ -4129,7 +4148,7 @@
         "name": "expanded",
         "type": "string[]",
         "required": false,
-        "doc": "Controlled expansion. Omit for uncontrolled. */"
+        "doc": "Controlled expansion. Omit for uncontrolled."
       },
       {
         "name": "onExpandedChange",
@@ -4140,7 +4159,7 @@
         "name": "selected",
         "type": "string | null",
         "required": false,
-        "doc": "The selected node, or null. */"
+        "doc": "The selected node, or null."
       },
       {
         "name": "onSelect",
@@ -4183,13 +4202,13 @@
         "name": "as",
         "type": "ElementType",
         "required": false,
-        "doc": "Render as something other than a span — a heading, a label, a div. */"
+        "doc": "Render as something other than a span — a heading, a label, a div."
       },
       {
         "name": "focusable",
         "type": "boolean",
         "required": false,
-        "doc": "Show it when it takes focus. For skip links, which must become visible. */"
+        "doc": "Show it when it takes focus. For skip links, which must become visible."
       },
       {
         "name": "className",

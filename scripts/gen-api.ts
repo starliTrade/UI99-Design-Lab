@@ -59,9 +59,16 @@ function docAbove(lines: string[], index: number): string | undefined {
   const body = lines
     .slice(i, end + 1)
     .map((l) => l.replace(/^\s*\/?\*+\/?/, '').trim())
-    .filter((l) => l && !/^@/.test(l))
+    .filter(Boolean)
+    // `@deprecated` KEEPS its text: the note after it is the reason, and it is
+    // the one tag a consumer needs to read. The others are stripped.
+    .map((l) => (l.startsWith('@deprecated') ? l.replace(/^@deprecated\s*/, 'Deprecated: ') : l))
+    .filter((l) => !/^@/.test(l))
     .join(' ')
     .replace(/\s+/g, ' ')
+    // A one-line JSDoc is both its own start and its own end, so the closing
+    // `*/` survives the per-line strip and lands in the text.
+    .replace(/\s*\*\/\s*$/, '')
     .trim();
   return body || undefined;
 }

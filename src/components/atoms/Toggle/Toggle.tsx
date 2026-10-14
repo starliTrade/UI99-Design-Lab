@@ -13,13 +13,25 @@ const KNOB_INSET = 3;
 const CONTROL = LiminalLayoutEngine.CONTROL;
 
 export interface ToggleProps {
+  /** Whether it is on. The one name this should have had. */
   checked?: boolean;
+  /**
+   * @deprecated An alias of `checked`. Three names for one boolean is three
+   * things a consumer has to learn and three ways to be inconsistent — the
+   * component reads all of them, and the API table is what made that visible.
+   */
   value?: boolean;
+  /**
+   * @deprecated An alias of `checked`. Use `checked`.
+   */
   on?: boolean;
+  /** Reports the NEXT value, not the event. A switch is a boolean, not a DOM
+   *  node, and every consumer was writing `e.target.checked` to get here. */
   onChange: (value: boolean) => void;
   disabled?: boolean;
   className?: string;
   style?: CSSProperties;
+  /** Required when there is no visible label. */
   'aria-label'?: string;
 }
 

@@ -121,22 +121,53 @@ export const buttonVariants = createVariants({
 export interface ButtonProps
   extends Omit<LiminalComponentProps<'button'>, 'onClick'>,
     VariantProps<typeof buttonVariants> {
+  /** Render the child element instead of a `<button>`, keeping its styles. */
   asChild?: boolean;
+  /**
+   * The name of a decision, not a colour. `danger` is a role; `red` would be a
+   * value pretending to be a choice, and it breaks the moment the theme moves.
+   */
   variant?: ButtonVariant;
+  /**
+   * The control height, from `CONTROL`. `md` is the default AND the accessible
+   * minimum — `CONTROL.md` and `TARGET.min` are the same number, so the default
+   * is not a compromise.
+   */
   size?: ButtonSize;
+  /** Inert: not focusable, not pressable, and it says so to a screen reader. */
   disabled?: boolean;
+  /**
+   * Force a state for a screenshot or a test.
+   *
+   * The interaction is CSS, so a still frame cannot show hover or press. This
+   * applies the layer's own declarations through a class — a harness for
+   * looking, not a second implementation of the state.
+   */
   forcedState?: LiminalState;
+  /** A glyph before the label. */
   icon?: ReactNode;
+  /** A glyph after the label. */
   iconRight?: ReactNode;
+  /** Fill the container. For a form's primary action, not for a toolbar. */
   fullWidth?: boolean;
   children?: ReactNode;
   onClick?: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void;
+  /** Defaults to `button`, because a button inside a form that submits by
+   *  accident is a bug the platform will happily commit for you. */
   type?: 'button' | 'submit' | 'reset';
+  /** Busy. The label stays, so the button does not change width mid-press. */
   loading?: boolean;
+  /** No visible label. Requires `ariaLabel` — an icon-only button with no name
+   *  is a button a screen reader cannot describe. */
   iconOnly?: boolean;
+  /** The accessible name when there is no visible one. */
   ariaLabel?: string;
+  /** Renders an `<a>` instead of a `<button>`. A link that navigates is a link,
+   *  and a screen reader announces it differently. */
   href?: string;
   target?: '_blank' | '_self' | '_parent' | '_top';
+  /** Required with `target="_blank"`: without it the new tab can reach back
+   *  through `window.opener`. */
   rel?: string;
 }
 
