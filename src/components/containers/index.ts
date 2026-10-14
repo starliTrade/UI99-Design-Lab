@@ -5,4 +5,5 @@ export * from './Sheet';
 export * from './Divider';
 export * from './Popover';
 export * from './HoverCard';
+export * from './Drawer';
 export * from './ContainersDemo';

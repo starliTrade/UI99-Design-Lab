@@ -14,6 +14,7 @@ import { Panel } from '../containers/Panel/Panel';
 import { Divider } from '../containers/Divider/Divider';
 import { Popover } from '../containers/Popover/Popover';
 import { HoverCard } from '../containers/HoverCard/HoverCard';
+import { Drawer } from '../containers/Drawer/Drawer';
 import { AlertDialog } from '../feedback/AlertDialog/AlertDialog';
 import { Avatar } from '../data/Avatar/Avatar';
 import { Stat } from '../data/Stat/Stat';
@@ -251,6 +252,14 @@ export const FIXTURES: ComponentFixture[] = [
       >
         <span>Popover content</span>
       </Popover>
+    ),
+  },
+  {
+    name: 'Drawer', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['closed', 'open'], expected: [],
+    render: (state, size) => (
+      <Drawer open={state === 'open'} side="end" size={(size ?? 'md') as 'sm'} title="Filters">
+        <span>Drawer content</span>
+      </Drawer>
     ),
   },
   {

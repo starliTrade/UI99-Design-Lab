@@ -43,10 +43,23 @@ const files = walk(join(SRC, 'components')).filter((f) => isComponent(readFileSy
  *
  * `size`, `variant`, `disabled` and `error` are CONTROL criteria. A Popover
  * sized by its content, or a Grid with a `variant`, would be a prop with no
- * meaning — and demanding one would push components to invent it. The role the
- * component declares is the honest discriminator: it says what the thing IS.
+ * meaning — and demanding one would push components to invent it.
+ *
+ * The FIXTURE says so, not the source. Reading the source for
+ * `resolveSurface({ role: 'control' })` looked right and was wrong: a Drawer
+ * renders a control for its handle, so the guess called the Drawer a control and
+ * then demanded a `variant` prop it should not have. A component that CONTAINS
+ * a control is not one.
  */
-const isControl = (src) => /resolveSurface\(\{\s*role:\s*'control'/.test(src);
+const declaredKind = (() => {
+  const src = readFileSync(resolve(SRC, 'components/__matrix__/fixtures.tsx'), 'utf8');
+  const out = new Map();
+  for (const m of src.matchAll(/name: '([A-Za-z]+)',(?:\s*kind: '(control|surface)',)?/g)) {
+    out.set(m[1], m[2] ?? 'surface');
+  }
+  return out;
+})();
+const isControl = (name) => declaredKind.get(name) === 'control';
 
 /**
  * Comments are not code.
@@ -63,7 +76,7 @@ const rows = files.map((f) => {
   const src = code(readFileSync(f, 'utf8'));
   const name = f.replace(SRC + '/components/', '').replace(/\.tsx$/, '').split('/').pop();
   const has = (re) => re.test(src);
-  const control = isControl(src);
+  const control = isControl(name);
   return {
     name,
     path: f.replace(SRC + '/', ''),
