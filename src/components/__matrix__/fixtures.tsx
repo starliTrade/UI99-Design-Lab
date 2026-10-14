@@ -7,6 +7,7 @@ import { Spinner } from '../atoms/Spinner/Spinner';
 import { Kbd } from '../atoms/Kbd/Kbd';
 import { Label } from '../atoms/Label/Label';
 import { Collapsible } from '../containers/Collapsible/Collapsible';
+import { Accordion } from '../containers/Accordion/Accordion';
 import { Mist } from '../atoms/Mist/Mist';
 import { Input } from '../inputs/Input/Input';
 import { Textarea } from '../inputs/Textarea/Textarea';
@@ -286,6 +287,19 @@ export const FIXTURES: ComponentFixture[] = [
       >
         Project name
       </Label>
+    ),
+  },
+  {
+    name: 'Accordion', group: 'Containers', sizes: [], states: ['closed', 'open'], expected: [],
+    render: (state) => (
+      <Accordion
+        type="single"
+        defaultOpen={state === 'open' ? ['one'] : []}
+        items={[
+          { id: 'one', title: 'Shipping', content: <span>Two to five days.</span> },
+          { id: 'two', title: 'Returns', content: <span>Thirty days.</span> },
+        ]}
+      />
     ),
   },
   {

@@ -37,12 +37,21 @@ export interface CollapsibleProps {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   disabled?: boolean;
+  /**
+   * Wrap the trigger in a heading of this level.
+   *
+   * An accordion's triggers MUST be headings — that is how a screen reader
+   * navigates between them, and it is the one part of the disclosure pattern
+   * that cannot be left to the consumer. A single disclosure is usually not a
+   * heading, which is why this is off by default and why `Accordion` turns it on.
+   */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   className?: string;
   style?: CSSProperties;
 }
 
 export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(function Collapsible(
-  { title, children, open: controlledOpen, defaultOpen = false, onOpenChange, disabled = false, className, style: customStyle },
+  { title, children, open: controlledOpen, defaultOpen = false, onOpenChange, disabled = false, headingLevel, className, style: customStyle },
   forwardedRef,
 ) {
   const id = useId();
@@ -62,9 +71,9 @@ export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(function
 
   const host = useHostSurface();
   const surface = resolveSurface({ role: 'work', on: host });
+  const Heading = headingLevel ? (`h${headingLevel}` as 'h1') : null;
 
-  return (
-    <div ref={forwardedRef} className={className} style={{ ...surface.style, borderRadius: `${L.RADIUS.card}px`, minWidth: 0, ...customStyle }}>
+  const trigger = (
       <button
         type="button"
         id={triggerId}
@@ -105,6 +114,11 @@ export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(function
           ▾
         </span>
       </button>
+  );
+
+  return (
+    <div ref={forwardedRef} className={className} style={{ ...surface.style, borderRadius: `${L.RADIUS.card}px`, minWidth: 0, ...customStyle }}>
+      {Heading ? <Heading style={{ margin: 0, fontSize: 'inherit', fontWeight: 'inherit' }}>{trigger}</Heading> : trigger}
       {isOpen && (
         <div id={regionId} role="region" aria-labelledby={triggerId} style={{ padding: `${L.SPACING[3]}px` }}>
           {children}

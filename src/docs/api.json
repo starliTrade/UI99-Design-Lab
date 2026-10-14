@@ -1,5 +1,54 @@
 [
   {
+    "component": "Accordion",
+    "path": "components/containers/Accordion/Accordion.tsx",
+    "props": [
+      {
+        "name": "items",
+        "type": "AccordionItem[]",
+        "required": true
+      },
+      {
+        "name": "type",
+        "type": "'single' | 'multiple'",
+        "required": false,
+        "doc": "The policy. `single` closes the others when one opens — a set of tabs in disguise, and the right shape when the panels are alternatives. `multiple` lets the reader open what they want, which is the right shape when the panels are sections of one thing."
+      },
+      {
+        "name": "open",
+        "type": "string[]",
+        "required": false,
+        "doc": "The open ids. Controlled; omit for uncontrolled."
+      },
+      {
+        "name": "defaultOpen",
+        "type": "string[]",
+        "required": false
+      },
+      {
+        "name": "onOpenChange",
+        "type": "(open: string[]) => void",
+        "required": false
+      },
+      {
+        "name": "headingLevel",
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
+        "required": false,
+        "doc": "The heading level for the triggers. 3 by default — see above."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
     "component": "Alert",
     "path": "components/feedback/Alert/Alert.tsx",
     "props": [
@@ -668,6 +717,12 @@
         "name": "disabled",
         "type": "boolean",
         "required": false
+      },
+      {
+        "name": "headingLevel",
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
+        "required": false,
+        "doc": "Wrap the trigger in a heading of this level. An accordion's triggers MUST be headings — that is how a screen reader navigates between them, and it is the one part of the disclosure pattern that cannot be left to the consumer. A single disclosure is usually not a heading, which is why this is off by default and why `Accordion` turns it on."
       },
       {
         "name": "className",
