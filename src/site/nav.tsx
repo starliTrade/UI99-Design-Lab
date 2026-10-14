@@ -56,11 +56,13 @@ export function ThemeControls({ compact }: { compact?: boolean }) {
             />
           </label>
         ))}
-      <div style={{ display: 'flex', gap: 2, borderRadius: `${R.chip}px`, overflow: 'hidden' }} aria-hidden>
-        {theme.ladder.map((hex, i) => (
-          <span key={i} title={`S${i} ${hex}`} style={{ width: 8, height: 16, background: hex }} />
-        ))}
-      </div>
+      {!compact && (
+        <div style={{ display: 'flex', gap: 2, borderRadius: `${R.chip}px`, overflow: 'hidden' }} aria-hidden>
+          {theme.ladder.map((hex, i) => (
+            <span key={i} title={`S${i} ${hex}`} style={{ width: 8, height: 16, background: hex }} />
+          ))}
+        </div>
+      )}
       {theme.warnings.length > 0 && (
         <span style={{ fontSize: 10, color: SEMANTICS.DANGER.text }} title={theme.warnings[0].why}>
           {theme.warnings[0].scale} clamped
@@ -133,11 +135,18 @@ export function TopNav({
         </>
       }
     >
-      {TOP_NAV.map((item) => (
-        <Btn key={item.page} active={isActive(route, item.page)} onClick={() => go({ page: item.page } as Route)} title={item.note}>
-          {item.label}
-        </Btn>
-      ))}
+      {/* THE LINKS ARE NOT IN THE BAR ON A PHONE, and that is a measurement
+          rather than a preference: five labels plus the actions need ~600px, and
+          a top bar that overflows drags the whole document wider than the
+          device. Measured at 390: the nav alone was 400px and the actions 205,
+          so the page scrolled sideways. On a phone they live in the drawer,
+          behind the ☰. */}
+      {!narrow &&
+        TOP_NAV.map((item) => (
+          <Btn key={item.page} active={isActive(route, item.page)} onClick={() => go({ page: item.page } as Route)} title={item.note}>
+            {item.label}
+          </Btn>
+        ))}
     </Topbar>
   );
 }

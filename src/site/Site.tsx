@@ -22,7 +22,7 @@ import { Sidebar } from '../components/nav/Sidebar';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
 import { useMediaQuery } from '../engine/liminal-hooks';
 import { FIXTURES } from '../components/__matrix__/fixtures';
-import { S, R, surfaceFor } from './ui';
+import { S, R, Btn, surfaceFor } from './ui';
 import { TopNav, DocsSidebar, NavDrawer, SiteFooter } from './nav';
 import { DOCS, TOP_NAV, routeKey, type Route } from './routes';
 import { HomePage } from './pages/Home';
@@ -117,7 +117,23 @@ export function Site() {
   ];
 
   const nav = (
-    <DocsSidebar route={route} go={go} q={q} onQ={setQ} onNavigate={() => setNavOpen(false)} />
+    <>
+      {/* The five destinations the top bar shows when it has room. On a phone it
+          does not, so they are here — the same table, drawn twice. */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[1]}px`, paddingBlock: `${S[2]}px` }}>
+        {TOP_NAV.map((item) => (
+          <Btn
+            key={item.page}
+            active={route.page === item.page}
+            onClick={() => go({ page: item.page } as Route)}
+            title={item.note}
+          >
+            {item.label}
+          </Btn>
+        ))}
+      </div>
+      <DocsSidebar route={route} go={go} q={q} onQ={setQ} onNavigate={() => setNavOpen(false)} />
+    </>
   );
 
   return (
