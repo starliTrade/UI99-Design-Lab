@@ -8,6 +8,7 @@ import { Input } from '../inputs/Input/Input';
 import { Textarea } from '../inputs/Textarea/Textarea';
 import { Slider } from '../inputs/Slider/Slider';
 import { NumberInput } from '../inputs/NumberInput/NumberInput';
+import { OTP } from '../inputs/OTP/OTP';
 import { Checkbox } from '../inputs/Checkbox/Checkbox';
 import { Radio } from '../inputs/Radio/Radio';
 import { Select } from '../inputs/Select/Select';
@@ -131,6 +132,19 @@ export const FIXTURES: ComponentFixture[] = [
         disabled={state === 'disabled'}
         readOnly={state === 'readonly'}
         defaultValue={state === 'default' ? '' : 'starli'}
+      />
+    ),
+  },
+  {
+    name: 'OTP', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'filled', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state, size) => (
+      <OTP
+        value={state === 'filled' ? '482913' : ''}
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'That code has expired' : undefined}
+        label="Verification code"
       />
     ),
   },
