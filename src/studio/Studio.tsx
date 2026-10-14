@@ -27,6 +27,7 @@ import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
 import { resolveSurface } from '../engine/liminal-surface';
 import { useTheme } from '../docs/theme';
 import { Card } from '../docs/ui';
+import { DeviceFrame, type DeviceWidth } from '../docs/DeviceFrame';
 import { FORCE_CSS } from '../docs/panels';
 import {
   CodePanel,
@@ -89,6 +90,9 @@ export function Studio({
   const [state, setState] = useState<string | undefined>();
   const [variant, setVariant] = useState<string | undefined>();
   const [forced, setForced] = useState<ForcedId>('none');
+  // The width the component is tested at. An iframe, not a narrow box — see
+  // `DeviceFrame` for why a `max-width` div would lie about what it shows.
+  const [device, setDevice] = useState<DeviceWidth>('fluid');
 
   const fixture = FIXTURES.find((f) => f.name === selected) ?? FIXTURES[0];
   const controls = controlsFor(fixture);
@@ -298,23 +302,48 @@ export function Studio({
               ))}
             </div>
 
-            <div
-              ref={previewRef}
-              className={forced === 'none' ? undefined : `force-${forced}`}
-              style={{
-                ...WELL.style,
-                borderRadius: `${R.card}px`,
-                padding: `${S[5]}px`,
-                minHeight: 132,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflowX: 'auto',
-                transition: M.getTransition('background', 'normal'),
-              }}
-            >
-              {rendered}
+            {/* The device the component is tested at. */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
+              <span style={{ fontSize: 10, opacity: 0.6 }}>device</span>
+              {(['phone', 'tablet', 'fluid'] as DeviceWidth[]).map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  aria-pressed={device === d}
+                  onClick={() => setDevice(d)}
+                  style={{
+                    ...(device === d ? WORK.style : WELL.style),
+                    font: 'inherit',
+                    fontSize: 11,
+                    padding: `2px ${S[2]}px`,
+                    borderRadius: `${R.chip}px`,
+                    border: '1px solid transparent',
+                  }}
+                >
+                  {d}
+                </button>
+              ))}
             </div>
+
+            <DeviceFrame device={device} minHeight={device === 'phone' ? 320 : 200}>
+              <div
+                ref={previewRef}
+                className={forced === 'none' ? undefined : `force-${forced}`}
+                style={{
+                  ...WELL.style,
+                  borderRadius: `${R.card}px`,
+                  padding: `${S[5]}px`,
+                  minHeight: 132,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflowX: 'auto',
+                  transition: M.getTransition('background', 'normal'),
+                }}
+              >
+                {rendered}
+              </div>
+            </DeviceFrame>
             <p style={{ margin: 0, fontSize: 11, opacity: 0.7 }}>
               Hover and focus work on the <b>real</b> preview. "Forced state" applies the
               layer's own declarations through a class — a harness for seeing, not the component's

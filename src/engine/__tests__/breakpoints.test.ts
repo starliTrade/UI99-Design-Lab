@@ -31,7 +31,16 @@ function walk(dir: string): string[] {
 function literalWidthQueries(): string[] {
   const offenders: string[] = [];
   for (const file of walk(SRC)) {
-    const text = readFileSync(file, 'utf8');
+    // COMMENTS ARE NOT CODE.
+    //
+    // The guard matched its own documentation: a comment explaining that
+    // `@media (max-width: 900px)` asks about the viewport contains exactly the
+    // pattern this rule looks for, and the file was reported as a violation for
+    // describing the thing it avoids. A guard that reads prose lies — and it
+    // lies toward "everything is broken", which is how a guard gets ignored.
+    const text = readFileSync(file, 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/\/\/[^\n]*/g, '');
     for (const m of text.matchAll(/@(?:media|container)[^{]*?(?:(?:max|min)-width\s*:|width\s*[<>]=?)\s*(\d+)px/g)) {
       offenders.push(`${file.replace(SRC + '/', '')}: ${m[0].trim()}`);
     }
@@ -139,7 +148,16 @@ describe('LIMINAL contract — a breakpoint is a floor, so the rule is strict', 
     // that form is always one pixel early. Banning the form bans the class.
     const offenders: string[] = [];
     for (const file of walk(SRC)) {
-      const text = readFileSync(file, 'utf8');
+      // COMMENTS ARE NOT CODE.
+    //
+    // The guard matched its own documentation: a comment explaining that
+    // `@media (max-width: 900px)` asks about the viewport contains exactly the
+    // pattern this rule looks for, and the file was reported as a violation for
+    // describing the thing it avoids. A guard that reads prose lies — and it
+    // lies toward "everything is broken", which is how a guard gets ignored.
+    const text = readFileSync(file, 'utf8')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/\/\/[^\n]*/g, '');
       for (const m of text.matchAll(/@(?:media|container)[^{]*?\b(?:max|min)-width\s*:/g)) {
         offenders.push(`${file.replace(SRC + '/', '')}: ${m[0].trim()}`);
       }

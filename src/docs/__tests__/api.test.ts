@@ -22,7 +22,8 @@ const JSON_PATH = resolve(ROOT, 'src/docs/api.json');
 interface Entry {
   component: string;
   path: string;
-  props: { name: string; type: string; required: boolean; doc?: string }[];
+  description?: string;
+  props: { name: string; type: string; required: boolean; doc?: string; default?: string }[];
 }
 
 const api: Entry[] = JSON.parse(readFileSync(JSON_PATH, 'utf8'));
