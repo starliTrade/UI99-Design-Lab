@@ -40,6 +40,16 @@ if (/function createElement|react\.createElement|__SECRET_INTERNALS/.test(esm)) 
 if (!pkg.peerDependencies?.react) problems.push('react is not a peer dependency');
 if (!pkg.peerDependencies?.['react-dom']) problems.push('react-dom is not a peer dependency');
 
+// ── the client directive must SURVIVE THE BUILD ───────────────────────────
+// A component library with hooks is a client library, and in a React Server
+// Component tree the directive is what says so. Rollup can hoist or drop it,
+// and a build that drops it produces a package that throws in a Next.js App
+// Router consumer with "useState only works in a Client Component" — a message
+// about OUR code, delivered to THEM.
+if (!esm.startsWith('"use client"') && !esm.startsWith("'use client'")) {
+  problems.push('the ESM bundle does not start with "use client" — an RSC consumer will get a hooks error');
+}
+
 // ── the stylesheet must be reachable ──────────────────────────────────────
 if (!pkg.exports?.['./styles.css']) problems.push('the stylesheet has no export, so a consumer cannot import it');
 if (!pkg.sideEffects?.some((s) => s.includes('css'))) {
