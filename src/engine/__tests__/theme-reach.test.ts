@@ -69,9 +69,12 @@ describe('a surface follows a theme', () => {
     ]);
   });
 
-  it('the ladder is what a theme overrides, so the guard is looking at the right thing', () => {
-    const themed = createLiminalTheme({ brandHue: 145 });
-    expect(themed.ladder).not.toEqual(LADDER);
+  it('the theme carries the ladder, so the guard is looking at the right thing', () => {
+    // The theme used to REGENERATE the ladder at a hue, which is what made a
+    // themed page's surfaces move. It carries the engine's ladder now — the
+    // identity is not a setting — so the guard's subject is the ladder itself.
+    const themed = createLiminalTheme({ density: 1.2 });
+    expect(themed.ladder).toEqual([...LADDER]);
     expect(themed.css).toContain('--liminal-s0');
     expect(getLadderVar(4)).toContain('var(--liminal-');
   });

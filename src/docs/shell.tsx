@@ -31,9 +31,9 @@ function ThemeControls({
   onDir: (d: 'ltr' | 'rtl') => void;
 }) {
   const { state, set, reset, isSystem, theme } = useTheme();
+  // Two scales. There is no hue slider because there is no hue to move: the
+  // ladder is the identity, and the density is clamped to the touch floor.
   const sliders: { key: keyof typeof state; label: string; min: number; max: number; step: number; fmt: (v: number) => string }[] = [
-    { key: 'brandHue', label: 'Hue', min: 0, max: 360, step: 1, fmt: (v) => `${v}°` },
-    { key: 'brandChroma', label: 'Chroma', min: 0, max: 0.06, step: 0.001, fmt: (v) => v.toFixed(3) },
     { key: 'density', label: 'Density', min: 0.8, max: 1.4, step: 0.05, fmt: (v) => `${v.toFixed(2)}×` },
     { key: 'motion', label: 'Motion', min: 0, max: 2, step: 0.1, fmt: (v) => `${v.toFixed(1)}×` },
   ];
@@ -59,6 +59,11 @@ function ThemeControls({
           <span key={i} title={`S${i} ${hex}`} style={{ width: 9, height: 16, background: hex }} />
         ))}
       </div>
+      {theme.warnings.length > 0 && (
+        <span style={{ fontSize: 10, color: 'var(--liminal-danger, #ba4646)' }} title={theme.warnings[0].why}>
+          {theme.warnings[0].scale} clamped
+        </span>
+      )}
       <Btn
         onClick={() => onDir(dir === 'ltr' ? 'rtl' : 'ltr')}
         active={dir === 'rtl'}

@@ -1,10 +1,14 @@
 /**
  * LIMINAL · DOCS — THE LIVE THEME
  *
- * The engine's claim is that a theme is three numbers: a hue, a density and a
- * motion. `createLiminalTheme` turns them into a CSS block scoped to
+ * The engine's claim is that a theme is two SCALES: a density and a motion.
+ * `createLiminalTheme` turns them into a CSS block scoped to
  * `[data-liminal-theme="…"]`, and the docs put that attribute on their own root
  * — so moving a slider re-themes the site you are reading, not a picture of it.
+ *
+ * It used to be three numbers, the third a hue. The hue turned the ladder green
+ * or purple, which is not a theme — it is leaving the system. The ladder is the
+ * identity and an identity is not a setting.
  *
  * The theme is generated, never hand-written, and the docs read the SAME
  * function a consumer would. If the docs could theme themselves by another
@@ -12,19 +16,20 @@
  */
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { createLiminalTheme, type LiminalTheme } from '../engine/liminal-theme';
-import { LADDER_CHROMA, LADDER_HUE } from '../engine/liminal-ladder';
 
 export interface ThemeState {
-  brandHue: number;
-  brandChroma: number;
   density: number;
   motion: number;
 }
 
-/** The system's own values. A theme that changes nothing is the reference. */
+/**
+ * The system's own values. A theme that changes nothing is the reference.
+ *
+ * There is no hue here, and that is the point: LIMINAL's identity is monochrome
+ * — the ladder is a luminance ramp at chroma 0.0069 and the code calls the brand
+ * "Monochrome identity. LOCKED." A ramp that can turn green is not an identity.
+ */
 export const SYSTEM_THEME: ThemeState = {
-  brandHue: LADDER_HUE,
-  brandChroma: LADDER_CHROMA,
   density: 1,
   motion: 1,
 };
@@ -32,12 +37,7 @@ export const SYSTEM_THEME: ThemeState = {
 const SCOPE = 'liminal';
 
 export function isSystemTheme(s: ThemeState): boolean {
-  return (
-    s.brandHue === SYSTEM_THEME.brandHue &&
-    s.brandChroma === SYSTEM_THEME.brandChroma &&
-    s.density === SYSTEM_THEME.density &&
-    s.motion === SYSTEM_THEME.motion
-  );
+  return s.density === SYSTEM_THEME.density && s.motion === SYSTEM_THEME.motion;
 }
 
 interface ThemeContextValue {
@@ -58,10 +58,7 @@ export function useTheme(): ThemeContextValue {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [state, set] = useState<ThemeState>({ ...SYSTEM_THEME });
-  const theme = useMemo(
-    () => createLiminalTheme({ ...state, name: SCOPE }),
-    [state.brandHue, state.brandChroma, state.density, state.motion],
-  );
+  const theme = useMemo(() => createLiminalTheme({ ...state, name: SCOPE }), [state.density, state.motion]);
   const value = useMemo<ThemeContextValue>(
     () => ({ state, theme, set, reset: () => set({ ...SYSTEM_THEME }), isSystem: isSystemTheme(state) }),
     [state, theme],

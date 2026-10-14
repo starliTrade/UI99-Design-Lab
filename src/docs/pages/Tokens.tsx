@@ -59,7 +59,7 @@ export function TokensPage() {
         {theme.warnings.length > 0 && (
           <Prose>
             <b style={{ color: 'var(--liminal-danger, #ba4646)' }}>{theme.warnings.length} warnings:</b>{' '}
-            {theme.warnings.map((w) => `S${w.level} (${w.q.toFixed(2)}q)`).join(' · ')}
+            {theme.warnings.map((w) => `${w.scale} clamped to ${w.used}`).join(' · ')}
           </Prose>
         )}
       </Section>

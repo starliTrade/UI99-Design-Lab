@@ -103,24 +103,6 @@ export function ThemeBar({
         }}
       >
         <Slider
-          label="Hue"
-          value={state.brandHue}
-          min={0}
-          max={360}
-          step={1}
-          format={(v) => `${v}°`}
-          onChange={(brandHue) => onChange({ ...state, brandHue })}
-        />
-        <Slider
-          label="Chroma"
-          value={state.brandChroma}
-          min={0}
-          max={0.06}
-          step={0.001}
-          format={(v) => v.toFixed(3)}
-          onChange={(brandChroma) => onChange({ ...state, brandChroma })}
-        />
-        <Slider
           label="Density"
           value={state.density}
           min={0.8}
@@ -173,11 +155,11 @@ export function ThemeBar({
       </div>
 
       {theme.warnings.length > 0 && (
-        <ul style={{ margin: 0, paddingInlineStart: `${S[4]}px`, fontSize: 11, opacity: 0.85 }}>
+        <ul style={{ margin: 0, paddingInlineStart: `${S[4]}px`, fontSize: 11, opacity: 0.9 }}>
           {theme.warnings.map((w, i) => (
             <li key={i}>
-              <code style={{ fontFamily: MONO }}>S{w.level}</code> — {w.q.toFixed(2)}q ·{' '}
-              {w.kind === 'below-quantum' ? 'below the quantum: two surfaces the eye cannot separate' : 'above the band'}
+              <code style={{ fontFamily: MONO }}>{w.scale}</code> asked for {w.asked} · used{' '}
+              <code style={{ fontFamily: MONO }}>{w.used}</code> — {w.why}
             </li>
           ))}
         </ul>

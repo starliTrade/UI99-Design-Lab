@@ -67,15 +67,15 @@ describe('the JSX serialiser', () => {
 });
 
 describe('the theme the studio uses is the engine’s own', () => {
-  it('generates a ladder that differs from the system one', () => {
-    const t = createLiminalTheme({ brandHue: 20, name: 'studio' });
-    expect(t.ladder).not.toEqual(LADDER);
+  it('carries the engine’s ladder, because the identity is not a setting', () => {
+    const t = createLiminalTheme({ name: 'studio' });
+    expect(t.ladder).toEqual([...LADDER]);
     expect(t.css).toContain('[data-liminal-theme="studio"]');
   });
 
-  it('reports the steps a hue cannot hold instead of failing silently', () => {
-    const t = createLiminalTheme({ brandHue: 20, brandChroma: 0.03, name: 'studio' });
-    expect(Array.isArray(t.warnings)).toBe(true);
-    for (const w of t.warnings) expect(['below-quantum', 'above-band']).toContain(w.kind);
+  it('clamps a density that would break the touch floor, and says so', () => {
+    const t = createLiminalTheme({ density: 0.8, name: 'studio' });
+    expect(t.density).toBeGreaterThan(0.8);
+    expect(t.warnings.some((w) => w.scale === 'density')).toBe(true);
   });
 });
