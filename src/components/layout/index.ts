@@ -4,3 +4,8 @@ export * from './Grid';
 export * from './PageSection';
 export * from './Footer';
 export * from './LayoutDemo';
+export * from './VisuallyHidden';
+export * from './Stack';
+export * from './AspectRatio';
+export * from './ScrollArea';
+export * from './FocusScope';

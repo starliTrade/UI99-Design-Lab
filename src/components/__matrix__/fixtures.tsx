@@ -52,6 +52,11 @@ import { Topbar } from '../nav/Topbar/Topbar';
 import { ErrorPage } from '../composites/ErrorPage/ErrorPage';
 import { FormLayout } from '../composites/FormLayout/FormLayout';
 import { Form, Field } from '../composites/Form/Form';
+import { VisuallyHidden } from '../layout/VisuallyHidden/VisuallyHidden';
+import { FocusScope } from '../layout/FocusScope/FocusScope';
+import { AspectRatio } from '../layout/AspectRatio/AspectRatio';
+import { ScrollArea } from '../layout/ScrollArea/ScrollArea';
+import { Stack } from '../layout/Stack/Stack';
 
 /**
  * THE COMPONENT MATRIX
@@ -475,6 +480,47 @@ export const FIXTURES: ComponentFixture[] = [
   {
     name: 'PageSection', group: 'Layout', sizes: [], states: ['default'], expected: [],
     render: () => <PageSection title="Section">Content</PageSection>,
+  },
+  {
+    name: 'Stack', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <Stack gap={2} direction="row">
+        <span>One</span>
+        <span>Two</span>
+      </Stack>
+    ),
+  },
+  {
+    name: 'AspectRatio', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <AspectRatio ratio={16 / 9} style={{ width: 160 }}>
+        <span>16:9</span>
+      </AspectRatio>
+    ),
+  },
+  {
+    name: 'ScrollArea', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <ScrollArea maxHeight={6} label="Scrollable content" style={{ width: 200 }}>
+        <Stack gap={2}>
+          {Array.from({ length: 12 }, (_, i) => (
+            <span key={i}>Row {i + 1}</span>
+          ))}
+        </Stack>
+      </ScrollArea>
+    ),
+  },
+  {
+    name: 'FocusScope', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <FocusScope active={false}>
+        <span>Scoped</span>
+      </FocusScope>
+    ),
+  },
+  {
+    name: 'VisuallyHidden', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <VisuallyHidden>Screen reader only</VisuallyHidden>,
   },
   {
     name: 'Grid', group: 'Layout', sizes: [], states: ['default'], expected: [],
