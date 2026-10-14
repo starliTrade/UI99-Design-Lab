@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>LIMINAL — آستانه‌ی تو در تو بودگی</title>
+<title>LIMINAL — سه سؤال تو در تو بودگی</title>
 <style>
   :root {
     --s0:#060709; --s0-5:#07080a; --s1:#07090b; --s1-5:#080a0c; --s2:#090b0d; --s2-5:#0a0c0e;
@@ -15,121 +15,126 @@
   * { box-sizing: border-box; }
   body {
     margin: 0; background: var(--s0); color: var(--text);
-    font: 14px/1.8 system-ui, -apple-system, "Segoe UI", sans-serif;
+    font: 14px/1.85 system-ui, -apple-system, "Segoe UI", sans-serif;
     padding: 28px 20px 72px; display: flex; flex-direction: column; align-items: center;
   }
   h1 { font-size: 21px; font-weight: 700; margin: 0 0 6px; letter-spacing: -.02em; }
-  .sub { color: var(--dim); font-size: 13px; max-width: 74ch; text-align: center; margin-bottom: 6px; }
-  .hint { color: var(--faint); font-size: 12px; max-width: 74ch; text-align: center; margin-bottom: 26px; }
-  .row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 28px; }
+  .sub { color: var(--dim); font-size: 13px; max-width: 76ch; text-align: center; margin-bottom: 26px; }
+  .q { width: 100%; max-width: 1080px; background: var(--well); border: 1px solid var(--rim); border-radius: 16px; padding: 20px 22px; margin-bottom: 18px; }
+  .q h2 { font-size: 15px; margin: 0 0 4px; font-weight: 600; }
+  .q .why { color: var(--faint); font-size: 12px; margin-bottom: 16px; }
+  .row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
   .cell { display: flex; flex-direction: column; gap: 8px; align-items: center; }
-  .host {
-    width: 190px; height: 190px; border-radius: 14px; position: relative;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .child { width: 108px; height: 108px; border-radius: 10px; }
+  .host { width: 150px; height: 150px; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .child { width: 86px; height: 86px; border-radius: 8px; }
   .child.bordered { border: 1px solid var(--rim); }
-  .label { font-size: 11px; color: var(--faint); text-align: center; line-height: 1.6; }
-  .label b { color: var(--dim); font-weight: 600; }
-  .mark {
-    font: inherit; font-size: 11px; padding: 4px 10px; border-radius: 999px; cursor: pointer;
-    background: transparent; color: var(--faint); border: 1px solid var(--rim);
-  }
-  .mark[aria-pressed="true"] { background: #e9ecf2; color: #06070a; border-color: #e9ecf2; font-weight: 600; }
-  h2 { font-size: 14px; margin: 0 0 14px; font-weight: 600; width: 100%; text-align: center; color: var(--dim); }
-  .bar { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
-  button.primary { font: inherit; font-size: 13px; font-weight: 600; color: #06070a; background: #e9ecf2; border: none; border-radius: 10px; padding: 10px 20px; cursor: pointer; }
-  .note { color: var(--faint); font-size: 12px; max-width: 74ch; text-align: center; margin-top: 20px; line-height: 1.9; }
+  .cap { font-size: 11px; color: var(--faint); text-align: center; line-height: 1.6; }
+  .cap b { color: var(--dim); }
+  .now { position: absolute; top: -9px; inset-inline-start: 8px; font-size: 10px; background: #e9ecf2; color: #06070a; border-radius: 999px; padding: 1px 8px; font-weight: 700; }
+  .opt { font: inherit; font-size: 12px; padding: 8px 14px; border-radius: 10px; cursor: pointer; background: transparent; color: var(--dim); border: 1px solid var(--rim); }
+  .opt[aria-pressed="true"] { background: #e9ecf2; color: #06070a; border-color: #e9ecf2; font-weight: 700; }
+  .opts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .bar { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+  button.primary { font: inherit; font-size: 13px; font-weight: 600; color: #06070a; background: #e9ecf2; border: none; border-radius: 10px; padding: 11px 22px; cursor: pointer; }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 11px; }
 </style>
 </head>
 <body>
-  <h1>آستانه‌ی تو در تو بودگی</h1>
+  <h1>سه سؤال — و بعد سیستم ساخته می‌شود</h1>
   <p class="sub">
-    میزبان: <b>سطح کار</b> (<code>S2</code>). فرزند: یک مربع داخلش، با فاصله‌های مختلف از میزبان.
-    سؤال: <b>کدام‌ها «داخل» خوانده می‌شوند، و کدام‌ها فقط یک لکه‌ی روی سطح‌اند؟</b>
-  </p>
-  <p class="hint">
-    روی هر کدام که به نظرت <b>واقعاً داخل</b> است (نه چسبیده، نه شناور) کلیک کن تا علامت بخورد.
-    هر دو ردیف را ببین: یکی با مرز، یکی بدون مرز — چون مرز و فاصله دو مکانیزم جدا هستند.
+    بوم، نردبان، مرز و اندازه‌شان <b>معلوم است</b>. چیزی که معلوم نیست: وقتی یک لایه <b>داخل</b> لایه‌ی
+    دیگری می‌نشیند، چقدر باید از آن فاصله داشته باشد. موتور الان <b>+۱ پله</b> برای فرزند بالایی و
+    <b>−۱.۵ پله</b> برای چاه می‌گذارد — ولی هیچ‌جا اندازه‌گیری نشده. این سه سؤال همان را قطعی می‌کند.
   </p>
 
-  <h2>با مرز (همان کاری که موتور الان می‌کند)</h2>
-  <div class="row" id="rowBorder"></div>
-
-  <h2>بدون مرز — فقط فاصله‌ی سطح</h2>
-  <div class="row" id="rowPlain"></div>
-
-  <div class="bar">
-    <button class="primary" onclick="copyMarks()">کپی انتخاب‌ها</button>
+  <div class="q">
+    <h2>۱. بدون مرز: از کجا «داخل» خوانده می‌شود؟</h2>
+    <div class="why">
+      میزبان: سطح کار <code>S2</code>. مربع داخلش، فقط با اختلاف سطح و بدون هیچ مرزی.
+      کدام‌ها یک <b>ناحیه‌ی داخل</b> خوانده می‌شوند، نه یک لکه؟
+    </div>
+    <div class="row" id="q1"></div>
+    <div class="opts" id="q1opts">
+      <button class="opt" data-q="1" data-v="0.5">۰.۵ پله (۰.۵۷q)</button>
+      <button class="opt" data-q="1" data-v="1">۱ پله (۱.۱۴q)</button>
+      <button class="opt" data-q="1" data-v="1.5">۱.۵ پله (۱.۷۱q)</button>
+      <button class="opt" data-q="1" data-v="2">۲ پله (۲.۲۸q)</button>
+    </div>
   </div>
 
-  <p class="note">
-    موتور الان برای هر فرزند <b>یک پله</b> فاصله می‌گذارد (<code>CONTROL_LIFT = 1</code>)، و برای چاه
-    <b>یک‌ونیم پله به پایین</b>. ولی هیچ‌جا اندازه‌گیری نشده که یک پله برای «داخل» خوانده‌شدن کافی است یا نه.
-  </p>
+  <div class="q">
+    <h2>۲. «فرورفته» به فاصله‌ی بیشتری نیاز دارد؟</h2>
+    <div class="why">
+      موتور الان چاه را <b>۱.۵ پله</b> پایین می‌برد ولی فرزند را <b>۱ پله</b> بالا. اگر چپ و راست
+      یکسان دیده می‌شوند، این نابرابری باید حذف شود. اگر نه، دلیلش را می‌نویسیم.
+    </div>
+    <div class="row" id="q2"></div>
+    <div class="opts" id="q2opts">
+      <button class="opt" data-q="2" data-v="equal">یکسان دیده می‌شوند — نابرابری را حذف کن</button>
+      <button class="opt" data-q="2" data-v="down-harder">فرورفته سخت‌تر دیده می‌شود — ۱.۵ پله درست است</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>۳. مرز تنها، برای «داخل» خوانده‌شدن کافی است؟</h2>
+    <div class="why">
+      مربع با اختلاف سطح <b>صفر</b> — رنگش دقیقاً رنگ میزبان — ولی با یک مرز.
+      آیا این یک ناحیه‌ی داخل است، یا فقط یک خط دور یک تکه از خودِ میزبان؟
+    </div>
+    <div class="row" id="q3"></div>
+    <div class="opts" id="q3opts">
+      <button class="opt" data-q="3" data-v="yes">بله، کافی است — مرز خودش ناحیه می‌سازد</button>
+      <button class="opt" data-q="3" data-v="no">نه، فاصله‌ی سطح هم لازم است</button>
+    </div>
+  </div>
+
+  <div class="bar">
+    <button class="primary" onclick="copyAnswers()">کپی جواب‌ها</button>
+  </div>
 
 <script>
-  /**
-   * THE LADDER, verbatim from the engine — so this page cannot drift from it.
-   * Steps are the nine levels; half-steps are the values the border and the
-   * state shift land on.
-   */
   const LADDER = ['#060709','#07090b','#090b0d','#0b0d0f','#0d0f12','#0f1114','#111316','#131518','#15171a'];
   const HALF   = ['#07080a','#080a0c','#0a0c0e','#0c0e10','#0e1013','#101215','#121417','#141619'];
-  const Q = 0.0083;
-  const STEP = 0.009475;          // one ladder step, in ΔL
-  const HOST = 2;                 // the work plane
+  const Q = 0.0083, STEP = 0.009475, HOST = 2;
+  const at = (o) => (Number.isInteger(HOST + o) ? LADDER[HOST + o] : HALF[Math.floor(HOST + o)]);
+  const answers = {};
 
-  /** The colour at `steps` above the host, using the half-steps where they exist. */
-  function at(steps) {
-    const n = HOST + steps;
-    if (Number.isInteger(n)) return LADDER[n];
-    const base = Math.floor(n);
-    return HALF[base];
-  }
-
-  const OFFSETS = [-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3];
-  const marks = {};
-
-  function cell(offset, bordered) {
-    const key = `${offset}|${bordered ? 'b' : 'p'}`;
-    const q = (offset * STEP) / Q;
+  function cell(offset, bordered, badge) {
     const el = document.createElement('div');
     el.className = 'cell';
+    const q = (offset * STEP) / Q;
     el.innerHTML = `
       <div class="host" style="background:${LADDER[HOST]}">
+        ${badge ? `<span class="now">${badge}</span>` : ''}
         <div class="child ${bordered ? 'bordered' : ''}" style="background:${at(offset)}"></div>
       </div>
-      <div class="label">
-        <b>${offset > 0 ? '+' : ''}${offset} پله</b><br>
-        ${q > 0 ? '+' : ''}${q.toFixed(2)}q<br>
-        <code>${at(offset)}</code>
-      </div>
-      <button class="mark" aria-pressed="false" data-key="${key}">داخل است</button>`;
-    el.querySelector('.mark').addEventListener('click', (e) => {
-      const on = e.currentTarget.getAttribute('aria-pressed') === 'true';
-      e.currentTarget.setAttribute('aria-pressed', on ? 'false' : 'true');
-      if (on) delete marks[key]; else marks[key] = { offset, bordered, q: Number(q.toFixed(2)) };
-    });
+      <div class="cap"><b>${offset > 0 ? '+' : ''}${offset} پله</b> · ${q > 0 ? '+' : ''}${q.toFixed(2)}q<br><code>${at(offset)}</code></div>`;
     return el;
   }
 
-  for (const o of OFFSETS) document.getElementById('rowBorder').appendChild(cell(o, true));
-  for (const o of OFFSETS) document.getElementById('rowPlain').appendChild(cell(o, false));
+  // Q1: the child with NO border, at four offsets.
+  for (const o of [0.5, 1, 1.5, 2]) document.getElementById('q1').appendChild(cell(o, false, o === 1 ? 'موتور' : null));
+  // Q2: down vs up, at the engine's own two values and at the symmetric pair.
+  for (const [o, badge] of [[-1.5, 'موتور: چاه'], [-1, null], [1, 'موتور: فرزند'], [1.5, null]])
+    document.getElementById('q2').appendChild(cell(o, true, badge));
+  // Q3: zero offset, with a border.
+  document.getElementById('q3').appendChild(cell(0, true, 'اختلاف صفر'));
 
-  function copyMarks() {
-    const out = {
-      at: new Date().toISOString(),
-      kind: 'nesting-eye',
-      host: `S${HOST}`,
-      marked: Object.values(marks).sort((a, b) => a.offset - b.offset),
-      stepInQ: Number((STEP / Q).toFixed(2)),
-    };
+  for (const btn of document.querySelectorAll('.opt')) {
+    btn.addEventListener('click', () => {
+      const q = btn.dataset.q;
+      for (const sib of document.querySelectorAll(`.opt[data-q="${q}"]`)) sib.setAttribute('aria-pressed', 'false');
+      btn.setAttribute('aria-pressed', 'true');
+      answers[q] = btn.dataset.v;
+    });
+  }
+
+  function copyAnswers() {
+    const out = { at: new Date().toISOString(), kind: 'nesting-3q', answers };
     navigator.clipboard?.writeText(JSON.stringify(out, null, 2));
-    const h = JSON.parse(localStorage.getItem('liminal-nesting-eye') || '[]');
-    h.push(out);
-    localStorage.setItem('liminal-nesting-eye', JSON.stringify(h));
-    alert(`کپی شد.\n\nعلامت‌خورده‌ها:\n${out.marked.map(m => `${m.offset > 0 ? '+' : ''}${m.offset} پله (${m.q}q)${m.bordered ? ' با مرز' : ' بدون مرز'}`).join('\n') || '—'}`);
+    const h = JSON.parse(localStorage.getItem('liminal-nesting-3q') || '[]');
+    h.push(out); localStorage.setItem('liminal-nesting-3q', JSON.stringify(h));
+    alert('کپی شد:\n' + JSON.stringify(answers));
   }
 </script>
 </body>
