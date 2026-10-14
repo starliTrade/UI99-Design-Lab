@@ -23,6 +23,7 @@ import { AlertDialog } from '../feedback/AlertDialog/AlertDialog';
 import { DatePicker } from '../data/Calendar/DatePicker';
 import { AvatarGroup } from '../data/AvatarGroup/AvatarGroup';
 import { Tabs } from '../nav/Tabs/Tabs';
+import { Stepper } from '../nav/Stepper/Stepper';
 import { Avatar } from '../data/Avatar/Avatar';
 import { Stat } from '../data/Stat/Stat';
 import { Progress } from '../data/Progress/Progress';
@@ -277,6 +278,20 @@ export const FIXTURES: ComponentFixture[] = [
         label="Date"
         disabled={state === 'disabled'}
         error={state === 'error' ? 'Pick a date' : undefined}
+      />
+    ),
+  },
+  {
+    name: 'Stepper', group: 'Navigation', sizes: ['sm', 'md', 'lg'], states: ['default', 'error'], expected: [],
+    render: (state, size) => (
+      <Stepper
+        current={state === 'error' ? 'two' : 'two'}
+        size={(size ?? 'md') as 'sm'}
+        steps={[
+          { id: 'one', label: 'Account', state: 'complete' },
+          { id: 'two', label: 'Details', state: state === 'error' ? 'error' : undefined },
+          { id: 'three', label: 'Confirm' },
+        ]}
       />
     ),
   },
