@@ -40,12 +40,94 @@ interface Prop {
   type: string;
   required: boolean;
   doc?: string;
+  /**
+   * The default, read from the DESTRUCTURING rather than from the type.
+   *
+   * A default is not part of a TypeScript interface — `size?: 'sm' | 'md'` says
+   * nothing about which one you get. It lives in the function signature, and a
+   * props table without it is a table that makes the reader open the source to
+   * answer the first question they had.
+   */
+  default?: string;
 }
 interface Entry {
   component: string;
   path: string;
+  /**
+   * The one-line summary, read from the file's own header comment.
+   *
+   * A component page opens with a sentence — shadcn's does, and a page that
+   * opens with a table of numbers makes the reader work out what the thing is.
+   * It is read rather than written here for the same reason the props are: a
+   * hand-written summary is wrong on the day the component changes.
+   */
+  description?: string;
   extends?: string;
   props: Prop[];
+}
+
+/**
+ * The defaults, read from the component's own destructuring.
+ *
+ * `function Button({ size = 'md', variant = 'primary', ...rest })` — the pattern
+ * is regular enough to read, and the guard asserts it found some.
+ */
+function defaultsIn(source: string): Map<string, string> {
+  const out = new Map<string, string>();
+  // LINE BY LINE, because a destructuring entry is a line: `  size = 'md',`.
+  //
+  // Two earlier attempts looked for a block or a function signature and found
+  // nothing in this repo — most components are built through a factory, so there
+  // is no `function Name({…})` to match. The entry itself is the reliable shape,
+  // and the guard asserts that some were found.
+  for (const line of source.split('\n')) {
+    const m = line.match(/^\s{4,}([\w$]+)\s*=\s*(.+?),?\s*$/);
+    if (!m) continue;
+    const name = m[1];
+    const value = m[2].trim().replace(/,$/, '');
+    // A destructuring default is a literal or a simple expression. A statement
+    // like `const x = foo()` is not a prop default, and the indentation plus the
+    // trailing comma is what tells them apart.
+    if (!/,\s*$/.test(line)) continue;
+    if (/^(const|let|var|return|if|else|for|while|import|export)\b/.test(value)) continue;
+    if (!out.has(name)) out.set(name, value);
+  }
+  return out;
+}
+
+/**
+ * The file's opening sentence.
+ *
+ * The header comment is `LIMINAL · NAME` followed by a blank line and then the
+ * summary — so the summary is the first paragraph that is prose rather than a
+ * label. Anything before it is the title line, and the rule lists below it are
+ * not a description.
+ */
+function summaryOf(source: string, component: string): string | undefined {
+  const head = source.slice(0, source.indexOf('*/'));
+  const lines = head
+    .split('\n')
+    .map((l) => l.replace(/^\s*\/?\*+\/?/, '').trim());
+  // `LIMINAL · NAME` in most files, `NAME · something` in the older ones. Both
+  // are the title line; the summary is what follows it.
+  const start = lines.findIndex((l) => /^(LIMINAL|[A-Z][A-Za-z0-9]*)\s*·/.test(l));
+  if (start < 0) return undefined;
+  const prose: string[] = [];
+  for (let i = start + 1; i < lines.length; i++) {
+    const l = lines[i];
+    if (!l) {
+      if (prose.length) break;
+      continue;
+    }
+    // A rule line, a bullet, or a label is not prose.
+    if (/^[─—=-]{2,}/.test(l) || /^[-*•]/.test(l) || /^[A-Z][A-Z\s·]+$/.test(l)) {
+      if (prose.length) break;
+      continue;
+    }
+    prose.push(l);
+  }
+  const text = prose.join(' ').replace(/\s+/g, ' ').trim();
+  return text || undefined;
 }
 
 /** The JSDoc block immediately above a line, as plain text. */
@@ -78,6 +160,7 @@ const entries: Entry[] = [];
 for (const file of walk(join(SRC, 'components'))) {
   const source = readFileSync(file, 'utf8');
   const lines = source.split('\n');
+  const defaults = defaultsIn(source);
 
   for (let i = 0; i < lines.length; i++) {
     // The declaration may WRAP. `ButtonProps` is
@@ -115,17 +198,20 @@ for (const file of walk(join(SRC, 'components'))) {
         k++;
         type += ' ' + lines[k].trim();
       }
+      const propName = m[1].replace(/['"]/g, '');
       props.push({
-        name: m[1].replace(/['"]/g, ''),
+        name: propName,
         type: type.replace(/[;,]\s*$/, '').replace(/\s+/g, ' ').trim(),
         required: !m[2],
         doc: docAbove(lines, j),
+        default: defaults.get(propName),
       });
     }
 
     entries.push({
       component,
       path: relative(SRC, file).replace(/\\/g, '/'),
+      description: summaryOf(source, component),
       extends: heritage,
       props,
     });
@@ -137,5 +223,6 @@ const dest = resolve(SRC, 'docs/api.json');
 writeFileSync(dest, JSON.stringify(entries, null, 2) + '\n');
 const total = entries.reduce((n, e) => n + e.props.length, 0);
 const documented = entries.filter((e) => e.props.some((p) => p.doc)).length;
+const withDefault = entries.reduce((n, e) => n + e.props.filter((p) => p.default).length, 0);
 console.log(`wrote ${dest}`);
-console.log(`${entries.length} components · ${total} props · ${documented} with a documented prop`);
+console.log(`${entries.length} components · ${total} props · ${documented} with a reason · ${withDefault} with a default`);

@@ -58,6 +58,26 @@ describe('the API table', () => {
     expect(size?.required).toBe(false);
   });
 
+  it('reads DEFAULTS from the destructuring, not from the type', () => {
+    // A default is not part of an interface: `size?: 'sm' | 'md'` says nothing
+    // about which one you get. It lives in the function signature, and a props
+    // table without it makes the reader open the source to answer the first
+    // question they had. Two earlier readings of it found nothing in this repo.
+    const button = api.find((e) => e.component === 'Button')!;
+    const size = button.props.find((p) => p.name === 'size');
+    expect(size?.default).toBe("'md'");
+    const total = api.reduce((n, e) => n + e.props.filter((p) => p.default).length, 0);
+    expect(total, 'props with a default').toBeGreaterThan(40);
+  });
+
+  it('carries the one-line summary, where the file has one', () => {
+    // The page opens with a sentence. A page that opens with a table of numbers
+    // makes the reader work out what the thing is.
+    const slider = api.find((e) => e.component === 'Slider');
+    expect(slider?.description).toBeTruthy();
+    expect(slider!.description!.length).toBeGreaterThan(20);
+  });
+
   it('carries the REASON, where a prop has one', () => {
     // The JSDoc in this repo is where the reason lives, not the description.
     const input = api.find((e) => e.component === 'Input');

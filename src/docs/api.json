@@ -2,6 +2,7 @@
   {
     "component": "Accordion",
     "path": "components/containers/Accordion/Accordion.tsx",
+    "description": "A SET of disclosures, and the policy that makes them a set.",
     "props": [
       {
         "name": "items",
@@ -102,6 +103,7 @@
   {
     "component": "AlertDialog",
     "path": "components/feedback/AlertDialog/AlertDialog.tsx",
+    "description": "A modal that asks a question the reader cannot ignore, and the third component built to COMPONENT-CONTRACT.md. Its one rule is the reason it exists as a separate component rather than a `Modal` with a `destructive` prop:",
     "props": [
       {
         "name": "open",
@@ -123,18 +125,21 @@
       {
         "name": "confirmLabel",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "'Confirm'"
       },
       {
         "name": "cancelLabel",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "'Cancel'"
       },
       {
         "name": "destructive",
         "type": "boolean",
         "required": false,
-        "doc": "Whether confirming DESTROYS something. It changes which action is safe, and therefore which one takes focus — and it colours the confirm button. It does not change the layout, because a destructive question is not a different shape."
+        "doc": "Whether confirming DESTROYS something. It changes which action is safe, and therefore which one takes focus — and it colours the confirm button. It does not change the layout, because a destructive question is not a different shape.",
+        "default": "false"
       },
       {
         "name": "onConfirm",
@@ -212,6 +217,7 @@
   {
     "component": "AspectRatio",
     "path": "components/layout/AspectRatio/AspectRatio.tsx",
+    "description": "A box that keeps its shape while its width changes.",
     "extends": "Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>",
     "props": [
       {
@@ -402,6 +408,7 @@
   {
     "component": "Bubble",
     "path": "components/composites/Message/Message.tsx",
+    "description": "A conversation: who said it, and what they said.",
     "props": [
       {
         "name": "children",
@@ -441,25 +448,29 @@
         "name": "asChild",
         "type": "boolean",
         "required": false,
-        "doc": "Render the child element instead of a `<button>`, keeping its styles."
+        "doc": "Render the child element instead of a `<button>`, keeping its styles.",
+        "default": "false"
       },
       {
         "name": "variant",
         "type": "ButtonVariant",
         "required": false,
-        "doc": "The name of a decision, not a colour. `danger` is a role; `red` would be a value pretending to be a choice, and it breaks the moment the theme moves."
+        "doc": "The name of a decision, not a colour. `danger` is a role; `red` would be a value pretending to be a choice, and it breaks the moment the theme moves.",
+        "default": "'secondary'"
       },
       {
         "name": "size",
         "type": "ButtonSize",
         "required": false,
-        "doc": "The control height, from `CONTROL`. `md` is the default AND the accessible minimum — `CONTROL.md` and `TARGET.min` are the same number, so the default is not a compromise."
+        "doc": "The control height, from `CONTROL`. `md` is the default AND the accessible minimum — `CONTROL.md` and `TARGET.min` are the same number, so the default is not a compromise.",
+        "default": "'md'"
       },
       {
         "name": "disabled",
         "type": "boolean",
         "required": false,
-        "doc": "Inert: not focusable, not pressable, and it says so to a screen reader."
+        "doc": "Inert: not focusable, not pressable, and it says so to a screen reader.",
+        "default": "false"
       },
       {
         "name": "forcedState",
@@ -483,7 +494,8 @@
         "name": "fullWidth",
         "type": "boolean",
         "required": false,
-        "doc": "Fill the container. For a form's primary action, not for a toolbar."
+        "doc": "Fill the container. For a form's primary action, not for a toolbar.",
+        "default": "false"
       },
       {
         "name": "children",
@@ -499,19 +511,22 @@
         "name": "type",
         "type": "'button' | 'submit' | 'reset'",
         "required": false,
-        "doc": "Defaults to `button`, because a button inside a form that submits by accident is a bug the platform will happily commit for you."
+        "doc": "Defaults to `button`, because a button inside a form that submits by accident is a bug the platform will happily commit for you.",
+        "default": "'button'"
       },
       {
         "name": "loading",
         "type": "boolean",
         "required": false,
-        "doc": "Busy. The label stays, so the button does not change width mid-press."
+        "doc": "Busy. The label stays, so the button does not change width mid-press.",
+        "default": "false"
       },
       {
         "name": "iconOnly",
         "type": "boolean",
         "required": false,
-        "doc": "No visible label. Requires `ariaLabel` — an icon-only button with no name is a button a screen reader cannot describe."
+        "doc": "No visible label. Requires `ariaLabel` — an icon-only button with no name is a button a screen reader cannot describe.",
+        "default": "false"
       },
       {
         "name": "ariaLabel",
@@ -541,6 +556,7 @@
   {
     "component": "ButtonGroup",
     "path": "components/containers/ButtonGroup/ButtonGroup.tsx",
+    "description": "Buttons that belong together, joined.",
     "props": [
       {
         "name": "children",
@@ -751,6 +767,7 @@
   {
     "component": "Collapsible",
     "path": "components/containers/Collapsible/Collapsible.tsx",
+    "description": "A region the reader opens and closes, with a trigger that says which.",
     "props": [
       {
         "name": "title",
@@ -1120,6 +1137,7 @@
   {
     "component": "Drawer",
     "path": "components/containers/Drawer/Drawer.tsx",
+    "description": "A panel that comes in from an edge and takes over the view. The fourth and last component built to COMPONENT-CONTRACT.md.",
     "props": [
       {
         "name": "open",
@@ -1134,12 +1152,14 @@
       {
         "name": "side",
         "type": "DrawerSide",
-        "required": false
+        "required": false,
+        "default": "'end'"
       },
       {
         "name": "size",
         "type": "'sm' | 'md' | 'lg'",
-        "required": false
+        "required": false,
+        "default": "'md'"
       },
       {
         "name": "title",
@@ -1155,7 +1175,8 @@
         "name": "dragThreshold",
         "type": "number",
         "required": false,
-        "doc": "How far the handle must be dragged before it counts as a dismissal."
+        "doc": "How far the handle must be dragged before it counts as a dismissal.",
+        "default": "96"
       },
       {
         "name": "className",
@@ -1213,7 +1234,8 @@
       {
         "name": "asChild",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "checked",
@@ -1228,7 +1250,8 @@
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "children",
@@ -1250,7 +1273,8 @@
       {
         "name": "asChild",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "children",
@@ -1260,7 +1284,8 @@
       {
         "name": "className",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "''"
       },
       {
         "name": "style",
@@ -1270,12 +1295,14 @@
       {
         "name": "minWidth",
         "type": "number",
-        "required": false
+        "required": false,
+        "default": "190"
       },
       {
         "name": "loop",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "true"
       }
     ]
   },
@@ -1287,7 +1314,8 @@
       {
         "name": "asChild",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "children",
@@ -1297,12 +1325,14 @@
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "variant",
         "type": "'default' | 'danger'",
-        "required": false
+        "required": false,
+        "default": "'default'"
       },
       {
         "name": "icon",
@@ -1329,7 +1359,8 @@
       {
         "name": "asChild",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "children",
@@ -1367,7 +1398,8 @@
       {
         "name": "asChild",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "value",
@@ -1377,7 +1409,8 @@
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "children",
@@ -1399,7 +1432,8 @@
       {
         "name": "asChild",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       }
     ]
   },
@@ -1517,6 +1551,7 @@
   {
     "component": "Field",
     "path": "components/composites/Form/Form.tsx",
+    "description": "«فرم، جایی است که دسترس‌پذیری واقعاً آزموده می‌شود.»",
     "props": [
       {
         "name": "name",
@@ -1561,6 +1596,7 @@
   {
     "component": "FileUpload",
     "path": "components/inputs/FileUpload/FileUpload.tsx",
+    "description": "A REAL `<input type=\"file\">`, and a large visible zone that is its label.",
     "props": [
       {
         "name": "files",
@@ -1581,12 +1617,14 @@
       {
         "name": "multiple",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "size",
         "type": "'sm' | 'md' | 'lg'",
-        "required": false
+        "required": false,
+        "default": "'md'"
       },
       {
         "name": "label",
@@ -1606,7 +1644,8 @@
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "id",
@@ -1621,7 +1660,8 @@
       {
         "name": "className",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "''"
       },
       {
         "name": "style",
@@ -1669,6 +1709,7 @@
   {
     "component": "FocusScope",
     "path": "components/layout/FocusScope/FocusScope.tsx",
+    "description": "A region that keeps Tab inside it while it is active.",
     "extends": "Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>",
     "props": [
       {
@@ -1729,6 +1770,7 @@
   {
     "component": "Form",
     "path": "components/composites/Form/Form.tsx",
+    "description": "«فرم، جایی است که دسترس‌پذیری واقعاً آزموده می‌شود.»",
     "props": [
       {
         "name": "children",
@@ -1977,6 +2019,7 @@
   {
     "component": "Heading",
     "path": "components/atoms/Typography/Typography.tsx",
+    "description": "The type scale, as components, because a consumer should not have to call `getTypeStyle` by hand to write a paragraph.",
     "props": [
       {
         "name": "children",
@@ -2021,6 +2064,7 @@
   {
     "component": "HoverCard",
     "path": "components/containers/HoverCard/HoverCard.tsx",
+    "description": "A surface that appears because the reader lingered, not because they asked. It is the second component built to COMPONENT-CONTRACT.md, and its keyboard contract is the OPPOSITE of the Popover's:",
     "props": [
       {
         "name": "trigger",
@@ -2036,19 +2080,22 @@
       {
         "name": "placement",
         "type": "Placement",
-        "required": false
+        "required": false,
+        "default": "'bottom-start'"
       },
       {
         "name": "openDelay",
         "type": "number",
         "required": false,
-        "doc": "How long the pointer must rest before it opens."
+        "doc": "How long the pointer must rest before it opens.",
+        "default": "320"
       },
       {
         "name": "closeDelay",
         "type": "number",
         "required": false,
-        "doc": "How long it waits before closing, so the pointer can travel into it."
+        "doc": "How long it waits before closing, so the pointer can travel into it.",
+        "default": "160"
       },
       {
         "name": "open",
@@ -2087,12 +2134,14 @@
         "name": "size",
         "type": "'sm' | 'md' | 'lg'",
         "required": false,
-        "doc": "The control height. `md` is the default AND the accessible minimum — the engine's `CONTROL.md` and `TARGET.min` are the same number, so the default is not a compromise. It was missing: `minHeight` was hardcoded to `CONTROL.md`, so every input was 44px and there was no way to ask for a denser one."
+        "doc": "The control height. `md` is the default AND the accessible minimum — the engine's `CONTROL.md` and `TARGET.min` are the same number, so the default is not a compromise. It was missing: `minHeight` was hardcoded to `CONTROL.md`, so every input was 44px and there was no way to ask for a denser one.",
+        "default": "'md'"
       },
       {
         "name": "type",
         "type": "'text' | 'email' | 'password' | 'search' | 'number' | 'tel' | 'url'",
-        "required": false
+        "required": false,
+        "default": "'text'"
       },
       {
         "name": "label",
@@ -2132,7 +2181,8 @@
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "error",
@@ -2172,7 +2222,8 @@
       {
         "name": "togglePassword",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "maxLength",
@@ -2182,17 +2233,20 @@
       {
         "name": "showCount",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "clearable",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "allowClear",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "onClear",
@@ -2212,7 +2266,8 @@
       {
         "name": "required",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "autoComplete",
@@ -2267,7 +2322,8 @@
       {
         "name": "className",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "''"
       },
       {
         "name": "style",
@@ -2279,6 +2335,7 @@
   {
     "component": "InputGroup",
     "path": "components/inputs/InputGroup/InputGroup.tsx",
+    "description": "An input with something attached to it — a unit, a protocol, a button.",
     "props": [
       {
         "name": "children",
@@ -2343,6 +2400,7 @@
   {
     "component": "Item",
     "path": "components/data/Item/Item.tsx",
+    "description": "A row in a list: something at the start, a label, and something at the end.",
     "props": [
       {
         "name": "children",
@@ -2410,6 +2468,7 @@
   {
     "component": "Kbd",
     "path": "components/atoms/Kbd/Kbd.tsx",
+    "description": "A keyboard key, named.",
     "props": [
       {
         "name": "children",
@@ -2442,6 +2501,7 @@
   {
     "component": "Label",
     "path": "components/atoms/Label/Label.tsx",
+    "description": "The name of a control, tied to it.",
     "props": [
       {
         "name": "htmlFor",
@@ -2486,6 +2546,7 @@
   {
     "component": "Marker",
     "path": "components/atoms/Marker/Marker.tsx",
+    "description": "A small label that names a thing: a count, a category, a state.",
     "props": [
       {
         "name": "children",
@@ -2519,6 +2580,7 @@
   {
     "component": "Message",
     "path": "components/composites/Message/Message.tsx",
+    "description": "A conversation: who said it, and what they said.",
     "props": [
       {
         "name": "children",
@@ -2567,6 +2629,7 @@
   {
     "component": "MessageList",
     "path": "components/composites/Message/Message.tsx",
+    "description": "A conversation: who said it, and what they said.",
     "props": [
       {
         "name": "children",
@@ -2594,6 +2657,7 @@
   {
     "component": "MessageScroller",
     "path": "components/composites/MessageScroller/MessageScroller.tsx",
+    "description": "A conversation that follows the newest message — until the reader says otherwise.",
     "props": [
       {
         "name": "children",
@@ -2920,6 +2984,7 @@
   {
     "component": "NumberInput",
     "path": "components/inputs/NumberInput/NumberInput.tsx",
+    "description": "A number field with steppers. It WRAPS `Input` rather than rebuilding it, and that is the whole design: the Input already carries the size scale, the error state, the helper text, the ARIA wiring and the interaction layer. A second implementation would be a second answer for all of it.",
     "props": [
       {
         "name": "value",
@@ -2945,12 +3010,14 @@
       {
         "name": "step",
         "type": "number",
-        "required": false
+        "required": false,
+        "default": "1"
       },
       {
         "name": "size",
         "type": "'sm' | 'md' | 'lg'",
-        "required": false
+        "required": false,
+        "default": "'md'"
       },
       {
         "name": "label",
@@ -2975,12 +3042,14 @@
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "readOnly",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "id",
@@ -3007,6 +3076,7 @@
   {
     "component": "OTP",
     "path": "components/inputs/OTP/OTP.tsx",
+    "description": "A one-time code field. It is ONE input, and that is the whole design.",
     "props": [
       {
         "name": "value",
@@ -3022,12 +3092,14 @@
         "name": "length",
         "type": "number",
         "required": false,
-        "doc": "How many digits. Also the input's maxLength."
+        "doc": "How many digits. Also the input's maxLength.",
+        "default": "6"
       },
       {
         "name": "size",
         "type": "'sm' | 'md' | 'lg'",
-        "required": false
+        "required": false,
+        "default": "'md'"
       },
       {
         "name": "label",
@@ -3042,7 +3114,8 @@
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "onComplete",
@@ -3063,12 +3136,14 @@
       {
         "name": "autoFocus",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "className",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "''"
       },
       {
         "name": "style",
@@ -3245,6 +3320,7 @@
   {
     "component": "Popover",
     "path": "components/containers/Popover/Popover.tsx",
+    "description": "A surface that floats above the flow, anchored to the thing that opened it. It is the first component built to COMPONENT-CONTRACT.md rather than before it, so the ten rules are visible in the code rather than promised in a doc:",
     "props": [
       {
         "name": "trigger",
@@ -3261,7 +3337,8 @@
         "name": "placement",
         "type": "Placement",
         "required": false,
-        "doc": "Where the engine should try to put it, before collision handling."
+        "doc": "Where the engine should try to put it, before collision handling.",
+        "default": "'bottom-start'"
       },
       {
         "name": "open",
@@ -3278,7 +3355,8 @@
         "name": "modal",
         "type": "boolean",
         "required": false,
-        "doc": "Whether the content traps focus. A popover holding a form wants the trap; one holding a paragraph does not, and trapping focus for a paragraph is a trap the reader has to escape."
+        "doc": "Whether the content traps focus. A popover holding a form wants the trap; one holding a paragraph does not, and trapping focus for a paragraph is a trap the reader has to escape.",
+        "default": "false"
       },
       {
         "name": "aria-label",
@@ -3425,6 +3503,7 @@
   {
     "component": "Rating",
     "path": "components/inputs/Rating/Rating.tsx",
+    "description": "A rating is a CHOICE FROM A SET, so it is a radio group. Not five buttons.",
     "props": [
       {
         "name": "value",
@@ -3440,12 +3519,14 @@
       {
         "name": "max",
         "type": "number",
-        "required": false
+        "required": false,
+        "default": "5"
       },
       {
         "name": "size",
         "type": "'sm' | 'md' | 'lg'",
-        "required": false
+        "required": false,
+        "default": "'md'"
       },
       {
         "name": "label",
@@ -3460,18 +3541,21 @@
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "readOnly",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "showValue",
         "type": "boolean",
         "required": false,
-        "doc": "Show \"3 of 5\" beside the stars."
+        "doc": "Show \"3 of 5\" beside the stars.",
+        "default": "false"
       },
       {
         "name": "id",
@@ -3486,7 +3570,8 @@
       {
         "name": "className",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "''"
       },
       {
         "name": "style",
@@ -3498,6 +3583,7 @@
   {
     "component": "ScrollArea",
     "path": "components/layout/ScrollArea/ScrollArea.tsx",
+    "description": "A region that scrolls, and that a KEYBOARD can scroll.",
     "extends": "Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>",
     "props": [
       {
@@ -3546,12 +3632,14 @@
       {
         "name": "placeholder",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "'Select an option...'"
       },
       {
         "name": "options",
         "type": "SelectOption[]",
-        "required": false
+        "required": false,
+        "default": "[]"
       },
       {
         "name": "value",
@@ -3582,7 +3670,8 @@
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "error",
@@ -3622,12 +3711,14 @@
       {
         "name": "required",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "className",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "''"
       },
       {
         "name": "style",
@@ -3870,6 +3961,7 @@
   {
     "component": "Slider",
     "path": "components/inputs/Slider/Slider.tsx",
+    "description": "A native `<input type=\"range\">`, styled.",
     "props": [
       {
         "name": "value",
@@ -3884,27 +3976,32 @@
       {
         "name": "min",
         "type": "number",
-        "required": false
+        "required": false,
+        "default": "0"
       },
       {
         "name": "max",
         "type": "number",
-        "required": false
+        "required": false,
+        "default": "100"
       },
       {
         "name": "step",
         "type": "number",
-        "required": false
+        "required": false,
+        "default": "1"
       },
       {
         "name": "size",
         "type": "'sm' | 'md' | 'lg'",
-        "required": false
+        "required": false,
+        "default": "'md'"
       },
       {
         "name": "disabled",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "label",
@@ -3921,7 +4018,8 @@
         "name": "showValue",
         "type": "boolean",
         "required": false,
-        "doc": "Show the current value beside the label."
+        "doc": "Show the current value beside the label.",
+        "default": "false"
       },
       {
         "name": "id",
@@ -3936,7 +4034,8 @@
       {
         "name": "className",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "''"
       },
       {
         "name": "style",
@@ -3948,6 +4047,7 @@
   {
     "component": "Spinner",
     "path": "components/atoms/Spinner/Spinner.tsx",
+    "description": "Something is happening and the reader cannot see what.",
     "props": [
       {
         "name": "label",
@@ -3981,6 +4081,7 @@
   {
     "component": "Stack",
     "path": "components/layout/Stack/Stack.tsx",
+    "description": "One direction, one gap, from the engine's spacing scale.",
     "extends": "Omit<React.HTMLAttributes<HTMLElement>, 'children'>",
     "props": [
       {
@@ -3992,27 +4093,32 @@
         "name": "gap",
         "type": "keyof typeof L.SPACING",
         "required": false,
-        "doc": "The gap, as a STEP IN THE SCALE — not a number of pixels."
+        "doc": "The gap, as a STEP IN THE SCALE — not a number of pixels.",
+        "default": "3"
       },
       {
         "name": "direction",
         "type": "'row' | 'column'",
-        "required": false
+        "required": false,
+        "default": "'column'"
       },
       {
         "name": "align",
         "type": "'start' | 'center' | 'end' | 'stretch'",
-        "required": false
+        "required": false,
+        "default": "'stretch'"
       },
       {
         "name": "justify",
         "type": "'start' | 'center' | 'end' | 'between'",
-        "required": false
+        "required": false,
+        "default": "'start'"
       },
       {
         "name": "wrap",
         "type": "boolean",
-        "required": false
+        "required": false,
+        "default": "false"
       },
       {
         "name": "as",
@@ -4095,6 +4201,7 @@
   {
     "component": "Stepper",
     "path": "components/nav/Stepper/Stepper.tsx",
+    "description": "Where the reader is in a sequence, and how many steps are left.",
     "props": [
       {
         "name": "steps",
@@ -4464,6 +4571,7 @@
   {
     "component": "Text",
     "path": "components/atoms/Typography/Typography.tsx",
+    "description": "The type scale, as components, because a consumer should not have to call `getTypeStyle` by hand to write a paragraph.",
     "props": [
       {
         "name": "children",
@@ -4733,6 +4841,7 @@
   {
     "component": "ToggleGroup",
     "path": "components/inputs/ToggleGroup/ToggleGroup.tsx",
+    "description": "A set of toggles, and the two different things that can mean.",
     "props": [
       {
         "name": "items",
@@ -4828,6 +4937,7 @@
   {
     "component": "TreeView",
     "path": "components/data/TreeView/TreeView.tsx",
+    "description": "The hardest ARIA in the library, and the keyboard is the reason.",
     "props": [
       {
         "name": "nodes",
@@ -4849,7 +4959,8 @@
         "name": "selected",
         "type": "string | null",
         "required": false,
-        "doc": "The selected node, or null."
+        "doc": "The selected node, or null.",
+        "default": "null"
       },
       {
         "name": "onSelect",
@@ -4859,7 +4970,8 @@
       {
         "name": "size",
         "type": "'sm' | 'md' | 'lg'",
-        "required": false
+        "required": false,
+        "default": "'md'"
       },
       {
         "name": "label",
@@ -4869,7 +4981,8 @@
       {
         "name": "className",
         "type": "string",
-        "required": false
+        "required": false,
+        "default": "''"
       },
       {
         "name": "style",
@@ -4881,6 +4994,7 @@
   {
     "component": "VisuallyHidden",
     "path": "components/layout/VisuallyHidden/VisuallyHidden.tsx",
+    "description": "Content a screen reader needs and the eye does not: a heading that names a region, a \"skip to content\" link, the label of an icon-only control.",
     "extends": "Omit<React.HTMLAttributes<HTMLElement>, 'children'>",
     "props": [
       {
