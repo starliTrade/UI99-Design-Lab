@@ -9,7 +9,8 @@ import {
   CSS_VARS_START,
   CSS_VARS_END,
 } from '../liminal-css-vars';
-import { LADDER, TEXT_HIERARCHY, SURFACE_TINT, VEIL, SHADOWS, Z_INDEX, HALF } from '../spec-engine';
+import {LADDER, TEXT_HIERARCHY, SURFACE_TINT, VEIL, Z_INDEX, HALF} from '../spec-engine';
+import { FLOAT_SHADOWS } from '../liminal-surface';
 import { LiminalLayoutEngine } from '../liminal-layout-engine';
 import { LiminalMotionEngine } from '../liminal-motion-engine';
 import { LiminalColorEngine } from '../liminal-color-engine';
@@ -49,8 +50,8 @@ describe('CSS variable layer — generated, complete, in sync', () => {
   });
 
   it('exposes every shadow', () => {
-    Object.entries(SHADOWS).forEach(([k, val]) =>
-      expect(css).toContain(`--liminal-shadow-e${k}: ${val};`),
+    Object.entries(FLOAT_SHADOWS).forEach(([k, val]) =>
+      expect(css).toContain(`--liminal-shadow-${k}: ${val};`),
     );
   });
 

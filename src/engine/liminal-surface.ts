@@ -37,7 +37,8 @@
 import type { CSSProperties } from 'react';
 import { LADDER, getLadderColor, FOCUS_RING_COLOR, PERCEPTUAL_QUANTUM, getLadderVar } from './liminal-ladder';
 import { oklchLightness } from './liminal-color-math';
-import { getDirectionalRim, SHADOWS, type DirectionalRimResult } from './spec-engine';
+import { getDirectionalRim, type DirectionalRimResult } from './spec-engine';
+import { floatShadow } from './liminal-shadow';
 import { LiminalMotionEngine } from './liminal-motion-engine';
 
 /** What an element is in the hierarchy. */
@@ -133,6 +134,21 @@ export const ROLE_SHADOW: Record<SurfaceRole, 1 | 2 | 3 | 4 | null> = {
 
 /** Roles that float above the flow, and therefore may cast a shadow. */
 export const FLOATING_ROLES: readonly SurfaceRole[] = ['menu', 'popover', 'modal', 'toast'];
+
+/**
+ * THE FLOATING SHADOWS, NAMED BY ROLE.
+ *
+ * They were `SHADOWS[1..4]` — four numbers with no meaning, described in comments
+ * as "dropdown, header", "featured card, popover". A number that needs a comment
+ * to say what it is for is a name that has not been written yet.
+ *
+ * These are a VIEW of the one model in `liminal-shadow.ts`, evaluated at each
+ * floating role's own height, so they cannot disagree with what the mist layer
+ * draws for the same role.
+ */
+export const FLOAT_SHADOWS = Object.fromEntries(
+  FLOATING_ROLES.map((role) => [role, floatShadow(ROLE_LEVEL[role])]),
+) as Record<(typeof FLOATING_ROLES)[number], string>;
 
 /**
  * STATE SHIFT, in ladder steps.
@@ -326,7 +342,9 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
 
   // ── shadow: only for roles that float ───────────────────────────────────
   const shadowTier = elevation ?? ROLE_SHADOW[role];
-  const shadow = shadowTier ? SHADOWS[shadowTier] : 'none';
+  // The shadow comes from the role's own HEIGHT, so a surface cannot be given a
+  // shadow that disagrees with the one the mist layer would draw for it.
+  const shadow = shadowTier ? floatShadow(ROLE_LEVEL[role]) : 'none';
 
   // ── focus ring: visible on keyboard focus, never on pointer focus ───────
   const outline = state === 'focus' ? `2px solid ${FOCUS_RING_COLOR}` : 'none';

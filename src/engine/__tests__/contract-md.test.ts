@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { LADDER, HALF, SHADOWS, getDirectionalRim } from '../spec-engine';
+import {LADDER, HALF, getDirectionalRim} from '../spec-engine';
+import { FLOAT_SHADOWS } from '../liminal-surface';
 import { LiminalLayoutEngine as L } from '../liminal-layout-engine';
 import { LiminalMotionEngine as M } from '../liminal-motion-engine';
 import { LiminalColorEngine as C } from '../liminal-color-engine';
@@ -53,7 +54,7 @@ describe('DESIGN-CONTRACT.md — the value blocks match the engine', () => {
 
   it('carries the engine’s shadows', () => {
     const b = block('shadows');
-    Object.values(SHADOWS).forEach((v) => expect(b).toContain(v));
+    Object.values(FLOAT_SHADOWS).forEach((v) => expect(b).toContain(v));
   });
 
   it('carries every spacing value', () => {

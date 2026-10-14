@@ -23,7 +23,8 @@ import { fileURLToPath } from 'node:url';
 import { LiminalLayoutEngine as L } from '../src/engine/liminal-layout-engine';
 import { LiminalMotionEngine as M } from '../src/engine/liminal-motion-engine';
 import { LiminalColorEngine as C } from '../src/engine/liminal-color-engine';
-import { LADDER, HALF, SHADOWS, SURFACE_TINT, VEIL, getDirectionalRim } from '../src/engine/spec-engine';
+import { LADDER, HALF, SURFACE_TINT, VEIL, getDirectionalRim } from '../src/engine/spec-engine';
+import { FLOAT_SHADOWS } from '../src/engine/liminal-surface';
 import { LADDER_STEP, LADDER_CHROMA, LADDER_HUE, CANVAS_L, PERCEPTUAL_QUANTUM, RELIABLE_BOUNDARY, WELLS } from '../src/engine/liminal-ladder';
 import { hexToRgb, rgbToOklch } from '../src/engine/liminal-color-math';
 
@@ -67,7 +68,7 @@ const BLOCKS: Record<string, () => string> = {
     }).join('\n'),
 
   'shadows': () =>
-    Object.entries(SHADOWS)
+    Object.entries(FLOAT_SHADOWS)
       .map(([e, v]) => `- **E${e}:**\n  \`${(v as string).replace(/, /g, ', ')}\``)
       .join('\n'),
 

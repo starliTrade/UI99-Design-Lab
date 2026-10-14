@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { LADDER, HALF, SHADOWS, getDirectionalRim, getTextStyle } from '../spec-engine';
+import {LADDER, HALF, getDirectionalRim, getTextStyle} from '../spec-engine';
+import { FLOAT_SHADOWS } from '../liminal-surface';
 import { WELLS, LADDER_STEP, PERCEPTUAL_QUANTUM } from '../liminal-ladder';
 import { LiminalLayoutEngine as L } from '../liminal-layout-engine';
 import { LiminalMotionEngine as M } from '../liminal-motion-engine';
@@ -50,9 +51,9 @@ describe('DTCG — the file is the engine, in the format other tools read', () =
   });
 
   it('carries the shadows as boxShadow strings', () => {
-    Object.entries(SHADOWS).forEach(([e, v]) => {
-      expect(doc.color.shadow[`e${e}`].$value).toBe(v);
-      expect(doc.color.shadow[`e${e}`].$type).toBe('boxShadow');
+    Object.entries(FLOAT_SHADOWS).forEach(([e, v]) => {
+      expect(doc.color.shadow[e].$value).toBe(v);
+      expect(doc.color.shadow[e].$type).toBe('boxShadow');
     });
   });
 

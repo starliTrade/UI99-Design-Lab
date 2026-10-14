@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { MagnifyingGlass, Command as CommandIcon } from '@phosphor-icons/react';
-import {
-  getTextStyle,
+import {getTextStyle,
   getLadderColor,
-  SHADOWS, VEIL } from '../../../engine/spec-engine';
+  VEIL} from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';

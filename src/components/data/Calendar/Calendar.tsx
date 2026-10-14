@@ -3,11 +3,8 @@ import type { CSSProperties } from 'react';
 import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { Button } from '../../atoms/Button';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
-import {
-  getLadderColor,
-  getTextStyle,
-  SHADOWS,
-} from '../../../engine/spec-engine';
+import {getLadderColor,
+  getTextStyle} from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
@@ -24,6 +21,7 @@ import {
   formatJalali,
 } from '../../../engine/liminal-jalali';
 import { toPersianDigits } from '../../../engine/liminal-persian';
+import { floatShadow, floatHeight } from '../../../engine/liminal-mist';
 
 /** A layout decision this component owns, not a system token. */
 const CALENDAR_WIDTH = 320;
@@ -212,7 +210,7 @@ export function Calendar({
     borderRadius: `${RADIUS.card}px`,
     background: resolveSurface({ role: 'control', on: host }).background,
     border: `1px solid ${resolveBorder({ role: 'control', kind: 'hairline', on: host })}`,
-    boxShadow: SHADOWS[3],
+    boxShadow: floatShadow(floatHeight('popover')),
     boxSizing: 'border-box',
     userSelect: 'none',
     ...customStyle,

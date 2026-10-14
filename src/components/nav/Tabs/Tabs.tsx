@@ -7,16 +7,14 @@ import React, { useId,
   useCallback,
 } from 'react';
 import type { CSSProperties, ReactNode, KeyboardEvent } from 'react';
-import {
-  getTextStyle,
-  getFocusRing,
-  SHADOWS,
-} from '../../../engine/spec-engine';
+import {getTextStyle,
+  getFocusRing} from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useRovingTabIndex } from '../../../engine/liminal-hooks';
 import { resolveSurface, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
+import { REST_SHADOW } from '../../../engine/liminal-mist';
 
 /** The gap between tabs: off the spacing scale, so it is named. */
 const TAB_GAP = 6;
@@ -93,7 +91,7 @@ export function Tab({
   if (isActive) {
     bg = activeRim ? activeRim.cssBackground : resolveSurface({ role: 'control', state: 'active', on: host }).background;
     color = getTextStyle('primary', 1).color;
-    shadow = SHADOWS[1]; // Micro E1 elevation, from the engine
+    shadow = REST_SHADOW; // an active tab is an object ON its surface, not a floating one
   }
 
   const SPACING = LiminalLayoutEngine.SPACING;

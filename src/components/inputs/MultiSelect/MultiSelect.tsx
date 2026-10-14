@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef, useId, useCallback } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 import { CaretDown, Check, X } from '@phosphor-icons/react';
-import {
-  getTextStyle,
-  SHADOWS,
+import {getTextStyle,
   Z_INDEX,
-  LiminalState,
-} from '../../../engine/spec-engine';
+  LiminalState} from '../../../engine/spec-engine';
 import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';

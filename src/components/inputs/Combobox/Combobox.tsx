@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef, useId, useCallback } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, KeyboardEvent } from 'react';
 import { CaretDown, Check } from '@phosphor-icons/react';
-import {
-  getTextStyle,
+import {getTextStyle,
   getLadderColor,
-  SHADOWS,
-  Z_INDEX,
-} from '../../../engine/spec-engine';
+  Z_INDEX} from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';

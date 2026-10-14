@@ -83,12 +83,13 @@ export function getDirectionalRim(
   };
 }
 
-export const SHADOWS = {
-  1: '0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22)',
-  2: '0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26)',
-  3: '0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30)',
-  4: '0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)',
-} as const;
+/**
+ * THE SHADOW SCALE IS GONE — see `liminal-shadow.ts` for the one model.
+ *
+ * A floating surface takes `floatShadow(height)`; an object resting on a surface
+ * takes `REST_SHADOW`. There is no `SHADOWS[1..4]` any more, because that record
+ * was the second answer to a question that already had one.
+ */
 
 /**
  * SURFACE TINTS — white laid over a surface to lift it.

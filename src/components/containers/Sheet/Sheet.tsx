@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
-import { getLadderVar, getTextStyle, SHADOWS, SURFACE_TINT, VEIL } from '../../../engine/spec-engine';
+import {getLadderVar, getTextStyle, SURFACE_TINT, VEIL} from '../../../engine/spec-engine';
 import { resolveSurface, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import {
@@ -15,6 +15,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { Divider } from '../Divider';
 import { X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
+import { floatShadow, floatHeight } from '../../../engine/liminal-mist';
 
 /** A layout decision this component owns, not a system token. */
 const DRAG_HANDLE_WIDTH = 36;
@@ -110,7 +111,7 @@ export function Sheet({
     position: 'fixed',
     background: rim ? rim.cssBackground : getLadderVar(ROLE_LEVEL.well),
     border: rim ? '1px solid transparent' : 'none',
-    boxShadow: SHADOWS[3],
+    boxShadow: floatShadow(floatHeight('modal')),
     boxSizing: 'border-box',
     outline: 'none',
     overflowY: 'auto',

@@ -1,11 +1,12 @@
 import React from 'react';
 import type { CSSProperties, KeyboardEvent } from 'react';
-import {getDirectionalRim, getLadderColor, SURFACE_TINT, SHADOWS } from '../../../engine/spec-engine';
+import {getDirectionalRim, getLadderColor, SURFACE_TINT} from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { resolveSurface, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
+import { REST_SHADOW } from '../../../engine/liminal-mist';
 
 /** The knob's inset from the track edge: a visual decision, so it is named. */
 /**
@@ -153,7 +154,7 @@ export function Toggle({
     // backwards in RTL.
     insetInlineEnd: `${isChecked ? travel(size) : dims.inset}px`,
     background: isChecked ? brand.onColor : SURFACE_TINT.solid,
-    boxShadow: SHADOWS[1],
+    boxShadow: REST_SHADOW,
   };
 
   return (

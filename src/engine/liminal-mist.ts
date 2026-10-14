@@ -26,6 +26,7 @@
 import { LADDER, PERCEPTUAL_QUANTUM, getLadderVar } from './liminal-ladder';
 import { ROLE_LEVEL, resolveBorder } from './liminal-surface';
 import type { SurfaceRole } from './liminal-surface';
+import { shadowModel } from './liminal-shadow';
 
 /** The roles that float above the page, and therefore catch mist. */
 export const FLOATING_MIST_ROLES: SurfaceRole[] = ['menu', 'popover', 'modal', 'toast'];
@@ -174,20 +175,26 @@ export function mistHaloRadius(role: SurfaceRole): number {
  * a menu — which is what the eye expects and what an absolute constant could
  * not express.
  */
+/**
+ * THE SHADOW MODEL LIVES IN ITS OWN MODULE, because three things need it and one
+ * of them is the mist's own dependency. See `liminal-shadow.ts`.
+ */
+export { shadowModel, floatShadow, REST_SHADOW } from './liminal-shadow';
+
 export function mistShadowNearRadius(role: SurfaceRole): number {
-  return 4 + floatHeight(role) * 0.5;
+  return shadowModel(floatHeight(role)).near;
 }
 
 export function mistShadowFarRadius(role: SurfaceRole): number {
-  return 40 + floatHeight(role) * 3.2;
+  return shadowModel(floatHeight(role)).far;
 }
 
 export function mistShadowNearAlpha(role: SurfaceRole): number {
-  return 0.30 + floatHeight(role) * 0.005;
+  return shadowModel(floatHeight(role)).nearAlpha;
 }
 
 export function mistShadowFarAlpha(role: SurfaceRole): number {
-  return 0.42 + floatHeight(role) * 0.010;
+  return shadowModel(floatHeight(role)).farAlpha;
 }
 
 /**

@@ -4,16 +4,14 @@ import { useFloating } from '../../../engine/liminal-floating';
 import { type Placement } from '../../../engine/liminal-positioning-engine';
 import { LiminalPortal } from '../../../engine/liminal-portal';
 import { resolveBorder } from '../../../engine/liminal-surface';
-import {
-  getDirectionalRim,
+import {getDirectionalRim,
   getLadderColor,
-  getTextStyle,
-  SHADOWS,
-} from '../../../engine/spec-engine';
+  getTextStyle} from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { resolveSurface } from '../../../engine/liminal-surface';
+import { floatShadow, floatHeight } from '../../../engine/liminal-mist';
 
 /** Half the arrow square, so the rotated corner lands on the edge. */
 const ARROW_OFFSET = 4;
@@ -179,7 +177,7 @@ export function SimpleTooltip({
               zIndex: 1000,
               background: rim ? rim.cssBackground : arrowColor,
               border: rim ? '1px solid transparent' : 'none',
-              boxShadow: SHADOWS[2],
+              boxShadow: floatShadow(floatHeight('popover')),
               borderRadius: `${controlRadius}px`,
               padding: `${CONTROL_PADDING.sm.y}px ${CONTROL_PADDING.sm.x}px`,
               maxWidth: TOOLTIP_MAX_WIDTH,

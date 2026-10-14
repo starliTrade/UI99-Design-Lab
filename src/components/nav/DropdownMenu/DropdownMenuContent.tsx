@@ -8,10 +8,7 @@ import type {
   KeyboardEvent,
   HTMLAttributes,
 } from 'react';
-import {
-  SHADOWS,
-  Z_INDEX,
-} from '../../../engine/spec-engine';
+import {Z_INDEX} from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';

@@ -15,7 +15,6 @@
 import {
   LADDER,
   TEXT_HIERARCHY,
-  SHADOWS,
   RIM,
   FOCUS_RING_COLOR,
   getDirectionalRim,
@@ -31,6 +30,7 @@ import {
   LADDER_CHROMA,
   LADDER_HUE, WELLS } from './liminal-ladder';
 import { oklchLightness } from './liminal-color-math';
+import { FLOAT_SHADOWS } from './liminal-surface';
 
 /** Locked constants of the system. */
 export const CONTRACT = {
@@ -133,7 +133,7 @@ export function getContractSections(): ContractSection[] {
       title: '3) SUB-CANVAS SHADOW',
       body:
         `Dual layer: ambient S-1 ${WELLS.penumbra} + contact S-2 ${WELLS.umbra}. Floating and featured elements only. ` +
-        `E1 ${SHADOWS[1]} · E2 ${SHADOWS[2]} · E3 ${SHADOWS[3]} · E4 ${SHADOWS[4]}.`,
+        Object.entries(FLOAT_SHADOWS).map(([role, v]) => `${role}: ${v}`).join(' · ') + '.',
     },
     {
       id: 'states',

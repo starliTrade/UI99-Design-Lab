@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
-import { getTextStyle, SHADOWS, SURFACE_TINT } from '../../../engine/spec-engine';
+import {getTextStyle, SURFACE_TINT} from '../../../engine/spec-engine';
 import { mistCssVars } from '../../../engine/liminal-mist';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';

@@ -153,25 +153,25 @@
       }
     },
     "shadow": {
-      "e1": {
-        "$value": "0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22)",
+      "menu": {
+        "$value": "0 6.5px 56px rgba(1, 2, 3, 0.470), 0 2px 6.5px rgba(1, 2, 3, 0.325)",
         "$type": "boxShadow",
-        "$description": "dropdown, header"
+        "$description": "the menu — a floating surface at its own height"
       },
-      "e2": {
-        "$value": "0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26)",
+      "popover": {
+        "$value": "0 7.0px 59px rgba(1, 2, 3, 0.480), 0 2px 7.0px rgba(1, 2, 3, 0.330)",
         "$type": "boxShadow",
-        "$description": "featured card, popover"
+        "$description": "the popover — a floating surface at its own height"
       },
-      "e3": {
-        "$value": "0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30)",
+      "modal": {
+        "$value": "0 7.5px 62px rgba(1, 2, 3, 0.490), 0 2px 7.5px rgba(1, 2, 3, 0.335)",
         "$type": "boxShadow",
-        "$description": "modal, drawer sheet"
+        "$description": "the modal — a floating surface at its own height"
       },
-      "e4": {
-        "$value": "0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)",
+      "toast": {
+        "$value": "0 8.0px 66px rgba(1, 2, 3, 0.500), 0 2px 8.0px rgba(1, 2, 3, 0.340)",
         "$type": "boxShadow",
-        "$description": "toast, max floating anchor"
+        "$description": "the toast — a floating surface at its own height"
       }
     },
     "tint": {

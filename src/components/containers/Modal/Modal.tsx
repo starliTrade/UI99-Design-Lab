@@ -1,7 +1,7 @@
 import React, { useRef, useId, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
-import { getLadderVar, getTextStyle, SHADOWS, VEIL } from '../../../engine/spec-engine';
+import {getLadderVar, getTextStyle, VEIL} from '../../../engine/spec-engine';
 import { resolveSurface, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import {
@@ -15,6 +15,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { Divider } from '../Divider';
 import { X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
+import { floatShadow, floatHeight } from '../../../engine/liminal-mist';
 
 export interface ModalProps {
   open?: boolean;
@@ -130,7 +131,7 @@ export function Modal({
     background: rim ? rim.cssBackground : getLadderVar(ROLE_LEVEL.panel),
     border: rim ? '1px solid transparent' : 'none',
     borderRadius: `${RADIUS.panel}px`, // 20px
-    boxShadow: SHADOWS[3], // Authentic dual-layer penumbra
+    boxShadow: floatShadow(floatHeight('modal')), // Authentic dual-layer penumbra
     padding: `${SPACING[5]}px`, // 24px
     display: 'flex',
     flexDirection: 'column',

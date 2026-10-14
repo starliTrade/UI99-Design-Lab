@@ -16,7 +16,6 @@ import { LADDER, HALF, WELLS } from './liminal-ladder';
 import { PERSIAN_FONT_STACK, PERSIAN_LINE_HEIGHT_FLOOR } from './liminal-persian';
 import {
   RIM,
-  SHADOWS,
   SURFACE_TINT,
   VEIL,
   BRAND_ALPHA,
@@ -25,6 +24,7 @@ import {
   getDirectionalRim,
 } from './spec-engine';
 import { LiminalLayoutEngine } from './liminal-layout-engine';
+import { FLOAT_SHADOWS } from './liminal-surface';
 import { LiminalMotionEngine } from './liminal-motion-engine';
 import { LiminalColorEngine } from './liminal-color-engine';
 
@@ -69,7 +69,8 @@ export function generateCssVars(): string {
 
   // ── 3. SUB-CANVAS SHADOW ───────────────────────────────────────────
   section('3. SHADOW');
-  ([1, 2, 3, 4] as const).forEach((e) => v(`shadow-e${e}`, SHADOWS[e]));
+  // Named by ROLE, not by a tier number: `shadow-menu` says what it is for.
+  Object.entries(FLOAT_SHADOWS).forEach(([role, value]) => v(`shadow-${role}`, value));
 
   // ── 4. SURFACE TINT ────────────────────────────────────────────────
   section('4. SURFACE TINT (fills — never for type)');
