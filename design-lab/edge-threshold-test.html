@@ -76,7 +76,7 @@
           روی آنی کلیک کن که فکر می‌کنی خط دارد. <b>حدس زدن اجباری است</b> — «نمی‌دانم» نداریم،
           چون خودِ حدس بخشی از اندازه‌گیری است.</li>
       <li>عجله نکن، ولی مکث هم نکن. نگاهت را روی خط نگه ندار — به وسط پنل نگاه کن.</li>
-      <li>۵۶ آزمایش، حدود ۵ دقیقه. وسط کار خسته شدی، صفحه را ببند و بعداً از نو شروع کن.</li>
+      <li>۶۸ آزمایش، حدود ۶ دقیقه. وسط کار خسته شدی، صفحه را ببند و بعداً از نو شروع کن.</li>
     </ol>
     <div class="row" style="margin-top:20px">
       <button onclick="start()">شروع</button>
@@ -117,7 +117,7 @@
  * This is the same method as the original experiment — fixed stimuli, repeated
  * trials, a logistic fit — with the stimulus changed from two halves to a line.
  *
- *   2AFC, 8 levels x 6 repeats = 48 trials, plus 8 catch trials where NEITHER
+ *   2AFC, 5 levels x 8-14 repeats = 60 trials, plus 8 catch trials where NEITHER
  *   panel has a line. The catch trials are the control: a forced choice on a
  *   pair with no difference measures the guess rate, and if it is far from 50%
  *   the session is not trustworthy.
@@ -127,14 +127,37 @@
  */
 const CANVAS = '#060709';
 const Q = 0.0083;          // the flat-surface threshold, measured earlier
-const REPEATS = 6;
 const CATCH = 8;
 
-/** The same eight levels the original experiment used: each is the next
- *  reachable hex above the canvas in the ladder's hue/chroma family. */
+/**
+ * THE LEVELS ARE WHERE THE TRANSITION IS, NOT WHERE THE SURFACE ONE WAS.
+ *
+ * The first run used the original experiment's eight levels, which were spaced
+ * for the SURFACE threshold (0.15q .. 2.6q). The edge threshold turned out to be
+ * about half of that, so the entire transition fell between the two LOWEST
+ * levels and the measurement had no resolution where it mattered.
+ *
+ * So the levels were re-derived from the reachable grid. Every hex in the
+ * ladder's hue/chroma family between 0.15q and 1.10q, computed by walking L and
+ * quantising:
+ *
+ *     #06080a   0.53q
+ *     #06080b   0.60q
+ *     #07080b   0.77q
+ *
+ * THREE values. Between 0.25q and 0.71q the 8-bit grid offers nothing else — so
+ * this is not a choice of levels, it is the entire population of them. The band
+ * the eye's edge threshold falls in is a band the colour space can barely write.
+ *
+ * Five levels, twelve repeats each: 60 trials, and the two that matter (#06080a
+ * and #06080b) get the most looks.
+ */
 const LEVELS = [
-  { hex: '#07070a' }, { hex: '#07080a' }, { hex: '#07080b' }, { hex: '#07090b' },
-  { hex: '#08090c' }, { hex: '#080a0d' }, { hex: '#090a0d' }, { hex: '#0a0b0e' },
+  { hex: '#07070a', reps: 8 },   // 0.25q — the floor of the previous run
+  { hex: '#06080a', reps: 14 },  // 0.53q
+  { hex: '#06080b', reps: 14 },  // 0.60q  <- the border's own offset is 0.57q
+  { hex: '#07080a', reps: 12 },  // 0.71q
+  { hex: '#07080b', reps: 12 },  // 0.77q
 ];
 
 /* ── OKLCH lightness, so the levels are described in the engine's own terms ── */
@@ -154,7 +177,7 @@ let trials = [], current = 0, startedAt = 0;
 
 function buildTrials() {
   const t = [];
-  LEVELS.forEach(lv => { for (let i = 0; i < REPEATS; i++) t.push({ hex: lv.hex, dl: lv.dl, side: Math.random() < 0.5 ? 0 : 1, catch: false, correct: null }); });
+  LEVELS.forEach(lv => { for (let i = 0; i < lv.reps; i++) t.push({ hex: lv.hex, dl: lv.dl, side: Math.random() < 0.5 ? 0 : 1, catch: false, correct: null }); });
   for (let i = 0; i < CATCH; i++) t.push({ hex: null, dl: 0, side: null, catch: true, correct: null });
   for (let i = t.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [t[i], t[j]] = [t[j], t[i]]; }
   return t;
