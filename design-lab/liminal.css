@@ -1,0 +1,100 @@
+/**
+ * LIMINAL · THE LAB TOKENS — GENERATED, DO NOT EDIT.
+ *
+ * Written by `scripts/gen-lab-css.ts` from the engine itself, so a test page
+ * cannot draw a copy of the system while claiming to test it.
+ */
+:root {
+  /* ── the ladder, and its half-steps ─────────────────────────────── */
+  --liminal-s0: #060709; /* L 0.1281 */
+  --liminal-s1: #07090b; /* L 0.1381 */
+  --liminal-s2: #090b0d; /* L 0.1482 */
+  --liminal-s3: #0b0d0f; /* L 0.1577 */
+  --liminal-s4: #0d0f12; /* L 0.1676 */
+  --liminal-s5: #0f1114; /* L 0.1768 */
+  --liminal-s6: #111316; /* L 0.1859 */
+  --liminal-s7: #131518; /* L 0.1949 */
+  --liminal-s8: #15171a; /* L 0.2038 */
+  --liminal-s0-5: #07080a; /* the hairline above S0 */
+  --liminal-s1-5: #080a0c; /* the hairline above S1 */
+  --liminal-s2-5: #0a0c0e; /* the hairline above S2 */
+  --liminal-s3-5: #0c0e10; /* the hairline above S3 */
+  --liminal-s4-5: #0e1013; /* the hairline above S4 */
+  --liminal-s5-5: #101215; /* the hairline above S5 */
+  --liminal-s6-5: #121417; /* the hairline above S6 */
+  --liminal-s7-5: #141619; /* the hairline above S7 */
+
+  /* ── below the canvas ───────────────────────────────────────────── */
+  --liminal-well-penumbra: #030406;
+  --liminal-well-umbra: #010203;
+
+  /* ── the roles: level, rim tier, shadow ─────────────────────────── */
+  --liminal-role-canvas-level: 0;
+  --liminal-role-canvas-rim: 0;
+  --liminal-role-canvas-shadow: none;
+  --liminal-role-canvas-border: #07080a;
+  --liminal-role-chrome-level: 1;
+  --liminal-role-chrome-rim: 0;
+  --liminal-role-chrome-shadow: none;
+  --liminal-role-chrome-border: #080a0c;
+  --liminal-role-work-level: 2;
+  --liminal-role-work-rim: 0;
+  --liminal-role-work-shadow: none;
+  --liminal-role-work-border: #0a0c0e;
+  --liminal-role-well-level: 2;
+  --liminal-role-well-rim: 1;
+  --liminal-role-well-shadow: none;
+  --liminal-role-well-border: #0a0c0e;
+  --liminal-role-panel-level: 3;
+  --liminal-role-panel-rim: 1;
+  --liminal-role-panel-shadow: none;
+  --liminal-role-panel-border: #0c0e10;
+  --liminal-role-control-level: 4;
+  --liminal-role-control-rim: 1;
+  --liminal-role-control-shadow: none;
+  --liminal-role-control-border: #0e1013;
+  --liminal-role-menu-level: 5;
+  --liminal-role-menu-rim: 1;
+  --liminal-role-menu-shadow: 1;
+  --liminal-role-menu-border: #101215;
+  --liminal-role-popover-level: 6;
+  --liminal-role-popover-rim: 2;
+  --liminal-role-popover-shadow: 2;
+  --liminal-role-popover-border: #121417;
+  --liminal-role-modal-level: 7;
+  --liminal-role-modal-rim: 2;
+  --liminal-role-modal-shadow: 3;
+  --liminal-role-modal-border: #141619;
+  --liminal-role-toast-level: 8;
+  --liminal-role-toast-rim: 2;
+  --liminal-role-toast-shadow: 4;
+  --liminal-role-toast-border: #141619;
+
+  /* ── the floating shadows, named by role ────────────────────────── */
+  --liminal-shadow-menu: 0 6.5px 56px rgba(1, 2, 3, 0.470), 0 2px 6.5px rgba(1, 2, 3, 0.325);
+  --liminal-shadow-popover: 0 7.0px 59px rgba(1, 2, 3, 0.480), 0 2px 7.0px rgba(1, 2, 3, 0.330);
+  --liminal-shadow-modal: 0 7.5px 62px rgba(1, 2, 3, 0.490), 0 2px 7.5px rgba(1, 2, 3, 0.335);
+  --liminal-shadow-toast: 0 8.0px 66px rgba(1, 2, 3, 0.500), 0 2px 8.0px rgba(1, 2, 3, 0.340);
+
+  /* ── motion, and the duration a floating surface derives ─────────── */
+  --liminal-duration-instant: 100ms;
+  --liminal-duration-fast: 150ms;
+  --liminal-duration-normal: 200ms;
+  --liminal-duration-slow: 250ms;
+  --liminal-duration-slower: 350ms;
+  --liminal-duration-dramatic: 500ms;
+  --liminal-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --liminal-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --liminal-ease-inOut: cubic-bezier(0.65, 0, 0.35, 1);
+  --liminal-ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --liminal-ease-linear: linear;
+  --liminal-float-enter-menu: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  --liminal-float-enter-popover: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --liminal-float-enter-modal: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  --liminal-float-enter-toast: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── the measured constants ─────────────────────────────────────── */
+  --liminal-q: 0.0083;
+  --liminal-edge: 0.0040; /* the edge threshold, measured on the display */
+  --liminal-nest-min: 0.5; /* 0.5 ladder steps */
+}

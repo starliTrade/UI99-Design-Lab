@@ -120,7 +120,7 @@ export function Modal({
     justifyContent: 'center',
     padding: `${SPACING[4]}px`,
     boxSizing: 'border-box',
-    animation: reduced ? 'none' : `liminalFadeIn 0.2s ${LiminalMotionEngine.EASING.out}`,
+    animation: reduced ? 'none' : `liminalFadeIn ${LiminalMotionEngine.floatEnter('modal')}`,
   };
 
   const modalContainerStyle: CSSProperties = {
@@ -138,7 +138,7 @@ export function Modal({
     boxSizing: 'border-box',
     outline: 'none',
     overflowY: 'auto',
-    animation: reduced ? 'none' : `liminalModalSlide 0.25s ${LiminalMotionEngine.EASING.out}`,
+    animation: reduced ? 'none' : `liminalModalSlide ${LiminalMotionEngine.floatEnter('modal')}`,
     ...customStyle,
   };
 

@@ -191,8 +191,8 @@ export function SimpleTooltip({
               animation: reduced
                 ? 'none'
                 : position.placement.startsWith('top')
-                ? `liminalTooltipFadeTop 0.15s ${LiminalMotionEngine.EASING.out}`
-                : `liminalTooltipFadeBottom 0.15s ${LiminalMotionEngine.EASING.out}`,
+                ? `liminalTooltipFadeTop ${LiminalMotionEngine.floatEnter('popover')}`
+                : `liminalTooltipFadeBottom ${LiminalMotionEngine.floatEnter('popover')}`,
               ...customStyle,
             }}
           >
