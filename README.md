@@ -194,10 +194,10 @@ Recorded rather than hidden:
 
 - **No bundle budget.** The measurement exists; the budget is a decision, not a measurement.
 - **No Storybook.** The docs app serves the purpose for now.
-- **No per-component API table.**
 - **No performance measurement** — render counts, layout thrash.
-- **12 components short of the standard**, and two of the 71 are flagged for `role` because they
-  are lines rather than surfaces.
+- **31 of 88 components have a JSDoc comment above any prop.** The API table is generated from
+  the types and says so on every component page — in this repo the comment above a prop is where
+  the reason lives, and a prop without one has its reason only in someone's head.
 - **Not published.** The package is `private`, and publishing is a decision about demand.
 
 ---
@@ -224,6 +224,7 @@ other way to be seen.
 bun run verify        # typecheck · lint · test · build · build:lib · verify:package
 bun run test:watch
 bun run gen:css       # regenerate the CSS variables from the engine
+bun run gen:api       # regenerate the props table from the types
 node scripts/verify-component-standard.mjs
 node scripts/verify-hierarchy.mjs
 bash scripts/verify-next-smoke.sh   # packs, installs into a Next.js app, builds it
