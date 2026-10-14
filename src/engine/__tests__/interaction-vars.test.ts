@@ -16,8 +16,17 @@ function walk(dir: string): string[] {
   return out;
 }
 
-/** Every component file, plus the demo page that renders them. */
-const COMPONENT_FILES = [...walk(join(SRC, 'components')), join(SRC, 'App.tsx')];
+/**
+ * Every component file — and NOT the page that renders them.
+ *
+ * The list used to end with `join(SRC, 'App.tsx')`, "the demo page that renders
+ * them". That page is gone: the studio replaced it, and the studio is a
+ * consumer of the components rather than one of them. The rule below is about
+ * the population that PUBLISHES the six variables, and that population is
+ * `src/components` — a page that renders a component inherits its variables and
+ * never assembles one.
+ */
+const COMPONENT_FILES = walk(join(SRC, 'components'));
 
 /**
  * THE SIX VARIABLES HAVE ONE PRODUCER, AND THIS KEEPS IT THAT WAY.
