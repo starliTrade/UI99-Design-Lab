@@ -40,6 +40,7 @@ import { Progress } from '../data/Progress/Progress';
 import { Alert } from '../feedback/Alert/Alert';
 import { Skeleton } from '../composites/Skeleton/Skeleton';
 import { EmptyState } from '../composites/EmptyState/EmptyState';
+import { Message, MessageList } from '../composites/Message/Message';
 import { Pagination } from '../data/Pagination/Pagination';
 import { NavItem } from '../nav/NavItem/NavItem';
 import { Breadcrumb } from '../nav/Breadcrumb/Breadcrumb';
@@ -456,6 +457,15 @@ export const FIXTURES: ComponentFixture[] = [
     name: 'Skeleton', group: 'Utilities', sizes: [], states: ['text', 'circle', 'rect'], expected: [],
     variants: ['text', 'circle', 'rect'],
     render: (state) => <Skeleton variant={state as 'text'} width={160} />,
+  },
+  {
+    name: 'Message', group: 'Composites', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <MessageList label="Conversation">
+        <Message from="them" name="Starli" meta="09:12">Did the build pass?</Message>
+        <Message from="me" name="You" meta="09:13" tail={false}>It did — 852 tests.</Message>
+      </MessageList>
+    ),
   },
   {
     name: 'EmptyState', group: 'Utilities', sizes: [], states: ['default'], expected: [],

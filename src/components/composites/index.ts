@@ -3,3 +3,4 @@ export * from './ErrorPage';
 export * from './Skeleton';
 export * from './FormLayout';
 export * from './CompositesDemo';
+export * from './Message';

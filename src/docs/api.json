@@ -400,6 +400,39 @@
     ]
   },
   {
+    "component": "Bubble",
+    "path": "components/composites/Message/Message.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "from",
+        "type": "'me' | 'them'",
+        "required": false,
+        "doc": "Who it is from. Decides the side, the fill and the tail."
+      },
+      {
+        "name": "tail",
+        "type": "boolean",
+        "required": false,
+        "doc": "The corner that points at the sender. Off for a follow-up in a run."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
     "component": "Button",
     "path": "components/atoms/Button/Button.tsx",
     "extends": "Omit<LiminalComponentProps<'button'>, 'onClick'>, VariantProps<typeof buttonVariants>",
@@ -2370,6 +2403,81 @@
         "name": "disabled",
         "type": "boolean",
         "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "Message",
+    "path": "components/composites/Message/Message.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "from",
+        "type": "'me' | 'them'",
+        "required": false
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "doc": "Who said it. Rendered as text — the fill is the second signal, not the first."
+      },
+      {
+        "name": "meta",
+        "type": "string",
+        "required": false,
+        "doc": "A time or a status."
+      },
+      {
+        "name": "avatar",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "tail",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "MessageList",
+    "path": "components/composites/Message/Message.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": true,
+        "doc": "Required: a log with no name is a region a reader cannot identify."
       },
       {
         "name": "className",
