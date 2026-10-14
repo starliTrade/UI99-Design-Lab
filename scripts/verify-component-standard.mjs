@@ -6,9 +6,15 @@
  * can be read from the source; the tenth — the eye test — cannot, and is
  * reported as unknown rather than assumed.
  *
- *   node scripts/verify-component-standard.mjs [--json]
+ *   node scripts/verify-component-standard.mjs [--json] [--ratchet]
+ *
+ * `--ratchet` compares against `scripts/component-standard.json` and FAILS when
+ * a criterion goes DOWN. It cannot demand 55/55 today — nothing would pass and
+ * the gate would be turned off — but it can promise that the number never walks
+ * backwards. A ratchet is what you build when the target is far and the
+ * direction is what matters.
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { resolve, join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -51,6 +57,34 @@ const rows = files.map((f) => {
 
 const KEYS = ['role', 'size', 'variant', 'disabled', 'error', 'tokens', 'fixture'];
 const score = (r) => KEYS.filter((k) => r[k]).length;
+
+const counts = Object.fromEntries(KEYS.map((k) => [k, rows.filter((r) => r[k]).length]));
+counts.components = rows.length;
+counts.complete = rows.filter((r) => score(r) === KEYS.length).length;
+
+if (process.argv.includes('--ratchet')) {
+  const basePath = resolve(ROOT, 'scripts/component-standard.json');
+  if (!existsSync(basePath)) {
+    writeFileSync(basePath, JSON.stringify(counts, null, 2) + '\n');
+    console.log(`no baseline — wrote ${basePath}`);
+    console.log(JSON.stringify(counts));
+    process.exit(0);
+  }
+  const base = JSON.parse(readFileSync(basePath, 'utf8'));
+  const drops = Object.keys(counts).filter((k) => counts[k] < (base[k] ?? 0));
+  for (const k of Object.keys(counts)) {
+    const was = base[k] ?? 0;
+    const now = counts[k];
+    const mark = now < was ? '  ← DOWN' : now > was ? '  ← up' : '';
+    console.log(`  ${k.padEnd(12)} ${was} → ${now}${mark}`);
+  }
+  if (drops.length) {
+    console.error(`\nThe component standard went backwards: ${drops.join(', ')}`);
+    process.exit(1);
+  }
+  console.log('\nthe component standard did not go backwards');
+  process.exit(0);
+}
 
 if (process.argv.includes('--json')) {
   console.log(JSON.stringify(rows, null, 1));
