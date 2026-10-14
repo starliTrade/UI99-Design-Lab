@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — حرکت: مدت از کجا بیاید؟</title>
+<style>
+  :root{
+    --s0:#060709;--s1:#07090b;--s2:#090b0d;--s3:#0b0d0f;--s4:#0d0f12;--s5:#0f1114;--s6:#111316;--s7:#131518;
+    --text:rgba(255,255,255,.89);--dim:rgba(255,255,255,.6);--faint:rgba(255,255,255,.34);
+    --well:#030406;--hair:rgba(233,236,242,.03);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--s0);color:var(--text);
+    font:14px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;padding:26px 20px 60px;
+    display:flex;flex-direction:column;align-items:center}
+  h1{font-size:20px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--dim);font-size:13px;max-width:80ch;text-align:center;margin-bottom:22px}
+  .q{width:100%;max-width:1120px;background:var(--well);border:1px solid var(--hair);border-radius:16px;padding:20px 22px;margin-bottom:18px}
+  .q h2{font-size:14px;margin:0 0 4px;font-weight:600}
+  .q .why{color:var(--faint);font-size:12px;margin-bottom:16px}
+  .stage{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;padding:10px 0 4px}
+  .cell{display:flex;flex-direction:column;gap:8px;align-items:center}
+  .box{width:190px;height:120px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    background:var(--s2);position:relative;overflow:hidden}
+  .surf{width:150px;height:74px;border-radius:10px;background:var(--s6);border:1px solid rgba(233,236,242,.06);
+    display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--faint)}
+  .cap{font-size:10.5px;color:var(--faint);text-align:center;line-height:1.6}
+  .cap b{color:var(--dim)}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10px}
+  button.play{font:inherit;font-size:12px;font-weight:600;color:#06070a;background:#e9ecf2;border:none;
+    border-radius:9px;padding:8px 18px;cursor:pointer}
+  .opt{font:inherit;font-size:12px;padding:8px 14px;border-radius:10px;cursor:pointer;
+    background:transparent;color:var(--dim);border:1px solid var(--hair)}
+  .opt[aria-pressed="true"]{background:#e9ecf2;color:#06070a;border-color:#e9ecf2;font-weight:700}
+  .opts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .bar{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:6px}
+</style>
+</head>
+<body>
+  <h1>حرکت — مدت از کجا بیاید؟</h1>
+  <p class="sub">
+    موتور شش مدت دارد (<code>instant 100 · fast 150 · normal 200 · slow 250 · slower 350 · dramatic 500</code>)
+    و کامپوننتها <b>مدت خام</b> مینویسند: مودال <code>0.25s</code>، شیت <code>0.25s</code>. پس مقیاس
+    دور زده میشود و اسلایدر Motion در تم رویشان اثر ندارد. سؤال: <b>مدت باید از عمق لایه بیاید؟</b>
+  </p>
+
+  <div class="q">
+    <h2>۱. سفر بلند — یک سطح بزرگ (مدال/شیت): ۲۴px بالا + محو</h2>
+    <div class="why">همه با هم حرکت می‌کنند. کدام «درست» تمام می‌شود؟</div>
+    <div class="stage" id="rowBig"></div>
+    <div class="bar"><button class="play" onclick="play('big')">▶ پخش همه</button></div>
+  </div>
+
+  <div class="q">
+    <h2>۲. سفر کوتاه — یک سطح کوچک (تولتیپ/منو): ۶px بالا + محو</h2>
+    <div class="why">همان مدت‌ها، ولی مسافت کمتر. آیا همان عدد درست است؟</div>
+    <div class="stage" id="rowSmall"></div>
+    <div class="bar"><button class="play" onclick="play('small')">▶ پخش همه</button></div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۱ — برای سفر بلند کدام مدت؟</h2>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="150">۱۵۰ms (fast)</button>
+      <button class="opt" data-q="1" data-v="200">۲۰۰ms (normal)</button>
+      <button class="opt" data-q="1" data-v="250">۲۵۰ms (slow — فعلی)</button>
+      <button class="opt" data-q="1" data-v="350">۳۵۰ms (slower — آنچه موتور می‌گوید)</button>
+      <button class="opt" data-q="1" data-v="500">۵۰۰ms (dramatic)</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۲ — برای سفر کوتاه کدام مدت؟</h2>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="100">۱۰۰ms (instant)</button>
+      <button class="opt" data-q="2" data-v="150">۱۵۰ms (fast)</button>
+      <button class="opt" data-q="2" data-v="200">۲۰۰ms (normal)</button>
+      <button class="opt" data-q="2" data-v="250">۲۵۰ms (slow)</button>
+      <button class="opt" data-q="2" data-v="350">۳۵۰ms (slower)</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۳ — قاعده چه باشد؟</h2>
+    <div class="why">این تصمیم کل سیستم حرکت را عوض می‌کند.</div>
+    <div class="opts" id="q3">
+      <button class="opt" data-q="3" data-v="depth">مدت از <b>عمق</b> بیاید — لایه‌ی بالاتر، سفر بلندتر، مدت بیشتر</button>
+      <button class="opt" data-q="3" data-v="travel">مدت از <b>مسافت</b> بیاید — هر کامپوننت مسافتش را اعلام کند</button>
+      <button class="opt" data-q="3" data-v="fixed">مدت <b>ثابت</b> باشد — همه‌ی سطوح شناور یک مدت</button>
+    </div>
+  </div>
+
+  <button class="play" onclick="copyAnswers()" style="padding:11px 22px">کپی جواب‌ها</button>
+
+<script>
+  const DURATIONS = [150, 200, 250, 350, 500];
+  const SMALL_DURATIONS = [100, 150, 200, 250, 350];
+  const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
+  function cell(ms, travel, kind){
+    const el = document.createElement('div'); el.className = 'cell';
+    el.innerHTML = `<div class="box"><div class="surf" data-kind="${kind}" style="opacity:0;transform:translateY(${travel}px)">${ms}ms</div></div>
+      <div class="cap"><b>${ms}ms</b><br><code>${travel}px</code></div>`;
+    return el;
+  }
+  for (const ms of DURATIONS) document.getElementById('rowBig').appendChild(cell(ms, 24, 'big'));
+  for (const ms of SMALL_DURATIONS) document.getElementById('rowSmall').appendChild(cell(ms, 6, 'small'));
+
+  /** Each surface animates with its OWN duration, so one play shows all five. */
+  function play(kind){
+    const list = kind === 'big' ? DURATIONS : SMALL_DURATIONS;
+    const nodes = [...document.querySelectorAll(`.surf[data-kind="${kind}"]`)];
+    nodes.forEach((n, i) => {
+      n.style.transition = 'none';
+      n.style.opacity = '0';
+      n.style.transform = `translateY(${kind === 'big' ? 24 : 6}px)`;
+    });
+    // force a reflow so the reset is committed before the animation starts
+    void document.body.offsetHeight;
+    nodes.forEach((n, i) => {
+      n.style.transition = `opacity ${list[i]}ms ${EASE}, transform ${list[i]}ms ${EASE}`;
+      n.style.opacity = '1';
+      n.style.transform = 'translateY(0)';
+    });
+  }
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed','true'); answers[q] = b.dataset.v;
+  });
+  function copyAnswers(){
+    const out = { at:new Date().toISOString(), kind:'motion-3q', answers };
+    navigator.clipboard?.writeText(JSON.stringify(out,null,2));
+    alert('کپی شد:\n' + JSON.stringify(answers));
+  }
+  // one play on load, so the page is not a still frame
+  setTimeout(() => play('big'), 400);
+</script>
+</body>
+</html>
