@@ -200,6 +200,45 @@ export interface SurfaceRequest {
  */
 export const CONTROL_LIFT = 1;
 
+/**
+ * THE NESTING FLOOR — how far a child must sit from its host to read as a layer.
+ *
+ * Measured by eye, and then explained by a measurement that already existed.
+ *
+ * A nested child is not a flat patch. It is a BOUNDED region, and what makes it
+ * read as a region is its BOUNDARY — an edge. So the nesting threshold is
+ * governed by the EDGE threshold (measured at 0.0040, about 0.48q), NOT by the
+ * flat-surface threshold q. That is why a child can read as a layer at a
+ * distance that would be invisible as a flat patch: 0.5 steps is 0.00474, which
+ * is BELOW q and ABOVE the edge threshold.
+ *
+ *   the ladder's step     0.009475 / q           = 1.14x
+ *   the border's offset   0.004738 / edge        = 1.18x
+ *   this floor            0.004738 / edge        = 1.18x
+ *
+ * Three mechanisms, three thresholds, one ratio: every layer-to-layer signal sits
+ * about 1.15x above the threshold of whatever mechanism reads it.
+ *
+ * AND THE SYSTEM USES TWICE THE FLOOR, ON PURPOSE. `CONTROL_LIFT` is one step —
+ * 2x this floor — because a floor is a BOUND, not a target: a nested control has
+ * to be READABLE, not merely detectable. The floor is what a nesting may never go
+ * below; the working value is what it should be.
+ *
+ * The two signals are independent, and the eye test settled both:
+ *
+ *   the BOUNDARY  a border, which says a region exists. It alone is enough —
+ *                 a child at ZERO offset, the exact colour of its host, reads as
+ *                 a region when it has one.
+ *   the DIRECTION a fill difference, which says the region is raised or sunk.
+ *
+ * The sunk direction is NOT harder to see: measured by eye, a well one step down
+ * and a control one step up are equally clear. So the asymmetry in
+ * `resolveInset` (one and a half steps) is STRUCTURAL — it lands the well between
+ * the canvas and chrome rather than inventing a value — and it must be read as
+ * such, not as a perceptual requirement.
+ */
+export const NEST_MIN = 0.5;
+
 export interface SurfaceResolution {
   /** The resolved ladder level (may be fractional). */
   level: number;
