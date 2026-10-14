@@ -21,6 +21,7 @@ import { S, R, MONO, Btn, WORK, surfaceFor } from './ui';
 import { useMediaQuery } from '../engine/liminal-hooks';
 import { useTheme } from './theme';
 import { PAGES, routeKey, type Route } from './routes';
+import { CommandPalette } from '../components/nav/CommandPalette';
 import { FOCUS_RING_COLOR } from '../engine/liminal-ladder';
 import { LiminalColorEngine } from '../engine/liminal-color-engine';
 import { getLadderVar } from '../engine/liminal-ladder';
@@ -104,6 +105,24 @@ export function DocsShell({
 }) {
   const [q, setQ] = React.useState('');
   const [navOpen, setNavOpen] = React.useState(false);
+  /**
+   * ⌘K — the palette, because a 74-row list is a list you scroll.
+   *
+   * The sidebar is the list, and a reviewer still has to hunt through it: the
+   * palette is the same table, indexed by typing. It is the library's own
+   * `CommandPalette`, so the studio is navigated by the thing it reviews.
+   */
+  const [paletteOpen, setPaletteOpen] = React.useState(false);
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
   // The CONTAINER is the page here, so a media query is the right question —
   // unlike the studio, which lives inside the demo's frame.
   // THE ENGINE'S BREAKPOINT, not a device category.
@@ -121,6 +140,51 @@ export function DocsShell({
     : FIXTURES;
 
   const active = routeKey(route);
+
+  /**
+   * THE PAGES LIVE IN THE TOP BAR — «چند صفحه با نوارِ بالا».
+   *
+   * They were a section of the sidebar, which made the site read as one long
+   * list with a page list bolted to the top of it. A page is not a component:
+   * it belongs in the bar, and the sidebar belongs to the 74 rows that need
+   * scrolling. On a narrow screen the bar has no room for six links, so they go
+   * back into the drawer — where the theme controls already are, for the same
+   * reason.
+   */
+  const pageNav = narrow ? null : (
+    <div style={{ display: 'flex', alignItems: 'center', gap: S[1], minWidth: 0, overflowX: 'auto' }}>
+      {PAGES.map((p) => (
+        <Btn key={p.page} active={active === p.page} onClick={() => go({ page: p.page } as Route)} title={p.note}>
+          {p.label}
+        </Btn>
+      ))}
+    </div>
+  );
+
+  const paletteGroups = [
+    {
+      title: 'Pages',
+      items: PAGES.map((p) => ({
+        id: `page:${p.page}`,
+        label: p.label,
+        action: () => {
+          go({ page: p.page } as Route);
+          setPaletteOpen(false);
+        },
+      })),
+    },
+    {
+      title: 'Components',
+      items: FIXTURES.map((f) => ({
+        id: `component:${f.name}`,
+        label: f.name,
+        action: () => {
+          go({ page: 'component', name: f.name });
+          setPaletteOpen(false);
+        },
+      })),
+    },
+  ];
 
   const nav = (
     <>
@@ -141,20 +205,23 @@ export function DocsShell({
           aria-label="Search components"
         />
       </div>
-      <SidebarSection label="Pages">
-        {PAGES.map((p) => (
-          <NavItem
-            key={p.page}
-            active={active === p.page}
-            onClick={() => {
-              go({ page: p.page } as Route);
-              setNavOpen(false);
-            }}
-          >
-            {p.label}
-          </NavItem>
-        ))}
-      </SidebarSection>
+      {/* Only in the drawer: on a wide screen the pages are in the top bar. */}
+      {narrow && (
+        <SidebarSection label="Pages">
+          {PAGES.map((p) => (
+            <NavItem
+              key={p.page}
+              active={active === p.page}
+              onClick={() => {
+                go({ page: p.page } as Route);
+                setNavOpen(false);
+              }}
+            >
+              {p.label}
+            </NavItem>
+          ))}
+        </SidebarSection>
+      )}
       {groups.map((g) => {
         const rows = matches.filter((f) => f.group === g);
         if (!rows.length) return null;
@@ -210,8 +277,17 @@ export function DocsShell({
               <Badge>v1.0</Badge>
             </span>
           }
-          actions={<ThemeControls compact={narrow} dir={dir} onDir={onDir} />}
-        />
+          actions={
+            <>
+              <Btn onClick={() => setPaletteOpen(true)} title="Search everything — ⌘K">
+                ⌘K
+              </Btn>
+              <ThemeControls compact={narrow} dir={dir} onDir={onDir} />
+            </>
+          }
+        >
+          {pageNav}
+        </Topbar>
       </header>
 
       <div
@@ -284,6 +360,10 @@ export function DocsShell({
           {children}
         </main>
       </div>
+
+      {/* The library's own palette. A tool that hand-rolled its own would be a
+          tool that cannot notice when the palette breaks. */}
+      <CommandPalette isOpen={paletteOpen} onClose={() => setPaletteOpen(false)} groups={paletteGroups} />
     </div>
   );
 }
