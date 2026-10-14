@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { NEST_MIN, CONTROL_LIFT, resolveInset, resolveSurface, ROLE_LEVEL } from '../liminal-surface';
+import { NEST_MIN, CONTROL_LIFT, resolveInset, resolveSurface, ROLE_LEVEL, ROLE_RIM } from '../liminal-surface';
 import { LADDER, PERCEPTUAL_QUANTUM, LADDER_STEP } from '../liminal-ladder';
 
 /**
@@ -67,5 +67,61 @@ describe('nesting — a child is a region, and a region is read by its edge', ()
     for (let n = 0; n < LADDER.length - 1; n++) {
       expect(LADDER[n], `the half-step above S${n} exists`).toBeTruthy();
     }
+  });
+});
+
+/**
+ * THE RIM FOLLOWS THE HEIGHT, AND IT DID NOT BEFORE.
+ *
+ * Measured by eye, at three strengths on two hosts: a panel's rim at R2 is loud
+ * and at R1 it is at the threshold — the same answer on the work plane and on the
+ * canvas, which is why the whole table shifted rather than one role.
+ *
+ * The old table gave a panel the same tier as a menu: two steps of edge light for
+ * one step of height. A rim is the light a surface catches on its edge, and how
+ * much it catches depends on how far it sits above what it is on.
+ */
+describe('rim — the tier follows the height above the host', () => {
+  it('structural surfaces catch no edge light', () => {
+    // chrome and work DEFINE the frame and the plane. They do not sit on
+    // anything, so there is no edge for light to catch.
+    expect(ROLE_RIM.canvas).toBe(0);
+    expect(ROLE_RIM.chrome).toBe(0);
+    expect(ROLE_RIM.work).toBe(0);
+  });
+
+  it('one step above its host is one tier', () => {
+    expect(ROLE_RIM.panel).toBe(1);
+    expect(ROLE_RIM.control).toBe(1);
+    expect(ROLE_RIM.menu).toBe(1);
+    expect(ROLE_RIM.well).toBe(1);
+  });
+
+  it('floating is two tiers, and nothing is three', () => {
+    expect(ROLE_RIM.popover).toBe(2);
+    expect(ROLE_RIM.modal).toBe(2);
+    expect(ROLE_RIM.toast).toBe(2);
+    // Tier 3 exists in the table and no role uses it: a surface would have to
+    // float two steps above the highest floating layer, and the ladder's ceiling
+    // is where the toast already sits.
+    expect(Math.max(...Object.values(ROLE_RIM))).toBe(2);
+  });
+
+  it('the rim never exceeds the height it expresses — except a well, which is concave', () => {
+    // The rule as an inequality: a role's rim tier is at most the number of steps
+    // it sits above the structural plane.
+    //
+    // AND THE WELL IS THE EXCEPTION, which this assertion found by failing. A well
+    // shares the work plane's LEVEL but not its edge: it is CUT IN, so light does
+    // not land on a raised edge — it catches the far lip of a depression. The
+    // engine's own note says why: a quiet seam would make an unselected control
+    // disappear into the surface, which is the opposite of what it should do.
+    for (const role of Object.keys(ROLE_LEVEL) as (keyof typeof ROLE_LEVEL)[]) {
+      if (role === 'well') continue;
+      const above = Math.max(0, ROLE_LEVEL[role] - ROLE_LEVEL.work);
+      expect(ROLE_RIM[role], `${role} rim`).toBeLessThanOrEqual(above);
+    }
+    expect(ROLE_RIM.well, 'a well is concave, so it catches light at the same level').toBe(1);
+    expect(ROLE_LEVEL.well).toBe(ROLE_LEVEL.work);
   });
 });

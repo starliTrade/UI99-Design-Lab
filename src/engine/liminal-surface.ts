@@ -92,20 +92,40 @@ export const ROLE_LEVEL: Record<SurfaceRole, number> = {
  *   2 — a defined edge (panels, controls, menus)
  *   3 — a lifted edge (everything that floats high: popover, modal, toast)
  */
+/**
+ * RIM INTENSITY PER ROLE — and it is one tier LOWER than it was.
+ *
+ * Measured by eye, at three strengths on two hosts: the panel's rim at R2 is
+ * loud, and at R1 it is at the threshold — on the work plane AND on the canvas.
+ * The reader's answer was the same in both, which is why this is a shift of the
+ * whole table rather than a special case for one host.
+ *
+ * AND THE SHIFT MAKES THE TABLE SAY WHAT IT SHOULD HAVE SAID. A rim is the light
+ * a surface catches on its edge, and how much light it catches depends on how far
+ * it sits above what it is on. The old table gave a panel the same tier as a menu
+ * — two steps of rim for one step of height. Now the tier follows the height:
+ *
+ *   0  structural — chrome and work DEFINE the frame and the plane; they do not
+ *      sit on anything, so they catch no edge light
+ *   1  one step above its host — a panel on the work plane, a control on whatever
+ *      hosts it, a menu over the plane
+ *   2  floating — a popover, a modal, a toast
+ *
+ * The reader chose "relative to its OWN surface" over "relative to the
+ * neighbour", so the rule stays physical: the rim is a light on the edge, not a
+ * separator. What changed is how bright the light is.
+ */
 export const ROLE_RIM: Record<SurfaceRole, 0 | 1 | 2 | 3> = {
   canvas: 0,
-  chrome: 1,
-  work: 1,
-  // The well shares the work plane's LEVEL but not its edge: a quiet seam would
-  // make the control disappear into the surface, which is the opposite of what
-  // an unselected control should do.
-  well: 2,
-  panel: 2,
-  control: 2,
-  menu: 2,
-  popover: 3,
-  modal: 3,
-  toast: 3,
+  chrome: 0,
+  work: 0,
+  well: 1,
+  panel: 1,
+  control: 1,
+  menu: 1,
+  popover: 2,
+  modal: 2,
+  toast: 2,
 };
 
 /**
