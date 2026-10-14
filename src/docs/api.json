@@ -2592,6 +2592,51 @@
     ]
   },
   {
+    "component": "MessageScroller",
+    "path": "components/composites/MessageScroller/MessageScroller.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "threshold",
+        "type": "number",
+        "required": false,
+        "doc": "How close to the bottom counts as \"at the bottom\"."
+      },
+      {
+        "name": "maxHeight",
+        "type": "keyof typeof L.SPACING",
+        "required": false,
+        "doc": "The height it scrolls within, as a step in the engine's scale."
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": true,
+        "doc": "Required: a scrollable region is a tab stop, and a stop needs a name."
+      },
+      {
+        "name": "jumpLabel",
+        "type": "string",
+        "required": false,
+        "doc": "The label on the button that returns to the newest message."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
     "component": "Mist",
     "path": "components/atoms/Mist/Mist.tsx",
     "props": [

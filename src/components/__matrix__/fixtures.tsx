@@ -43,6 +43,7 @@ import { Alert } from '../feedback/Alert/Alert';
 import { Skeleton } from '../composites/Skeleton/Skeleton';
 import { EmptyState } from '../composites/EmptyState/EmptyState';
 import { Message, MessageList } from '../composites/Message/Message';
+import { MessageScroller } from '../composites/MessageScroller/MessageScroller';
 import { Pagination } from '../data/Pagination/Pagination';
 import { NavItem } from '../nav/NavItem/NavItem';
 import { Breadcrumb } from '../nav/Breadcrumb/Breadcrumb';
@@ -486,6 +487,20 @@ export const FIXTURES: ComponentFixture[] = [
     name: 'Skeleton', group: 'Utilities', sizes: [], states: ['text', 'circle', 'rect'], expected: [],
     variants: ['text', 'circle', 'rect'],
     render: (state) => <Skeleton variant={state as 'text'} width={160} />,
+  },
+  {
+    name: 'MessageScroller', group: 'Composites', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <MessageScroller label="Conversation" maxHeight={6} style={{ width: 280 }}>
+        <MessageList label="Messages">
+          {Array.from({ length: 8 }, (_, i) => (
+            <Message key={i} from={i % 2 ? 'me' : 'them'} name={i % 2 ? 'You' : 'Starli'}>
+              Message {i + 1}
+            </Message>
+          ))}
+        </MessageList>
+      </MessageScroller>
+    ),
   },
   {
     name: 'Message', group: 'Composites', sizes: [], states: ['default'], expected: [],
