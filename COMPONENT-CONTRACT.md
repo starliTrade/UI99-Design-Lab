@@ -174,13 +174,13 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-59 components · 46 complete · 13 short of the standard
+59 components · 47 complete · 12 short of the standard
   role       57/59
   size       11/11  (declaration matches code)
   variant    11/11  (declaration matches code)
   disabled   11/11  (controls only)
   error       8/8   (inputs only)
-  tokens     58/59
+  tokens     59/59
   fixture    49/59
 ```
 

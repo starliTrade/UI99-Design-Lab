@@ -166,7 +166,16 @@ function darknessForApca(h: number, C: number, floor: number, against: string): 
   return lo;
 }
 
-const rgbaOf = (hex: string, alpha: number) => {
+/**
+ * A hex at an alpha, as an `rgba()` string.
+ *
+ * EXPORTED, because a component needed it and wrote its own. `Avatar` carried a
+ * private `hexToRgba` with a documented eslint-disable for the raw colour it
+ * contained — an exception granted to a function whose whole job was to build
+ * one. A conversion belongs where the colours are, not in a component that then
+ * needs permission to have it.
+ */
+export const rgbaOf = (hex: string, alpha: number): string => {
   const { r, g, b } = hexToRgb(hex);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { getLadderColor } from '../../../engine/spec-engine';
-import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
+import { LiminalColorEngine, rgbaOf } from '../../../engine/liminal-color-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { resolveBorder, resolveSurface } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
@@ -16,24 +16,10 @@ export interface AvatarProps {
   style?: CSSProperties;
 }
 
-/**
- * A hex to an rgba string. A CONVERSION, not a colour choice.
- *
- * The raw-colour guard flags it, and it is right to: the rule cannot tell a
- * conversion from a hard-coded value. The exception is documented here rather
- * than silenced globally, and the fallback is the engine's brand rather than a
- * literal.
- */
-/* eslint-disable no-restricted-syntax -- a conversion utility, not a colour */
-function hexToRgba(hex: string, alpha: number): string {
-  const clean = hex.replace('#', '');
-  if (clean.length !== 6) return `rgba(233, 236, 242, ${alpha})`;
-  const r = parseInt(clean.substring(0, 2), 16);
-  const g = parseInt(clean.substring(2, 4), 16);
-  const b = parseInt(clean.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-/* eslint-enable no-restricted-syntax */
+// The conversion lives in the engine. It had a private copy here with an
+// eslint-disable for the raw colour inside it — an exception granted to a
+// function whose whole job was to build one.
+const hexToRgba = rgbaOf;
 
 // Extract max 2 initials from name
 function getInitials(name?: string): string {
