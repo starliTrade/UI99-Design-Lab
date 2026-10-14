@@ -9,6 +9,7 @@ import { Textarea } from '../inputs/Textarea/Textarea';
 import { Slider } from '../inputs/Slider/Slider';
 import { NumberInput } from '../inputs/NumberInput/NumberInput';
 import { OTP } from '../inputs/OTP/OTP';
+import { Rating } from '../inputs/Rating/Rating';
 import { Checkbox } from '../inputs/Checkbox/Checkbox';
 import { Radio } from '../inputs/Radio/Radio';
 import { Select } from '../inputs/Select/Select';
@@ -132,6 +133,20 @@ export const FIXTURES: ComponentFixture[] = [
         disabled={state === 'disabled'}
         readOnly={state === 'readonly'}
         defaultValue={state === 'default' ? '' : 'starli'}
+      />
+    ),
+  },
+  {
+    name: 'Rating', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'rated', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state, size) => (
+      <Rating
+        value={state === 'rated' ? 4 : 0}
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'Choose a rating' : undefined}
+        label="How was it?"
+        showValue
       />
     ),
   },
