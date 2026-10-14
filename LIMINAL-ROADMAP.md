@@ -92,14 +92,23 @@ LIMINAL = سیستم طراحیِ ریاضی‌محورِ dark-native
 **تخمین:** ۱–۲ هفته
 
 - [ ] ساختار monorepo (bun workspaces): `@liminal/tokens`, `@liminal/react`, `@liminal/icons`
-- [ ] Library build واقعی (`tsup` یا Vite lib mode): ESM + CJS + `.d.ts`
-- [ ] `exports` map + `sideEffects: false` + تأیید tree-shaking با تست
-- [ ] peerDependencies درست (`react`, `react-dom`)
+- [x] **Library build واقعی** — `vite.lib.config.ts` + `tsconfig.lib.json`؛ ESM + CJS + `.d.ts`
+- [x] **`exports` map + `sideEffects`** — `./styles.css` جدا، و CSS در `sideEffects` تا bundler استایل را tree-shake نکند
+- [x] **peerDependencies درست** (`react`, `react-dom`) — و React در باندل نیست، که چک می‌شود
+- [x] **`verify:package`** — هر مسیری که manifest وعده می‌دهد باید وجود داشته باشد؛ React نباید باندل شده باشد؛ استایل باید قابل import باشد
+- [x] **اندازه‌گیری باندل** — esm **۳۸۷٫۷kB** (≈۸۷kB gzip) · cjs **۲۷۸kB** · css **۱٫۷kB**.
+      **عدد حالا وجود دارد؛ بودجه یک تصمیم است، نه یک اندازه‌گیری** — و تصمیم مالِ صاحب پروژه است
 - [ ] بودجه‌ی باندل + `size-limit` در CI
-- [ ] انتشار `0.1.0` روی npm (عمومی، MIT) + npm provenance
+- [ ] انتشار `0.1.0` روی npm — **عمداً نه.** `private: true` می‌ماند تا تقاضا باشد
 - [ ] سازگاری SSR/RSC: بدون `window` در زمان import؛ `"use client"` در جای درست
 - [ ] تست در یک اپ واقعی Next.js (App Router + RSC)
 - [ ] README حرفه‌ای: نصب، شروع سریع، جدول کامپوننت‌ها، لینک مستندات
+
+**و یک شکاف که همین کار پیدا کرد:** barrelِ موتور **۱۴ ماژول** را صادر نمی‌کرد — از جمله
+`liminal-surface` (همان resolver که هر کامپوننت صدا می‌زند)، `liminal-ladder`، `liminal-theme`،
+`liminal-direction` و `liminal-contrast`. داخل ریپو دیده نمی‌شود چون کامپوننت‌ها با مسیر import
+می‌کنند؛ **برای یک کتابخانه کل سؤال همین است** — مصرف‌کننده‌ای که نمی‌تواند `resolveSurface` را
+import کند، نمی‌تواند روی موتور بسازد. حالا `engine-barrel.test.ts` فهرست را صادق نگه می‌دارد.
 
 **تعریف «انجام شد»:** یک پروژه‌ی خالی Next.js با `npm i @liminal/react` یک دکمه‌ی LIMINAL رندر می‌کند.
 
