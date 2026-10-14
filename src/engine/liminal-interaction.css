@@ -160,3 +160,52 @@
     transform: none;
   }
 }
+
+/* ── THE REVIEW HARNESS ───────────────────────────────────────────────────
+ * «حالتی که فقط با موس دیده می‌شود، حالتی است که کسی آن را بررسی نکرده.»
+ *
+ * A browser shows `:hover` only while a pointer is over the element, and
+ * `:focus-visible` only while it has keyboard focus. Neither can be set from
+ * markup, so a component page, a matrix or a studio could not SHOW a hover
+ * state — and a state nobody can see is a state nobody reviews. Five defects in
+ * this project were found in exactly the places a still frame is blind to.
+ *
+ * So the harness replays the LAYER'S OWN DECLARATIONS through an attribute:
+ * identical rules, a different trigger. It is not behaviour and it is not a
+ * second implementation of the states — it lives in this file, directly beside
+ * the declarations it repeats, so it cannot drift from them. If a rule above
+ * changes, the rule below is one screen away.
+ *
+ * Opt in with `data-liminal-force="hover | focus | active | disabled"` on any
+ * ancestor. Nothing in the library uses it; only the review tools do.
+ */
+[data-liminal-force='hover'] [data-liminal-surface] {
+  background: var(--liminal-surface-hover);
+}
+[data-liminal-force='hover'] [data-liminal-hover-color] {
+  color: var(--liminal-hover-color);
+}
+
+[data-liminal-force='active'] [data-liminal-surface] {
+  background: var(--liminal-surface-active);
+}
+
+/* A control that owns its focus ring as a child element — an input inside a
+ * field wrapper — is forced through the same rule the real focus uses. */
+[data-liminal-force='focus'] [data-liminal-surface]:not([data-liminal-focus-within]) {
+  outline: 2px solid var(--liminal-brand, #E9ECF2);
+  outline-offset: 2px;
+}
+[data-liminal-force='focus'] [data-liminal-focus-within] {
+  background: var(--liminal-surface-focus, var(--liminal-surface-idle, transparent));
+  border-color: var(--liminal-border-focus, var(--liminal-brand, #E9ECF2));
+}
+[data-liminal-force='focus'] [data-liminal-focus-within] .liminal-focus-ring {
+  outline: 2px solid var(--liminal-brand, #E9ECF2);
+  outline-offset: 2px;
+}
+
+[data-liminal-force='disabled'] [data-liminal-surface] {
+  opacity: 0.25;
+  pointer-events: none;
+}

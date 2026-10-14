@@ -116,23 +116,27 @@ export function Site() {
     },
   ];
 
-  const nav = (
+  /**
+   * The sidebar is the COMPONENT list and the docs pages — not the five
+   * destinations, which are in the bar.
+   *
+   * They were in here, so on a wide screen the page showed the same five links
+   * twice: once in the floating bar and once at the top of the sidebar. The five
+   * belong to the DRAWER, where the bar has no room for them, and that is the
+   * only place they are drawn a second time.
+   */
+  const sidebarNav = <DocsSidebar route={route} go={go} q={q} onQ={setQ} onNavigate={() => setNavOpen(false)} />;
+
+  const drawerNav = (
     <>
-      {/* The five destinations the top bar shows when it has room. On a phone it
-          does not, so they are here — the same table, drawn twice. */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[1]}px`, paddingBlock: `${S[2]}px` }}>
         {TOP_NAV.map((item) => (
-          <Btn
-            key={item.page}
-            active={route.page === item.page}
-            onClick={() => go({ page: item.page } as Route)}
-            title={item.note}
-          >
+          <Btn key={item.page} active={route.page === item.page} onClick={() => go({ page: item.page } as Route)} title={item.note}>
             {item.label}
           </Btn>
         ))}
       </div>
-      <DocsSidebar route={route} go={go} q={q} onQ={setQ} onNavigate={() => setNavOpen(false)} />
+      {sidebarNav}
     </>
   );
 
@@ -180,7 +184,7 @@ export function Site() {
                   boxSizing: 'border-box',
                 }}
               >
-                <Sidebar width={L.SIDEBAR_W}>{nav}</Sidebar>
+                <Sidebar width={L.SIDEBAR_W}>{sidebarNav}</Sidebar>
               </aside>
 
               <main
@@ -214,7 +218,7 @@ export function Site() {
 
         {narrow && (
           <NavDrawer open={navOpen} onClose={() => setNavOpen(false)}>
-            {nav}
+            {drawerNav}
           </NavDrawer>
         )}
 

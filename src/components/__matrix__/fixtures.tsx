@@ -338,9 +338,30 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Toggle', kind: 'action', group: 'Atoms', sizes: [], states: ['off', 'on', 'disabled'], expected: INTERACTIVE,
-    render: (state) => (
-      <Toggle checked={state === 'on'} disabled={state === 'disabled'} onChange={noop} aria-label="Enabled" />
+    /**
+     * THE STATES ARE RENDERED NOW, NOT JUST DECLARED.
+     *
+     * It was `states: ['off', 'on', 'disabled']` with `expected: INTERACTIVE`,
+     * which scored 20% — and the 20% was honest: the fixture named three states
+     * and the system expects four, and `hover` and `focus` were missing from
+     * both halves. A state the fixture cannot render is a state nobody reviews.
+     *
+     * `data-liminal-force` is the engine's review harness: it replays the
+     * interaction layer's own declarations through an attribute, so the hover
+     * here IS the hover, not a picture of it.
+     */
+    name: 'Toggle', kind: 'action', group: 'Atoms', sizes: ['sm', 'md', 'lg'],
+    states: ['default', 'on', 'hover', 'focus', 'disabled'], expected: INTERACTIVE,
+    render: (state, size) => (
+      <span data-liminal-force={state === 'hover' || state === 'focus' ? state : undefined}>
+        <Toggle
+          size={(size ?? 'md') as 'sm'}
+          checked={state === 'on'}
+          disabled={state === 'disabled'}
+          onChange={noop}
+          aria-label="Enabled"
+        />
+      </span>
     ),
   },
   {

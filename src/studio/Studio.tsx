@@ -237,7 +237,7 @@ export function Studio({ initial, showList = true }: { initial?: string; showLis
           <DeviceFrame device={device} minHeight={device === 'phone' ? 340 : 200}>
             <div
               ref={setPreview}
-              className={forced === 'none' ? undefined : `force-${forced}`}
+              data-liminal-force={forced === 'none' ? undefined : forced}
               style={{
                 ...WELL.style,
                 borderRadius: `${R.card}px`,

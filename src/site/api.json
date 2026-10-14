@@ -4827,6 +4827,12 @@
         "required": false
       },
       {
+        "name": "size",
+        "type": "'sm' | 'md' | 'lg'",
+        "required": false,
+        "doc": "The switch's size, from the engine's control scale. It had none, and the system's own standard says a control needs them: a switch that only exists at one size is a switch that cannot sit in a dense toolbar or beside a large button. The track takes its width from `CONTROL`, the knob from `SPACING`, and the travel is COMPUTED from the two rather than written down — the old `23px` was correct only for the one size that existed, which is exactly how a hard-coded number hides."
+      },
+      {
         "name": "className",
         "type": "string",
         "required": false

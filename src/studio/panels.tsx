@@ -27,33 +27,18 @@ import { LiminalColorEngine } from '../engine/liminal-color-engine';
 const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
 /**
- * THE FORCING HARNESS.
+ * THE FORCING HARNESS MOVED TO THE ENGINE, and that is the point of it.
  *
- * `:hover`, `:focus-visible` and `:active` cannot be set from JavaScript, and a
- * reviewer cannot hold a mouse over one component while reading another. So the
- * harness applies the LAYER'S OWN DECLARATIONS through a class. Identical
- * declarations — only the trigger differs. It is a harness, not behaviour: the
- * component still does the real thing when you use it.
+ * It lived here as a `FORCE_CSS` string that the studio injected. It is
+ * `src/engine/liminal-interaction.css` now, in the same file as the declarations
+ * it replays — because a harness that restates a rule from two directories away
+ * is a harness that drifts, and this project has paid for that pattern twice.
+ *
+ * `FORCE_CSS` is kept as an empty string so the studio's `<style>` element does
+ * not have to change shape; the rules arrive with the stylesheet.
  */
-export const FORCE_CSS = `
-.force-hover [data-liminal-surface] { background: var(--liminal-surface-hover); }
-.force-hover [data-liminal-hover-color] { color: var(--liminal-hover-color); }
-.force-active [data-liminal-surface] { background: var(--liminal-surface-active); transform: translateY(${L.BORDER.hairline / 2}px); }
-.force-focus [data-liminal-surface]:not([data-liminal-focus-within]) { outline: ${L.BORDER.emphasis}px solid ${FOCUS_RING_COLOR}; outline-offset: ${L.BORDER.emphasis}px; }
-.force-focus [data-liminal-focus-within] { background: var(--liminal-surface-focus, var(--liminal-surface-idle)); border-color: var(--liminal-border-focus, ${FOCUS_RING_COLOR}); }
-.force-disabled { opacity: 0.25; pointer-events: none; }
-`;
+export const FORCE_CSS = '';
 
-/**
- * THE THEME BAR IS GONE, AND THAT IS THE POINT.
- *
- * `ThemeBar` lived here — a second set of density and motion sliders, with its
- * own reset and its own ladder strip — while the shell had a first set in the
- * topbar. Two controls for one theme is two answers to one question, and the
- * project's own rule is that there is one. The shell's is the one a reader can
- * reach from every page; this one was reachable from nowhere, because nothing
- * rendered it.
- */
 // ─────────────────────────────────────────────────────────────────────────────
 // WHAT THE ENGINE PUBLISHED
 // ─────────────────────────────────────────────────────────────────────────────

@@ -8,7 +8,27 @@ import { resolveSurface, resolveInteractionVars } from '../../../engine/liminal-
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 /** The knob's inset from the track edge: a visual decision, so it is named. */
-const KNOB_INSET = 3;
+/**
+ * The three sizes, derived rather than drawn.
+ *
+ * `track` is the engine's control width; `knob` and `inset` are spacing steps.
+ * The height is the knob plus its two insets, so a size cannot end up with a
+ * knob that does not fit — which is what a hand-written height eventually does.
+ */
+const SWITCH = {
+  sm: { track: LiminalLayoutEngine.CONTROL.sm, knob: LiminalLayoutEngine.SPACING[4] - LiminalLayoutEngine.SPACING[0], inset: LiminalLayoutEngine.SPACING[0] },
+  md: { track: LiminalLayoutEngine.CONTROL.md, knob: LiminalLayoutEngine.SPACING[4], inset: LiminalLayoutEngine.SPACING[0] + LiminalLayoutEngine.BORDER.hairline },
+  lg: { track: LiminalLayoutEngine.CONTROL.lg, knob: LiminalLayoutEngine.SPACING[5] - LiminalLayoutEngine.SPACING[0], inset: LiminalLayoutEngine.SPACING[1] },
+} as const;
+
+/**
+ * How far the knob travels: the track, minus its two hairline borders, minus the
+ * knob, minus the inset it starts at. The old value was the literal `23px`.
+ */
+const travel = (size: keyof typeof SWITCH) => {
+  const s = SWITCH[size];
+  return s.track - 2 * LiminalLayoutEngine.BORDER.hairline - s.knob - s.inset;
+};
 
 const CONTROL = LiminalLayoutEngine.CONTROL;
 
@@ -29,6 +49,17 @@ export interface ToggleProps {
    *  node, and every consumer was writing `e.target.checked` to get here. */
   onChange: (value: boolean) => void;
   disabled?: boolean;
+  /**
+   * The switch's size, from the engine's control scale.
+   *
+   * It had none, and the system's own standard says a control needs them: a
+   * switch that only exists at one size is a switch that cannot sit in a dense
+   * toolbar or beside a large button. The track takes its width from `CONTROL`,
+   * the knob from `SPACING`, and the travel is COMPUTED from the two rather than
+   * written down — the old `23px` was correct only for the one size that
+   * existed, which is exactly how a hard-coded number hides.
+   */
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
   style?: CSSProperties;
   /** Required when there is no visible label. */
@@ -41,10 +72,12 @@ export function Toggle({
   on,
   onChange,
   disabled = false,
+  size = 'md',
   className = '',
   style: customStyle = {},
   'aria-label': ariaLabel = 'Toggle switch',
 }: ToggleProps) {
+  const dims = SWITCH[size];
   const host = useHostSurface();
   const isChecked = checked ?? value ?? on ?? false;
   const brand = LiminalColorEngine.BRAND_PRIMARY;
@@ -75,8 +108,8 @@ export function Toggle({
     position: 'relative',
     display: 'inline-flex',
     alignItems: 'center',
-    width: CONTROL.md,
-    height: `${LiminalLayoutEngine.SPACING[5]}px`,
+    width: dims.track,
+    height: `${dims.knob + 2 * dims.inset}px`,
     borderRadius: `${LiminalLayoutEngine.RADIUS.full}px`, // 9999px
     cursor: disabled ? 'not-allowed' : 'pointer',
     opacity: disabled ? 0.5 : 1,
@@ -107,9 +140,9 @@ export function Toggle({
 
   const knobStyle: CSSProperties = {
     position: 'absolute',
-    top: `${KNOB_INSET}px`,
-    width: `${LiminalLayoutEngine.SPACING[4]}px`,
-    height: `${LiminalLayoutEngine.SPACING[4]}px`,
+    top: `${dims.inset}px`,
+    width: `${dims.knob}px`,
+    height: `${dims.knob}px`,
     borderRadius: '50%',
     transition: LiminalMotionEngine.TRANSITION.slow,
     // In compliance with LIMINAL Master Spec:
@@ -118,7 +151,7 @@ export function Toggle({
     // The knob travels along the INLINE axis: it starts at the beginning and
     // moves toward the end. A physical `right` would leave it travelling
     // backwards in RTL.
-    insetInlineEnd: isChecked ? '23px' : '3px',
+    insetInlineEnd: `${isChecked ? travel(size) : dims.inset}px`,
     background: isChecked ? brand.onColor : SURFACE_TINT.solid,
     boxShadow: SHADOWS[1],
   };
