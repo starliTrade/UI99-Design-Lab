@@ -64,7 +64,10 @@ export function Section({
       }}
     >
       <header style={{ display: 'flex', alignItems: 'baseline', gap: `${S[2]}px`, flexWrap: 'wrap' }}>
-        <h3 style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>{title}</h3>
+        {/* h2, not h3: every page opens with an h1 and then a run of sections,
+            so h3 skipped a level — axe reports `heading-order`, and a screen
+            reader's outline showed a gap where a level should be. */}
+        <h2 style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>{title}</h2>
         {note && <span style={{ fontSize: 11, opacity: 0.7 }}>{note}</span>}
       </header>
       {children}

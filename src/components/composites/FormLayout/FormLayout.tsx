@@ -88,6 +88,39 @@ export function FormField({
 }: FormFieldProps) {
   const SPACING = LiminalLayoutEngine.SPACING;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  /**
+   * THE LABEL HAS TO POINT AT SOMETHING.
+   *
+   * `<label>{label}</label>` with no `htmlFor` and nothing wrapped inside it is
+   * a decoration: the input beside it has no accessible name, so a screen
+   * reader announces "edit text" and nothing else. axe reports it as `label`,
+   * critical — and it is the same defect this project already named once, when
+   * `Label` was required to take an `htmlFor`: "a label with no `for` is a
+   * decoration".
+   *
+   * The field owns the association now. It generates an id, gives it to the
+   * child when the child does not have one, and points the label at it — so a
+   * consumer that writes `<FormField label="Name"><Input /></FormField>` gets a
+   * labelled input without having to know that ids exist.
+   *
+   * `hint` and `error` are wired to `aria-describedby` for the same reason: a
+   * message the reader cannot reach is not a message.
+   */
+  const generated = React.useId();
+  const describedBy: string[] = [];
+  if (hint && !error) describedBy.push(`${generated}-hint`);
+  if (error) describedBy.push(`${generated}-error`);
+
+  let control: ReactNode = children;
+  let controlId = generated;
+  if (React.isValidElement(children)) {
+    const child = children as React.ReactElement<{ id?: string; 'aria-describedby'?: string }>;
+    controlId = child.props.id ?? generated;
+    control = React.cloneElement(child, {
+      id: controlId,
+      ...(describedBy.length ? { 'aria-describedby': describedBy.join(' ') } : null),
+    });
+  }
 
   return (
     <div
@@ -102,6 +135,7 @@ export function FormField({
       }}
     >
       <label
+        htmlFor={React.isValidElement(children) ? controlId : undefined}
         style={{
           fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
           fontWeight: 500,
@@ -112,16 +146,22 @@ export function FormField({
         {label}
       </label>
 
-      {children}
+      {control}
 
       {hint && !error && (
-        <span style={{ fontSize: LiminalLayoutEngine.getTypeSizeCss(1), color: getTextStyle('tertiary', 1).color }}>
+        <span
+          id={`${generated}-hint`}
+          style={{ fontSize: LiminalLayoutEngine.getTypeSizeCss(1), color: getTextStyle('tertiary', 1).color }}
+        >
           {hint}
         </span>
       )}
 
       {error && (
-        <span style={{ fontSize: LiminalLayoutEngine.getTypeSizeCss(1), color: SEMANTICS.DANGER.text, fontWeight: 500 }}>
+        <span
+          id={`${generated}-error`}
+          style={{ fontSize: LiminalLayoutEngine.getTypeSizeCss(1), color: SEMANTICS.DANGER.text, fontWeight: 500 }}
+        >
           {error}
         </span>
       )}

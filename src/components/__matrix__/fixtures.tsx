@@ -32,7 +32,7 @@ import { Drawer } from '../containers/Drawer/Drawer';
 import { AlertDialog } from '../feedback/AlertDialog/AlertDialog';
 import { DatePicker } from '../data/Calendar/DatePicker';
 import { AvatarGroup } from '../data/AvatarGroup/AvatarGroup';
-import { Tabs } from '../nav/Tabs/Tabs';
+import { Tabs, TabPanel } from '../nav/Tabs/Tabs';
 import { Stepper } from '../nav/Stepper/Stepper';
 import { Avatar } from '../data/Avatar/Avatar';
 import { Stat } from '../data/Stat/Stat';
@@ -410,13 +410,22 @@ export const FIXTURES: ComponentFixture[] = [
         onChange={noop}
         size={(size ?? 'md') as 'sm'}
         items={[{ id: 'a', label: 'Overview' }, { id: 'b', label: 'Settings' }]}
-      />
+      >
+        {/* THE PANEL IS PART OF THE FIXTURE, because a tab without one is a
+            broken reference: `aria-controls` pointed at an id that was never
+            rendered, and axe reports `aria-valid-attr-value` — critical. A
+            screen reader following it lands nowhere. */}
+        <TabPanel value="a">Overview panel</TabPanel>
+      </Tabs>
     ),
   },
   {
     name: 'Alert', group: 'Feedback', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
     render: (state) => (
-      <Alert semantic={state as 'info'} title={state} onClose={noop}>Message</Alert>
+      // `headingLevel={3}`: the fixture is rendered under an `h2` in the index
+      // and under an `h1` on a component page, and the default `h4` skipped a
+      // level in both. The level is the host page's decision, so the host says.
+      <Alert semantic={state as 'info'} title={state} headingLevel={3} onClose={noop}>Message</Alert>
     ),
   },
   {

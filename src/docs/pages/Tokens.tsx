@@ -15,6 +15,7 @@ import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { Section, Prose, Value, Stat, MONO, S, R } from '../ui';
 import { useTheme } from '../theme';
 import { LiminalLayoutEngine as L } from '../../engine/liminal-layout-engine';
+import { LiminalMotionEngine as M } from '../../engine/liminal-motion-engine';
 
 /** The semantic roles, from the engine — a colour a reader can name. */
 const SEMANTICS = LiminalColorEngine.SEMANTICS;
@@ -181,6 +182,99 @@ export function TokensPage() {
           />
         </div>
       </Section>
+
+      {/* ── MOTION ─────────────────────────────────────────────────────────
+       *
+       * The top bar has a Motion slider and the site never said what it moves.
+       * A control whose effect is undocumented is a control a reader leaves
+       * alone — and this one is a SCALE, not a preference: the durations are
+       * the engine's, and the theme multiplies them.
+       */}
+      <Section title="Motion" note="Six durations, five curves, one rule about who may animate">
+        <Prose>
+          Hover any control on this site and you are watching these numbers. The theme's motion
+          slider multiplies them, and it <b>cannot make one instant</b> — a transition that finishes
+          before the eye registers it is not feedback. The values below are what the page is using
+          right now, at motion <b>{theme.motion.toFixed(2)}×</b>.
+        </Prose>
+
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(${L.CELL_MIN * 2}px, 1fr))`, gap: `${S[2]}px ${S[4]}px` }}>
+          {Object.entries(M.DURATION).map(([name, ms]) => (
+            <Value key={name} label={name} value={`${Math.round(ms * theme.motion)}ms`} />
+          ))}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fit, minmax(${L.CELL_MIN * 2}px, 1fr))`, gap: `${S[2]}px ${S[4]}px` }}>
+          {Object.entries(M.EASING).map(([name, curve]) => (
+            <Value key={name} label={name} value={curve} />
+          ))}
+        </div>
+
+        {/* The durations, as durations: one control, three of them, live. */}
+        <MotionDemo />
+
+        <Value label="Animatable" value={M.ANIMATABLE} />
+        <Prose>
+          <b>And one rule about who may animate.</b> The list above is the whole of it: `transition:
+          all` animates layout properties too, so a change to `width` is interpolated frame by frame
+          instead of applied. Naming the properties makes that impossible rather than unlikely.
+          Reduced motion is handled once, globally, in the interaction layer — every component gets
+          it without any of them remembering to.
+        </Prose>
+      </Section>
+    </div>
+  );
+}
+
+/**
+ * The durations, as something you can see.
+ *
+ * One button, three chips, three durations. Toggling it is the only honest way
+ * to show what 150ms and 350ms look like — a table of milliseconds is a
+ * measurement, not a demonstration.
+ */
+function MotionDemo() {
+  const { theme } = useTheme();
+  const [on, setOn] = React.useState(false);
+  const rows: { name: keyof typeof M.DURATION; easing: keyof typeof M.EASING }[] = [
+    { name: 'fast', easing: 'out' },
+    { name: 'normal', easing: 'out' },
+    { name: 'slower', easing: 'spring' },
+  ];
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: `${S[4]}px`, flexWrap: 'wrap' }}>
+      <button
+        type="button"
+        onClick={() => setOn((v) => !v)}
+        aria-pressed={on}
+        style={{
+          font: 'inherit',
+          fontSize: 12,
+          padding: `${S[1]}px ${S[3]}px`,
+          borderRadius: `${R.chip}px`,
+          border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.medium}`,
+          background: 'transparent',
+          color: 'inherit',
+          cursor: 'pointer',
+        }}
+      >
+        {on ? 'Back' : 'Play'}
+      </button>
+      {rows.map((r) => (
+        <span key={r.name} style={{ display: 'flex', alignItems: 'center', gap: `${S[2]}px` }}>
+          <span
+            style={{
+              width: L.CELL_MIN,
+              height: S[5],
+              borderRadius: `${R.chip}px`,
+              background: on ? LADDER[6] : LADDER[2],
+              border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.subtle}`,
+              transition: `background ${Math.round(M.DURATION[r.name] * theme.motion)}ms ${M.EASING[r.easing]}`,
+            }}
+          />
+          <code style={{ fontFamily: MONO, fontSize: 11 }}>{r.name}</code>
+        </span>
+      ))}
     </div>
   );
 }

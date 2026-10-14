@@ -264,8 +264,11 @@ export function DocsShell({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', minWidth: 0 }}>
-      <header style={{ width: '100%', flexShrink: 0 }}>
-        <Topbar
+      {/* NO WRAPPER ELEMENT: `Topbar` renders its own `<header>`, so wrapping it
+          in another one made two banner landmarks, one inside the other — axe
+          reports `landmark-banner-is-top-level`, `landmark-no-duplicate-banner`
+          and `landmark-unique`, three violations from one div. */}
+      <Topbar
           logo={
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: `${S[2]}px` }}>
               {narrow && (
@@ -285,10 +288,9 @@ export function DocsShell({
               <ThemeControls compact={narrow} dir={dir} onDir={onDir} />
             </>
           }
-        >
-          {pageNav}
-        </Topbar>
-      </header>
+      >
+        {pageNav}
+      </Topbar>
 
       <div
         style={{

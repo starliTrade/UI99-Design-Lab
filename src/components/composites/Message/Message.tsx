@@ -160,7 +160,22 @@ export const MessageList = forwardRef<HTMLOListElement, MessageListProps>(functi
   return (
     <ol
       ref={forwardedRef}
-      role="log"
+      /**
+       * A LOG IS A LIVE REGION, AND `<ol>` CANNOT BE ONE.
+       *
+       * `role="log"` was here, and axe is right to refuse it: `log` is not an
+       * allowed role on `<ol>`, and an `<ol>` with an explicit role stops being
+       * a list — so its `<li>` children became list items outside a list, two
+       * violations from one attribute.
+       *
+       * The two attributes below ARE what `role="log"` means: the role has
+       * implicit `aria-live="polite"` and `aria-relevant="additions"`, and both
+       * are global — allowed on a list. So the transcript keeps its structure
+       * (an ordered list, because a conversation is ordered) and keeps its
+       * announcement behaviour, without pretending to be a role it cannot be.
+       */
+      aria-live="polite"
+      aria-relevant="additions"
       aria-label={label}
       className={className}
       style={{

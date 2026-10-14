@@ -94,6 +94,16 @@ export function DatePicker({
           error={error}
           disabled={disabled}
           readOnly
+          /**
+           * `role="combobox"` — because a textbox may not be expanded.
+           *
+           * `aria-expanded` and `aria-haspopup` are not allowed on an
+           * `<input type="text">`: its role is `textbox`, and a textbox has no
+           * popup. axe reports it as `aria-allowed-attr`, critical. The field
+           * IS a combobox — a text field with a popup — so it says so, and the
+           * two attributes become legal instead of decorative.
+           */
+          role="combobox"
           aria-expanded={isOpen}
           aria-haspopup="dialog"
           leftIcon={<LiminalIcon icon={CalendarIcon} size="sm" weight="regular" />}

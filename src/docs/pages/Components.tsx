@@ -51,10 +51,23 @@ export function ComponentsPage({ go }: { go: (name: string) => void }) {
               const c = pct(coverage(f));
               const missing = f.expected.filter((s) => !f.states.includes(s));
               return (
-                <button
+                /**
+                 * THE CARD IS NOT A BUTTON, AND THE PREVIEW IS WHY.
+                 *
+                 * It was: the whole card was a `<button>`, so every preview
+                 * that contains a control — which is most of them — put a
+                 * button inside a button. axe reports `nested-interactive`,
+                 * serious, and it is worse than a lint: a reader could not
+                 * hover the Button in the Button card, because the card was
+                 * swallowing the interaction. The studio's own index could not
+                 * do the one thing the studio is for.
+                 *
+                 * The NAME is the link now. The preview is a preview — you can
+                 * touch it here, which is the point of an index built from the
+                 * real components.
+                 */
+                <div
                   key={f.name}
-                  type="button"
-                  onClick={() => go(f.name)}
                   style={{
                     ...WORK.style,
                     display: 'flex',
@@ -63,13 +76,27 @@ export function ComponentsPage({ go }: { go: (name: string) => void }) {
                     padding: `${S[3]}px`,
                     borderRadius: `${R.card}px`,
                     border: `${L.BORDER.hairline}px solid ${SURFACE_TINT.medium}`,
-                    font: 'inherit',
-                    textAlign: 'start',
                     minWidth: 0,
                   }}
                 >
                   <span style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: `${S[2]}px` }}>
-                    <b style={{ fontSize: 12 }}>{f.name}</b>
+                    <button
+                      type="button"
+                      onClick={() => go(f.name)}
+                      style={{
+                        font: 'inherit',
+                        fontSize: 12,
+                        fontWeight: 600,
+                        padding: 0,
+                        border: 'none',
+                        background: 'transparent',
+                        color: 'inherit',
+                        cursor: 'pointer',
+                        textAlign: 'start',
+                      }}
+                    >
+                      {f.name}
+                    </button>
                     <code
                       style={{
                         fontFamily: MONO,
@@ -97,7 +124,7 @@ export function ComponentsPage({ go }: { go: (name: string) => void }) {
                     {f.variants?.length ? ` · ${f.variants.length} variants` : ''}
                     {missing.length ? ` · missing: ${missing.join(', ')}` : ''}
                   </span>
-                </button>
+                </div>
               );
             })}
           </div>

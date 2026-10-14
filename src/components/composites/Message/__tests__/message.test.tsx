@@ -4,9 +4,18 @@ import React from 'react';
 import { Message, Bubble, MessageList } from '../Message';
 
 describe('MessageList — a log, which announces without stealing focus', () => {
-  it('is a live region with a name', () => {
+  it('is a live region with a name, and it is a LIST', () => {
+    // `role="log"` is what this used to assert, and axe refuses it: `log` is not
+    // an allowed role on `<ol>`, and an `<ol>` with an explicit role stops being
+    // a list — so the messages below stopped being list items too, two
+    // violations from one attribute. The two attributes asserted here ARE what
+    // `role="log"` means (the role has implicit `aria-live="polite"` and
+    // `aria-relevant="additions"`), and both are global, so a list may carry
+    // them. Same announcement, valid structure.
     render(<MessageList label="Conversation"><Message>Hi</Message></MessageList>);
-    expect(screen.getByRole('log', { name: 'Conversation' })).toBeTruthy();
+    const list = screen.getByRole('list', { name: 'Conversation' });
+    expect(list.getAttribute('aria-live')).toBe('polite');
+    expect(list.getAttribute('aria-relevant')).toBe('additions');
   });
 
   it('is a list, so the messages are countable', () => {

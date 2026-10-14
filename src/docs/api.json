@@ -64,6 +64,12 @@
         "required": false
       },
       {
+        "name": "headingLevel",
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
+        "required": false,
+        "doc": "The DOCUMENT level of the title, when the title is a heading. It was `<h4>`, hard-coded — which is a decision about the page the alert is dropped into, made by a component that cannot see the page. On the studio's index the sections are `h2`, so an `h4` skipped a level and axe reported `heading-order`: a screen reader's outline showed a gap. `Accordion` already takes a `headingLevel` for the same reason. The default is unchanged, so nothing that renders an Alert today moves."
+      },
+      {
         "name": "children",
         "type": "ReactNode",
         "required": true
