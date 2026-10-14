@@ -22,6 +22,8 @@ import { Checkbox } from '../inputs/Checkbox/Checkbox';
 import { Radio } from '../inputs/Radio/Radio';
 import { Select } from '../inputs/Select/Select';
 import { Card } from '../containers/Card/Card';
+import { ButtonGroup } from '../containers/ButtonGroup/ButtonGroup';
+import { InputGroup } from '../inputs/InputGroup/InputGroup';
 import { Panel } from '../containers/Panel/Panel';
 import { Divider } from '../containers/Divider/Divider';
 import { Popover } from '../containers/Popover/Popover';
@@ -419,6 +421,24 @@ export const FIXTURES: ComponentFixture[] = [
   {
     name: 'Stat', group: 'Data', sizes: [], states: ['default'], expected: [],
     render: () => <Stat label="Requests" value="1,204" />,
+  },
+  {
+    name: 'ButtonGroup', group: 'Containers', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <ButtonGroup label="Actions">
+        <Button variant="secondary">Save</Button>
+        <Button variant="secondary">Duplicate</Button>
+        <Button variant="secondary">Delete</Button>
+      </ButtonGroup>
+    ),
+  },
+  {
+    name: 'InputGroup', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state) => (
+      <InputGroup prefix="$" suffix="USD" disabled={state === 'disabled'}>
+        <Input label="Amount" error={state === 'error' ? 'Too large' : undefined} />
+      </InputGroup>
+    ),
   },
   {
     name: 'Card', group: 'Containers', sizes: [], states: ['default'], expected: [],

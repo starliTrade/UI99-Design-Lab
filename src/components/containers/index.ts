@@ -9,3 +9,4 @@ export * from './Drawer';
 export * from './ContainersDemo';
 export * from './Collapsible';
 export * from './Accordion';
+export * from './ButtonGroup';

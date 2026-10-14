@@ -506,6 +506,39 @@
     ]
   },
   {
+    "component": "ButtonGroup",
+    "path": "components/containers/ButtonGroup/ButtonGroup.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": true,
+        "doc": "Required: a group of controls with no name is a group a reader cannot describe."
+      },
+      {
+        "name": "orientation",
+        "type": "'horizontal' | 'vertical'",
+        "required": false,
+        "doc": "Stack them instead of joining them side by side."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
     "component": "Calendar",
     "path": "components/data/Calendar/Calendar.tsx",
     "props": [
@@ -2196,6 +2229,44 @@
       {
         "name": "ariaAutocomplete",
         "type": "'none' | 'inline' | 'list' | 'both'",
+        "required": false
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false
+      }
+    ]
+  },
+  {
+    "component": "InputGroup",
+    "path": "components/inputs/InputGroup/InputGroup.tsx",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false
+      },
+      {
+        "name": "prefix",
+        "type": "ReactNode",
+        "required": false,
+        "doc": "Rendered before the field. A unit or a protocol — not a label."
+      },
+      {
+        "name": "suffix",
+        "type": "ReactNode",
+        "required": false,
+        "doc": "Rendered after the field."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
         "required": false
       },
       {

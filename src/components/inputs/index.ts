@@ -12,3 +12,4 @@ export * from './OTP';
 export * from './Rating';
 export * from './FileUpload';
 export * from './ToggleGroup';
+export * from './InputGroup';

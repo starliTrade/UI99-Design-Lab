@@ -101,7 +101,7 @@ Density scales spacing, control heights **and radii as one set**, so the concent
 
 ## The components
 
-**78 components, all 78 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md),
+**80 components, all 80 complete** against [`COMPONENT-CONTRACT.md`](./COMPONENT-CONTRACT.md),
 which states the ten things a component must have and names the guard that fails when it does not.
 
 The last ten took no component changes at all — they took a check that stopped asking the wrong
@@ -110,8 +110,8 @@ question. See below.
 | group | components |
 |---|---|
 | **Atoms** | Badge · Button · Kbd · Label · Mist · Spinner · Tag · Toggle · Typography |
-| **Inputs** | Checkbox · Combobox · FileUpload · Input · MultiSelect · NumberInput · OTP · Radio · Rating · Select · Slider · Textarea · ToggleGroup |
-| **Containers** | Accordion · Card · Collapsible · Divider · Drawer · HoverCard · Modal · Panel · Popover · Sheet |
+| **Inputs** | Checkbox · Combobox · FileUpload · Input · InputGroup · MultiSelect · NumberInput · OTP · Radio · Rating · Select · Slider · Textarea · ToggleGroup |
+| **Containers** | Accordion · ButtonGroup · Card · Collapsible · Divider · Drawer · HoverCard · Modal · Panel · Popover · Sheet |
 | **Feedback** | Alert · AlertDialog · Toast · Tooltip |
 | **Data** | Avatar · AvatarGroup · Calendar · DatePicker · FilterBar · Pagination · Progress · Stat · Table · TreeView |
 | **Navigation** | Breadcrumb · CommandPalette · ContextMenu · DropdownMenu · NavItem · Sidebar · Stepper · Tabs · Topbar |
@@ -125,14 +125,14 @@ node scripts/verify-component-standard.mjs
 ```
 
 ```
-78 components · 78 complete · 0 short of the standard
-  role       78/78
+80 components · 80 complete · 0 short of the standard
+  role       80/80
   size       16/16  (declaration matches code)
   variant    16/16  (declaration matches code)
   disabled   16/16  (controls only)
   error      13/13  (inputs only)
-  tokens     78/78
-  fixture    78/78
+  tokens     80/80
+  fixture    80/80
 ```
 
 **A criterion is asked of the population it applies to.** `size`, `variant`, `disabled` and
@@ -166,7 +166,7 @@ A rule with no guard is a habit. Nine guards, each banning one pattern:
 | `engine-barrel` | a module a consumer cannot import |
 | `event-forwarding` | an event handler a component swallows |
 
-**846 tests across 60 files.** `verify` runs typecheck, lint, tests, the app build, the library
+**852 tests across 61 files.** `verify` runs typecheck, lint, tests, the app build, the library
 build and a package-coherence check.
 
 ---
