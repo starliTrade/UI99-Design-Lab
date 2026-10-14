@@ -14,10 +14,10 @@ import { Button } from '../components/atoms/Button';
 import { FIXTURES, coverage } from '../components/__matrix__/fixtures';
 import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../engine/liminal-color-engine';
-import { getLadderVar, FOCUS_RING_COLOR } from '../engine/liminal-ladder';
+import { getLadderVar } from '../engine/liminal-ladder';
 import { useMediaQuery } from '../engine/liminal-hooks';
+import { mistCssVars } from '../engine/liminal-mist';
 import { Btn, MONO, S, R, surfaceFor } from './ui';
-import { useTheme } from './theme';
 import { DOCS, TOP_NAV, type Route } from './routes';
 
 const SEMANTICS = LiminalColorEngine.SEMANTICS;
@@ -27,56 +27,27 @@ const pct = (n: number) => Math.round(n * 100);
 const isActive = (route: Route, page: Route['page']) => route.page === page;
 
 /**
- * The theme controls, in the top bar.
+ * THE BAR FLOATS, AND IT IS MIST — not glass.
  *
- * Two scales and no hue: the ladder is the identity, and an identity is not a
- * setting. The slider is live on the page you are reading, because a theme
- * demonstrated on a picture of the site proves nothing about the site.
+ * Measured on a product page in the wild: its nav is a floating pill, inset from
+ * the edges, `rgba(255,255,255,0.03)` with `blur(12px)`, radius 999px, and 48px
+ * between its links. Airy, and it reads as a surface the page passes under
+ * rather than a band cut across the top.
+ *
+ * LIMINAL cannot copy the glass, because the contract PURGED glass: a blurred
+ * backdrop cost 35.7x a plain surface and was invisible on the near-uniform dark
+ * backgrounds this system actually uses. What the contract kept is Mist — a
+ * vertical fog inside the surface, one hairline of light on its top edge, a dark
+ * shadow below that grows with height, and a faint seam. Every value derives
+ * from the role's ladder height; none of it is hand-tuned.
+ *
+ * The diffusion is opted into HERE and nowhere else, because this is the one
+ * surface in the system that has content scrolling under it: the opt-in exists
+ * for exactly that case.
  */
-export function ThemeControls({ compact }: { compact?: boolean }) {
-  const { state, set, reset, isSystem, theme } = useTheme();
-  const scales = [
-    { key: 'density' as const, label: 'Density', min: 0.8, max: 1.4, step: 0.05 },
-    { key: 'motion' as const, label: 'Motion', min: 0, max: 2, step: 0.1 },
-  ];
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: `${S[3]}px`, flexWrap: 'wrap', minWidth: 0 }}>
-      {!compact &&
-        scales.map((s) => (
-          <label key={s.key} style={{ display: 'flex', alignItems: 'center', gap: `${S[1]}px`, minWidth: 0 }}>
-            <span style={{ fontSize: 10, opacity: 0.65, whiteSpace: 'nowrap' }}>{s.label}</span>
-            <input
-              type="range"
-              min={s.min}
-              max={s.max}
-              step={s.step}
-              value={state[s.key]}
-              aria-label={s.label}
-              onChange={(e) => set({ ...state, [s.key]: Number(e.target.value) })}
-              style={{ width: 72, accentColor: FOCUS_RING_COLOR }}
-            />
-          </label>
-        ))}
-      {!compact && (
-        <div style={{ display: 'flex', gap: 2, borderRadius: `${R.chip}px`, overflow: 'hidden' }} aria-hidden>
-          {theme.ladder.map((hex, i) => (
-            <span key={i} title={`S${i} ${hex}`} style={{ width: 8, height: 16, background: hex }} />
-          ))}
-        </div>
-      )}
-      {theme.warnings.length > 0 && (
-        <span style={{ fontSize: 10, color: SEMANTICS.DANGER.text }} title={theme.warnings[0].why}>
-          {theme.warnings[0].scale} clamped
-        </span>
-      )}
-      {!isSystem && (
-        <Btn onClick={reset} title="Back to the system theme">
-          Reset
-        </Btn>
-      )}
-    </div>
-  );
-}
+export const NAV_HEIGHT = L.CONTROL.md;
+/** How far the page has to start below the top, so the floating bar clears it. */
+export const NAV_CLEARANCE = S[4] + NAV_HEIGHT + S[2] * 2 + S[5];
 
 export function TopNav({
   route,
@@ -94,15 +65,55 @@ export function TopNav({
   onDir: (d: 'ltr' | 'rtl') => void;
 }) {
   const narrow = useMediaQuery(`(max-width: ${BP.shellSidebar}px)`);
+  const mist = mistCssVars('menu');
+
   return (
-    <Topbar
-      navLabel="Main"
-      logo={
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: `${S[2]}px` }}>
+    <div
+      style={{
+        position: 'fixed',
+        insetBlockStart: S[4],
+        insetInline: 0,
+        zIndex: 60,
+        paddingInline: `${S[4]}px`,
+        boxSizing: 'border-box',
+        pointerEvents: 'none',
+      }}
+    >
+      <nav
+        data-liminal-mist="diffuse"
+        aria-label="Main"
+        style={{
+          ...mist,
+          pointerEvents: 'auto',
+          maxWidth: 1120,
+          margin: '0 auto',
+          height: NAV_HEIGHT,
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${S[5]}px`,
+          paddingInline: `${S[4]}px`,
+          borderRadius: `${R.full}px`,
+          boxSizing: 'border-box',
+        }}
+      >
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: `${S[2]}px`, flexShrink: 0 }}>
           {narrow && onMenu && (
-            <Btn onClick={onMenu} title="Navigation">
+            <button
+              type="button"
+              onClick={onMenu}
+              aria-label="Navigation"
+              style={{
+                font: 'inherit',
+                fontSize: 14,
+                background: 'transparent',
+                border: 'none',
+                color: 'inherit',
+                cursor: 'pointer',
+                padding: 0,
+              }}
+            >
               ☰
-            </Btn>
+            </button>
           )}
           <button
             type="button"
@@ -120,43 +131,38 @@ export function TopNav({
             }}
           >
             <span style={{ ...L.getTypeStyle(2, true), fontWeight: 700 }}>LIMINAL</span>
-            <Badge>v1.0</Badge>
+            {!narrow && <Badge>v1.0</Badge>}
           </button>
         </span>
-      }
-      actions={
-        <>
+
+        {/* THE LINKS ARE NOT IN THE BAR ON A PHONE, and that is a measurement
+            rather than a preference: five labels plus the actions need ~600px,
+            and a bar that overflows drags the whole document wider than the
+            device. Measured at 390: the nav alone was 400px and the actions 205,
+            so the page scrolled sideways. On a phone they live in the drawer. */}
+        {!narrow &&
+          TOP_NAV.map((item) => (
+            <Btn key={item.page} active={isActive(route, item.page)} onClick={() => go({ page: item.page } as Route)} title={item.note}>
+              {item.label}
+            </Btn>
+          ))}
+
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: `${S[2]}px`, marginInlineStart: 'auto', flexShrink: 0 }}>
           <Btn onClick={onSearch} title="Search everything — ⌘K">
             {narrow ? '⌘K' : 'Search… ⌘K'}
           </Btn>
           <Btn onClick={() => onDir(dir === 'ltr' ? 'rtl' : 'ltr')} active={dir === 'rtl'} title="Flip the document direction">
             {dir.toUpperCase()}
           </Btn>
-          <ThemeControls compact={narrow} />
-          {/* THE BAR ENDS IN AN ACTION.
-              Measured on a product page in the wild: its nav is 52px and its
+          {/* THE BAR ENDS IN AN ACTION. Measured on the same product page: its
               last item is "Try for free" — the links say where you can go and
-              the last thing says what you can DO. A nav that ends in a slider
-              leaves the reader to find the door. */}
+              the last thing says what you can DO. */}
           <Button size="sm" variant="primary" onClick={() => go({ page: 'docs', slug: 'installation' })}>
             {narrow ? 'Start' : 'Get started'}
           </Button>
-        </>
-      }
-    >
-      {/* THE LINKS ARE NOT IN THE BAR ON A PHONE, and that is a measurement
-          rather than a preference: five labels plus the actions need ~600px, and
-          a top bar that overflows drags the whole document wider than the
-          device. Measured at 390: the nav alone was 400px and the actions 205,
-          so the page scrolled sideways. On a phone they live in the drawer,
-          behind the ☰. */}
-      {!narrow &&
-        TOP_NAV.map((item) => (
-          <Btn key={item.page} active={isActive(route, item.page)} onClick={() => go({ page: item.page } as Route)} title={item.note}>
-            {item.label}
-          </Btn>
-        ))}
-    </Topbar>
+        </span>
+      </nav>
+    </div>
   );
 }
 

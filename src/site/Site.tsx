@@ -23,7 +23,7 @@ import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
 import { useMediaQuery } from '../engine/liminal-hooks';
 import { FIXTURES } from '../components/__matrix__/fixtures';
 import { S, R, Btn, surfaceFor } from './ui';
-import { TopNav, DocsSidebar, NavDrawer, SiteFooter } from './nav';
+import { TopNav, DocsSidebar, NavDrawer, SiteFooter, NAV_CLEARANCE } from './nav';
 import { DOCS, TOP_NAV, routeKey, type Route } from './routes';
 import { HomePage } from './pages/Home';
 import { DocsPage } from './pages/Docs';
@@ -139,7 +139,8 @@ export function Site() {
   return (
     <ThemeProvider>
       <DirProvider dir={dir}>
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', minWidth: 0 }}>
+        {/* The bar FLOATS over the page, so the page has to start below it. */}
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', minWidth: 0, paddingBlockStart: `${NAV_CLEARANCE}px`, boxSizing: 'border-box' }}>
           <TopNav
             route={route}
             go={go}
@@ -172,8 +173,8 @@ export function Site() {
                   flexShrink: 0,
                   alignSelf: 'flex-start',
                   position: 'sticky',
-                  top: `${L.CONTROL.md + S[3] * 2 + S[5]}px`,
-                  maxHeight: `calc(100vh - ${L.CONTROL.md + S[3] * 2 + S[5] * 2}px)`,
+                  top: `${NAV_CLEARANCE + S[2]}px`,
+                  maxHeight: `calc(100vh - ${NAV_CLEARANCE + S[2] * 2}px)`,
                   overflowY: 'auto',
                   display: narrow ? 'none' : 'block',
                   boxSizing: 'border-box',
