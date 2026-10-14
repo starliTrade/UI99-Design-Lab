@@ -547,6 +547,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
           maxLength={maxLength}
           autoComplete={autoComplete}
           aria-describedby={ariaDescribedBy ?? (rest['aria-describedby'] as string | undefined)}
+          // AN ERROR IS AN INVALID STATE, not only a message.
+          //
+          // `error` rendered the text and never said the control was invalid, so
+          // a screen reader announced the field without the state that matters.
+          // `Checkbox`, `Radio` and `Slider` all set this; the Input, which the
+          // other three are modelled on, did not. A consumer can still override
+          // it through `rest`, which is spread last.
+          aria-invalid={error ? true : undefined}
           role={role}
           aria-expanded={ariaExpanded}
           aria-haspopup={ariaHasPopup}

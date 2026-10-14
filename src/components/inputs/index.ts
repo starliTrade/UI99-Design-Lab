@@ -7,3 +7,4 @@ export * from './Checkbox';
 export * from './Radio';
 export * from './InputsDemo';
 export * from './Slider';
+export * from './NumberInput';

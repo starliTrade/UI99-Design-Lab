@@ -7,6 +7,7 @@ import { Mist } from '../atoms/Mist/Mist';
 import { Input } from '../inputs/Input/Input';
 import { Textarea } from '../inputs/Textarea/Textarea';
 import { Slider } from '../inputs/Slider/Slider';
+import { NumberInput } from '../inputs/NumberInput/NumberInput';
 import { Checkbox } from '../inputs/Checkbox/Checkbox';
 import { Radio } from '../inputs/Radio/Radio';
 import { Select } from '../inputs/Select/Select';
@@ -130,6 +131,22 @@ export const FIXTURES: ComponentFixture[] = [
         disabled={state === 'disabled'}
         readOnly={state === 'readonly'}
         defaultValue={state === 'default' ? '' : 'starli'}
+      />
+    ),
+  },
+  {
+    name: 'NumberInput', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'disabled', 'readonly', 'error'], expected: INPUT_STATES,
+    render: (state, size) => (
+      <NumberInput
+        value={12}
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        min={0}
+        max={99}
+        disabled={state === 'disabled'}
+        readOnly={state === 'readonly'}
+        error={state === 'error' ? 'Out of range' : undefined}
+        label="Quantity"
       />
     ),
   },
