@@ -248,18 +248,42 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
   // A disabled element drops to its parent's level: it is present but inert.
   // An inset is cut one and a half steps below — between the canvas and chrome,
   // which is where a well belongs.
+  //
+  // ── THE CEILING INVERTS ──────────────────────────────────────────────────
+  // A positive shift at the ceiling has nowhere to go. Rounding used to hide
+  // that: 8 + 0.5 became 8, so a hover on a toast did nothing at all. Now that
+  // the half-step is kept, the shift would run off the ladder — so it inverts
+  // and goes DOWN, which is what `resolveBorder` has always done at the ceiling.
+  // A separator becomes a shadow; a hover becomes a press.
+  // ── CLAMP THE ANCHOR FIRST ───────────────────────────────────────────────
+  // A control anchored on the toast lands at 8 + 1 = 9 — a level that was never
+  // reachable. `resolveBorder` already learned this: "the inversion has to start
+  // from the ceiling, not from a level that was never reachable". Without the
+  // clamp, 9 − 0.5 = 8.5 clamps back to 8 and the state becomes a no-op.
+  const ceiling = Math.min(MAX_LEVEL, anchored);
+  const shifted = ceiling + depth + shift;
   const level = state === 'disabled'
-    ? Math.max(0, anchored - 1)
+    ? Math.max(0, ceiling - 1)
     : request.inset
-    ? Math.max(0, anchored - 1.5)
-    : Math.max(0, Math.min(MAX_LEVEL, anchored + depth + shift));
+    ? Math.max(0, ceiling - 1.5)
+    : shifted > MAX_LEVEL && shift > 0
+    ? // At the ceiling a positive shift has nowhere to go, so it goes DOWN.
+      // A hover at the top of the ladder becomes a press.
+      Math.max(0, MAX_LEVEL - shift)
+    : shifted < 0 && shift < 0
+    ? // And at the floor it goes UP, which is the same rule seen from the
+      // other end. The canvas is the only role that reaches it.
+      Math.min(MAX_LEVEL, 0 - shift)
+    : Math.max(0, Math.min(MAX_LEVEL, shifted));
 
   // ── rim: from the role, suppressed when disabled ────────────────────────
   // An inset takes a defined edge whatever its role: the well has to read as a
   // cut, and a quiet seam would not.
   const rim: 0 | 1 | 2 | 3 = state === 'disabled' ? 0 : request.inset ? 2 : ROLE_RIM[role];
   const concave = state === 'active' || request.inset === true;
-  const rimColors = rim === 0 ? null : getDirectionalRim(Math.round(level), rim, concave);
+  // The rim follows the LEVEL, including its half — a hovered surface's edge
+  // moves with its fill. Rounding here would leave the edge behind.
+  const rimColors = rim === 0 ? null : getDirectionalRim(level, rim, concave);
 
   // ── shadow: only for roles that float ───────────────────────────────────
   const shadowTier = elevation ?? ROLE_SHADOW[role];
@@ -272,7 +296,7 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
     request.interactive ?? !['canvas', 'work', 'well', 'panel'].includes(role);
 
   const style: CSSProperties = {
-    background: rimColors ? rimColors.cssBackground : getLadderVar(Math.round(level)),
+    background: rimColors ? rimColors.cssBackground : getLadderVar(level),
     border: rimColors ? '1px solid transparent' : 'none',
     boxShadow: shadow,
     outline,
@@ -287,9 +311,16 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
   return {
     level,
     // The style-facing value reads the CSS layer, so it follows a theme.
-    background: getLadderVar(Math.round(level)),
+    //
+    // NOT rounded. `HALF` exists — the ladder publishes eight half-steps and
+    // its own comment says they are "used for state changes (hover / active)",
+    // "deliberately below the threshold: a state change should be felt, not
+    // seen". `resolveSurface` rounded the level anyway, so a half-step shift
+    // landed either a FULL quantum away (visible) or exactly on the idle fill
+    // (invisible). It broke the system's first rule in every role.
+    background: getLadderVar(level),
     // The computed value, for tests and the contract.
-    backgroundHex: getLadderColor(Math.round(level)),
+    backgroundHex: getLadderColor(level),
     rim,
     rimColors,
     shadow,

@@ -58,7 +58,16 @@ const resolveVar = (v: string) => {
   const n = Number(m[1]);
   return m[2] ? halfOf(n) : LADDER[n];
 };
-/** The fill the fix would publish: the same level, unrounded. */
+/**
+ * What the engine published BEFORE the fix: the same level, rounded.
+ *
+ * Hard-coded on purpose. The engine no longer produces these values, and a
+ * record has to keep its own copy or it stops being a record.
+ */
+const beforeFill = (role: SurfaceRole, state: 'hover' | 'active', on?: SurfaceRole) =>
+  resolveVar(getLadderVar(Math.round(resolveSurface({ role, state, on }).level)));
+
+/** The fill the engine publishes now: the same level, unrounded. */
 const fixedFill = (role: SurfaceRole, state: 'hover' | 'active', on?: SurfaceRole) =>
   resolveVar(getLadderVar(resolveSurface({ role, state, on }).level));
 
@@ -88,9 +97,9 @@ const rows = CASES.map((c) => {
   return {
     ...c,
     now,
-    hoverNow: withFill(now, '--liminal-surface-hover', resolveVar(resolveSurface({ role: c.role, on: c.on, state: 'hover' }).background)),
+    hoverNow: withFill(now, '--liminal-surface-hover', beforeFill(c.role, 'hover', c.on)),
     hoverFixed: withFill(now, '--liminal-surface-hover', fixedFill(c.role, 'hover', c.on)),
-    activeNow: withFill(now, '--liminal-surface-active', resolveVar(resolveSurface({ role: c.role, on: c.on, state: 'active' }).background)),
+    activeNow: withFill(now, '--liminal-surface-active', beforeFill(c.role, 'active', c.on)),
     activeFixed: withFill(now, '--liminal-surface-active', fixedFill(c.role, 'active', c.on)),
   };
 });
@@ -107,9 +116,9 @@ const col = (title: string, note: string, pick: (r: typeof rows[number]) => stri
 
 const table = rows.map((r) => {
   const idle = resolveVar(resolveSurface({ role: r.role, on: r.on }).background);
-  const hNow = resolveVar(resolveSurface({ role: r.role, on: r.on, state: 'hover' }).background);
+  const hNow = beforeFill(r.role, 'hover', r.on);
   const hFix = fixedFill(r.role, 'hover', r.on);
-  const aNow = resolveVar(resolveSurface({ role: r.role, on: r.on, state: 'active' }).background);
+  const aNow = beforeFill(r.role, 'active', r.on);
   const aFix = fixedFill(r.role, 'active', r.on);
   const f = (v: number) => (v === 0 ? 'invisible' : v >= 1 ? 'VISIBLE' : 'felt');
   return `<tr>
@@ -127,7 +136,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LIMINAL — the perceptual boundary</title>
+<title>LIMINAL — the perceptual boundary, before and after</title>
 <style>
 ${VARS}
 ${LAYERS}
@@ -177,39 +186,44 @@ ${LAYERS}
 </head>
 <body>
 <div class="wrap">
-  <h1>The perceptual boundary</h1>
+  <h1>The perceptual boundary — fixed</h1>
   <div class="sub">
-    LIMINAL's first rule: a change lands <b>on</b> the boundary — felt, not seen. Measured, the engine
-    breaks it in every role. <code>resolveSurface</code> rounds the level to an integer and the ladder's
-    half-step variables go unused, so a half-step shift lands either a <b>full quantum</b> away
+    LIMINAL's first rule: a change lands <b>on</b> the boundary — felt, not seen. The engine broke it
+    in every role: <code>resolveSurface</code> rounded the level to an integer while the ladder's
+    half-step variables went unused, so a half-step shift landed either a <b>full quantum</b> away
     (visible) or exactly on the idle fill (<b>invisible</b>).
+    <br><br>
+    It is fixed. The level is no longer rounded, and at the ceiling — where there is no room above —
+    the shift <b>inverts</b>, exactly as <code>resolveBorder</code> has always done. This page is the
+    record: the <b>before</b> column is what the engine used to publish, hard-coded, and the
+    <b>after</b> column is read from the engine as it is now.
   </div>
 
   <table>
     <thead><tr>
       <th>component</th><th>idle</th>
-      <th>hover — now</th><th>hover — unrounded</th>
-      <th>active — now</th><th>active — unrounded</th>
+      <th>hover — before</th><th>hover — after</th>
+      <th>active — before</th><th>active — after</th>
     </tr></thead>
     <tbody>${table}</tbody>
   </table>
 
-  <div class="bar"><b>hover</b><span>now (1.1–1.2q, visible) against unrounded (0.54–0.62q, felt)</span></div>
+  <div class="bar"><b>hover</b><span>before (1.1–1.2q, visible) against after (0.54–0.62q, felt)</span></div>
   <div class="cols">
-    ${col('now', 'one full quantum above — seen', (r) => r.hoverNow, 'hover')}
-    ${col('unrounded', 'half a step — felt', (r) => r.hoverFixed, 'hover')}
+    ${col('before', 'one full quantum above — seen', (r) => r.hoverNow, 'hover')}
+    ${col('after', 'half a step — felt', (r) => r.hoverFixed, 'hover')}
   </div>
 
-  <div class="bar"><b>active</b><span>now (0.00q, invisible) against unrounded (0.49–0.62q, felt)</span></div>
+  <div class="bar"><b>active</b><span>before (0.00q, invisible) against after (0.49–0.62q, felt)</span></div>
   <div class="cols">
-    ${col('now', 'the idle fill — nothing happens', (r) => r.activeNow, 'active')}
-    ${col('unrounded', 'half a step below — felt', (r) => r.activeFixed, 'active')}
+    ${col('before', 'the idle fill — nothing happened', (r) => r.activeNow, 'active')}
+    ${col('after', 'half a step below — felt', (r) => r.activeFixed, 'active')}
   </div>
 
   <div class="hint">
-    Two cases the half-step alone does not fix, and they are the ceiling: a control anchored on a
-    <code>modal</code> and the <code>toast</code> itself sit at S8, where there is no room above.
-    <code>resolveBorder</code> already inverts at the ceiling; <code>resolveSurface</code> does not.
+    The guard is <code>perceptual-boundary.test.ts</code>: every state, on every role and every host,
+    must land between 0.4q and 1q — felt, not seen — and no state may be a no-op. It also asserts that
+    the engine actually uses the half-steps it publishes.
   </div>
 </div>
 </body>

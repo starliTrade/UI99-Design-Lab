@@ -290,7 +290,7 @@ describe('surface decision engine — controls are relative to their host', () =
     expect(spread, `the lift varies by ${spread.toFixed(2)}q across depths`).toBeLessThanOrEqual(0.2);
   });
 
-  it('clamps at the ceiling rather than running off the ladder', () => {
+  it('never runs off the ladder, even anchored on the ceiling', () => {
     const control = resolveSurface({ role: 'control', on: 'toast' });
     expect(control.level).toBeLessThanOrEqual(LADDER.length - 1);
   });
@@ -332,8 +332,14 @@ describe('the ladder ceiling is derived from the ladder', () => {
     expect(hover.level).toBeGreaterThan(idle.level);
   });
 
-  it('clamps at the ceiling rather than running off the ladder', () => {
-    expect(resolveSurface({ role: 'toast', state: 'hover' }).level).toBe(TOP);
+  it('INVERTS at the ceiling, because there is no room above', () => {
+    // It used to clamp — and clamping plus rounding meant a hover on a toast
+    // did nothing at all (8 + 0.5 → 8.5 → round → 8 → the idle fill). The
+    // border has inverted at the ceiling since it was written; the surface does
+    // now too. A hover at the top of the ladder becomes a press.
+    const hover = resolveSurface({ role: 'toast', state: 'hover' });
+    expect(hover.level).toBe(TOP - 0.5);
+    expect(hover.backgroundHex).not.toBe(resolveSurface({ role: 'toast' }).backgroundHex);
   });
 });
 
