@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — S2 روی S1</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.89);
+    font:14px/1.8 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:34px 20px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:19px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.55);font-size:12.5px;max-width:78ch;text-align:center;margin-bottom:8px}
+  .rule{color:rgba(255,255,255,.72);font-size:12.5px;max-width:78ch;text-align:center;margin-bottom:30px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+
+  /* THE CANVAS IS THE PAGE. Only S1 may sit on it. */
+  .s1{
+    width:100%;max-width:1040px;border-radius:16px;background:var(--liminal-s1);
+    padding:38px 24px;display:flex;gap:34px;justify-content:center;flex-wrap:wrap;
+    border:1px solid var(--liminal-role-chrome-border);
+  }
+  .cell{display:flex;flex-direction:column;gap:12px;align-items:center}
+
+  /* SURFACE TWO, on surface one. Nothing else is allowed here. */
+  .s2{width:196px;height:122px;border-radius:12px;background:var(--liminal-s2)}
+  .s2.border{border:1px solid var(--liminal-role-work-border)}
+  .s2.shadow{box-shadow:var(--liminal-shadow-surface-one)}
+  .s2.rim{
+    border:1px solid transparent;
+    background:
+      linear-gradient(var(--liminal-s2), var(--liminal-s2)) padding-box,
+      linear-gradient(180deg, var(--liminal-s3) 0%, var(--liminal-s2-5) 55%, var(--liminal-s2) 100%) border-box;
+  }
+  .cap{font-size:11px;color:rgba(255,255,255,.45);text-align:center;line-height:1.9}
+  .cap b{color:rgba(255,255,255,.72);font-size:12px}
+</style>
+</head>
+<body>
+  <h1>S2 روی S1</h1>
+  <p class="sub">
+    ساختار: <code>S0 → S1 → S2</code>. روی بوم فقط <b>سطح یک</b> مینشیند، و روی سطح یک فقط
+    <b>سطح دو</b> — مگر در شرایط خاص.
+  </p>
+  <p class="rule">
+    این صفحه همان قاعده است، به‌صورت ساختار: بوم، یک سطح یک رویش، و چهار سطح دو داخل آن.
+  </p>
+
+  <!-- S1 sits on the canvas; S2 sits on S1. -->
+  <div class="s1">
+    <div class="cell">
+      <div class="s2"></div>
+      <div class="cap"><b>فقط لایه</b><br>بدون مرز، بدون سایه، بدون ریم<br><code>S2</code> روی <code>S1</code> — ۱.۱۴q</div>
+    </div>
+    <div class="cell">
+      <div class="s2 border"></div>
+      <div class="cap"><b>مرز</b><br><code>S2.5</code> — نیم‌پله بالای خودش<br>۰.۵۷q از S2 · ۱.۷۱q از S1</div>
+    </div>
+    <div class="cell">
+      <div class="s2 shadow"></div>
+      <div class="cap"><b>سایه</b><br>مدل مشتق، ارتفاع ۱<br><code>3.5px / 10px</code></div>
+    </div>
+    <div class="cell">
+      <div class="s2 rim"></div>
+      <div class="cap"><b>ریم</b><br>گرادیان ۱۸۰° روی لبه<br><code>S3 → S2.5 → S2</code></div>
+    </div>
+  </div>
+</body>
+</html>
