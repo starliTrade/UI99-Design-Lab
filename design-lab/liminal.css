@@ -71,10 +71,14 @@
   --liminal-role-toast-border: #141619;
 
   /* ── the floating shadows, named by role ────────────────────────── */
-  --liminal-shadow-menu: 0 6.5px 56px rgba(1, 2, 3, 0.470), 0 2px 6.5px rgba(1, 2, 3, 0.325);
-  --liminal-shadow-popover: 0 7.0px 59px rgba(1, 2, 3, 0.480), 0 2px 7.0px rgba(1, 2, 3, 0.330);
-  --liminal-shadow-modal: 0 7.5px 62px rgba(1, 2, 3, 0.490), 0 2px 7.5px rgba(1, 2, 3, 0.335);
-  --liminal-shadow-toast: 0 8.0px 66px rgba(1, 2, 3, 0.500), 0 2px 8.0px rgba(1, 2, 3, 0.340);
+  --liminal-shadow-menu: 0 9.5px 34px rgba(1, 2, 3, 0.075), 0 2px 9.5px rgba(1, 2, 3, 0.080);
+  --liminal-shadow-popover: 0 11.0px 40px rgba(1, 2, 3, 0.080), 0 2px 11.0px rgba(1, 2, 3, 0.086);
+  --liminal-shadow-modal: 0 12.5px 46px rgba(1, 2, 3, 0.085), 0 2px 12.5px rgba(1, 2, 3, 0.092);
+  --liminal-shadow-toast: 0 14.0px 52px rgba(1, 2, 3, 0.090), 0 2px 14.0px rgba(1, 2, 3, 0.098);
+  --liminal-shadow-surface-one: 0 3.5px 10px rgba(1, 2, 3, 0.055), 0 2px 3.5px rgba(1, 2, 3, 0.056);
+  --liminal-shadow-surface-two: 0 5.0px 16px rgba(1, 2, 3, 0.060), 0 2px 5.0px rgba(1, 2, 3, 0.062);
+  --liminal-shadow-surface-three: 0 6.5px 22px rgba(1, 2, 3, 0.065), 0 2px 6.5px rgba(1, 2, 3, 0.068);
+  --liminal-shadow-surface-four: 0 8.0px 28px rgba(1, 2, 3, 0.070), 0 2px 8.0px rgba(1, 2, 3, 0.074);
 
   /* ── motion, and the duration a floating surface derives ─────────── */
   --liminal-duration-instant: 100ms;

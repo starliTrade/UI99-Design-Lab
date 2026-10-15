@@ -17,6 +17,7 @@ import {
   mistShadowNearRadius,
 } from '../liminal-mist';
 import { LADDER } from '../liminal-ladder';
+import { shadowModel } from '../liminal-shadow';
 import { resolveBorder, type SurfaceRole } from '../liminal-surface';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -131,10 +132,9 @@ describe('mist — every value follows from the height', () => {
     expect(linear(mistShadowFarAlpha)).toBe(true);
     expect(linear(mistEdgeAlpha)).toBe(true);
     expect(linear(mistBlur)).toBe(true);
-    // The far radius is published as whole pixels, so allow a pixel of
-    // rounding: 40 + h * 3.2 gives 56, 59.2, 62.4, 65.6 -> 56, 59, 62, 66, and
-    // a line fitted to rounded points cannot land within half a pixel of all
-    // of them.
+    // The far radius is published as whole pixels, so allow a pixel of rounding:
+    // a line fitted to rounded points cannot land within half a pixel of all of
+    // them.
     expect(linear((r) => num(published(r)['--liminal-mist-shadow-far']), 1)).toBe(true);
   });
 
@@ -146,7 +146,12 @@ describe('mist — every value follows from the height', () => {
     // `mistCssVars` now reads the helper.
     const h = floatHeight('menu');
     expect(num(vars('menu')['--liminal-mist-shadow-far'])).toBe(Math.round(mistShadowFarRadius('menu')));
-    expect(mistShadowFarRadius('menu')).toBe(40 + h * 3.2);
+    // The formula is the MODEL's, not a copy of it. This assertion used to spell
+    // out `40 + h * 3.2` — the old model, whose 40px constant dominated the radius
+    // so the height barely moved it. The shadow now scales from the height, and
+    // this line reads the model rather than restating it: a test that spells out
+    // the formula it is checking cannot notice the formula changing.
+    expect(mistShadowFarRadius('menu')).toBe(shadowModel(h).far);
     expect(num(vars('menu')['--liminal-mist-shadow-near'])).toBeCloseTo(mistShadowNearRadius('menu'), 1);
   });
 

@@ -17,6 +17,7 @@ import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { LADDER, WELLS, PERCEPTUAL_QUANTUM } from '../src/engine/liminal-ladder';
 import { ROLE_LEVEL, ROLE_RIM, ROLE_SHADOW, FLOAT_SHADOWS, FLOATING_ROLES, resolveBorderHex } from '../src/engine/liminal-surface';
+import { floatShadow } from '../src/engine/liminal-shadow';
 import { LiminalMotionEngine as M } from '../src/engine/liminal-motion-engine';
 import { LiminalLayoutEngine as L } from '../src/engine/liminal-layout-engine';
 import { oklchLightness } from '../src/engine/liminal-color-math';
@@ -59,6 +60,9 @@ w('  /* ── the roles: level, rim tier, shadow ──────────
 w('');
 w('  /* ── the floating shadows, named by role ────────────────────────── */');
 FLOATING_ROLES.forEach((role) => w(`  --liminal-shadow-${role}: ${FLOAT_SHADOWS[role]};`));
+// And the model at every height a settled surface can sit at, so a test page can
+// ask for the shadow of a surface one step above the canvas.
+for (let h = 1; h <= 4; h++) w(`  --liminal-shadow-surface-${['one','two','three','four'][h - 1]}: ${floatShadow(h)};`);
 
 w('');
 w('  /* ── motion, and the duration a floating surface derives ─────────── */');

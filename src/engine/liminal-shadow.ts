@@ -23,18 +23,41 @@
  * Height in, radius and darkness out.
  *
  * A floating surface blocks light over a wide area because it is FAR from what it
- * falls on, and the further it floats the wider and softer the shadow. Nothing
- * here is hand-picked: four numbers, all linear in the height.
+ * falls on, and the further it floats the wider and softer the shadow.
+ *
+ * AND IT NOW SCALES FROM THE HEIGHT, WHICH IT DID NOT. The old far radius was
+ * `40 + h*3.2` — a 40px CONSTANT that was 93% of the value at height 1 and 61% at
+ * height 8. So every floating surface cast essentially the same wide shadow, and
+ * the height — the one quantity this system derives everything else from — moved
+ * it by 18%. A shadow that does not answer to height cannot be at the threshold of
+ * anything. The constant is gone: 10px at height 1, 52px at height 8.
  */
 export function shadowModel(height: number) {
   return {
-    near: 4 + height * 0.5,
-    far: 40 + height * 3.2,
-    nearAlpha: 0.30 + height * 0.005,
-    farAlpha: 0.42 + height * 0.010,
+    near: 2 + height * 1.5,
+    far: 4 + height * 6,
+    nearAlpha: 0.05 + height * 0.006,
+    farAlpha: 0.05 + height * 0.005,
   };
 }
 
+/**
+ * THE PEAK — both layers overlapping just below the surface.
+ *
+ * A shadow is TWO layers, and where they overlap the darkness is not either
+ * alpha: it is `1 - (1-a)(1-b)`. The old model's peak was 0.642 combined, which
+ * composites to #040507 over the work plane — **4.07q**, four times the
+ * threshold. That is why the reader said the shadow was "blatant, jarring,
+ * obvious and separate" while the border and the rim were at the boundary: the
+ * shadow was not at the boundary of anything.
+ *
+ * The alphas are set so the peak lands within a quantum of the threshold at every
+ * height, which is what "felt, not seen" means as a number.
+ */
+export function shadowPeakAlpha(height: number): number {
+  const { nearAlpha, farAlpha } = shadowModel(height);
+  return 1 - (1 - nearAlpha) * (1 - farAlpha);
+}
 /** A floating surface's shadow, as a CSS value. */
 export function floatShadow(height: number): string {
   const { near, far, nearAlpha, farAlpha } = shadowModel(height);
