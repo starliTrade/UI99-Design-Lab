@@ -93,7 +93,7 @@ describe('mist — the surface diffuses light, it does not emit it', () => {
     for (const role of ROLES) {
       const seam = vars(role)['--liminal-mist-seam'];
       expect(seam, `${role} seam is not the engine's edge`).toContain('color-mix');
-      expect(seam, `${role} seam does not come from resolveBorder`).toContain(resolveBorder({ role, kind: 'hairline' }));
+      expect(seam, `${role} seam does not come from resolveBorder`).toContain(resolveBorder({ role, kind: 'separator' }));
     }
   });
 });

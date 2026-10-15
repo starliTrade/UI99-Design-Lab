@@ -32,7 +32,7 @@ export function TableHead({
   const SPACING = LiminalLayoutEngine.SPACING;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   // A row separator: a seam inside the work surface.
-  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'separator' });
 
   const isSortable = typeof onSort === 'function';
 

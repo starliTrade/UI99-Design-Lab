@@ -50,7 +50,7 @@ export function Avatar({
   };
 
   const { px, fs, dotPx } = sizes[size];
-  const rimSideColor = resolveBorder({ role: 'control', kind: 'hairline', on: host });
+  const rimSideColor = resolveBorder({ role: 'control', kind: 'separator', on: host });
   const canvasBorderColor = resolveSurface({ role: 'canvas' }).background;
 
   // Pick color from EXTENDED_SPECTRUM

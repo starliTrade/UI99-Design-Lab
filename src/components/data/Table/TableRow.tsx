@@ -23,7 +23,7 @@ export function TableRow({
   const reducedMotion = useReducedMotion();
 
   // A row separator: a seam inside the work surface.
-  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'separator' });
   const selectedRim = resolveSurface({ role: 'work' }).rimColors;
 
   let rowBg = 'transparent';

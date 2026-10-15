@@ -197,7 +197,7 @@ describe('surface decision engine — the measured depth', () => {
 describe('surface decision engine — the border rule', () => {
   it('makes a hairline a half-step above its surface', () => {
     const surface = resolveSurface({ role: 'work' });
-    const hairline = resolveBorderHex({ role: 'work', kind: 'hairline' });
+    const hairline = resolveBorderHex({ role: 'work', kind: 'separator' });
     const step = oklchLightness(hairline) - oklchLightness(surface.backgroundHex);
     const quanta = step / PERCEPTUAL_QUANTUM;
     expect(quanta, `hairline is ${quanta.toFixed(2)}q above the surface`).toBeLessThan(1);
@@ -223,7 +223,7 @@ describe('surface decision engine — the border rule', () => {
     // that does not exist, and never something off the scale.
     const known = new Set<string>([...LADDER, ...HALF]);
     for (const role of ROLES) {
-      for (const kind of ['hairline', 'edge'] as const) {
+      for (const kind of ['separator', 'edge'] as const) {
         const c = resolveBorderHex({ role: role as SurfaceRole, kind, state: 'hover' });
         expect(known, `${role}/${kind} resolved to ${c}`).toContain(c);
       }
@@ -351,20 +351,20 @@ describe('the ceiling inversion also applies when the level came from a host', (
   const ceiling = LADDER[LADDER.length - 1];
 
   it('a control anchored on the toast still gets a visible hairline', () => {
-    const rim = resolveBorderHex({ role: 'control', kind: 'hairline', on: 'toast' });
+    const rim = resolveBorderHex({ role: 'control', kind: 'separator', on: 'toast' });
     expect(rim).not.toBe(ceiling);
     expect(contrastRatioHex(rim, ceiling)).toBeGreaterThan(1);
   });
 
   it('the inverted rim is DARKER than the surface, not lighter', () => {
-    const rim = resolveBorderHex({ role: 'control', kind: 'hairline', on: 'toast' });
+    const rim = resolveBorderHex({ role: 'control', kind: 'separator', on: 'toast' });
     const steps = LADDER as readonly string[];
     expect(steps.indexOf(rim)).toBeLessThan(steps.indexOf(ceiling));
   });
 
   it('below the ceiling the rim is still a highlight, unchanged', () => {
-    expect(resolveBorderHex({ role: 'control', kind: 'hairline', on: 'work' })).toBe(HALF[3]);
-    expect(resolveBorderHex({ role: 'control', kind: 'hairline', on: 'menu' })).toBe(HALF[6]);
+    expect(resolveBorderHex({ role: 'control', kind: 'separator', on: 'work' })).toBe(HALF[3]);
+    expect(resolveBorderHex({ role: 'control', kind: 'separator', on: 'menu' })).toBe(HALF[6]);
   });
 });
 

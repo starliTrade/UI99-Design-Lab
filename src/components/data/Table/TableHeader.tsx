@@ -15,7 +15,7 @@ export function TableHeader({
   style: customStyle = {},
 }: TableHeaderProps) {
   // A row separator: a seam inside the work surface.
-  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'separator' });
 
   const headerStyle: CSSProperties = {
     borderBottom: `1px solid ${rimSideColor}`,

@@ -43,7 +43,7 @@ export interface InsetWellProps {
  * Uses Inverted Directional Rim (Concave: top darker shadow, bottom specular reflection)
  */
 /** A divider inside a card is a hairline on the panel role. */
-const dividerRim = resolveBorder({ role: 'panel', kind: 'hairline' });
+const dividerRim = resolveBorder({ role: 'panel', kind: 'separator' });
 
 export function InsetWell({
   children,

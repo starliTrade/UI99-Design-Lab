@@ -22,7 +22,7 @@ export function Divider({
 
   // Exact half-step S1.5 (#090A0D = canonical rimSide) for optical continuity
   // A divider is a seam inside the work surface, not a decorative line.
-  const dividerColor = resolveBorder({ role: 'work', kind: 'hairline' });
+  const dividerColor = resolveBorder({ role: 'work', kind: 'separator' });
 
   const spacingValues: Record<'sm' | 'md' | 'lg', number> = {
     sm: SPACING[2], // 8px

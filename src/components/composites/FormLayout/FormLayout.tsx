@@ -200,7 +200,7 @@ export function FormActions({
   style: customStyle = {},
 }: FormActionsProps) {
   const SPACING = LiminalLayoutEngine.SPACING;
-  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' }); // S1.5 border
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'separator' }); // S1.5 border
 
   return (
     <div
@@ -228,7 +228,7 @@ export function FormLayout({
   className = '',
   style: customStyle = {},
 }: FormLayoutProps) {
-  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'separator' });
 
   return (
     <form

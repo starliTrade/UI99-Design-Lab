@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { NEST_MIN, CONTROL_LIFT, resolveInset, resolveSurface, ROLE_LEVEL, ROLE_RIM } from '../liminal-surface';
+import { NEST_MIN, CONTROL_LIFT, resolveInset, resolveSurface, ROLE_LEVEL, ROLE_RIM, resolveBorderLevel } from '../liminal-surface';
 import { LADDER, PERCEPTUAL_QUANTUM, LADDER_STEP } from '../liminal-ladder';
 
 /**
@@ -123,5 +123,56 @@ describe('rim — the tier follows the height above the host', () => {
     }
     expect(ROLE_RIM.well, 'a well is concave, so it catches light at the same level').toBe(1);
     expect(ROLE_LEVEL.well).toBe(ROLE_LEVEL.work);
+  });
+});
+
+/**
+ * TWO JOBS, TWO DISTANCES — and the names say which is which.
+ *
+ * The reader's argument, and the numbers agree: "if we want to keep the logic and
+ * the meaning of a border, we have to choose one full step — because at anything
+ * less, even a border is not a border."
+ *
+ *   separator  0.5 steps = 0.57q   a line between two regions of the SAME surface
+ *   edge       1.0 steps = 1.14q   the boundary of a surface against what it sits on
+ *
+ * Half a step is 1.18x the measured edge threshold — a hint. A whole step is
+ * 2.4x — a border. It was called `hairline`, which named a style rather than a
+ * job, and that is how a surface's boundary ended up drawn at the separator's
+ * strength in several components.
+ */
+describe('the border — a separator is a hint, an edge is a border', () => {
+  const EDGE_THRESHOLD = 0.48 * PERCEPTUAL_QUANTUM;
+  /**
+   * Measured on the LEVEL, not on the hex.
+   *
+   * `resolveBorderHex` is quantised — it is what the display can write — so a test
+   * that reads it finds the edge at 2.098 times the separator instead of 2.0. The
+   * ratio is exact in the system and rounded in the hex, and measuring the level is
+   * measuring the system.
+   */
+  const at = (role: 'work' | 'panel' | 'control', kind: 'separator' | 'edge') =>
+    (resolveBorderLevel({ role, kind }) - ROLE_LEVEL[role]) * (LADDER_STEP / PERCEPTUAL_QUANTUM);
+
+  it('a separator sits at the threshold — you feel the division, you do not read a line', () => {
+    for (const role of ['work', 'panel', 'control'] as const) {
+      const q = at(role, 'separator');
+      expect(q, `${role} separator`).toBeGreaterThan(0.4);
+      expect(q, `${role} separator`).toBeLessThan(0.8);
+    }
+  });
+
+  it('an edge is TWICE the threshold, because a border has to be a border', () => {
+    for (const role of ['work', 'panel', 'control'] as const) {
+      const q = at(role, 'edge');
+      expect(q, `${role} edge`).toBeGreaterThan(1);
+      expect(q / (EDGE_THRESHOLD / PERCEPTUAL_QUANTUM), `${role} edge against the edge threshold`).toBeGreaterThan(2);
+    }
+  });
+
+  it('and the two are exactly a factor of two apart, which is the rule in one line', () => {
+    for (const role of ['work', 'panel', 'control'] as const) {
+      expect(at(role, 'edge') / at(role, 'separator')).toBeCloseTo(2, 1);
+    }
   });
 });

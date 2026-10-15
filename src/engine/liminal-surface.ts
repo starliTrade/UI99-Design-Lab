@@ -440,7 +440,7 @@ export function roleDepthInSteps(role: SurfaceRole): number {
  * (which would make the border invisible), the border inverts and goes one step
  * BELOW: at the ceiling a separator is a shadow, not a highlight.
  */
-export type BorderKind = 'hairline' | 'edge';
+export type BorderKind = 'separator' | 'edge';
 
 interface BorderRequest {
   role: SurfaceRole;
@@ -452,7 +452,7 @@ interface BorderRequest {
 
 /** The ladder level a border lands on, before it is turned into a value. */
 function borderLevel(request: BorderRequest): number {
-  const { role, kind = 'hairline', state = 'idle' } = request;
+  const { role, kind = 'separator', state = 'idle' } = request;
   const anchored = request.on !== undefined ? ROLE_LEVEL[request.on] + CONTROL_LIFT : ROLE_LEVEL[role];
   // Clamp BEFORE deciding whether there is room above. Without this, a control
   // anchored on the toast lands at 8 + 1 = 9, `above` is 9.5, the inversion
@@ -460,7 +460,27 @@ function borderLevel(request: BorderRequest): number {
   // came back as the surface colour and vanished. The inversion has to start
   // from the ceiling, not from a level that was never reachable.
   const base = Math.min(MAX_LEVEL, anchored + STATE_SHIFT[state]);
-  const offset = kind === 'hairline' ? 0.5 : 1;
+  /**
+   * TWO JOBS, TWO DISTANCES — and the names say which is which.
+   *
+   *   separator  0.5 steps = 0.57q   a line between two regions of the SAME
+   *                                  surface. It sits at the threshold: you feel
+   *                                  the division without reading a line.
+   *   edge       1.0 steps = 1.14q   the boundary of a surface against what it
+   *                                  sits on. It is TWICE the threshold, on
+   *                                  purpose.
+   *
+   * AND THE SECOND ONE WAS MEASURED, NOT CHOSEN. The reader's argument: "if we
+   * want to keep the logic and the meaning of a border, we have to choose one full
+   * step — because at anything less, even a border is not a border." The numbers
+   * agree: half a step is 0.57q against an edge threshold of 0.48q — 1.18x, a
+   * HINT. A whole step is 1.14q — 2.4x, a BORDER.
+   *
+   * It was called `hairline`, which named a style rather than a job, and that is
+   * how a surface's boundary ended up drawn at the separator's strength in several
+   * components. The name is the rule now.
+   */
+  const offset = kind === 'separator' ? 0.5 : 1;
   const above = base + offset;
   // At the ceiling there is no room above, so the border inverts and goes below.
   return above > MAX_LEVEL ? Math.max(0, base - offset) : above;
@@ -480,6 +500,22 @@ export function resolveBorder(request: BorderRequest): string {
  */
 export function resolveBorderHex(request: BorderRequest): string {
   return getLadderColor(borderLevel(request));
+}
+
+/**
+ * THE BORDER'S LEVEL — the primitive both outputs come from.
+ *
+ * `resolveBorder` turns it into a `var()` reference and `resolveBorderHex` into a
+ * hex, and those two are no longer the same number: the stylesheet publishes the
+ * ladder exactly (see `LADDER_EXACT`), so a border drawn from the variable is
+ * exact while a border drawn from the hex carries the display's rounding.
+ *
+ * That is why a test measuring `resolveBorderHex` finds the edge at 2.098 times
+ * the separator instead of 2.0 — the ratio is exact in the system and quantised in
+ * the hex. Measuring the LEVEL is measuring the system.
+ */
+export function resolveBorderLevel(request: BorderRequest): number {
+  return borderLevel(request);
 }
 
 /**

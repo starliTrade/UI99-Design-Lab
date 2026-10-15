@@ -33,7 +33,7 @@ describe('tag — the surface is derived and bounded by the ladder', () => {
     for (const host of HOSTS) {
       // The component renders a CSS variable, so the assertion reads the
       // variable — which is the whole point of the change.
-      const expected = resolveBorder({ role: 'control', kind: 'hairline', on: host });
+      const expected = resolveBorder({ role: 'control', kind: 'separator', on: host });
       expect(render({ host, children: 'x' }), `host ${host}`).toContain(`1px solid ${expected}`);
     }
   });
@@ -121,7 +121,7 @@ describe('tag — the standards', () => {
       // The computed value, not the rendered one: what a component renders is
       // a variable now, and a variable has no lightness to measure.
       const surface = resolveSurface({ role: 'control', on: host }).backgroundHex;
-      const rim = resolveBorderHex({ role: 'control', kind: 'hairline', on: host });
+      const rim = resolveBorderHex({ role: 'control', kind: 'separator', on: host });
       const dL = Math.abs(rgbToOklch(hexToRgb(rim)).L - rgbToOklch(hexToRgb(surface)).L);
       expect(dL, `${host}: rim dL ${dL.toFixed(4)}`).toBeLessThan(0.012);
     }

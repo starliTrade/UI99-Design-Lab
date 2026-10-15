@@ -127,7 +127,7 @@ export function CommandPalette({
 
   const headerStyle: CSSProperties = {
     padding: `${SPACING[3]}px`,
-    borderBottom: `1px solid ${resolveBorder({ role: 'modal', kind: 'hairline' })}`,
+    borderBottom: `1px solid ${resolveBorder({ role: 'modal', kind: 'separator' })}`,
   };
 
   const bodyStyle: CSSProperties = {

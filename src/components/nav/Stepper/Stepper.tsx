@@ -69,7 +69,7 @@ export const Stepper = forwardRef<HTMLOListElement, StepperProps>(function Stepp
   // The component declares its own surface, so it can be anchored inside
   // anything — the same rule every control follows.
   const surface = resolveSurface({ role: 'chrome', on: host });
-  const edge = resolveBorder({ role: 'chrome', kind: 'hairline', on: host });
+  const edge = resolveBorder({ role: 'chrome', kind: 'separator', on: host });
 
   const stateOf = (step: StepperStep, index: number): NonNullable<StepperStep['state']> => {
     if (step.state === 'error') return 'error';

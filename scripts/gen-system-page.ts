@@ -38,7 +38,7 @@ const canvas = LADDER[0];
 const TEXT = getTextStyle('primary', 2).color as string;
 const DIM = getTextStyle('secondary', 2).color as string;
 const FAINT = getTextStyle('tertiary', 2).color as string;
-const LINE = resolveBorder({ role: 'work', kind: 'hairline' });
+const LINE = resolveBorder({ role: 'work', kind: 'separator' });
 const CARD = resolveSurface({ role: 'work' }).background;
 
 const sec = (id: string, title: string, lede: string, body: string) => `
@@ -121,16 +121,16 @@ const rim = sec('rim', 'The directional rim', `
 `);
 
 // ── 3. BORDERS ─────────────────────────────────────────────────────────────
-const borderKinds: Array<[string, string]> = [['hairline', 'the thinnest line the system draws — a seam, not a wall'], ['edge', 'a boundary that should be seen — an input, a focused control']];
+const borderKinds: Array<[string, string]> = [['separator', 'a line between two regions of the SAME surface — half a step, at the threshold'], ['edge', 'the boundary of a surface against what it sits on — a whole step, because a border has to be a border']];
 const borderRows = borderKinds.map(([kind, use]) => {
-  const work = resolveBorder({ role: 'work', kind: kind as 'hairline' });
-  const menu = resolveBorder({ role: 'menu', kind: kind as 'hairline' });
+  const work = resolveBorder({ role: 'work', kind: kind as 'separator' });
+  const menu = resolveBorder({ role: 'menu', kind: kind as 'separator' });
   return `
   <tr>
     <td class="mono">${kind}</td>
     <td><span class="sw" style="background:${work}"></span><span class="mono">${work}</span></td>
     <td><span class="sw" style="background:${menu}"></span><span class="mono">${menu}</span></td>
-    <td class="mono">${L.BORDER[kind === 'hairline' ? 'hairline' : 'emphasis']}px</td>
+    <td class="mono">${L.BORDER[kind === 'separator' ? 'hairline' : 'emphasis']}px</td>
     <td class="use">${use}</td>
   </tr>`;
 }).join('');

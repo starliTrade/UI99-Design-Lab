@@ -115,7 +115,7 @@ export const DropdownMenuContent = forwardRef<HTMLDivElement, DropdownMenuConten
       minWidth: `${minWidth}px`,
       borderRadius: `${RADIUS.control}px`,
       padding: `${SPACING[1]}px`,
-      border: rim ? '1px solid transparent' : `1px solid ${resolveBorder({ role: 'menu', kind: 'hairline' })}`,
+      border: rim ? '1px solid transparent' : `1px solid ${resolveBorder({ role: 'menu', kind: 'separator' })}`,
       outline: 'none',
       boxSizing: 'border-box',
       display: 'flex',

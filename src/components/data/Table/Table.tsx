@@ -52,7 +52,7 @@ export function Table({
   const limStyle = resolveSurface({ role: 'work', interactive: false });
 
   // A row separator: a seam inside the work surface.
-  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'separator' });
 
   const containerStyle: CSSProperties = {
     width: '100%',

@@ -33,7 +33,7 @@ describe('badge — the surface is derived from its host', () => {
 
   it('gets a hairline rim from the same host', () => {
     for (const host of HOSTS) {
-      const expected = resolveBorder({ role: 'control', kind: 'hairline', on: host });
+      const expected = resolveBorder({ role: 'control', kind: 'separator', on: host });
       expect(render({ host, children: 'x' }), `host ${host}`).toContain(`1px solid ${expected}`);
     }
   });
@@ -107,7 +107,7 @@ describe('badge — the geometry is on the spacing scale', () => {
 describe('badge — at the ladder ceiling', () => {
   it('still separates from a toast, through the rim', () => {
     const html = render({ host: 'toast', children: 'x' });
-    const rim = resolveBorder({ role: 'control', kind: 'hairline', on: 'toast' });
+    const rim = resolveBorder({ role: 'control', kind: 'separator', on: 'toast' });
     const ceiling = LADDER[LADDER.length - 1];
     expect(rim).not.toBe(ceiling);
     expect(html).toContain(`1px solid ${rim}`);

@@ -21,7 +21,7 @@ export function Footer({
 
   // rimSide half-step S1.5 (#090A0D) for top border (harmonious with Divider)
   // The footer is chrome: its top edge separates it from the work surface.
-  const borderTopColor = resolveBorder({ role: 'chrome', kind: 'hairline' });
+  const borderTopColor = resolveBorder({ role: 'chrome', kind: 'separator' });
 
   const footerStyle: CSSProperties = {
     marginTop: `${SPACING[8]}px`, // 64px

@@ -362,7 +362,7 @@ export function mistCssVars(role: SurfaceRole, options: MistOptions = {}): Recor
     // same resolver now, so its seam cannot drift from the rest of the system —
     // and the `fill` option scales it, because a window's frame is fainter than
     // a mass's edge.
-    '--liminal-mist-seam': `color-mix(in oklab, ${resolveBorder({ role, kind: 'hairline' })} ${Math.round((options.fill ?? 1) * 100)}%, transparent)`,
+    '--liminal-mist-seam': `color-mix(in oklab, ${resolveBorder({ role, kind: 'separator' })} ${Math.round((options.fill ?? 1) * 100)}%, transparent)`,
     // Opt-in diffusion only.
     '--liminal-mist-blur': `${m.blur}px`,
   };

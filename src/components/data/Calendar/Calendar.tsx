@@ -209,7 +209,7 @@ export function Calendar({
     padding: `${SPACING[3]}px`,
     borderRadius: `${RADIUS.card}px`,
     background: resolveSurface({ role: 'control', on: host }).background,
-    border: `1px solid ${resolveBorder({ role: 'control', kind: 'hairline', on: host })}`,
+    border: `1px solid ${resolveBorder({ role: 'control', kind: 'separator', on: host })}`,
     boxShadow: floatShadow(floatHeight('popover')),
     boxSizing: 'border-box',
     userSelect: 'none',

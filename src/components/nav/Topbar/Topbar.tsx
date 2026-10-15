@@ -35,7 +35,7 @@ export function Topbar({
 
   // rimSide half-step S1.5 (#090A0D) for bottom border (harmonious with Divider)
   // The topbar is chrome: its bottom edge separates it from the work surface.
-  const borderBottomColor = resolveBorder({ role: 'chrome', kind: 'hairline' });
+  const borderBottomColor = resolveBorder({ role: 'chrome', kind: 'separator' });
 
   const topbarStyle: CSSProperties = {
     position: sticky ? 'sticky' : 'relative',

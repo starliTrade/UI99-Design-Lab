@@ -73,7 +73,7 @@ export function Badge({
 
   // A badge is a relative surface: it sits one step above its host, at any depth.
   const background = resolveSurface({ role: 'control', on: hostRole }).background;
-  const rim = resolveBorder({ role: 'control', kind: 'hairline', on: hostRole });
+  const rim = resolveBorder({ role: 'control', kind: 'separator', on: hostRole });
   // The label is primary text ON THE BADGE'S OWN SURFACE, so it takes that
   // surface's alpha — the same derivation every other piece of text uses.
   const labelColor = getTextStyle('primary', ROLE_LEVEL[hostRole] + 1).color;

@@ -39,7 +39,7 @@ import { LiminalIcon } from '../../engine/liminal-icon-engine';
 import { resolveBorder } from '../../engine/liminal-surface';
 
 /** A page-level boundary is a hairline on the panel role. */
-const pageRim = resolveBorder({ role: 'panel', kind: 'hairline' });
+const pageRim = resolveBorder({ role: 'panel', kind: 'separator' });
 
 export function DashboardPage() {
   const { navigate } = useNavigation();

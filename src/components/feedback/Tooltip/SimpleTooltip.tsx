@@ -44,7 +44,7 @@ export interface SimpleTooltipProps {
  */
 /** The arrow's edges continue the tooltip's own boundary, so they take the
  *  same derived hairline rather than four hand-tuned alphas. */
-const arrowRim = resolveBorder({ role: 'popover', kind: 'hairline' });
+const arrowRim = resolveBorder({ role: 'popover', kind: 'separator' });
 
 export function SimpleTooltip({
   content,

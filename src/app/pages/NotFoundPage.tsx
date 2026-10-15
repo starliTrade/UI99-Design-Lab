@@ -12,7 +12,7 @@ import { getTextStyle, BRAND_ALPHA } from '../../engine/spec-engine';
 import { resolveBorder } from '../../engine/liminal-surface';
 
 /** A page-level boundary is a hairline on the panel role. */
-const pageRim = resolveBorder({ role: 'panel', kind: 'hairline' });
+const pageRim = resolveBorder({ role: 'panel', kind: 'separator' });
 
 export function NotFoundPage() {
   const { navigate } = useNavigation();

@@ -50,7 +50,7 @@ LADDER.slice(0, -1).forEach((hex, n) => {
   // The half-step is the value the engine's own border resolver lands on, so it
   // is read from there rather than recomputed here.
   void mid;
-  w(`  --liminal-s${n}-5: ${resolveBorderHex({ role: (['canvas','chrome','work','panel','control','menu','popover','modal'][n] as never), kind: 'hairline' })}; /* the hairline above S${n} */`);
+  w(`  --liminal-s${n}-5: ${resolveBorderHex({ role: (['canvas','chrome','work','panel','control','menu','popover','modal'][n] as never), kind: 'separator' })}; /* the hairline above S${n} */`);
   w(`  --liminal-s${n}-5: ${HALF_EXACT[n]}; /* exact */`);
 });
 
@@ -64,7 +64,7 @@ w('  /* ── the roles: level, rim tier, shadow ──────────
   w(`  --liminal-role-${role}-level: ${ROLE_LEVEL[role]};`);
   w(`  --liminal-role-${role}-rim: ${ROLE_RIM[role]};`);
   w(`  --liminal-role-${role}-shadow: ${ROLE_SHADOW[role] === null ? 'none' : ROLE_SHADOW[role]};`);
-  w(`  --liminal-role-${role}-border: ${resolveBorderHex({ role, kind: 'hairline' })};`);
+  w(`  --liminal-role-${role}-border: ${resolveBorderHex({ role, kind: 'separator' })};`);
 });
 
 w('');
