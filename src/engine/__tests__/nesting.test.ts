@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { getDirectionalRim } from '../spec-engine';
+import { getDirectionalRim, getLadderColor, RIM } from '../spec-engine';
+import { shadowPeakAlpha } from '../liminal-shadow';
+import { oklchLightness } from '../liminal-color-math';
 import { NEST_MIN, CONTROL_LIFT, resolveInset, resolveSurface, ROLE_LEVEL, ROLE_RIM, resolveBorderLevel, allowedHost, checkPlacement, resolvedLevel, PLACEMENT_EXEMPTIONS } from '../liminal-surface';
 import { LADDER, PERCEPTUAL_QUANTUM, LADDER_STEP, CANVAS_L, CEILING_IS_HARD } from '../liminal-ladder';
 import type { SurfaceRole } from '../liminal-surface';
@@ -377,5 +379,72 @@ describe('the ceiling is a hard bound', () => {
     const policy = readFileSync(resolve(process.cwd(), 'LIMINAL-POLICY.md'), 'utf8');
     expect(policy, 'the policy does not carry the decision').toContain('سقف همه‌چیز را محدود می‌کند');
     expect(CEILING_IS_HARD, 'the code does not carry the decision').toBe(true);
+  });
+});
+
+/**
+ * AND EVERY TREATMENT'S STRENGTH IS A CONSTANT — LAW 1, ONE LEVEL DOWN.
+ *
+ * The reader's decision: "constant numbers and perceptual distances are our winning
+ * combination." So a treatment's strength does not move with where it is used.
+ *
+ *   separator   0.5 steps   always
+ *   edge        1.0 steps   always
+ *   rim         1.5 steps   always
+ *   shadow      1 quantum   always
+ *
+ * WHICH IS WHY THE TWO REFERENCE FRAMES ARE NOT A DEFECT. A border and a rim are
+ * properties OF A SURFACE — its own edge — so they are measured against the surface and
+ * they are the same everywhere. A shadow is a property of the RELATIONSHIP between a
+ * surface and what it falls on, so it is measured against the host. Each has one ruler,
+ * and the ruler never changes.
+ *
+ * AND THE CONSEQUENCE IS ACCEPTED RATHER THAN FIXED: a border on a panel over the canvas
+ * is 4.56q from the canvas while the same border on a panel over a work plane is 2.28q.
+ * That is the hierarchy showing through, not an error — a panel on the canvas IS a
+ * bigger statement than a panel on a work plane.
+ */
+describe('every treatment has one constant strength', () => {
+  it('the border does not move with the host', () => {
+    for (const role of ['work', 'panel', 'control'] as const) {
+      for (const kind of ['separator', 'edge'] as const) {
+        const level = resolveBorderLevel({ role, kind });
+        const offset = level - ROLE_LEVEL[role];
+        expect(offset, `${role} ${kind}`).toBe(kind === 'separator' ? 0.5 : 1);
+      }
+    }
+  });
+
+  it('the rim does not move with the host', () => {
+    expect(RIM.t).toBe(1.5);
+    expect(RIM.s).toBe(1);
+    expect(RIM.b).toBe(0.5);
+  });
+
+  it('the shadow does not move with the height — only its radius does', () => {
+    // Measured in CONTINUOUS space: rounding the composite to a hex first measures the
+    // display rather than the system, and reports 0.78q where the system says 1.
+    const linear = (c: number) => { const v = c / 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    const Lf = (c: number[]) => {
+      const [R, G, B] = c.map(linear);
+      const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+      const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+      const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+      return 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+    };
+    const rgbAt = (level: number) => [1, 3, 5].map((i) => parseInt(getLadderColor(level).slice(i, i + 2), 16));
+    for (const host of [0, 2, 3]) {
+      const bg = rgbAt(host);
+      const peak = shadowPeakAlpha(bg);
+      const composite = bg.map((b, i) => b + peak * ([1, 2, 3][i] - b));
+      const quanta = Math.abs((Lf(composite) - Lf(bg)) / PERCEPTUAL_QUANTUM);
+      expect(quanta, `on S${host}`).toBeCloseTo(1, 2);
+    }
+  });
+
+  it('and the four constants are four different numbers, one step apart', () => {
+    // A hint, a border, a light — and a shadow, which is not a step but a quantum.
+    expect([0.5, 1, RIM.t]).toEqual([0.5, 1, 1.5]);
+    expect(new Set([0.5, 1, RIM.t]).size).toBe(3);
   });
 });
