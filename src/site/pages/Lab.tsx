@@ -1,24 +1,26 @@
 /**
  * LIMINAL · SITE — THE LAB
  *
- * One component. One surface. Every variant, in every state, on that surface.
+ * One component, one surface, and only what you asked to see.
  *
- * WHY NOT A MATRIX OF EVERYTHING. The first version showed every component on every
- * surface at once, and it was unreadable: six sections of a hundred cells, and the thing
- * being judged — how ONE component behaves on ONE surface — was lost in it. A page whose
- * parts cannot be compared is a page that cannot be reviewed.
+ * WHY NOT EVERYTHING AT ONCE. The first version showed every component on every surface,
+ * and it was unreadable. The second showed every variant against every state, and that
+ * was still too much: a button has six variants and four states, and twenty-four cells
+ * is a wall rather than a comparison. A page whose parts cannot be compared is a page
+ * that cannot be reviewed.
  *
- * So: pick a component, pick the surface it sits on, and see the component's own variants
- * against its own states. Nothing else. The surface is drawn as a real band at the
- * engine's value, so the relationship between the component and what hosts it is visible
- * rather than described.
+ * So everything is a choice: the component, the surface it sits on, which variants, and
+ * which states. Pick two variants and one state and you are looking at exactly the thing
+ * you are judging — which is what an eye test is for.
  *
- * AND THE VALUES ARE PRINTED BESIDE IT. A variant that looks wrong is a variant whose
- * numbers can be read: the fill's level, the border's level, the rim's three stops —
- * every one of them resolved by the engine, so a bug in the engine shows up as a number
- * before it shows up as a colour.
+ * AND IT IS MOBILE FIRST. One column, chips that wrap, and a preview band that is the
+ * star of the page. Every control is a tap target, and nothing scrolls sideways.
+ *
+ * AND EVERY VALUE COMES FROM THE ENGINE — the text roles, the chip fills, the borders,
+ * the preview band. The guard that watches for hand-picked colours caught this page twice
+ * while it was being written, which is the guard working.
  */
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FIXTURES } from '../../components/__matrix__/fixtures';
 import {
   ROLE_LEVEL,
@@ -27,13 +29,14 @@ import {
   resolveSurface,
   type SurfaceRole,
 } from '../../engine/liminal-surface';
-import { LADDER_STEP, PERCEPTUAL_QUANTUM } from '../../engine/liminal-ladder';
+import { LADDER_STEP, PERCEPTUAL_QUANTUM, BRAND_HEX } from '../../engine/liminal-ladder';
 import { SURFACE_TINT, getTextStyle } from '../../engine/spec-engine';
-import { BRAND_HEX } from '../../engine/liminal-ladder';
 import { Heading, Text } from '../../components/atoms/Typography';
-import { Section, S, MONO, surfaceFor } from '../ui';
+import { S, MONO, surfaceFor } from '../ui';
 
-/** The text roles, so this page has no colour of its own. */
+const HOSTS: SurfaceRole[] = ['canvas', 'chrome', 'work', 'panel', 'menu', 'modal'];
+const FORCEABLE: Record<string, string> = { hover: 'hover', focus: 'focus', active: 'active', disabled: 'disabled' };
+
 const T = {
   primary: getTextStyle('primary', 2).color,
   secondary: getTextStyle('secondary', 2).color,
@@ -41,217 +44,250 @@ const T = {
   quaternary: getTextStyle('quaternary', 2).color,
 };
 const CANVAS_HEX = resolveSurface({ role: 'canvas' }).backgroundHex ?? '';
-const BRAND = BRAND_HEX;
-const CELL_LINE = SURFACE_TINT.subtle;
-
-
-
-/** The surfaces a component can sit on, in hierarchy order. */
-const HOSTS: SurfaceRole[] = ['canvas', 'chrome', 'work', 'panel', 'menu', 'modal'];
-
-/** The states the engine can force without a pointer. */
-const FORCEABLE: Record<string, string> = { hover: 'hover', focus: 'focus', active: 'active', disabled: 'disabled' };
+const LINE = SURFACE_TINT.subtle;
+const STEP_Q = (LADDER_STEP / PERCEPTUAL_QUANTUM).toFixed(4);
 
 export function LabPage() {
   const [name, setName] = useState('Button');
   const [host, setHost] = useState<SurfaceRole>('work');
-  const fixture = FIXTURES.find((f) => f.name === name) ?? FIXTURES[0];
-  if (!fixture) return null;
+  const [pickedVariants, setPickedVariants] = useState<string[] | null>(null);
+  const [pickedStates, setPickedStates] = useState<string[] | null>(null);
 
-  const states = fixture.states.length ? fixture.states : ['default'];
-  const variants = fixture.variants?.length ? fixture.variants : [undefined];
+  const fixture = FIXTURES.find((f) => f.name === name) ?? FIXTURES[0];
   const surface = surfaceFor(host);
 
+  const allVariants = useMemo(() => fixture?.variants?.length ? fixture.variants : ['—'], [fixture]);
+  const allStates = useMemo(() => (fixture?.states.length ? fixture.states : ['default']), [fixture]);
+  const variants = pickedVariants ?? allVariants;
+  const states = pickedStates ?? allStates;
+
+  if (!fixture) return null;
+
+  const toggle = (list: string[], set: (v: string[]) => void, all: string[], v: string) => {
+    const next = list.includes(v) ? list.filter((x) => x !== v) : [...list, v];
+    set(next.length ? next : all);
+  };
+
   return (
-    <>
+    <div style={{ maxWidth: 760, margin: '0 auto' }}>
       <Heading level={1}>آزمایشگاه</Heading>
-      <Text tone="secondary" style={{ marginBottom: S[4] }}>
-        یک کامپوننت، یک لایه، و همهٔ واریانت‌هایش در همهٔ حالت‌هایش. هر عدد از موتور.
+      <Text tone="secondary" style={{ marginBottom: S[5] }}>
+        یک کامپوننت، یک لایه، و فقط چیزی که انتخاب می‌کنی.
       </Text>
 
-      {/* ── the two pickers ────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: S[5], marginBottom: S[5] }}>
-        <Picker
-          label="کامپوننت"
-          value={fixture.name}
+      {/* ── ۱. the component ──────────────────────────────────────────── */}
+      <Field label="کامپوننت">
+        <Chips
           options={FIXTURES.map((f) => f.name)}
-          onPick={setName}
+          selected={[name]}
+          onPick={(v) => { setName(v); setPickedVariants(null); setPickedStates(null); }}
+          scroll
         />
-        <Picker
-          label="لایه"
-          value={host}
+      </Field>
+
+      {/* ── ۲. the surface it sits on ─────────────────────────────────── */}
+      <Field label="لایه" note="و روی همان لایه، همه‌چیز از موتور می‌آید">
+        <Chips
           options={HOSTS as unknown as string[]}
+          selected={[host]}
           onPick={(v) => setHost(v as SurfaceRole)}
           render={(v) => `${v} · S${ROLE_LEVEL[v as SurfaceRole]}`}
         />
-      </div>
+      </Field>
 
-      {/* ── the component, on that surface ─────────────────────────────── */}
-      <Section
-        title={`${fixture.name} روی ${host}`}
-        note={`${surface.backgroundHex ?? ''} · ${fixture.kind ?? 'surface'} · ${variants.length} واریانت × ${states.length} حالت`}
+      {/* ── ۳. which variants ─────────────────────────────────────────── */}
+      {allVariants.length > 1 && (
+        <Field label="واریانت‌ها" note="چند تا را می‌خواهی؟">
+          <Chips
+            options={allVariants as string[]}
+            selected={variants as string[]}
+            onPick={(v) => toggle(variants as string[], setPickedVariants as (x: string[]) => void, allVariants as string[], v)}
+          />
+        </Field>
+      )}
+
+      {/* ── ۴. which states ───────────────────────────────────────────── */}
+      {allStates.length > 1 && (
+        <Field label="حالت‌ها" note="چند تا را می‌خواهی؟">
+          <Chips
+            options={allStates}
+            selected={states}
+            onPick={(v) => toggle(states, setPickedStates as (x: string[]) => void, allStates, v)}
+          />
+        </Field>
+      )}
+
+      {/* ── the preview: the star of the page ─────────────────────────── */}
+      <div
+        style={{
+          marginTop: S[5],
+          borderRadius: 16,
+          overflow: 'hidden',
+          border: `1px solid ${resolveBorder({ role: 'panel', kind: 'separator' })}`,
+        }}
       >
-        <div style={{ overflowX: 'auto', paddingBottom: S[2] }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'baseline',
+            padding: `${S[2]}px ${S[4]}px`,
+            background: surfaceFor('panel').background,
+            fontSize: 11.5,
+            fontFamily: MONO,
+            color: T.tertiary,
+          }}
+        >
+          <span>{fixture.name}</span>
+          <span>{host} · S{ROLE_LEVEL[host]} · {surface.backgroundHex}</span>
+        </div>
+
+        {/* the host band — full bleed, so the component sits ON something */}
+        <div style={{ background: surface.background, padding: S[5] }}>
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: `120px repeat(${states.length}, minmax(140px, 1fr))`,
-              gap: 1,
-              background: CELL_LINE,
-              borderRadius: 10,
-              overflow: 'hidden',
-              minWidth: 120 + states.length * 140,
+              gridTemplateColumns: `repeat(${states.length}, minmax(0, 1fr))`,
+              gap: S[4],
             }}
           >
-            {/* the header row */}
-            <Cell head>واریانت</Cell>
             {states.map((state) => (
-              <Cell key={state} head>{state}</Cell>
-            ))}
-
-            {/* one row per variant */}
-            {variants.map((variant) => (
-              <React.Fragment key={variant ?? 'only'}>
-                <Cell head>{variant ?? '—'}</Cell>
-                {states.map((state) => (
-                  <div
-                    key={state}
-                    {...(FORCEABLE[state] ? { 'data-liminal-force': FORCEABLE[state] } : {})}
-                    style={{
-                      background: surface.background,
-                      padding: S[4],
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      minHeight: 92,
-                    }}
-                  >
-                    {fixture.render(state, fixture.sizes[0], variant)}
-                  </div>
-                ))}
-              </React.Fragment>
+              <div key={state} style={{ display: 'flex', flexDirection: 'column', gap: S[2], alignItems: 'center' }}>
+                <div
+                  {...(FORCEABLE[state] ? { 'data-liminal-force': FORCEABLE[state] } : {})}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: S[3],
+                    alignItems: 'center',
+                    width: '100%',
+                  }}
+                >
+                  {variants.map((variant) => (
+                    <div key={variant} style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                      {fixture.render(state, fixture.sizes[0], variant === '—' ? undefined : variant)}
+                    </div>
+                  ))}
+                </div>
+                <div style={{ fontSize: 10.5, fontFamily: MONO, color: T.quaternary }}>{state}</div>
+              </div>
             ))}
           </div>
-        </div>
-      </Section>
 
-      {/* ── and the numbers, so a bug is readable ─────────────────────── */}
-      <Section title="اعدادِ همین لایه" note="از موتور خوانده می‌شوند — نه نوشته">
-        <div style={{ fontFamily: MONO, fontSize: 12, lineHeight: 2.1 }}>
-          <div>میزبان: <b>{host}</b> · سطح S{ROLE_LEVEL[host]} · {surface.backgroundHex}</div>
-          <div>
-            fill کنترل: S{ROLE_LEVEL[host] + 1} · مرز:{' '}
-            S{resolveBorderLevel({ role: 'control', kind: 'edge', on: host })} · جداکننده:{' '}
-            S{resolveBorderLevel({ role: 'control', kind: 'separator', on: host })}
-          </div>
-          <div>
-            فاصلهٔ fill از میزبان: {((LADDER_STEP / PERCEPTUAL_QUANTUM)).toFixed(4)}q · فاصلهٔ مرز از fill:{' '}
-            {((LADDER_STEP / PERCEPTUAL_QUANTUM)).toFixed(4)}q
-          </div>
-          <div style={{ marginTop: S[2], color: T.quaternary }}>
-            {resolveSurface({ role: 'control', on: host }).backgroundHex} ·{' '}
-            {resolveSurface({ role: 'control', on: host }).rimColors ? 'ریم دارد' : 'ریم ندارد'}
-          </div>
-        </div>
-      </Section>
-    </>
-  );
-}
-
-/** A small labelled picker — a row of buttons, not a select, so the options are visible. */
-function Picker({
-  label,
-  value,
-  options,
-  onPick,
-  render,
-}: {
-  label: string;
-  value: string;
-  options: string[];
-  onPick: (v: string) => void;
-  render?: (v: string) => string;
-}) {
-  const [open, setOpen] = useState(false);
-  const idle = resolveSurface({ role: 'control', state: 'idle', on: 'work' });
-  const borderHex = resolveBorder({ role: 'control', kind: 'edge', on: 'work' });
-  return (
-    <div>
-      <div style={{ fontSize: 11, color: T.tertiary, marginBottom: 6, fontFamily: MONO }}>
-        {label}
-      </div>
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        style={{
-          font: 'inherit',
-          fontSize: 13,
-          padding: `${S[1]}px ${S[3]}px`,
-          borderRadius: 9,
-          cursor: 'pointer',
-          background: idle.background,
-          color: T.primary,
-          border: `1px solid ${borderHex}`,
-        }}
-      >
-        {render ? render(value) : value} ▾
-      </button>
-      {open && (
-        <div
-          style={{
-            position: 'absolute',
-            zIndex: 20,
-            marginTop: 6,
-            padding: S[2],
-            borderRadius: 10,
-            background: surfaceFor('menu').background,
-            border: `1px solid ${resolveBorder({ role: 'menu', kind: 'separator' })}`,
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 4,
-            maxWidth: 420,
-          }}
-        >
-          {options.map((o) => (
-            <button
-              key={o}
-              type="button"
-              onClick={() => { onPick(o); setOpen(false); }}
+          {variants.length > 1 && (
+            <div
               style={{
-                font: 'inherit',
-                fontSize: 12,
-                padding: `${S[0]}px ${S[2]}px`,
-                borderRadius: 7,
-                cursor: 'pointer',
-                background: o === value ? BRAND : 'transparent',
-                color: o === value ? CANVAS_HEX : T.secondary,
-                border: 'none',
+                display: 'flex',
+                gap: S[3],
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                marginTop: S[4],
+                fontSize: 10.5,
+                fontFamily: MONO,
+                color: T.quaternary,
               }}
             >
-              {render ? render(o) : o}
-            </button>
-          ))}
+              {variants.map((v) => <span key={v}>{v}</span>)}
+            </div>
+          )}
         </div>
-      )}
+      </div>
+
+      {/* ── and the numbers ───────────────────────────────────────────── */}
+      <div style={{ marginTop: S[5], fontFamily: MONO, fontSize: 12, lineHeight: 2.2, color: T.secondary }}>
+        <Row k="میزبان" v={`S${ROLE_LEVEL[host]} · ${surface.backgroundHex}`} />
+        <Row k="fill باتن" v={`S${ROLE_LEVEL[host] + 1} · +${STEP_Q}q`} />
+        <Row k="مرز (edge)" v={`S${resolveBorderLevel({ role: 'control', kind: 'edge', on: host })} · +${STEP_Q}q از fill`} />
+        <Row k="جداکننده" v={`S${resolveBorderLevel({ role: 'control', kind: 'separator', on: host })}`} />
+        <Row
+          k="ریم"
+          v={resolveSurface({ role: 'control', on: host }).rimColors ? `+۱.۵ / ۱ / ۰.۵ پله` : 'ندارد'}
+        />
+      </div>
     </div>
   );
 }
 
-function Cell({ children, head }: { children: React.ReactNode; head?: boolean }) {
+/** A labelled group of chips. */
+function Field({ label, note, children }: { label: string; note?: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: S[4] }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: S[2], marginBottom: S[2] }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: T.secondary }}>{label}</span>
+        {note && <span style={{ fontSize: 11, color: T.quaternary }}>{note}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/** A wrapping row of chips — tap targets, not a select. */
+function Chips({
+  options,
+  selected,
+  onPick,
+  render,
+  scroll,
+}: {
+  options: string[];
+  selected: string[];
+  onPick: (v: string) => void;
+  render?: (v: string) => string;
+  scroll?: boolean;
+}) {
+  const idle = resolveSurface({ role: 'control', state: 'idle', on: 'work' });
+  const border = resolveBorder({ role: 'control', kind: 'separator', on: 'work' });
   return (
     <div
       style={{
-        background: surfaceFor('panel').background,
-        padding: `${S[1]}px ${S[2]}px`,
-        fontSize: 10.5,
-        fontFamily: MONO,
-        color: T.tertiary,
-        borderBottom: `1px solid ${CELL_LINE}`,
         display: 'flex',
-        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: S[1],
+        ...(scroll ? { maxHeight: 132, overflowY: 'auto' as const } : {}),
       }}
     >
-      {children}
+      {options.map((o) => {
+        const on = selected.includes(o);
+        return (
+          <button
+            key={o}
+            type="button"
+            onClick={() => onPick(o)}
+            style={{
+              font: 'inherit',
+              fontSize: 12.5,
+              padding: `${S[1]}px ${S[3]}px`,
+              borderRadius: 999,
+              cursor: 'pointer',
+              background: on ? BRAND_HEX : idle.background,
+              color: on ? CANVAS_HEX : T.secondary,
+              border: `1px solid ${border}`,
+              fontWeight: on ? 700 : 400,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {render ? render(o) : o}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** One line of the numbers. */
+function Row({ k, v }: { k: string; v: string }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: S[3],
+        padding: `${S[1]}px 0`,
+        borderBottom: `1px solid ${LINE}`,
+      }}
+    >
+      <span style={{ color: T.tertiary }}>{k}</span>
+      <span style={{ textAlign: 'end' }}>{v}</span>
     </div>
   );
 }
