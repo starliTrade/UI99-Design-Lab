@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — بازسازی مرز</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.89);
+    font:14px/1.8 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:30px 20px 64px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:20px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:13px;max-width:86ch;text-align:center;margin-bottom:8px}
+  .note{color:rgba(255,255,255,.42);font-size:12px;max-width:86ch;text-align:center;margin-bottom:26px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+  .q{width:100%;max-width:1140px;border-radius:16px;padding:20px 22px;margin-bottom:18px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:14px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.42);font-size:12px;margin-bottom:16px}
+  /* The host is a full-bleed BAND, never an object. */
+  .band{padding:30px 0;display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;gap:9px;align-items:center}
+  .surf{width:164px;height:104px;border-radius:11px}
+  .cap{font-size:10.5px;color:rgba(255,255,255,.45);text-align:center;line-height:1.8}
+  .cap b{color:rgba(255,255,255,.75);font-size:11.5px}
+  .opt{font:inherit;font-size:12px;padding:8px 14px;border-radius:10px;cursor:pointer;
+    background:transparent;color:rgba(255,255,255,.6);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  button.primary{font:inherit;font-size:13px;font-weight:600;color:var(--liminal-s0);
+    background:var(--liminal-s8);border:none;border-radius:10px;padding:11px 22px;cursor:pointer;margin-top:6px}
+</style>
+</head>
+<body>
+  <h1>بازسازی مرز</h1>
+  <p class="sub">
+    هسته عوض شد — نردبان حالا <b>دقیق</b> است، پس آفست مرز <b>لازم نیست نیم‌پله باشد</b>.
+    پنج آفست، روی سه مرز. کدام «روی مرز ادراک» است؟
+  </p>
+  <p class="note">
+    آفست <code>d</code> یعنی مرز <code>d</code> پله بالای <b>سطح خودش</b> است. پس فاصله‌اش از
+    میزبان <code>۱ + d</code> پله است. هر خانه هر دو را نشان می‌دهد.
+  </p>
+
+  <div class="q">
+    <h2>۱. مرز بین بوم و لایهٔ ۱</h2>
+    <div class="why">میزبان: بوم <code>S0</code> · سطح: <code>S1</code></div>
+    <div class="band" id="bandA" style="background:var(--liminal-s0)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۲. مرز بین لایهٔ ۱ و لایهٔ ۲</h2>
+    <div class="why">میزبان: <code>S1</code> · سطح: <code>S2</code></div>
+    <div class="band" id="bandB" style="background:var(--liminal-s1)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۳. مرز بین لایهٔ ۲ و لایهٔ ۳</h2>
+    <div class="why">میزبان: <code>S2</code> · سطح: <code>S3</code></div>
+    <div class="band" id="bandC" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال — در هر مرز، کدام آفست؟</h2>
+    <div class="why">«روی مرز ادراک» یعنی: لبه حس می‌شود، ولی خط دیده نمی‌شود.</div>
+    <div class="opts" id="qA">
+      <button class="opt" data-q="A" data-v="none">بوم↔۱: بدون مرز</button>
+      <button class="opt" data-q="A" data-v="0.25">بوم↔۱: ۰.۲۵ پله</button>
+      <button class="opt" data-q="A" data-v="0.5">بوم↔۱: ۰.۵ پله (فعلی)</button>
+      <button class="opt" data-q="A" data-v="0.75">بوم↔۱: ۰.۷۵ پله</button>
+      <button class="opt" data-q="A" data-v="1">بوم↔۱: ۱ پله</button>
+    </div>
+    <div class="opts" id="qB" style="margin-top:8px">
+      <button class="opt" data-q="B" data-v="none">۱↔۲: بدون مرز</button>
+      <button class="opt" data-q="B" data-v="0.25">۱↔۲: ۰.۲۵ پله</button>
+      <button class="opt" data-q="B" data-v="0.5">۱↔۲: ۰.۵ پله (فعلی)</button>
+      <button class="opt" data-q="B" data-v="0.75">۱↔۲: ۰.۷۵ پله</button>
+      <button class="opt" data-q="B" data-v="1">۱↔۲: ۱ پله</button>
+    </div>
+    <div class="opts" id="qC" style="margin-top:8px">
+      <button class="opt" data-q="C" data-v="none">۲↔۳: بدون مرز</button>
+      <button class="opt" data-q="C" data-v="0.25">۲↔۳: ۰.۲۵ پله</button>
+      <button class="opt" data-q="C" data-v="0.5">۲↔۳: ۰.۵ پله (فعلی)</button>
+      <button class="opt" data-q="C" data-v="0.75">۲↔۳: ۰.۷۵ پله</button>
+      <button class="opt" data-q="C" data-v="1">۲↔۳: ۱ پله</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>و سؤال دوم — آیا یک آفست برای همهٔ مرزها کافی است؟</h2>
+    <div class="why">یا مرز باید به فاصله‌اش از میزبان هم نگاه کند؟</div>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="one">یک آفست برای همه — ساده و یکنواخت</button>
+      <button class="opt" data-q="2" data-v="by-host">آفست از <b>فاصله تا میزبان</b> بیاید</button>
+      <button class="opt" data-q="2" data-v="by-depth">آفست از <b>عمق</b> بیاید — عمیق‌تر، متفاوت‌تر</button>
+    </div>
+  </div>
+
+  <button class="primary" onclick="copyAnswers()">کپی جواب‌ها</button>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const CANVAS_L = num('--liminal-canvas-l');
+  const STEP = num('--liminal-step');
+  const C = num('--liminal-chroma');
+  const H = num('--liminal-hue');
+  const Q = num('--liminal-q');
+  const S = (n) => `oklch(${(CANVAS_L + n * STEP).toFixed(7)} ${C} ${H})`;
+
+  /** A border at `d` steps above the surface it belongs to. */
+  const borderAt = (level, d) => `oklch(${(CANVAS_L + (level + d) * STEP).toFixed(7)} ${C} ${H})`;
+
+  const OFFSETS = [
+    { d: 0,    label: 'بدون مرز' },
+    { d: 0.25, label: '۰.۲۵ پله' },
+    { d: 0.5,  label: '۰.۵ پله' },
+    { d: 0.75, label: '۰.۷۵ پله' },
+    { d: 1,    label: '۱ پله' },
+  ];
+
+  function fill(bandId, host, level) {
+    const band = document.getElementById(bandId);
+    for (const o of OFFSETS) {
+      const el = document.createElement('div'); el.className = 'cell';
+      const own = o.d / 1.1416;               // the offset in quanta, from its own surface
+      const fromHost = (1 + o.d) / 1.1416;    // and from the host
+      el.innerHTML = `<div class="surf" style="background:${S(level)};${o.d ? `border:1px solid ${borderAt(level, o.d)};` : ''}"></div>
+        <div class="cap"><b>${o.label}</b><br>${o.d ? `${own.toFixed(2)}q از سطح · ${fromHost.toFixed(2)}q از میزبان` : `فقط اختلاف سطح (۱.۱۴q)`}</div>`;
+      band.appendChild(el);
+    }
+  }
+  fill('bandA', 0, 1);
+  fill('bandB', 1, 2);
+  fill('bandC', 2, 3);
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed','true'); answers[q] = b.dataset.v;
+  });
+  function copyAnswers(){
+    const out = { at:new Date().toISOString(), kind:'border-rebuild', answers };
+    navigator.clipboard?.writeText(JSON.stringify(out,null,2));
+    alert('کپی شد:\n' + JSON.stringify(answers));
+  }
+</script>
+</body>
+</html>

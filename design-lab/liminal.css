@@ -116,6 +116,10 @@
 
   /* ── the measured constants ─────────────────────────────────────── */
   --liminal-q: 0.0083;
+  --liminal-canvas-l: 0.128;
+  --liminal-step: 0.009475;
+  --liminal-chroma: 0.0069;
+  --liminal-hue: 258.4;
   --liminal-edge: 0.0040; /* the edge threshold, measured on the display */
   --liminal-nest-min: 0.5; /* 0.5 ladder steps */
 }

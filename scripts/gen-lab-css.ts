@@ -15,7 +15,7 @@
  */
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { LADDER, WELLS, PERCEPTUAL_QUANTUM, LADDER_EXACT, HALF_EXACT } from '../src/engine/liminal-ladder';
+import { LADDER, WELLS, PERCEPTUAL_QUANTUM, LADDER_EXACT, HALF_EXACT, CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from '../src/engine/liminal-ladder';
 import { ROLE_LEVEL, ROLE_RIM, ROLE_SHADOW, FLOAT_SHADOWS, FLOATING_ROLES, resolveBorderHex } from '../src/engine/liminal-surface';
 import { floatShadow } from '../src/engine/liminal-shadow';
 import { LiminalMotionEngine as M } from '../src/engine/liminal-motion-engine';
@@ -83,6 +83,13 @@ FLOATING_ROLES.forEach((role) => w(`  --liminal-float-enter-${role}: ${M.floatEn
 w('');
 w('  /* ── the measured constants ─────────────────────────────────────── */');
 w(`  --liminal-q: ${PERCEPTUAL_QUANTUM};`);
+// The two numbers a page needs to compute an offset that is NOT on the ladder
+// grid — a border at a quarter step, say. The ladder is exact now, so any offset
+// is writable, and a test page has to be able to reach it.
+w(`  --liminal-canvas-l: ${CANVAS_L};`);
+w(`  --liminal-step: ${LADDER_STEP};`);
+w(`  --liminal-chroma: ${LADDER_CHROMA};`);
+w(`  --liminal-hue: ${LADDER_HUE};`);
 w(`  --liminal-edge: 0.0040; /* the edge threshold, measured on the display */`);
 w(`  --liminal-nest-min: ${L.SPACING[1] / 8}; /* 0.5 ladder steps */`);
 w('}');
