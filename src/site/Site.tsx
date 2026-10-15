@@ -33,7 +33,7 @@ import { ComponentPage } from './pages/Component';
 import { BlocksPage } from './pages/Blocks';
 import { ThemesPage } from './pages/Themes';
 import { ColorsPage } from './pages/Colors';
-import { MatrixPage } from './pages/Matrix';
+import { LabPage } from './pages/Lab';
 
 const BP = L.BREAKPOINTS;
 
@@ -54,8 +54,8 @@ function Page({ route, go }: { route: Route; go: (r: Route) => void }) {
       return <ThemesPage />;
     case 'colors':
       return <ColorsPage />;
-    case 'matrix':
-      return <MatrixPage />;
+    case 'lab':
+      return <LabPage />;
     default:
       return <HomePage go={go} />;
   }
