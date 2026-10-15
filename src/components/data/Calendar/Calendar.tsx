@@ -21,7 +21,7 @@ import {
   formatJalali,
 } from '../../../engine/liminal-jalali';
 import { toPersianDigits } from '../../../engine/liminal-persian';
-import { floatShadow, floatHeight } from '../../../engine/liminal-mist';
+import { floatingShadow } from '../../../engine/liminal-surface';
 
 /** A layout decision this component owns, not a system token. */
 const CALENDAR_WIDTH = 320;
@@ -210,7 +210,7 @@ export function Calendar({
     borderRadius: `${RADIUS.card}px`,
     background: resolveSurface({ role: 'control', on: host }).background,
     border: `1px solid ${resolveBorder({ role: 'control', kind: 'separator', on: host })}`,
-    boxShadow: floatShadow(floatHeight('popover')),
+    boxShadow: floatingShadow('popover'),
     boxSizing: 'border-box',
     userSelect: 'none',
     ...customStyle,

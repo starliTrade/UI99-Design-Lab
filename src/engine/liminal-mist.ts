@@ -27,6 +27,20 @@ import { LADDER, PERCEPTUAL_QUANTUM, getLadderVar } from './liminal-ladder';
 import { ROLE_LEVEL, resolveBorder } from './liminal-surface';
 import type { SurfaceRole } from './liminal-surface';
 import { shadowModel } from './liminal-shadow';
+import { oklchToRgb } from './liminal-color-math';
+import { CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from './liminal-ladder';
+
+/**
+ * What a mist surface falls on, as sRGB.
+ *
+ * The shadow's alpha is solved per host, so the mist needs to name one. It is the
+ * work plane: a menu, a popover, a modal and a toast all float over the surface the
+ * work is done on, not over the canvas.
+ */
+const WORK_PLANE = (() => {
+  const { r, g, b } = oklchToRgb({ L: CANVAS_L + 2 * LADDER_STEP, C: LADDER_CHROMA, h: LADDER_HUE });
+  return [r, g, b];
+})();
 
 /** The roles that float above the page, and therefore catch mist. */
 export const FLOATING_MIST_ROLES: SurfaceRole[] = ['menu', 'popover', 'modal', 'toast'];
@@ -182,19 +196,19 @@ export function mistHaloRadius(role: SurfaceRole): number {
 export { shadowModel, floatShadow, REST_SHADOW } from './liminal-shadow';
 
 export function mistShadowNearRadius(role: SurfaceRole): number {
-  return shadowModel(floatHeight(role)).near;
+  return shadowModel(floatHeight(role), WORK_PLANE).near;
 }
 
 export function mistShadowFarRadius(role: SurfaceRole): number {
-  return shadowModel(floatHeight(role)).far;
+  return shadowModel(floatHeight(role), WORK_PLANE).far;
 }
 
 export function mistShadowNearAlpha(role: SurfaceRole): number {
-  return shadowModel(floatHeight(role)).nearAlpha;
+  return shadowModel(floatHeight(role), WORK_PLANE).nearAlpha;
 }
 
 export function mistShadowFarAlpha(role: SurfaceRole): number {
-  return shadowModel(floatHeight(role)).farAlpha;
+  return shadowModel(floatHeight(role), WORK_PLANE).farAlpha;
 }
 
 /**

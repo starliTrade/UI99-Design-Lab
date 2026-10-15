@@ -15,7 +15,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { Divider } from '../Divider';
 import { X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
-import { floatShadow, floatHeight } from '../../../engine/liminal-mist';
+import { floatingShadow } from '../../../engine/liminal-surface';
 
 export interface ModalProps {
   open?: boolean;
@@ -131,7 +131,7 @@ export function Modal({
     background: rim ? rim.cssBackground : getLadderVar(ROLE_LEVEL.panel),
     border: rim ? '1px solid transparent' : 'none',
     borderRadius: `${RADIUS.panel}px`, // 20px
-    boxShadow: floatShadow(floatHeight('modal')), // Authentic dual-layer penumbra
+    boxShadow: floatingShadow('modal'), // Authentic dual-layer penumbra
     padding: `${SPACING[5]}px`, // 24px
     display: 'flex',
     flexDirection: 'column',

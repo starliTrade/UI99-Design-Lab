@@ -154,22 +154,22 @@
     },
     "shadow": {
       "menu": {
-        "$value": "0 9.5px 34px rgba(1, 2, 3, 0.075), 0 2px 9.5px rgba(1, 2, 3, 0.080)",
+        "$value": "0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991)",
         "$type": "boxShadow",
         "$description": "the menu — a floating surface at its own height"
       },
       "popover": {
-        "$value": "0 11.0px 40px rgba(1, 2, 3, 0.080), 0 2px 11.0px rgba(1, 2, 3, 0.086)",
+        "$value": "0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991)",
         "$type": "boxShadow",
         "$description": "the popover — a floating surface at its own height"
       },
       "modal": {
-        "$value": "0 12.5px 46px rgba(1, 2, 3, 0.085), 0 2px 12.5px rgba(1, 2, 3, 0.092)",
+        "$value": "0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991)",
         "$type": "boxShadow",
         "$description": "the modal — a floating surface at its own height"
       },
       "toast": {
-        "$value": "0 14.0px 52px rgba(1, 2, 3, 0.090), 0 2px 14.0px rgba(1, 2, 3, 0.098)",
+        "$value": "0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991)",
         "$type": "boxShadow",
         "$description": "the toast — a floating surface at its own height"
       }

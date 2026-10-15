@@ -18,6 +18,13 @@ import {
 } from '../liminal-mist';
 import { LADDER } from '../liminal-ladder';
 import { shadowModel } from '../liminal-shadow';
+import { oklchToRgb } from '../liminal-color-math';
+import { CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from '../liminal-ladder';
+
+const WORK_PLANE = (() => {
+  const { r, g, b } = oklchToRgb({ L: CANVAS_L + 2 * LADDER_STEP, C: LADDER_CHROMA, h: LADDER_HUE });
+  return [r, g, b];
+})();
 import { resolveBorder, type SurfaceRole } from '../liminal-surface';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -107,9 +114,14 @@ describe('mist — every value follows from the height', () => {
 
     expect(rising(series(mistInnerLight))).toBe(true);
     expect(rising(series(mistShadowFarRadius))).toBe(true);
-    expect(rising(series(mistShadowFarAlpha))).toBe(true);
     expect(rising(series(mistEdgeAlpha))).toBe(true);
     expect(rising(series(mistBlur))).toBe(true);
+    // AND THE SHADOW'S ALPHA IS NOT IN THIS LIST, because it does not rise.
+    // The darkness is one quantum by construction now — SOLVED per host rather than
+    // written down — so what rises with height is the radius. A shadow that got
+    // darker with height would be saying "higher is darker", which is not what
+    // height means; height means further, and further means wider.
+    expect(rising(series(mistShadowFarAlpha)), 'the alphas are constant, not rising').toBe(false);
   });
 
   it('is linear in the height — a formula, not a per-role table', () => {
@@ -129,7 +141,9 @@ describe('mist — every value follows from the height', () => {
 
     expect(linear(mistInnerLight)).toBe(true);
     expect(linear(mistShadowFarRadius)).toBe(true);
-    expect(linear(mistShadowFarAlpha)).toBe(true);
+    // The ALPHAS no longer rise with height: the darkness is one quantum by
+    // construction, solved per host. What rises is the radius.
+    expect(linear(mistShadowFarRadius)).toBe(true);
     expect(linear(mistEdgeAlpha)).toBe(true);
     expect(linear(mistBlur)).toBe(true);
     // The far radius is published as whole pixels, so allow a pixel of rounding:
@@ -151,7 +165,7 @@ describe('mist — every value follows from the height', () => {
     // so the height barely moved it. The shadow now scales from the height, and
     // this line reads the model rather than restating it: a test that spells out
     // the formula it is checking cannot notice the formula changing.
-    expect(mistShadowFarRadius('menu')).toBe(shadowModel(h).far);
+    expect(mistShadowFarRadius('menu')).toBe(shadowModel(h, WORK_PLANE).far);
     expect(num(vars('menu')['--liminal-mist-shadow-near'])).toBeCloseTo(mistShadowNearRadius('menu'), 1);
   });
 

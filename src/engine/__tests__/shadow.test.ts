@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { shadowModel, shadowPeakAlpha, floatShadow, REST_SHADOW, SHADOW_FLOOR } from '../liminal-shadow';
+import { oklchToRgb } from '../liminal-color-math';
+import { CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from '../liminal-ladder';
+
+/** The work plane, as sRGB — what a floating surface falls on. */
+const HOST = (() => {
+  const { r, g, b } = oklchToRgb({ L: CANVAS_L + 2 * LADDER_STEP, C: LADDER_CHROMA, h: LADDER_HUE });
+  return [r, g, b];
+})();
 import { oklchLightness } from '../liminal-color-math';
 import { PERCEPTUAL_QUANTUM, LADDER } from '../liminal-ladder';
 import { FLOAT_SHADOWS, FLOATING_ROLES, ROLE_LEVEL } from '../liminal-surface';
@@ -18,13 +26,20 @@ import { floatHeight, mistShadowNearRadius, mistShadowFarRadius } from '../limin
  * These assertions hold the three things that make that true.
  */
 describe('shadow — one model, and the two jobs it serves', () => {
-  it('grows with height, in both radius and darkness', () => {
-    const low = shadowModel(5);
-    const high = shadowModel(8);
+  it('the RADIUS grows with height, and the DARKNESS does not', () => {
+    /**
+     * The darkness is one quantum by construction now, at every height and on every
+     * host — the alpha is SOLVED for it rather than written down. So what grows with
+     * height is the radius: a surface that floats higher blocks light over a wider
+     * area. A shadow that got darker with height would be saying "higher is darker",
+     * which is not what height means.
+     */
+    const low = shadowModel(5, HOST);
+    const high = shadowModel(8, HOST);
     expect(high.near).toBeGreaterThan(low.near);
     expect(high.far).toBeGreaterThan(low.far);
-    expect(high.nearAlpha).toBeGreaterThan(low.nearAlpha);
-    expect(high.farAlpha).toBeGreaterThan(low.farAlpha);
+    expect(high.peak).toBeCloseTo(low.peak, 6);
+    expect(high.nearAlpha).toBeCloseTo(low.nearAlpha, 6);
   });
 
   /**
@@ -44,9 +59,9 @@ describe('shadow — one model, and the two jobs it serves', () => {
   it('the mist and the named view cannot disagree — one formula, two doors', () => {
     for (const role of FLOATING_ROLES) {
       const height = floatHeight(role);
-      expect(FLOAT_SHADOWS[role], `${role} shadow`).toBe(floatShadow(height));
-      expect(mistShadowNearRadius(role)).toBe(shadowModel(height).near);
-      expect(mistShadowFarRadius(role)).toBe(shadowModel(height).far);
+      expect(FLOAT_SHADOWS[role], `${role} shadow`).toBe(floatShadow(height, HOST));
+      expect(mistShadowNearRadius(role)).toBe(shadowModel(height, HOST).near);
+      expect(mistShadowFarRadius(role)).toBe(shadowModel(height, HOST).far);
     }
   });
 
@@ -62,7 +77,7 @@ describe('shadow — one model, and the two jobs it serves', () => {
     // A knob touches its surface, so its shadow is a contact shadow: tight, dark,
     // directly below. The defect was never that there were two shadows — it was
     // that one record tried to be both.
-    expect(REST_SHADOW).not.toBe(floatShadow(ROLE_LEVEL.control));
+    expect(REST_SHADOW).not.toBe(floatShadow(ROLE_LEVEL.control, HOST));
     // A contact shadow is tight: no radius anywhere near a floating one.
     const radii = [...REST_SHADOW.matchAll(/(\d+)px/g)].map((m) => Number(m[1]));
     expect(Math.max(...radii), 'a contact shadow must stay tight').toBeLessThan(8);
@@ -80,16 +95,25 @@ describe('shadow — one model, and the two jobs it serves', () => {
      *
      * `felt, not seen` is a number, and the number is one quantum.
      */
-    const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-    const over = (a: number, bg: number[]) => bg.map((b, i) => b + a * ([1, 2, 3][i] - b));
-    const hex = (c: number[]) => '#' + c.map((v) => Math.max(0, Math.round(v)).toString(16).padStart(2, '0')).join('');
-    for (const host of [LADDER[0], LADDER[2], LADDER[3]]) {
-      for (let h = 1; h <= 8; h++) {
-        const peak = shadowPeakAlpha(h);
-        const composite = hex(over(peak, rgb(host)));
-        const quanta = Math.abs((oklchLightness(composite) - oklchLightness(host)) / PERCEPTUAL_QUANTUM);
-        expect(quanta, `height ${h} on ${host}: the peak is ${quanta.toFixed(2)}q`).toBeLessThan(1.6);
-      }
+    // The peak is one quantum below whatever it falls on, at EVERY host — because
+    // the alpha is solved per host rather than written down once. Measured in
+    // CONTINUOUS space: rounding the composite to a hex first would measure the
+    // display rather than the system.
+    const linear = (c: number) => { const v = c / 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    const L = (c: number[]) => {
+      const [R, G, B] = c.map(linear);
+      const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+      const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+      const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+      return 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+    };
+    const hostRgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    for (const hostHex of [LADDER[0], LADDER[2], LADDER[3]]) {
+      const host = hostRgb(hostHex);
+      const peak = shadowPeakAlpha(host);
+      const composite = host.map((b, i) => b + peak * ([1, 2, 3][i] - b));
+      const quanta = Math.abs((L(composite) - L(host)) / PERCEPTUAL_QUANTUM);
+      expect(quanta, `on ${hostHex}: the peak is ${quanta.toFixed(3)}q`).toBeCloseTo(1, 2);
     }
   });
 
@@ -98,7 +122,7 @@ describe('shadow — one model, and the two jobs it serves', () => {
     // value at height 1 and 61% at height 8, so every surface cast the same wide
     // shadow. A shadow that does not answer to height cannot be at the threshold
     // of anything.
-    const growth = shadowModel(8).far / shadowModel(1).far;
+    const growth = shadowModel(8, HOST).far / shadowModel(1, HOST).far;
     expect(growth, 'the far radius barely moves with height').toBeGreaterThan(3);
   });
 

@@ -15,7 +15,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { Divider } from '../Divider';
 import { X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
-import { floatShadow, floatHeight } from '../../../engine/liminal-mist';
+import { floatingShadow } from '../../../engine/liminal-surface';
 
 /** A layout decision this component owns, not a system token. */
 const DRAG_HANDLE_WIDTH = 36;
@@ -111,7 +111,7 @@ export function Sheet({
     position: 'fixed',
     background: rim ? rim.cssBackground : getLadderVar(ROLE_LEVEL.well),
     border: rim ? '1px solid transparent' : 'none',
-    boxShadow: floatShadow(floatHeight('modal')),
+    boxShadow: floatingShadow('modal'),
     boxSizing: 'border-box',
     outline: 'none',
     overflowY: 'auto',

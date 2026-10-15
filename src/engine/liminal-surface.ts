@@ -35,10 +35,11 @@
  */
 
 import type { CSSProperties } from 'react';
-import { LADDER, getLadderColor, FOCUS_RING_COLOR, PERCEPTUAL_QUANTUM, getLadderVar } from './liminal-ladder';
+import { LADDER, getLadderColor, FOCUS_RING_COLOR, PERCEPTUAL_QUANTUM, getLadderVar, CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from './liminal-ladder';
 import { oklchLightness } from './liminal-color-math';
 import { getDirectionalRim, type DirectionalRimResult } from './spec-engine';
 import { floatShadow } from './liminal-shadow';
+import { oklchToRgb } from './liminal-color-math';
 import { LiminalMotionEngine } from './liminal-motion-engine';
 
 /** What an element is in the hierarchy. */
@@ -166,8 +167,27 @@ export const FLOATING_ROLES: readonly SurfaceRole[] = ['menu', 'popover', 'modal
  * floating role's own height, so they cannot disagree with what the mist layer
  * draws for the same role.
  */
+/**
+ * THE SHADOW A FLOATING SURFACE CASTS, resolved against the host it falls on.
+ *
+ * The alpha is not a constant: the shadow's own colour is fixed, so one quantum of
+ * darkness needs 0.2477 over the canvas and 0.0890 over the ceiling. A single number
+ * cannot be one quantum on both, and a shadow 2.8x too dark on the ceiling is the
+ * defect the model exists to prevent. So the host is a parameter, and it defaults to
+ * the work plane — what a floating surface almost always falls on.
+ */
+export function floatingShadow(role: SurfaceRole, on: SurfaceRole = 'work'): string {
+  return floatShadow(ROLE_LEVEL[role], ladderRgb(ROLE_LEVEL[on]));
+}
+
+/** A ladder level as sRGB, for the shadow model — which takes numbers, not roles. */
+function ladderRgb(level: number): number[] {
+  const { r, g, b } = oklchToRgb({ L: CANVAS_L + level * LADDER_STEP, C: LADDER_CHROMA, h: LADDER_HUE });
+  return [r, g, b];
+}
+
 export const FLOAT_SHADOWS = Object.fromEntries(
-  FLOATING_ROLES.map((role) => [role, floatShadow(ROLE_LEVEL[role])]),
+  FLOATING_ROLES.map((role) => [role, floatingShadow(role)]),
 ) as Record<(typeof FLOATING_ROLES)[number], string>;
 
 /**
@@ -362,9 +382,10 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
 
   // ── shadow: only for roles that float ───────────────────────────────────
   const shadowTier = elevation ?? ROLE_SHADOW[role];
-  // The shadow comes from the role's own HEIGHT, so a surface cannot be given a
-  // shadow that disagrees with the one the mist layer would draw for it.
-  const shadow = shadowTier ? floatShadow(ROLE_LEVEL[role]) : 'none';
+  // The shadow comes from the role's own HEIGHT and the host it falls on, so a
+  // surface cannot be given a shadow that disagrees with the one the mist layer
+  // would draw for it.
+  const shadow = shadowTier ? floatingShadow(role, request.on ?? 'work') : 'none';
 
   // ── focus ring: visible on keyboard focus, never on pointer focus ───────
   const outline = state === 'focus' ? `2px solid ${FOCUS_RING_COLOR}` : 'none';
