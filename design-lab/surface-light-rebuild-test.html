@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — نور سطح</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.89);
+    font:14px/1.8 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:30px 20px 64px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:20px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:13px;max-width:90ch;text-align:center;margin-bottom:8px}
+  .note{color:rgba(255,255,255,.42);font-size:12px;max-width:90ch;text-align:center;margin-bottom:24px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+  .q{width:100%;max-width:1180px;border-radius:16px;padding:20px 22px;margin-bottom:16px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:14px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.42);font-size:12px;margin-bottom:16px}
+  /* The host is a full-bleed BAND. A surface you judge light ON must not itself look
+     like an object. */
+  .band{padding:34px 0;display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;gap:9px;align-items:center}
+  .surf{width:166px;height:104px;border-radius:11px}
+  .cap{font-size:10.5px;color:rgba(255,255,255,.45);text-align:center;line-height:1.8}
+  .cap b{color:rgba(255,255,255,.75);font-size:11.5px}
+  .opt{font:inherit;font-size:12px;padding:8px 14px;border-radius:10px;cursor:pointer;
+    background:transparent;color:rgba(255,255,255,.6);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  button.primary{font:inherit;font-size:13px;font-weight:600;color:var(--liminal-s0);
+    background:var(--liminal-s8);border:none;border-radius:10px;padding:11px 22px;cursor:pointer;margin-top:6px}
+</style>
+</head>
+<body>
+  <h1>نور سطح</h1>
+  <p class="sub">
+    <b>مه</b> یک گرادیان عمودی روی کل سطح دارد — نور از بالا می‌آید و ته در پایین می‌نشیند.
+    ولی <b>پنل، کارت و کنترل تخت‌اند</b>: هیچ نوری نمی‌گیرند.
+    سؤال: آیا یک لایه‌ی <b>نشسته</b> هم باید همان نور را داشته باشد؟
+  </p>
+  <p class="note">
+    این با <b>ریم</b> فرق دارد: ریم روی <b>لبه</b> است (۱ پیکسل). این روی <b>خودِ سطح</b> است.
+    و هر عدد اینجا از موتور خوانده می‌شود — نردبان <b>دقیق</b> است، پس هر پله‌ی کسری نوشتنی است.
+  </p>
+
+  <div class="q">
+    <h2>۱. نور سطح بین بوم و لایهٔ ۱</h2>
+    <div class="why">میزبان: بوم <code>S0</code> · سطح: <code>S1</code></div>
+    <div class="band" id="bandA" style="background:var(--liminal-s0)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۲. نور سطح بین لایهٔ ۱ و لایهٔ ۲</h2>
+    <div class="why">میزبان: <code>S1</code> · سطح: <code>S2</code></div>
+    <div class="band" id="bandB" style="background:var(--liminal-s1)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۳. نور سطح بین لایهٔ ۲ و لایهٔ ۳</h2>
+    <div class="why">میزبان: <code>S2</code> · سطح: <code>S3</code></div>
+    <div class="band" id="bandC" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۱ — در هر مرز، کدام شدت؟</h2>
+    <div class="why">«نور» یعنی: سطح روشن‌تر به نظر می‌رسد، ولی خودِ گرادیان دیده نمی‌شود.</div>
+    <div class="opts" id="qA">
+      <button class="opt" data-q="A" data-v="none">بوم↔۱: تخت (فعلی)</button>
+      <button class="opt" data-q="A" data-v="0.5">بوم↔۱: دامنه ۰.۵ پله</button>
+      <button class="opt" data-q="A" data-v="1">بوم↔۱: دامنه ۱ پله</button>
+      <button class="opt" data-q="A" data-v="1.5">بوم↔۱: دامنه ۱.۵ پله</button>
+      <button class="opt" data-q="A" data-v="2">بوم↔۱: دامنه ۲ پله</button>
+    </div>
+    <div class="opts" id="qB" style="margin-top:8px">
+      <button class="opt" data-q="B" data-v="none">۱↔۲: تخت (فعلی)</button>
+      <button class="opt" data-q="B" data-v="0.5">۱↔۲: دامنه ۰.۵ پله</button>
+      <button class="opt" data-q="B" data-v="1">۱↔۲: دامنه ۱ پله</button>
+      <button class="opt" data-q="B" data-v="1.5">۱↔۲: دامنه ۱.۵ پله</button>
+      <button class="opt" data-q="B" data-v="2">۱↔۲: دامنه ۲ پله</button>
+    </div>
+    <div class="opts" id="qC" style="margin-top:8px">
+      <button class="opt" data-q="C" data-v="none">۲↔۳: تخت (فعلی)</button>
+      <button class="opt" data-q="C" data-v="0.5">۲↔۳: دامنه ۰.۵ پله</button>
+      <button class="opt" data-q="C" data-v="1">۲↔۳: دامنه ۱ پله</button>
+      <button class="opt" data-q="C" data-v="1.5">۲↔۳: دامنه ۱.۵ پله</button>
+      <button class="opt" data-q="C" data-v="2">۲↔۳: دامنه ۲ پله</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۲ — نور از کجا بیاید؟</h2>
+    <div class="why">یا اصلاً نیاید.</div>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="none">نور سطح لازم نیست — تخت بماند (فعلی)</button>
+      <button class="opt" data-q="2" data-v="one">یک شدت برای همه — مثل مرز و ریم</button>
+      <button class="opt" data-q="2" data-v="by-height">از <b>ارتفاع</b> بیاید — مثل ریم و سایه و حرکت</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۳ — و آیا نور سطح برای لایه‌های ساختاری مجاز است؟</h2>
+    <div class="why">
+      موتور الان برای <b>مه</b> (سطوح شناور) نور دارد و برای بقیه ندارد. ولی این صفحه
+      نور را روی لایه‌های نشسته نشان می‌دهد.
+    </div>
+    <div class="opts" id="q3">
+      <button class="opt" data-q="3" data-v="floating">فقط سطوح شناور (فعلی)</button>
+      <button class="opt" data-q="3" data-v="all">هر لایه — مثل بقیه‌ی حالات</button>
+      <button class="opt" data-q="3" data-v="depth">از یک عمقی به بعد</button>
+    </div>
+  </div>
+
+  <button class="primary" onclick="copyAnswers()">کپی جواب‌ها</button>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const CANVAS_L = num('--liminal-canvas-l'), STEP = num('--liminal-step');
+  const C = num('--liminal-chroma'), H = num('--liminal-hue'), Q = num('--liminal-q');
+  const at = (level) => `oklch(${(CANVAS_L + level * STEP).toFixed(7)} ${C} ${H})`;
+
+  /** A vertical light over the WHOLE surface: the top is lifted, the bottom is the surface. */
+  const lit = (level, span) => span === 0
+    ? S(level)
+    : `linear-gradient(180deg, ${at(level + span)} 0%, ${S(level)} 100%)`;
+
+  const SPANS = [
+    { span: 0,   label: 'تخت' },
+    { span: 0.5, label: 'دامنه ۰.۵' },
+    { span: 1,   label: 'دامنه ۱' },
+    { span: 1.5, label: 'دامنه ۱.۵' },
+    { span: 2,   label: 'دامنه ۲' },
+  ];
+
+  function fill(bandId, host, level) {
+    const band = document.getElementById(bandId);
+    for (const s of SPANS) {
+      const el = document.createElement('div'); el.className = 'cell';
+      const q = (s.span / 1.1416).toFixed(2);
+      el.innerHTML = `<div class="surf" style="background:${lit(level, s.span)}"></div>
+        <div class="cap"><b>${s.label}</b><br>${s.span === 0 ? 'فقط اختلاف سطح (۱.۱۴q)' : `بالا ${q}q بالاتر`}</div>`;
+      band.appendChild(el);
+    }
+  }
+  fill('bandA', 0, 1);
+  fill('bandB', 1, 2);
+  fill('bandC', 2, 3);
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed','true'); answers[q] = b.dataset.v;
+  });
+  function copyAnswers(){
+    const out = { at:new Date().toISOString(), kind:'surface-light-rebuild', answers };
+    navigator.clipboard?.writeText(JSON.stringify(out,null,2));
+    alert('کپی شد:\n' + JSON.stringify(answers));
+  }
+</script>
+</body>
+</html>
