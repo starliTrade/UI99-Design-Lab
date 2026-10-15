@@ -653,3 +653,168 @@ export function resolveInteractionVars(request: InteractionVarsRequest): Interac
     '--liminal-border-focus': borderFocus ?? FOCUS_RING_COLOR,
   };
 }
+
+/**
+ * WHAT STATE A LAYER TAKES — DERIVED, NOT CHOSEN.
+ *
+ * The engine reads three facts and the state follows from them. Two were already
+ * known: the height above the host, and whether a role is in the flow or out of it.
+ * The third is the CONTENT, which is what decides the flow relationship.
+ *
+ * Measured by eye at three depths, with all four states drawn at each, and confirmed:
+ *
+ *   transient content     shadow + rim   it is out of the flow, so it casts one
+ *   a control             border + rim   it must read as an object on its host
+ *   a region on the canvas  border       the fill alone is at the threshold
+ *   a region inside one   nothing        the host is itself a surface
+ *   empty                 nothing        there is nothing to make readable
+ *
+ * AND "PLAIN" IS ALWAYS A VALID ANSWER, not the absence of one. A layer with no
+ * treatment is a layer the fill already separates.
+ *
+ * AND THE BORDER IS THE ONE TREATMENT THE CONTENT DOES NOT DECIDE. It is needed
+ * exactly when the fill difference is at the threshold — which is what sitting one
+ * step above the CANVAS means, and not what sitting one step above a surface means.
+ * So it is derived from the host, not from the content.
+ */
+export type LayerContent = 'empty' | 'region' | 'control' | 'transient';
+
+export interface LayerState {
+  /** Which border the layer takes, if any. */
+  border: 'none' | 'separator' | 'edge';
+  /** Whether it casts a shadow — which is what being out of the flow means. */
+  shadow: boolean;
+  /** Whether it catches light on its raised edge. */
+  rim: boolean;
+}
+
+export function resolveLayerState(request: {
+  /** What sits inside the layer. The one fact the engine cannot read for itself. */
+  content: LayerContent;
+  /** What the layer sits on. Defaults to the canvas — the bottom of the hierarchy. */
+  on?: SurfaceRole;
+}): LayerState {
+  const { content, on = 'canvas' } = request;
+
+  // Out of the flow: it floats above everything, so it casts a shadow and catches
+  // light on its edge.
+  if (content === 'transient') return { border: 'none', shadow: true, rim: true };
+
+  // A control is defined by its relationship to what hosts it: it must read as an
+  // object sitting on a surface, which takes a border and a lit edge.
+  if (content === 'control') return { border: 'edge', shadow: false, rim: true };
+
+  // Nothing to make readable.
+  if (content === 'empty') return { border: 'none', shadow: false, rim: false };
+
+  // A region: the border is needed exactly when the fill difference is at the
+  // threshold, which is one step above the CANVAS. One step above a surface is
+  // enough on its own, because the host is already a surface.
+  const onCanvas = ROLE_LEVEL[on] === ROLE_LEVEL.canvas;
+  return { border: onCanvas ? 'edge' : 'none', shadow: false, rim: false };
+}
+
+/**
+ * LAW 2, ENFORCEABLE — what may sit on what.
+ *
+ *   on the canvas, only layer 1. On layer 1, only layer 2. And so on.
+ *
+ * The rule was written and never checked: `resolveSurface` accepts any combination, so
+ * S2 could be put straight on the canvas and nothing objected. That exact defect was
+ * found in this project's own site once — panels directly on the canvas, the work plane
+ * never built — and it was found by looking, not by a test.
+ *
+ * AND IT IS ONE STEP, NOT "ANYTHING BELOW". A layer sits on the surface directly under
+ * it, so the hierarchy is a chain rather than a set of allowed pairs. That is what
+ * makes the distance constant: every layer is the same distance from the one below,
+ * which is Law 1.
+ *
+ * SPECIAL CONDITIONS ARE NOT DEFINED YET, and the guard says so rather than pretending
+ * otherwise: `exempt` is a named list, and a placement that needs one has to be added
+ * to it deliberately, with a reason, instead of the rule quietly not applying.
+ */
+export function allowedHost(role: SurfaceRole): SurfaceRole | null {
+  const level = ROLE_LEVEL[role];
+  if (level === 0) return null; // the canvas sits on nothing
+  const below = (Object.keys(ROLE_LEVEL) as SurfaceRole[]).filter((r) => ROLE_LEVEL[r] === level - 1);
+  // The well shares the work plane's level, so the level below a panel is ambiguous
+  // between `work` and `well` — and both are correct, because they are the same plane.
+  return below[0] ?? null;
+}
+
+/**
+ * THE PLACEMENTS LAW 2 DOES NOT ALLOW, NAMED — and there is exactly one kind.
+ *
+ * `control` is not a level: it is a RELATIONSHIP. A control is one step above whatever
+ * hosts it, so `control on work` is legal and lands at the panel's level. That is why
+ * the first version of this guard reported it as a violation — the guard was comparing
+ * a role's nominal level instead of its resolved one.
+ *
+ * AND THE ONE REAL CASE IS A CONTROL INSIDE A FLOATING SURFACE. A toast's close button
+ * and a drawer's resize handle are controls on a toast and a modal, and there is no step
+ * above either: 8 + 1 is past the ceiling and clamps back to 8, so the control's surface
+ * IS the surface it sits on. The Toast component works around it by asking for a
+ * transparent idle fill and says so in a comment — "there is no step above it for the
+ * engine to derive".
+ *
+ * That is the SAME open question as the rim at the ceiling: whether the ladder's ceiling
+ * bounds everything, or only the surfaces themselves. It is listed here so the exemption
+ * is deliberate and visible rather than the rule quietly not applying.
+ */
+export const PLACEMENT_EXEMPTIONS: readonly { role: SurfaceRole; on: SurfaceRole; reason: string }[] = [
+  {
+    role: 'control',
+    on: 'toast',
+    reason: 'a control inside a floating surface: there is no step above the ceiling, so it anchors on its host',
+  },
+  {
+    role: 'control',
+    on: 'modal',
+    reason: 'the same: a control inside a floating surface has no step above it to take',
+  },
+];
+
+/** The level a role resolves to, given what it sits on. */
+export function resolvedLevel(role: SurfaceRole, on?: SurfaceRole): number {
+  return on !== undefined ? Math.min(ROLE_LEVEL[on] + CONTROL_LIFT, Math.max(...Object.values(ROLE_LEVEL))) : ROLE_LEVEL[role];
+}
+
+/**
+ * Whether Law 2 allows this placement, or whether it needs a named exemption.
+ *
+ * AND TWO KINDS OF ROLE HAVE TO BE READ DIFFERENTLY, which is a modelling fact the
+ * guard exposed rather than a rule:
+ *
+ *   `control` is a RELATIONSHIP — it is always one step above whatever hosts it, and
+ *   `on` is how it says so. `control on work` is legal and lands at the panel's level.
+ *
+ *   every other role is an ABSOLUTE LEVEL — `work` is S2 wherever it is written — so
+ *   `work on canvas` is the defect itself: the work plane put straight on the canvas,
+ *   skipping chrome, which is exactly what happened in this project's own site.
+ *
+ * The engine applies `CONTROL_LIFT` to any role that names a host, so the API cannot
+ * tell the two apart on its own. This can, and says which one it is reading.
+ */
+export function checkPlacement(request: { role: SurfaceRole; on: SurfaceRole }): { ok: boolean; reason?: string } {
+  const { role, on } = request;
+  if (PLACEMENT_EXEMPTIONS.some((e) => e.role === role && e.on === on)) return { ok: true };
+
+  if (role === 'control') {
+    const gap = resolvedLevel('control', on) - ROLE_LEVEL[on];
+    if (gap === 1) return { ok: true };
+    return {
+      ok: false,
+      reason: `control on ${on} resolves to S${resolvedLevel('control', on)}: the ceiling clamps it onto its host`,
+    };
+  }
+
+  const gap = ROLE_LEVEL[role] - ROLE_LEVEL[on];
+  if (gap === 1) return { ok: true };
+  if (gap <= 0) {
+    return { ok: false, reason: `${role} (S${ROLE_LEVEL[role]}) is not above ${on} (S${ROLE_LEVEL[on]})` };
+  }
+  return {
+    ok: false,
+    reason: `${role} (S${ROLE_LEVEL[role]}) skipped ${gap - 1} layer(s) to sit on ${on} (S${ROLE_LEVEL[on]}): every layer sits on the one below it`,
+  };
+}

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { NEST_MIN, CONTROL_LIFT, resolveInset, resolveSurface, ROLE_LEVEL, ROLE_RIM, resolveBorderLevel } from '../liminal-surface';
+import { NEST_MIN, CONTROL_LIFT, resolveInset, resolveSurface, ROLE_LEVEL, ROLE_RIM, resolveBorderLevel, allowedHost, checkPlacement, resolvedLevel, PLACEMENT_EXEMPTIONS } from '../liminal-surface';
 import { LADDER, PERCEPTUAL_QUANTUM, LADDER_STEP } from '../liminal-ladder';
+import type { SurfaceRole } from '../liminal-surface';
 
 /**
  * THE NESTING RULE, AND WHY IT IS NOT THE SURFACE RULE.
@@ -211,5 +212,118 @@ describe('the border at the ceiling', () => {
     const l = level('toast', 'edge');
     const fromHost = (l - (ROLE_LEVEL.toast - 1)) * (LADDER_STEP / PERCEPTUAL_QUANTUM);
     expect(fromHost, 'the border is the colour of what it borders').toBeGreaterThan(0.5);
+  });
+});
+
+
+/**
+ * LAW 2, ENFORCEABLE — and it was not enforced before.
+ *
+ *   on the canvas, only layer 1. On layer 1, only layer 2. And so on.
+ *
+ * `resolveSurface` accepted any combination, so S2 could be put straight on the canvas
+ * and nothing objected. That exact defect was found in this project's own site once —
+ * panels directly on the canvas, the work plane never built — and it was found by
+ * looking, not by a test.
+ */
+describe('Law 2 — a layer sits on the one below it, and the gap is exactly one', () => {
+  it('every role has exactly one host, and it is the level below', () => {
+    for (const role of Object.keys(ROLE_LEVEL) as SurfaceRole[]) {
+      const host = allowedHost(role);
+      if (ROLE_LEVEL[role] === 0) {
+        expect(host, 'the canvas sits on nothing').toBeNull();
+        continue;
+      }
+      expect(host, `${role} has no host`).not.toBeNull();
+      expect(ROLE_LEVEL[role] - ROLE_LEVEL[host!], `${role} → ${host}`).toBe(1);
+    }
+  });
+
+  it('and a placement that skips a layer is refused, with the gap named', () => {
+    // The exact defect: the work plane on the canvas, skipping chrome.
+    const bad = checkPlacement({ role: 'work', on: 'canvas' });
+    expect(bad.ok).toBe(false);
+    expect(bad.reason, 'the reason names how many layers were skipped').toContain('skipped 1 layer');
+    // And a layer that is not above its host at all.
+    expect(checkPlacement({ role: 'canvas', on: 'work' }).ok).toBe(false);
+  });
+
+  it('a CONTROL is a relationship, not a level — it is one step above its host', () => {
+    // `control on work` is legal and lands at the panel's level. The first version of
+    // this guard compared the role's NOMINAL level and called it a violation.
+    expect(resolvedLevel('control', 'work')).toBe(ROLE_LEVEL.work + 1);
+    expect(checkPlacement({ role: 'control', on: 'work' }).ok).toBe(true);
+    expect(checkPlacement({ role: 'control', on: 'panel' }).ok).toBe(true);
+  });
+
+  it('and the ONE real case is named, with its reason', () => {
+    // A control inside a floating surface has no step above it: 8 + 1 is past the
+    // ceiling and clamps back to 8, so the control's surface IS its host. That is the
+    // same open question as the rim at the ceiling, and it is exempted deliberately
+    // rather than the rule quietly not applying.
+    expect(resolvedLevel('control', 'toast')).toBe(ROLE_LEVEL.toast);
+    for (const e of PLACEMENT_EXEMPTIONS) {
+      expect(e.reason.length, `${e.role} on ${e.on} has no reason`).toBeGreaterThan(20);
+      expect(checkPlacement({ role: e.role, on: e.on }).ok).toBe(true);
+    }
+    expect(PLACEMENT_EXEMPTIONS.length, 'there is more than one kind of exemption').toBe(2);
+  });
+
+  it('and every legal placement is accepted', () => {
+    for (const role of Object.keys(ROLE_LEVEL) as SurfaceRole[]) {
+      const host = allowedHost(role);
+      if (!host) continue;
+      expect(checkPlacement({ role, on: host }).ok, `${role} on ${host}`).toBe(true);
+    }
+  });
+
+  it('the well and the work plane are the same level, so both are a valid host', () => {
+    // A well is cut into the work plane rather than sitting above it, so a panel's
+    // host is ambiguous between them — and both are correct, because they are the
+    // same plane. The guard accepts either.
+    expect(ROLE_LEVEL.well).toBe(ROLE_LEVEL.work);
+    expect(checkPlacement({ role: 'panel', on: 'work' }).ok).toBe(true);
+    expect(checkPlacement({ role: 'panel', on: 'well' }).ok).toBe(true);
+  });
+});
+
+/**
+ * AND THE GUARD HAS TO LOOK AT THE REAL APP, not only at itself.
+ *
+ * A rule that is asserted against its own definitions is a rule that passes by finding
+ * nothing. So this walks every component that declares a host — `on: 'work'` and the
+ * like — and checks the placement against Law 2. It is a small list because most
+ * components do not declare one, which is itself the finding: the composition is not
+ * declared anywhere, so the rule can only check what is written down.
+ */
+describe('Law 2 — against the components that declare a host', () => {
+  it('every declared placement is legal', async () => {
+    const { readFileSync, readdirSync, statSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const walk = (dir: string): string[] => {
+      const out: string[] = [];
+      for (const e of readdirSync(dir)) {
+        if (e === 'node_modules') continue;
+        const full = join(dir, e);
+        if (statSync(full).isDirectory()) out.push(...walk(full));
+        else if (/\.tsx?$/.test(e)) out.push(full);
+      }
+      return out;
+    };
+    const declared: { file: string; role: string; on: string }[] = [];
+    for (const file of walk(join(process.cwd(), 'src/components'))) {
+      const text = readFileSync(file, 'utf8');
+      // `resolveSurface({ role: 'x', on: 'y' })` and the same for resolveBorder.
+      for (const m of text.matchAll(/role:\s*'(\w+)'[^}]*?on:\s*'(\w+)'/g)) {
+        declared.push({ file: file.replace(process.cwd() + '/src/', ''), role: m[1], on: m[2] });
+      }
+    }
+    // The guard has to prove it is looking at something, or it passes by finding none.
+    expect(declared.length, 'no declared placements were found to check').toBeGreaterThan(0);
+    const violations = declared
+      .map((d) => ({ ...d, check: checkPlacement({ role: d.role as SurfaceRole, on: d.on as SurfaceRole }) }))
+      .filter((d) => !d.check.ok)
+      .map((d) => `${d.file}: ${d.role} on ${d.on} — ${d.check.reason}`);
+    expect(violations, 'a placement Law 2 does not allow').toEqual([]);
   });
 });
