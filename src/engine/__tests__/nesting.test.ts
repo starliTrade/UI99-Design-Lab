@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { getDirectionalRim } from '../spec-engine';
 import { NEST_MIN, CONTROL_LIFT, resolveInset, resolveSurface, ROLE_LEVEL, ROLE_RIM, resolveBorderLevel, allowedHost, checkPlacement, resolvedLevel, PLACEMENT_EXEMPTIONS } from '../liminal-surface';
-import { LADDER, PERCEPTUAL_QUANTUM, LADDER_STEP } from '../liminal-ladder';
+import { LADDER, PERCEPTUAL_QUANTUM, LADDER_STEP, CANVAS_L, CEILING_IS_HARD } from '../liminal-ladder';
 import type { SurfaceRole } from '../liminal-surface';
 
 /**
@@ -325,5 +328,54 @@ describe('Law 2 — against the components that declare a host', () => {
       .filter((d) => !d.check.ok)
       .map((d) => `${d.file}: ${d.role} on ${d.on} — ${d.check.reason}`);
     expect(violations, 'a placement Law 2 does not allow').toEqual([]);
+  });
+});
+
+/**
+ * AND THE CEILING IS A HARD BOUND — IT BOUNDS EVERYTHING, NOT ONLY THE SURFACES.
+ *
+ * The reader's decision, for stability: "I consider A more stable and more LIMINAL." So
+ * the design DEGRADES rather than EXPANDS — a rim with nowhere to go turns dark, and a
+ * control with nowhere to go anchors on its host. The alternative was to let values
+ * above S8 exist, which would extend the palette every time something needed to go up —
+ * and the palette is the identity.
+ */
+describe('the ceiling is a hard bound', () => {
+  const MAX = LADDER.length - 1;
+
+  it('no role resolves above it, whatever it sits on', () => {
+    for (const role of Object.keys(ROLE_LEVEL) as SurfaceRole[]) {
+      for (const on of Object.keys(ROLE_LEVEL) as SurfaceRole[]) {
+        expect(resolvedLevel(role, on), `${role} on ${on}`).toBeLessThanOrEqual(MAX);
+      }
+    }
+  });
+
+  it('no border lands above it, at any role', () => {
+    for (const role of Object.keys(ROLE_LEVEL) as SurfaceRole[]) {
+      for (const kind of ['separator', 'edge'] as const) {
+        expect(resolveBorderLevel({ role, kind }), `${role} ${kind}`).toBeLessThanOrEqual(MAX);
+      }
+    }
+  });
+
+  it('and no rim stop lands above it, at any level', () => {
+    // Read from the PAINTED gradient: `top`/`side`/`bot` are hexes, and a hex is the
+    // quantised rendering rather than the value the browser paints.
+    const ceilingL = CANVAS_L + MAX * LADDER_STEP;
+    for (let n = 0; n <= MAX; n++) {
+      const stops = getDirectionalRim(n, true, false)!.cssBackground.match(/oklch\([^)]+\)/g) ?? [];
+      expect(stops.length, `S${n} has three stops`).toBe(3);
+      for (const stop of stops) {
+        const L = Number(stop.match(/oklch\(([\d.]+)/)![1]);
+        expect(L, `S${n}'s rim went above the ceiling`).toBeLessThanOrEqual(ceilingL + 1e-6);
+      }
+    }
+  });
+
+  it('and the decision is written down, in the policy and in the code', () => {
+    const policy = readFileSync(resolve(process.cwd(), 'LIMINAL-POLICY.md'), 'utf8');
+    expect(policy, 'the policy does not carry the decision').toContain('سقف همه‌چیز را محدود می‌کند');
+    expect(CEILING_IS_HARD, 'the code does not carry the decision').toBe(true);
   });
 });

@@ -76,6 +76,29 @@ export const LADDER_HUE = 258.4;
 export const LADDER_SIZE = 9;
 
 /**
+ * THE CEILING IS A HARD BOUND — IT BOUNDS EVERYTHING, NOT ONLY THE SURFACES.
+ *
+ * The reader's decision, and the reason was stability: "I consider A more stable and
+ * more LIMINAL." A rim can legitimately be brighter than any surface, and a control
+ * inside a toast has to be somewhere — so the alternative was to let values above S8
+ * exist. That would have extended the palette every time something needed to go up,
+ * and the palette is the identity.
+ *
+ * SO THE DESIGN DEGRADES RATHER THAN EXPANDS, in two named places:
+ *
+ *   THE TOAST'S RIM   a rim has to be brighter than its surface, and the toast is the
+ *                     brightest surface allowed — so its rim goes DOWN and the edge
+ *                     reads as cut in. Measured: #141619 against a surface of #15171a.
+ *   A CONTROL INSIDE A FLOATING SURFACE   a control sits one step above its host, so a
+ *                     control on a toast is S9, which does not exist. It anchors on its
+ *                     host instead, and the Toast component asks for a transparent fill.
+ *
+ * Both are in `PLACEMENT_EXEMPTIONS` and in the policy, with their reasons, so they are
+ * deliberate and visible rather than the rule quietly not applying.
+ */
+export const CEILING_IS_HARD = true;
+
+/**
  * THE EXACT LADDER — the design, which hex cannot write.
  *
  * The target was ALWAYS a constant: `LADDER_STEP = 0.009475` = 1.1416q, the same

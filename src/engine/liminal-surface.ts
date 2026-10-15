@@ -757,9 +757,14 @@ export function allowedHost(role: SurfaceRole): SurfaceRole | null {
  * transparent idle fill and says so in a comment — "there is no step above it for the
  * engine to derive".
  *
- * That is the SAME open question as the rim at the ceiling: whether the ladder's ceiling
- * bounds everything, or only the surfaces themselves. It is listed here so the exemption
- * is deliberate and visible rather than the rule quietly not applying.
+ * AND THE QUESTION IS SETTLED: THE CEILING IS A HARD BOUND. The reader chose it for
+ * stability — "I consider A more stable and more LIMINAL" — so the design DEGRADES
+ * rather than EXPANDS: a control with nowhere to go anchors on its host, and a rim with
+ * nowhere to go turns dark. The alternative would have extended the palette every time
+ * something needed to go up, and the palette is the identity.
+ *
+ * Listed here so the exemption is deliberate and visible rather than the rule quietly
+ * not applying.
  */
 export const PLACEMENT_EXEMPTIONS: readonly { role: SurfaceRole; on: SurfaceRole; reason: string }[] = [
   {
