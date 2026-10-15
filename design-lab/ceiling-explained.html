@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — سقف چیست و مشکلش کجاست</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.89);
+    font:14px/1.9 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:30px 20px 64px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:21px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.6);font-size:13px;max-width:84ch;text-align:center;margin-bottom:26px}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:11px}
+  .q{width:100%;max-width:1000px;border-radius:16px;padding:22px 24px;margin-bottom:18px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:15px;margin:0 0 6px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.45);font-size:12.5px;margin-bottom:20px;line-height:2}
+
+  /* the ladder, as a column */
+  .ladder{display:flex;flex-direction:column;gap:0;align-items:stretch}
+  .step{display:flex;align-items:center;gap:14px}
+  .band{flex:1;height:34px;border-radius:6px;display:flex;align-items:center;padding:0 12px;
+        font-size:11px;color:rgba(255,255,255,.55)}
+  .lbl{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:rgba(255,255,255,.4);width:120px;flex-shrink:0}
+  .ceiling-line{display:flex;align-items:center;gap:10px;margin:6px 0;color:#e0b070;font-size:12px}
+  .ceiling-line::before,.ceiling-line::after{content:'';flex:1;height:1px;background:rgba(224,176,112,.5)}
+  .above{height:52px;border:1px dashed rgba(224,176,112,.4);border-radius:8px;
+         display:flex;align-items:center;justify-content:center;color:#e0b070;font-size:12px}
+
+  /* the two cases */
+  .case{display:flex;gap:34px;flex-wrap:wrap;justify-content:center;padding:12px 0}
+  .card{display:flex;flex-direction:column;gap:12px;align-items:center;width:250px}
+  .stage{width:250px;height:150px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+         background:var(--liminal-s2)}
+  .toast{width:180px;height:96px;border-radius:10px;position:relative;display:flex;align-items:center;justify-content:center}
+  .cap{font-size:11.5px;color:rgba(255,255,255,.5);text-align:center;line-height:1.9}
+  .cap b{color:rgba(255,255,255,.8)}
+  .bad{color:#e07070} .good{color:#7fd0a0}
+</style>
+</head>
+<body>
+  <h1>سقف چیست، و مشکلش کجاست</h1>
+  <p class="sub">
+    نردبان ۹ پله دارد و <b>روشن‌ترینشان سقف است</b>. هر چیزی که باید <b>بالاتر</b> برود،
+    جایی ندارد. و دو چیز در همین پروژه به آن برخوردند.
+  </p>
+
+  <div class="q">
+    <h2>۱. نردبان، و سقف</h2>
+    <div class="why">هر پله دقیقاً <code>۱.۱۴۱۶q</code> از پلهٔ زیرش فاصله دارد. و بالای <code>S8</code> چیزی نیست.</div>
+    <div class="ladder" id="ladder"></div>
+  </div>
+
+  <div class="q">
+    <h2>۲. مشکل اول — ریم توست</h2>
+    <div class="why">
+      ریم نوری است که یک سطح روی لبه‌اش می‌گیرد، و باید <b>روشن‌تر از خودِ سطح</b> باشد.
+      توست در <code>S8</code> است — <b>روشن‌ترین سطح مجاز</b>. پس ریمش کجا برود؟
+    </div>
+    <div class="case">
+      <div class="card">
+        <div class="stage">
+          <div class="toast" id="toastBad"></div>
+        </div>
+        <div class="cap"><b class="bad">آنچه اتفاق می‌افتد</b><br>
+          ریم <b>پایین</b> می‌رود — لبه تیره‌تر از سطح می‌شود<br>
+          <code>#141619</code> روی سطح <code>#15171a</code></div>
+      </div>
+      <div class="card">
+        <div class="stage">
+          <div class="toast" id="toastGood"></div>
+        </div>
+        <div class="cap"><b class="good">آنچه باید اتفاق بیفتد</b><br>
+          ریم از سقف <b>بالاتر</b> برود — نور است، نه سطح<br>
+          <code>#1a1c20</code> روی سطح <code>#15171a</code></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>۳. مشکل دوم — کنترل داخل یک سطح شناور</h2>
+    <div class="why">
+      یک کنترل همیشه <b>یک پله بالای میزبانش</b> می‌نشیند. کنترل روی توست یعنی
+      <code>S8 + 1 = S9</code> — که <b>وجود ندارد</b>. پس به <code>S8</code> کلمپ می‌شود،
+      یعنی <b>روی خودِ توست</b> — و ناپدید می‌شود.
+    </div>
+    <div class="case">
+      <div class="card">
+        <div class="stage">
+          <div class="toast" id="ctrlBad">
+            <span style="width:26px;height:26px;border-radius:50%;background:var(--liminal-s8);opacity:.35"></span>
+          </div>
+        </div>
+        <div class="cap"><b class="bad">آنچه اتفاق می‌افتد</b><br>
+          کنترل روی سطح توست می‌افتد — <b>ناپدید</b><br>
+          کامپوننت Toast با <code>transparent</code> دورش می‌زند</div>
+      </div>
+      <div class="card">
+        <div class="stage">
+          <div class="toast" id="ctrlGood">
+            <span style="width:26px;height:26px;border-radius:50%;background:#1a1c20;border:1px solid #1e2024"></span>
+          </div>
+        </div>
+        <div class="cap"><b class="good">آنچه باید اتفاق بیفتد</b><br>
+          کنترل یک پله <b>بالای سقف</b> بنشیند<br>
+          و مثل یک شیء خوانده شود</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>۴. و سؤال</h2>
+    <div class="why">
+      سقف نردبان <b>سطوح</b> را محدود می‌کند — روشن‌ترین سطحی که یک لایه می‌تواند باشد.
+      ولی آیا باید <b>نورِ روی سطح</b> و <b>کنترلِ روی سطح</b> را هم محدود کند؟
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="opt" data-v="hard" style="font:inherit;font-size:12px;padding:9px 16px;border-radius:10px;cursor:pointer;background:transparent;color:rgba(255,255,255,.7);border:1px solid var(--liminal-role-panel-border)">سقف همه‌چیز را محدود می‌کند — همین بماند</button>
+      <button class="opt" data-v="soft" style="font:inherit;font-size:12px;padding:9px 16px;border-radius:10px;cursor:pointer;background:transparent;color:rgba(255,255,255,.7);border:1px solid var(--liminal-role-panel-border)">سقف فقط <b>سطوح</b> را محدود می‌کند — نور و کنترل می‌توانند بالاتر بروند</button>
+    </div>
+  </div>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const CANVAS_L = num('--liminal-canvas-l'), STEP = num('--liminal-step');
+  const C = num('--liminal-chroma'), H = num('--liminal-hue');
+  const at = (level) => `oklch(${(CANVAS_L + level * STEP).toFixed(7)} ${C} ${H})`;
+  const ROLE = ['بوم', 'لایه ۱ · chrome', 'لایه ۲ · work', 'لایه ۳ · panel', 'لایه ۴ · control',
+                'menu', 'popover', 'modal', 'toast'];
+
+  // The ladder, drawn from the bottom up.
+  const ladder = document.getElementById('ladder');
+  for (let n = 8; n >= 0; n--) {
+    const row = document.createElement('div'); row.className = 'step';
+    row.innerHTML = `<span class="lbl">S${n} · ${ROLE[n]}</span>
+      <span class="band" style="background:${S(n)}">${n === 8 ? '← سقف' : ''}</span>`;
+    ladder.appendChild(row);
+    if (n === 8) {
+      const above = document.createElement('div'); above.className = 'above';
+      above.textContent = 'بالای سقف — هیچ سطحی مجاز نیست';
+      ladder.appendChild(above);
+      const line = document.createElement('div'); line.className = 'ceiling-line';
+      line.textContent = 'سقف';
+      ladder.appendChild(line);
+    }
+  }
+
+  // Case 1: the toast's rim.
+  document.getElementById('toastBad').style.background =
+    `linear-gradient(${S(8)}, ${S(8)}) padding-box, linear-gradient(180deg, ${at(7.5)} 0%, ${at(7)} 55%, ${at(6.5)} 100%) border-box`;
+  document.getElementById('toastBad').style.border = '1px solid transparent';
+  document.getElementById('toastGood').style.background =
+    `linear-gradient(${S(8)}, ${S(8)}) padding-box, linear-gradient(180deg, ${at(9.5)} 0%, ${at(9)} 55%, ${at(8.5)} 100%) border-box`;
+  document.getElementById('toastGood').style.border = '1px solid transparent';
+
+  // Case 2: a control inside the toast.
+  document.getElementById('ctrlBad').style.background = S(8);
+  document.getElementById('ctrlBad').style.border = `1px solid ${at(8.5)}`;
+  document.getElementById('ctrlGood').style.background = S(8);
+  document.getElementById('ctrlGood').style.border = `1px solid ${at(8.5)}`;
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    answers.choice = b.dataset.v;
+    for (const s of document.querySelectorAll('.opt')) s.style.background = 'transparent';
+    b.style.background = S(8); b.style.color = S(0);
+  });
+</script>
+</body>
+</html>
