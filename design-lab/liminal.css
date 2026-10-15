@@ -6,23 +6,23 @@
  */
 :root {
   /* ── the ladder, and its half-steps ─────────────────────────────── */
-  --liminal-s0: #060709; /* L 0.1281 — the quantised rendering */
+  --liminal-s0-hex: #060709; /* L 0.1281 — the quantised rendering */
   --liminal-s0: oklch(0.1280000 0.0069 258.4); /* the design */
-  --liminal-s1: #07090b; /* L 0.1381 — the quantised rendering */
+  --liminal-s1-hex: #07090b; /* L 0.1381 — the quantised rendering */
   --liminal-s1: oklch(0.1374750 0.0069 258.4); /* the design */
-  --liminal-s2: #090b0d; /* L 0.1482 — the quantised rendering */
+  --liminal-s2-hex: #090b0d; /* L 0.1482 — the quantised rendering */
   --liminal-s2: oklch(0.1469500 0.0069 258.4); /* the design */
-  --liminal-s3: #0b0d0f; /* L 0.1577 — the quantised rendering */
+  --liminal-s3-hex: #0b0d0f; /* L 0.1577 — the quantised rendering */
   --liminal-s3: oklch(0.1564250 0.0069 258.4); /* the design */
-  --liminal-s4: #0d0f12; /* L 0.1676 — the quantised rendering */
+  --liminal-s4-hex: #0d0f12; /* L 0.1676 — the quantised rendering */
   --liminal-s4: oklch(0.1659000 0.0069 258.4); /* the design */
-  --liminal-s5: #0f1114; /* L 0.1768 — the quantised rendering */
+  --liminal-s5-hex: #0f1114; /* L 0.1768 — the quantised rendering */
   --liminal-s5: oklch(0.1753750 0.0069 258.4); /* the design */
-  --liminal-s6: #111316; /* L 0.1859 — the quantised rendering */
+  --liminal-s6-hex: #111316; /* L 0.1859 — the quantised rendering */
   --liminal-s6: oklch(0.1848500 0.0069 258.4); /* the design */
-  --liminal-s7: #131518; /* L 0.1949 — the quantised rendering */
+  --liminal-s7-hex: #131518; /* L 0.1949 — the quantised rendering */
   --liminal-s7: oklch(0.1943250 0.0069 258.4); /* the design */
-  --liminal-s8: #15171a; /* L 0.2038 — the quantised rendering */
+  --liminal-s8-hex: #15171a; /* L 0.2038 — the quantised rendering */
   --liminal-s8: oklch(0.2038000 0.0069 258.4); /* the design */
   --liminal-s0-5: #07080a; /* the hairline above S0 */
   --liminal-s0-5: oklch(0.1327375 0.0069 258.4); /* exact */

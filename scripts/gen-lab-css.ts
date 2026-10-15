@@ -38,7 +38,10 @@ w('  /* ── the ladder, and its half-steps ───────────�
 // page that read only the hex would be testing the display's rounding rather
 // than the system — which is the mistake this whole file exists to prevent.
 LADDER.forEach((hex, n) => {
-  w(`  --liminal-s${n}: ${hex}; /* L ${oklchLightness(hex).toFixed(4)} — the quantised rendering */`);
+  // `-hex` is the quantised rendering, kept SEPARATE so a comparison page can put
+  // the two side by side. `--liminal-sN` is the design, which is what a component
+  // should read.
+  w(`  --liminal-s${n}-hex: ${hex}; /* L ${oklchLightness(hex).toFixed(4)} — the quantised rendering */`);
   w(`  --liminal-s${n}: ${LADDER_EXACT[n]}; /* the design */`);
 });
 LADDER.slice(0, -1).forEach((hex, n) => {
