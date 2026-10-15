@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — S1 روی بوم: مرز، سایه، ریم</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.89);
+    font:14px/1.8 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:34px 20px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:19px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.55);font-size:12.5px;max-width:76ch;text-align:center;margin-bottom:30px}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+
+  /* THE CANVAS IS THE HOST — full bleed, so it does not read as an object. */
+  .canvas{width:100%;max-width:1000px;padding:44px 0;display:flex;gap:52px;justify-content:center;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;gap:14px;align-items:center}
+  /* SURFACE ONE, on the canvas. Nothing else. */
+  .s1{width:210px;height:130px;border-radius:12px;background:var(--liminal-s1)}
+  .s1.border{border:1px solid var(--liminal-role-chrome-border)}
+  .s1.shadow{box-shadow:var(--liminal-shadow-menu)}
+  .s1.rim{
+    border:1px solid transparent;
+    background:
+      linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box,
+      linear-gradient(180deg, var(--liminal-s2) 0%, var(--liminal-s1-5) 55%, var(--liminal-s1) 100%) border-box;
+  }
+  .cap{font-size:11px;color:rgba(255,255,255,.45);text-align:center;line-height:1.9}
+  .cap b{color:rgba(255,255,255,.72);font-size:12px}
+</style>
+</head>
+<body>
+  <h1>S1 روی بوم — سه درمان</h1>
+  <p class="sub">
+    سطح یک (<code>S1</code> · chrome) روی بوم (<code>S0</code>). سه گزینه، هر کدام یک درمان،
+    هیچ چیز دیگر. همه از توکن‌های موتور خوانده می‌شوند.
+  </p>
+
+  <div class="canvas">
+    <div class="cell">
+      <div class="s1 border"></div>
+      <div class="cap"><b>مرز</b><br><code>S1.5</code> — نیم‌پله بالای سطح خودش<br>۰.۵۷q از سطح · ۱.۲۰q از بوم</div>
+    </div>
+    <div class="cell">
+      <div class="s1 shadow"></div>
+      <div class="cap"><b>سایه</b><br>مدل مشتق، در ارتفاع ۱<br><code>4.5px / 43px</code></div>
+    </div>
+    <div class="cell">
+      <div class="s1 rim"></div>
+      <div class="cap"><b>ریم</b><br>گرادیان ۱۸۰° روی لبه<br><code>S2 → S1.5 → S1</code></div>
+    </div>
+  </div>
+</body>
+</html>
