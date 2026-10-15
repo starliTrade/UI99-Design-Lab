@@ -26,7 +26,8 @@ export type Route =
   | { page: 'component'; name: string }
   | { page: 'blocks' }
   | { page: 'themes' }
-  | { page: 'colors' };
+  | { page: 'colors' }
+  | { page: 'matrix' };
 
 export interface DocPage {
   slug: DocSlug;
@@ -54,6 +55,7 @@ export const TOP_NAV: { page: Route['page']; label: string; note: string }[] = [
   { page: 'blocks', label: 'Blocks', note: 'Whole screens' },
   { page: 'themes', label: 'Themes', note: 'Density and motion' },
   { page: 'colors', label: 'Colors', note: 'The ladder and the spectrum' },
+  { page: 'matrix', label: 'Matrix', note: 'Every state, on every surface' },
 ];
 
 /** A stable key for a route, so React can tell two routes apart. */
