@@ -15,6 +15,8 @@ import {
   LADDER_HUE,
   LADDER_SIZE,
   FOCUS_RING_COLOR,
+  LADDER_EXACT,
+  HALF_EXACT,
 } from '../liminal-ladder';
 import { LiminalColorEngine } from '../liminal-color-engine';
 import { LiminalLayoutEngine } from '../liminal-layout-engine';
@@ -424,3 +426,40 @@ function parseColor(color: string): { r: number; g: number; b: number } {
   }
   throw new Error(`parseColor: unsupported color "${color}"`);
 }
+
+
+/**
+ * THE LADDER THE BROWSER PAINTS IS THE LADDER THAT WAS DESIGNED.
+ *
+ * The target was always a constant — 0.009475 of L, the same for every step — and
+ * the realised hex ladder is 1.07q to 1.21q. That spread is not the design; it is
+ * 8-bit sRGB failing to write it, off by up to 0.199q at S4. `oklch()` carries
+ * full precision, so the stylesheet publishes both and the exact value wins.
+ */
+describe('the exact ladder — the design, which hex cannot write', () => {
+  /** The L out of an `oklch(L C H)` string. */
+  const lightness = (s: string) => Number(s.match(/oklch\(([\d.]+)/)![1]);
+
+  it('every step is EXACTLY the same, which the hex ladder is not', () => {
+    const steps = LADDER_EXACT.slice(1).map((s, i) => lightness(s) - lightness(LADDER_EXACT[i]));
+    for (const d of steps) expect(d).toBeCloseTo(LADDER_STEP, 9);
+    expect(lightness(LADDER_EXACT[0])).toBeCloseTo(CANVAS_L, 9);
+    expect(LADDER_STEP / PERCEPTUAL_QUANTUM).toBeCloseTo(1.1416, 3);
+  });
+
+  it('and the hex ladder is measurably off the design — which is why it exists', () => {
+    // If the hexes were exact, the exact ladder would be pointless. This asserts
+    // the error is real, so the second declaration is not decoration.
+    const worst = Math.max(
+      ...LADDER.map((hex, n) => Math.abs(oklchLightness(hex) - lightness(LADDER_EXACT[n])) / PERCEPTUAL_QUANTUM),
+    );
+    expect(worst, 'the hex ladder is further from the design than this').toBeGreaterThan(0.1);
+  });
+
+  it('the half-steps are exact too, because a border lands on one', () => {
+    for (let i = 0; i < HALF_EXACT.length; i++) {
+      expect(lightness(HALF_EXACT[i]) - lightness(HALF_EXACT[0])).toBeCloseTo(i * LADDER_STEP, 7);
+    }
+    expect(HALF_EXACT.length).toBe(8);
+  });
+});

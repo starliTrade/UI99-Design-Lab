@@ -15,7 +15,7 @@
  */
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { LADDER, WELLS, PERCEPTUAL_QUANTUM } from '../src/engine/liminal-ladder';
+import { LADDER, WELLS, PERCEPTUAL_QUANTUM, LADDER_EXACT, HALF_EXACT } from '../src/engine/liminal-ladder';
 import { ROLE_LEVEL, ROLE_RIM, ROLE_SHADOW, FLOAT_SHADOWS, FLOATING_ROLES, resolveBorderHex } from '../src/engine/liminal-surface';
 import { floatShadow } from '../src/engine/liminal-shadow';
 import { LiminalMotionEngine as M } from '../src/engine/liminal-motion-engine';
@@ -34,7 +34,13 @@ w(' */');
 w(':root {');
 
 w('  /* ── the ladder, and its half-steps ─────────────────────────────── */');
-LADDER.forEach((hex, n) => w(`  --liminal-s${n}: ${hex}; /* L ${oklchLightness(hex).toFixed(4)} */`));
+// THE SAME PAIR THE APP PUBLISHES: the quantised hex, then the design. A lab
+// page that read only the hex would be testing the display's rounding rather
+// than the system — which is the mistake this whole file exists to prevent.
+LADDER.forEach((hex, n) => {
+  w(`  --liminal-s${n}: ${hex}; /* L ${oklchLightness(hex).toFixed(4)} — the quantised rendering */`);
+  w(`  --liminal-s${n}: ${LADDER_EXACT[n]}; /* the design */`);
+});
 LADDER.slice(0, -1).forEach((hex, n) => {
   const a = oklchLightness(hex), b = oklchLightness(LADDER[n + 1]);
   const mid = a + (b - a) / 2;
@@ -42,6 +48,7 @@ LADDER.slice(0, -1).forEach((hex, n) => {
   // is read from there rather than recomputed here.
   void mid;
   w(`  --liminal-s${n}-5: ${resolveBorderHex({ role: (['canvas','chrome','work','panel','control','menu','popover','modal'][n] as never), kind: 'hairline' })}; /* the hairline above S${n} */`);
+  w(`  --liminal-s${n}-5: ${HALF_EXACT[n]}; /* exact */`);
 });
 
 w('');

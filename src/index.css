@@ -13,22 +13,39 @@
 
   /* ── 1. TONAL LADDER ─────────────────────────────────────────── */
   --liminal-s0: #060709; /* canvas */
+  --liminal-s0: oklch(0.1280000 0.0069 258.4);
   --liminal-s1: #07090b;
+  --liminal-s1: oklch(0.1374750 0.0069 258.4);
   --liminal-s2: #090b0d;
+  --liminal-s2: oklch(0.1469500 0.0069 258.4);
   --liminal-s3: #0b0d0f;
+  --liminal-s3: oklch(0.1564250 0.0069 258.4);
   --liminal-s4: #0d0f12;
+  --liminal-s4: oklch(0.1659000 0.0069 258.4);
   --liminal-s5: #0f1114;
+  --liminal-s5: oklch(0.1753750 0.0069 258.4);
   --liminal-s6: #111316;
+  --liminal-s6: oklch(0.1848500 0.0069 258.4);
   --liminal-s7: #131518;
+  --liminal-s7: oklch(0.1943250 0.0069 258.4);
   --liminal-s8: #15171a;
+  --liminal-s8: oklch(0.2038000 0.0069 258.4);
   --liminal-s0-5: #07080a;
+  --liminal-s0-5: oklch(0.1327375 0.0069 258.4);
   --liminal-s1-5: #080a0c;
+  --liminal-s1-5: oklch(0.1422125 0.0069 258.4);
   --liminal-s2-5: #0a0c0e;
+  --liminal-s2-5: oklch(0.1516875 0.0069 258.4);
   --liminal-s3-5: #0c0e10;
+  --liminal-s3-5: oklch(0.1611625 0.0069 258.4);
   --liminal-s4-5: #0e1013;
+  --liminal-s4-5: oklch(0.1706375 0.0069 258.4);
   --liminal-s5-5: #101215;
+  --liminal-s5-5: oklch(0.1801125 0.0069 258.4);
   --liminal-s6-5: #121417;
+  --liminal-s6-5: oklch(0.1895875 0.0069 258.4);
   --liminal-s7-5: #141619;
+  --liminal-s7-5: oklch(0.1990625 0.0069 258.4);
   --liminal-s-minus-1: #030406; /* penumbra */
   --liminal-s-minus-2: #010203; /* contact umbra */
 
@@ -200,22 +217,39 @@
 
   /* ── 1. TONAL LADDER ─────────────────────────────────────────── */
   --liminal-s0: #060709; /* canvas */
+  --liminal-s0: oklch(0.1280000 0.0069 258.4);
   --liminal-s1: #07090b;
+  --liminal-s1: oklch(0.1374750 0.0069 258.4);
   --liminal-s2: #090b0d;
+  --liminal-s2: oklch(0.1469500 0.0069 258.4);
   --liminal-s3: #0b0d0f;
+  --liminal-s3: oklch(0.1564250 0.0069 258.4);
   --liminal-s4: #0d0f12;
+  --liminal-s4: oklch(0.1659000 0.0069 258.4);
   --liminal-s5: #0f1114;
+  --liminal-s5: oklch(0.1753750 0.0069 258.4);
   --liminal-s6: #111316;
+  --liminal-s6: oklch(0.1848500 0.0069 258.4);
   --liminal-s7: #131518;
+  --liminal-s7: oklch(0.1943250 0.0069 258.4);
   --liminal-s8: #15171a;
+  --liminal-s8: oklch(0.2038000 0.0069 258.4);
   --liminal-s0-5: #07080a;
+  --liminal-s0-5: oklch(0.1327375 0.0069 258.4);
   --liminal-s1-5: #080a0c;
+  --liminal-s1-5: oklch(0.1422125 0.0069 258.4);
   --liminal-s2-5: #0a0c0e;
+  --liminal-s2-5: oklch(0.1516875 0.0069 258.4);
   --liminal-s3-5: #0c0e10;
+  --liminal-s3-5: oklch(0.1611625 0.0069 258.4);
   --liminal-s4-5: #0e1013;
+  --liminal-s4-5: oklch(0.1706375 0.0069 258.4);
   --liminal-s5-5: #101215;
+  --liminal-s5-5: oklch(0.1801125 0.0069 258.4);
   --liminal-s6-5: #121417;
+  --liminal-s6-5: oklch(0.1895875 0.0069 258.4);
   --liminal-s7-5: #141619;
+  --liminal-s7-5: oklch(0.1990625 0.0069 258.4);
   --liminal-s-minus-1: #030406; /* penumbra */
   --liminal-s-minus-2: #010203; /* contact umbra */
 

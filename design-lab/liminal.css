@@ -6,23 +6,40 @@
  */
 :root {
   /* ── the ladder, and its half-steps ─────────────────────────────── */
-  --liminal-s0: #060709; /* L 0.1281 */
-  --liminal-s1: #07090b; /* L 0.1381 */
-  --liminal-s2: #090b0d; /* L 0.1482 */
-  --liminal-s3: #0b0d0f; /* L 0.1577 */
-  --liminal-s4: #0d0f12; /* L 0.1676 */
-  --liminal-s5: #0f1114; /* L 0.1768 */
-  --liminal-s6: #111316; /* L 0.1859 */
-  --liminal-s7: #131518; /* L 0.1949 */
-  --liminal-s8: #15171a; /* L 0.2038 */
+  --liminal-s0: #060709; /* L 0.1281 — the quantised rendering */
+  --liminal-s0: oklch(0.1280000 0.0069 258.4); /* the design */
+  --liminal-s1: #07090b; /* L 0.1381 — the quantised rendering */
+  --liminal-s1: oklch(0.1374750 0.0069 258.4); /* the design */
+  --liminal-s2: #090b0d; /* L 0.1482 — the quantised rendering */
+  --liminal-s2: oklch(0.1469500 0.0069 258.4); /* the design */
+  --liminal-s3: #0b0d0f; /* L 0.1577 — the quantised rendering */
+  --liminal-s3: oklch(0.1564250 0.0069 258.4); /* the design */
+  --liminal-s4: #0d0f12; /* L 0.1676 — the quantised rendering */
+  --liminal-s4: oklch(0.1659000 0.0069 258.4); /* the design */
+  --liminal-s5: #0f1114; /* L 0.1768 — the quantised rendering */
+  --liminal-s5: oklch(0.1753750 0.0069 258.4); /* the design */
+  --liminal-s6: #111316; /* L 0.1859 — the quantised rendering */
+  --liminal-s6: oklch(0.1848500 0.0069 258.4); /* the design */
+  --liminal-s7: #131518; /* L 0.1949 — the quantised rendering */
+  --liminal-s7: oklch(0.1943250 0.0069 258.4); /* the design */
+  --liminal-s8: #15171a; /* L 0.2038 — the quantised rendering */
+  --liminal-s8: oklch(0.2038000 0.0069 258.4); /* the design */
   --liminal-s0-5: #07080a; /* the hairline above S0 */
+  --liminal-s0-5: oklch(0.1327375 0.0069 258.4); /* exact */
   --liminal-s1-5: #080a0c; /* the hairline above S1 */
+  --liminal-s1-5: oklch(0.1422125 0.0069 258.4); /* exact */
   --liminal-s2-5: #0a0c0e; /* the hairline above S2 */
+  --liminal-s2-5: oklch(0.1516875 0.0069 258.4); /* exact */
   --liminal-s3-5: #0c0e10; /* the hairline above S3 */
+  --liminal-s3-5: oklch(0.1611625 0.0069 258.4); /* exact */
   --liminal-s4-5: #0e1013; /* the hairline above S4 */
+  --liminal-s4-5: oklch(0.1706375 0.0069 258.4); /* exact */
   --liminal-s5-5: #101215; /* the hairline above S5 */
+  --liminal-s5-5: oklch(0.1801125 0.0069 258.4); /* exact */
   --liminal-s6-5: #121417; /* the hairline above S6 */
+  --liminal-s6-5: oklch(0.1895875 0.0069 258.4); /* exact */
   --liminal-s7-5: #141619; /* the hairline above S7 */
+  --liminal-s7-5: oklch(0.1990625 0.0069 258.4); /* exact */
 
   /* ── below the canvas ───────────────────────────────────────────── */
   --liminal-well-penumbra: #030406;
