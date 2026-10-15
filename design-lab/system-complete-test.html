@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — برگه‌ی کامل سیستم</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.89);
+    font:14px/1.8 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:28px 20px 64px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:21px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:13px;max-width:88ch;text-align:center;margin-bottom:24px}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+  .q{width:100%;max-width:1120px;border-radius:16px;padding:20px 22px;margin-bottom:16px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:14px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.42);font-size:12px;margin-bottom:18px}
+  .law{color:#7fd0a0;font-size:11.5px;margin-top:12px;line-height:2}
+  .warn{color:#e0b070;font-size:11.5px;margin-top:12px;line-height:2}
+
+  /* ── 1. the ladder ───────────────────────────────────────────────────── */
+  table{width:100%;border-collapse:collapse}
+  th{text-align:start;font-weight:500;color:rgba(255,255,255,.34);font-size:10.5px;padding:6px 8px;white-space:nowrap}
+  td{padding:5px 8px;border-top:1px solid var(--liminal-role-panel-border);vertical-align:middle}
+  .sw{width:72px;height:22px;border-radius:6px;display:inline-block;vertical-align:middle;border:1px solid var(--liminal-role-panel-border)}
+
+  /* ── 2. the nesting chain ────────────────────────────────────────────── */
+  .chain{display:flex;flex-direction:column;align-items:center;gap:0}
+  .slab{width:300px;border-radius:10px;display:flex;align-items:center;justify-content:center;height:46px;font-size:11px;color:rgba(255,255,255,.55)}
+  .gap{height:30px;display:flex;align-items:center;gap:8px;color:#7fd0a0;font-size:10.5px;font-family:ui-monospace,Menlo,monospace}
+  .gap::before,.gap::after{content:'';width:1px;height:30px;background:rgba(127,208,160,.3)}
+
+  /* ── 3. the border ───────────────────────────────────────────────────── */
+  .band{padding:26px 0;display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;gap:9px;align-items:center}
+  .surf{width:170px;height:106px;border-radius:11px}
+  .cap{font-size:10.5px;color:rgba(255,255,255,.45);text-align:center;line-height:1.8}
+  .cap b{color:rgba(255,255,255,.75);font-size:11.5px}
+
+  /* ── 4. the matrix ───────────────────────────────────────────────────── */
+  .yes{color:#7fd0a0} .no{color:rgba(255,255,255,.25)}
+</style>
+</head>
+<body>
+  <h1>برگه‌ی کامل سیستم</h1>
+  <p class="sub">
+    بوم · نردبان · دو قانون · مرز · تو در تو بودگی — هر عدد اندازه‌گیری‌شده یا مشتق،
+    و همه از توکن‌های موتور خوانده می‌شوند.
+  </p>
+
+  <div class="q">
+    <h2>۱. نردبان — نه پله، فاصله‌ی ثابت</h2>
+    <div class="why">قانون ۱: بازه‌ی عددی وجود ندارد. هر پله دقیقاً همان مقدار از پله‌ی قبلی.</div>
+    <table>
+      <thead><tr><th>پله</th><th>رنگ (دقیق)</th><th>L</th><th>فاصله از پایینی</th><th>در کوانتا</th><th>نقش</th></tr></thead>
+      <tbody id="ladder"></tbody>
+    </table>
+    <p class="law">
+      و همه‌ی پله‌ها <b>دقیقاً ۱.۱۴۱۶q</b> — نه ۱.۰۷q تا ۱.۲۱q. آن بازه خطای ۸ بیت بود، نه طرح.
+    </p>
+  </div>
+
+  <div class="q">
+    <h2>۲. زنجیره — چه چیزی روی چه چیزی</h2>
+    <div class="why">قانون ۲: روی بوم فقط لایهٔ ۱ · روی لایهٔ ۱ فقط لایهٔ ۲ · و به همین ترتیب.</div>
+    <div class="chain" id="chain"></div>
+    <p class="law">هر لایه همان مقدار از لایهٔ قبلی فاصله دارد — و هیچ لایه‌ای جایی نیست که اجازه ندارد.</p>
+  </div>
+
+  <div class="q">
+    <h2>۳. مرز — دو کار، دو فاصله</h2>
+    <div class="why">
+      جداکننده: خطی بین دو ناحیه‌ی همان سطح · مرز: مرز یک سطح در برابر چیزی که رویش نشسته.
+    </div>
+
+    <div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:4px">روی بوم — لایهٔ ۱ با <b>مرز</b> و با <b>جداکننده</b></div>
+    <div class="band" id="bandA" style="background:var(--liminal-s0)"></div>
+
+    <div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:4px">روی لایهٔ ۱ — لایهٔ ۲ با <b>مرز</b> و با <b>جداکننده</b></div>
+    <div class="band" id="bandB" style="background:var(--liminal-s1)"></div>
+
+    <p class="law">
+      <b>مرز (`edge`)</b> = ۱ پله = <code>۱.۱۴q</code> از سطح خودش · <code>۲.۲۸q</code> از میزبان — <b>۲.۴×</b> آستانه‌ی لبه → یک مرز.<br>
+      <b>جداکننده (`separator`)</b> = ۰.۵ پله = <code>۰.۵۷q</code> از سطح خودش · <code>۱.۷۱q</code> از میزبان — <b>۱.۱۸×</b> → یک اشاره.
+    </p>
+  </div>
+
+  <div class="q">
+    <h2>۴. تو در تو بودگی — دو سیگنال مستقل</h2>
+    <div class="why">
+      مرز می‌گوید «اینجا یک ناحیه است»؛ فاصله‌ی سطح می‌گوید «بالا است یا پایین».
+    </div>
+    <div class="band" id="nest" style="background:var(--liminal-s1)"></div>
+    <p class="law">
+      کف تو در تو بودگی <b>۰.۵ پله = ۰.۵۷q</b> — زیر آستانه‌ی سطح تخت و بالای آستانه‌ی لبه،
+      چون یک فرزند یک <b>ناحیه‌ی کراندار</b> است و با لبه‌اش خوانده می‌شود.
+    </p>
+  </div>
+
+  <div class="q">
+    <h2>۵. چه چیزی برای چه لایه‌ای مجاز است</h2>
+    <div class="why">موتور این را از قبل می‌داند — و دو تا از این‌ها در عمق‌های پایین ممنوع‌اند.</div>
+    <table>
+      <thead><tr><th>نقش</th><th>پله</th><th>جداکننده</th><th>مرز</th><th>ریم</th><th>سایه</th></tr></thead>
+      <tbody id="matrix"></tbody>
+    </table>
+    <p class="warn">
+      <b>و دو ممنوعیت:</b> یک سطح <b>ساختاری</b> (بوم، لایهٔ ۱، لایهٔ ۲) نه ریم دارد و نه سایه —
+      سایه یعنی «شناور است» و ریم یعنی «روی لبهٔ برجسته‌اش نور می‌گیرد»؛ یک سطح کار هیچ‌کدام را نمی‌کند.
+    </p>
+  </div>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const S_HEX = (n) => css.getPropertyValue(`--liminal-s${n}-hex`).trim();
+  const CANVAS_L = num('--liminal-canvas-l'), STEP = num('--liminal-step');
+  const C = num('--liminal-chroma'), H = num('--liminal-hue'), Q = num('--liminal-q');
+  const at = (level) => `oklch(${(CANVAS_L + level * STEP).toFixed(7)} ${C} ${H})`;
+  const ROLE = ['بوم', 'لایه ۱ · chrome', 'لایه ۲ · work', 'لایه ۳ · panel', 'لایه ۴ · control', 'menu', 'popover', 'modal', 'toast'];
+  const RIM = [0,0,0,1,1,1,2,2,2];
+  const SHADOW = [null,null,null,null,null,1,2,3,4];
+
+  document.getElementById('ladder').innerHTML = ROLE.map((role, n) => `
+    <tr>
+      <td><code>S${n}</code></td>
+      <td><span class="sw" style="background:${S(n)}"></span></td>
+      <td><code>${(CANVAS_L + n * STEP).toFixed(6)}</code></td>
+      <td><code>${n === 0 ? '—' : (STEP).toFixed(6)}</code></td>
+      <td><code>${n === 0 ? '—' : (STEP / Q).toFixed(4) + 'q'}</code></td>
+      <td>${role}</td>
+    </tr>`).join('');
+
+  const chain = document.getElementById('chain');
+  for (let n = 0; n <= 4; n++) {
+    if (n > 0) {
+      const g = document.createElement('div'); g.className = 'gap'; g.textContent = `d = ${(STEP / Q).toFixed(4)}q`;
+      chain.appendChild(g);
+    }
+    const el = document.createElement('div'); el.className = 'slab';
+    el.style.background = S(n);
+    el.style.border = n === 0 ? 'none' : `1px solid ${at(n + 1)}`;
+    el.textContent = ROLE[n];
+    chain.appendChild(el);
+  }
+
+  function borderCell(host, level, kind, label, note) {
+    const el = document.createElement('div'); el.className = 'cell';
+    const border = kind === 'edge' ? at(level + 1) : at(level + 0.5);
+    el.innerHTML = `<div class="surf" style="background:${S(level)};border:1px solid ${border}"></div>
+      <div class="cap"><b>${label}</b><br>${note}</div>`;
+    return el;
+  }
+  const A = document.getElementById('bandA'), B = document.getElementById('bandB');
+  A.appendChild(borderCell(0, 1, 'edge', 'مرز', `+۱ پله · <code>۱.۱۴q</code> از سطح · <code>۲.۲۸q</code> از بوم`));
+  A.appendChild(borderCell(0, 1, 'separator', 'جداکننده', `+۰.۵ پله · <code>۰.۵۷q</code> از سطح · <code>۱.۷۱q</code> از بوم`));
+  A.appendChild(borderCell(0, 1, 'none', 'بدون مرز', `فقط اختلاف سطح · <code>۱.۱۴q</code>`));
+  B.appendChild(borderCell(1, 2, 'edge', 'مرز', `+۱ پله · <code>۱.۱۴q</code> از سطح · <code>۲.۲۸q</code> از لایهٔ ۱`));
+  B.appendChild(borderCell(1, 2, 'separator', 'جداکننده', `+۰.۵ پله · <code>۰.۵۷q</code> از سطح · <code>۱.۷۱q</code> از لایهٔ ۱`));
+  B.appendChild(borderCell(1, 2, 'none', 'بدون مرز', `فقط اختلاف سطح · <code>۱.۱۴q</code>`));
+
+  const N = document.getElementById('nest');
+  for (const [level, label, note] of [
+    [2, 'فرزند +۱ پله', 'برجسته — <code>۱.۱۴q</code> از میزبان'],
+    [2, 'فرزند +۰.۵ پله', 'کف تو در تو بودگی — <code>۰.۵۷q</code>'],
+    [2, 'فرزند +۰.۵ با مرز', 'مرز + فاصله = دو سیگنال'],
+    [2, 'چاه −۱.۵ پله', 'فرورفته — <code>۱.۷۱q</code>'],
+  ]) {
+    const el = document.createElement('div'); el.className = 'cell';
+    const child = note.includes('چاه') ? at(level - 1.5) : (note.includes('۰.۵') ? at(level + 0.5) : at(level + 1));
+    const bordered = note.includes('مرز');
+    el.innerHTML = `<div class="surf" style="background:${S(level)};display:flex;align-items:center;justify-content:center">
+        <div style="width:104px;height:64px;border-radius:8px;background:${child};${bordered ? `border:1px solid ${at(level + 1)};` : ''}"></div>
+      </div><div class="cap"><b>${label}</b><br>${note}</div>`;
+    N.appendChild(el);
+  }
+
+  document.getElementById('matrix').innerHTML = ROLE.map((role, n) => {
+    const structural = n <= 2;
+    return `<tr>
+      <td>${role}</td>
+      <td><code>S${n}</code></td>
+      <td class="yes">مجاز</td>
+      <td class="yes">مجاز</td>
+      <td class="${RIM[n] ? 'yes' : 'no'}">${RIM[n] ? `درجه ${RIM[n]}` : 'ممنوع'}</td>
+      <td class="${SHADOW[n] ? 'yes' : 'no'}">${SHADOW[n] ? `E${SHADOW[n]}` : 'ممنوع'}</td>
+    </tr>`;
+  }).join('');
+</script>
+</body>
+</html>
