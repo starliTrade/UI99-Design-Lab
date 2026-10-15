@@ -116,17 +116,17 @@ export const ROLE_LEVEL: Record<SurfaceRole, number> = {
  * neighbour", so the rule stays physical: the rim is a light on the edge, not a
  * separator. What changed is how bright the light is.
  */
-export const ROLE_RIM: Record<SurfaceRole, 0 | 1 | 2 | 3> = {
-  canvas: 0,
-  chrome: 0,
-  work: 0,
-  well: 1,
-  panel: 1,
-  control: 1,
-  menu: 1,
-  popover: 2,
-  modal: 2,
-  toast: 2,
+export const ROLE_RIM: Record<SurfaceRole, boolean> = {
+  canvas: false,
+  chrome: false,
+  work: false,
+  well: true,
+  panel: true,
+  control: true,
+  menu: true,
+  popover: true,
+  modal: true,
+  toast: true,
 };
 
 /**
@@ -304,7 +304,7 @@ export interface SurfaceResolution {
   /** The same surface as a hex, for tests and the contract. */
   backgroundHex: string;
   /** The rim tier actually applied. */
-  rim: 0 | 1 | 2 | 3;
+  rim: boolean;
   /** The rim's resolved top/side/bottom colours, when a rim applies. */
   rimColors: DirectionalRimResult | null;
   /** The shadow string, or 'none'. */
@@ -374,11 +374,11 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
   // ── rim: from the role, suppressed when disabled ────────────────────────
   // An inset takes a defined edge whatever its role: the well has to read as a
   // cut, and a quiet seam would not.
-  const rim: 0 | 1 | 2 | 3 = state === 'disabled' ? 0 : request.inset ? 2 : ROLE_RIM[role];
+  const rim: boolean = state === 'disabled' ? false : request.inset ? true : ROLE_RIM[role];
   const concave = state === 'active' || request.inset === true;
   // The rim follows the LEVEL, including its half — a hovered surface's edge
   // moves with its fill. Rounding here would leave the edge behind.
-  const rimColors = rim === 0 ? null : getDirectionalRim(level, rim, concave);
+  const rimColors = rim ? getDirectionalRim(level, true, concave) : null;
 
   // ── shadow: only for roles that float ───────────────────────────────────
   const shadowTier = elevation ?? ROLE_SHADOW[role];

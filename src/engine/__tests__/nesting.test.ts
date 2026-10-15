@@ -85,26 +85,29 @@ describe('rim — the tier follows the height above the host', () => {
   it('structural surfaces catch no edge light', () => {
     // chrome and work DEFINE the frame and the plane. They do not sit on
     // anything, so there is no edge for light to catch.
-    expect(ROLE_RIM.canvas).toBe(0);
-    expect(ROLE_RIM.chrome).toBe(0);
-    expect(ROLE_RIM.work).toBe(0);
+    expect(ROLE_RIM.canvas).toBe(false);
+    expect(ROLE_RIM.chrome).toBe(false);
+    expect(ROLE_RIM.work).toBe(false);
   });
 
   it('one step above its host is one tier', () => {
-    expect(ROLE_RIM.panel).toBe(1);
-    expect(ROLE_RIM.control).toBe(1);
-    expect(ROLE_RIM.menu).toBe(1);
-    expect(ROLE_RIM.well).toBe(1);
+    expect(ROLE_RIM.panel).toBe(true);
+    expect(ROLE_RIM.control).toBe(true);
+    expect(ROLE_RIM.menu).toBe(true);
+    expect(ROLE_RIM.well).toBe(true);
   });
 
-  it('floating is two tiers, and nothing is three', () => {
-    expect(ROLE_RIM.popover).toBe(2);
-    expect(ROLE_RIM.modal).toBe(2);
-    expect(ROLE_RIM.toast).toBe(2);
-    // Tier 3 exists in the table and no role uses it: a surface would have to
-    // float two steps above the highest floating layer, and the ladder's ceiling
-    // is where the toast already sits.
-    expect(Math.max(...Object.values(ROLE_RIM))).toBe(2);
+  it('and every surface that has one has the SAME one', () => {
+    /**
+     * The rim was four tiers — 0, 0.5, 1, 1.5 — and a role table that picked one.
+     * Measured by eye at three boundaries, the reader's answer was the same at all of
+     * them, so the tiers were a choice that was not there. `ROLE_RIM` says whether a
+     * surface has a rim; the strength is one.
+     */
+    for (const role of ['popover', 'modal', 'toast', 'panel', 'control', 'menu'] as const) {
+      expect(ROLE_RIM[role], `${role}`).toBe(true);
+    }
+    expect(new Set(Object.values(ROLE_RIM)).size, 'the table has more than two states').toBe(2);
   });
 
   it('the rim never exceeds the height it expresses — except a well, which is concave', () => {
@@ -119,9 +122,11 @@ describe('rim — the tier follows the height above the host', () => {
     for (const role of Object.keys(ROLE_LEVEL) as (keyof typeof ROLE_LEVEL)[]) {
       if (role === 'well') continue;
       const above = Math.max(0, ROLE_LEVEL[role] - ROLE_LEVEL.work);
-      expect(ROLE_RIM[role], `${role} rim`).toBeLessThanOrEqual(above);
+      // The rim is one strength now, so what the height bounds is WHETHER a surface
+      // has one: a role at the structural plane may not have an edge light to catch.
+      if (above === 0) expect(ROLE_RIM[role], `${role} rim`).toBe(false);
     }
-    expect(ROLE_RIM.well, 'a well is concave, so it catches light at the same level').toBe(1);
+    expect(ROLE_RIM.well, 'a well is concave, so it catches light at the same level').toBe(true);
     expect(ROLE_LEVEL.well).toBe(ROLE_LEVEL.work);
   });
 });

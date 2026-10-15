@@ -45,10 +45,11 @@ describe('DESIGN-CONTRACT.md — the value blocks match the engine', () => {
 
   it('carries the engine’s rim hexes', () => {
     const b = block('rim');
-    for (const tier of [1, 2, 3]) {
-      const r = getDirectionalRim(tier as 1, tier as 1, false)!;
-      expect(b, `rim ${tier} top`).toContain(r.top);
-      expect(b, `rim ${tier} side`).toContain(r.side);
+    // ONE rim: the tier table was a choice the eye did not have.
+    {
+      const r = getDirectionalRim(3, true, false)!;
+      expect(b, 'rim top').toContain(r.top);
+      expect(b, 'rim side').toContain(r.side);
     }
   });
 

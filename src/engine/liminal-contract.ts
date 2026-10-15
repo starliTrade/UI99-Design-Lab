@@ -88,10 +88,11 @@ const spectrumList = LiminalColorEngine.EXTENDED_SPECTRUM.map(
   (h) => `H${h.hue} ${h.hex}`,
 ).join(', ');
 
-function rimLine(level: 1 | 2 | 3, surface: number): string {
-  const rim = getDirectionalRim(surface, level);
-  if (!rim) return `Rim ${level}: none`;
-  return `Rim ${level} (S${surface}): Top ${rim.top} | Side ${rim.side} | Bottom ${rim.bot}`;
+/** ONE rim now — the tiers were a choice the eye did not have. */
+function rimLine(surface: number): string {
+  const rim = getDirectionalRim(surface, true);
+  if (!rim) return `S${surface}: no rim`;
+  return `S${surface}: Top ${rim.top} | Side ${rim.side} | Bottom ${rim.bot}`;
 }
 
 /**
@@ -124,9 +125,9 @@ export function getContractSections(): ContractSection[] {
       id: 'rim',
       title: '2) DIRECTIONAL RIM',
       body:
-        `180° specular gradient, top-weighted: Top ${RIM[2].t}Δ > Side ${RIM[2].s}Δ > Bottom ${RIM[2].b}Δ. ` +
-        `${rimLine(1, 1)}. ${rimLine(2, 2)}. ${rimLine(3, 3)}. ` +
-        `Concave inversion on press. Rim 0 = no rim (disabled).`,
+        `180° specular gradient, top-weighted: Top ${RIM.t}Δ > Side ${RIM.s}Δ > Bottom ${RIM.b}Δ. ` +
+        `${rimLine(1)}. ${rimLine(2)}. ${rimLine(3)}. ` +
+        `Concave inversion on press. A role either has a rim or does not.`,
     },
     {
       id: 'shadow',

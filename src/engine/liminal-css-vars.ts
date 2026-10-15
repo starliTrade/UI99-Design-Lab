@@ -75,8 +75,9 @@ export function generateCssVars(): string {
 
   // ── 2. DIRECTIONAL RIM ─────────────────────────────────────────────
   section('2. RIM');
+  // ONE rim: the tiers were a choice the eye did not have.
   ([1, 2, 3] as const).forEach((level) => {
-    const rim = getDirectionalRim(level, level);
+    const rim = getDirectionalRim(level, true);
     if (!rim) return;
     v(`rim-${level}-top`, rim.top);
     v(`rim-${level}-side`, rim.side);

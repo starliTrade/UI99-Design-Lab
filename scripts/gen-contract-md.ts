@@ -61,11 +61,12 @@ const BLOCKS: Record<string, () => string> = {
     `- **S-1 (Penumbra Ambient):** \`${WELLS.penumbra}\` ($L \\approx ${Lof(WELLS.penumbra)}$)\n` +
     `- **S-2 (Contact Umbra):** \`${WELLS.umbra}\` ($L \\approx ${Lof(WELLS.umbra)}$)`,
 
-  'rim': () =>
-    [1, 2, 3].map((tier) => {
-      const r = getDirectionalRim(tier as 1, tier as 1, false);
-      return `- **Rim ${tier}${tier === 1 ? ' (Chrome / S1)' : tier === 2 ? ' (Work Surface / S2)' : ' (Raised / S3+)'}:** Top \`${r.top}\` | Side \`${r.side}\` | Bottom \`${r.bot}\``;
-    }).join('\n'),
+  'rim': () => {
+    // ONE rim. It was three tiers; measured by eye at three boundaries the answer was
+    // the same at all of them, so the table was a choice that was not there.
+    const r = getDirectionalRim(3, true, false)!;
+    return `- **Rim (one strength):** Top \`${r.top}\` (+1.5 steps) | Side \`${r.side}\` (+1.0) | Bottom \`${r.bot}\` (+0.5)`;
+  },
 
   'shadows': () =>
     Object.entries(FLOAT_SHADOWS)

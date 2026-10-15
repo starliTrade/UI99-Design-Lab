@@ -47,14 +47,16 @@ ladder.penumbra = color(WELLS.penumbra, 'the soft dark under a lifted surface');
 ladder.umbra = color(WELLS.umbra, 'the tight dark where a surface touches the canvas');
 
 const rim: Group = {};
-[1, 2, 3].forEach((t) => {
-  const r = getDirectionalRim(t as 1, t as 1, false)!;
-  rim[`rim${t}`] = {
-    top: color(r.top, '100% — the light comes from above'),
-    side: color(r.side, '55%'),
-    bottom: color(r.bot, 'the host surface itself'),
+// ONE rim, not three tiers: measured by eye at three boundaries, the answer was the
+// same at every one of them.
+{
+  const r = getDirectionalRim(3, true, false)!;
+  rim.rim = {
+    top: color(r.top, '100% — +1.5 steps, the light comes from above'),
+    side: color(r.side, '55% — +1.0 steps'),
+    bottom: color(r.bot, '100% — +0.5 steps'),
   } as Group;
-});
+}
 
 const shadow: Group = {};
 // NAMED BY ROLE, not by a tier number. `shadow.menu` says what it is for;

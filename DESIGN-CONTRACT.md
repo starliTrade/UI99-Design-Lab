@@ -277,9 +277,7 @@ $L(n) = 0.128 + n \times 0.009475 \quad | \quad C = 0.0069 \quad | \quad H = 258
 ### 1.2 Directional Specular Rim (لبه بازتابی زاویه‌دار)
 شیب خطی ۱۸۰ درجه با توزیع نور فیزیکی: Top (۱۰۰٪) > Side (۵۵٪) > Bottom (پایین‌ترین سطح نردبان):
 <!-- gen:rim -->
-- **Rim 1 (Chrome / S1):** Top `#080a0c` | Side `#080a0c` | Bottom `#07090b`
-- **Rim 2 (Work Surface / S2):** Top `#0b0d0f` | Side `#0a0c0e` | Bottom `#090b0d`
-- **Rim 3 (Raised / S3+):** Top `#0e1013` | Side `#0d0f12` | Bottom `#0c0e10`
+- **Rim (one strength):** Top `#0e1013` (+1.5 steps) | Side `#0d0f12` (+1.0) | Bottom `#0c0e10` (+0.5)
 <!-- /gen:rim -->
 
 - **Concave Inversion (Active State):** معکوس شدن جهت شیب نور به ۱۸۰ درجه معکوس هنگام فشرده شدن دکمه (نمایش فرورفتگی فیزیکی با جابجایی عمودی `translateY(0.5px)`).

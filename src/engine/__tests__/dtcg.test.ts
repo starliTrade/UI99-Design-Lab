@@ -41,12 +41,12 @@ describe('DTCG — the file is the engine, in the format other tools read', () =
     expect(doc.color.ladder.umbra.$value).toBe(WELLS.umbra);
   });
 
-  it('carries the rim tiers as their own group', () => {
-    for (const t of [1, 2, 3]) {
-      const r = getDirectionalRim(t as 1, t as 1, false)!;
-      expect(doc.color.rim[`rim${t}`].top.$value).toBe(r.top);
-      expect(doc.color.rim[`rim${t}`].side.$value).toBe(r.side);
-      expect(doc.color.rim[`rim${t}`].bottom.$value).toBe(r.bot);
+  it('carries the rim as its own group — one strength, not three tiers', () => {
+    {
+      const r = getDirectionalRim(3, true, false)!;
+      expect(doc.color.rim.rim.top.$value).toBe(r.top);
+      expect(doc.color.rim.rim.side.$value).toBe(r.side);
+      expect(doc.color.rim.rim.bottom.$value).toBe(r.bot);
     }
   });
 

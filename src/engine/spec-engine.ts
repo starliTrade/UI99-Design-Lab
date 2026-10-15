@@ -12,12 +12,29 @@ export { LADDER, HALF, getLadderColor, getLadderVar, FOCUS_RING_COLOR };
  * این سند، قرارداد کامل و قفل‌شده‌ی سیستم است. هیچ مقداری خارج از این سند مجاز نیست.
  */
 
-export const RIM = {
-  0: { t: 0, s: 0, b: 0 },
-  1: { t: 0.5, s: 0.25, b: 0 },
-  2: { t: 1.0, s: 0.5, b: 0 },
-  3: { t: 1.5, s: 1.0, b: 0.5 },
-} as const;
+/**
+ * THE RIM — ONE STRENGTH, AND IT IS A LIGHT.
+ *
+ *   top    +1.5 steps = 1.71q   2.73x the edge threshold
+ *   side   +1.0 steps = 1.14q
+ *   bottom +0.5 steps = 0.57q
+ *
+ * It was four tiers — 0, 0.5, 1, 1.5 — and a role table that picked one. Measured by
+ * eye at three boundaries, the reader's answer was the same at all of them: 1.5. "For
+ * the essence and the principles of the rim, along with being LIMINAL, my eye is
+ * stuck on 1.5."
+ *
+ * AND ONE STRENGTH IS WHAT THE SYSTEM ALREADY DOES EVERYWHERE ELSE:
+ *
+ *   separator   0.5 steps   a hint
+ *   edge        1.0 steps   a border
+ *   rim         1.5 steps   a light
+ *   shadow      1 quantum   a shadow
+ *
+ * Each treatment has exactly one strength, and the three edge treatments sit one step
+ * apart. A table of tiers implied a choice that, measured, was not there.
+ */
+export const RIM = { t: 1.5, s: 1.0, b: 0.5 } as const;
 
 export interface DirectionalRimResult {
   top: string;
@@ -32,10 +49,10 @@ export interface DirectionalRimResult {
 
 export function getDirectionalRim(
   n: number,
-  rim: 0 | 1 | 2 | 3,
+  hasRim: boolean,
   concave: boolean = false
 ): DirectionalRimResult | null {
-  if (rim === 0) return null;
+  if (!hasRim) return null;
   let top: string, side: string, bot: string;
 
   // At the ceiling there is no room above, so the rim INVERTS and lights from
@@ -43,20 +60,20 @@ export function getDirectionalRim(
   // the ceiling got a flat rim: measured, a toast's top, side and bottom all
   // resolved to `#15171a`, which is the surface itself. The rim was invisible
   // and nothing said so.
-  const atCeiling = n + RIM[rim].t > LADDER.length - 1;
+  const atCeiling = n + RIM.t > LADDER.length - 1;
 
   if (concave) {
     top = getLadderColor(n - 0.5);
     side = getLadderColor(n);
     bot = getLadderColor(n + 0.5);
   } else if (atCeiling) {
-    top = getLadderColor(n - RIM[rim].b);
-    side = getLadderColor(n - RIM[rim].s);
-    bot = getLadderColor(n - RIM[rim].t);
+    top = getLadderColor(n - RIM.b);
+    side = getLadderColor(n - RIM.s);
+    bot = getLadderColor(n - RIM.t);
   } else {
-    top = getLadderColor(n + RIM[rim].t);
-    side = getLadderColor(n + RIM[rim].s);
-    bot = getLadderColor(n + RIM[rim].b);
+    top = getLadderColor(n + RIM.t);
+    side = getLadderColor(n + RIM.s);
+    bot = getLadderColor(n + RIM.b);
   }
 
   const bg = getLadderColor(n);
@@ -66,9 +83,9 @@ export function getDirectionalRim(
   // they are the computed values the contract and the tests read — while the
   // gradient a component puts in a style object reads the CSS layer, so it
   // follows a theme.
-  const vTop = getLadderVar(concave ? n - 0.5 : atCeiling ? n - RIM[rim].b : n + RIM[rim].t);
-  const vSide = getLadderVar(concave ? n : atCeiling ? n - RIM[rim].s : n + RIM[rim].s);
-  const vBot = getLadderVar(concave ? n + 0.5 : atCeiling ? n - RIM[rim].t : n + RIM[rim].b);
+  const vTop = getLadderVar(concave ? n - 0.5 : atCeiling ? n - RIM.b : n + RIM.t);
+  const vSide = getLadderVar(concave ? n : atCeiling ? n - RIM.s : n + RIM.s);
+  const vBot = getLadderVar(concave ? n + 0.5 : atCeiling ? n - RIM.t : n + RIM.b);
   const vBg = getLadderVar(n);
   const gradVar = `linear-gradient(${vBg}, ${vBg}) padding-box, linear-gradient(180deg, ${vTop} 0%, ${vSide} 55%, ${vBot} 100%) border-box`;
 

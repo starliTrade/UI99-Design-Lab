@@ -13,8 +13,8 @@ import {
   type SurfaceRole,
   type SurfaceState,
 } from '../liminal-surface';
-import { LADDER, HALF, PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR } from '../liminal-ladder';
-import { getDirectionalRim, getLadderColor } from '../spec-engine';
+import { LADDER, HALF, PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR, LADDER_STEP } from '../liminal-ladder';
+import { getDirectionalRim, getLadderColor, RIM } from '../spec-engine';
 import { contrastRatioHex, oklchLightness } from '../liminal-color-math';
 
 const ROLES = Object.keys(ROLE_LEVEL) as SurfaceRole[];
@@ -89,24 +89,27 @@ describe('surface decision engine — the shadow rule', () => {
 
 describe('surface decision engine — the rim rule', () => {
   it('gives the canvas no rim', () => {
-    expect(resolveSurface({ role: 'canvas' }).rim).toBe(0);
+    expect(resolveSurface({ role: 'canvas' }).rim).toBe(false);
   });
 
-  it('never lets the rim tier decrease as a role rises', () => {
+  it('never lets a rim DISAPPEAR as a role rises', () => {
     const ordered: SurfaceRole[] = [
       'canvas', 'chrome', 'work', 'panel', 'control', 'menu', 'popover', 'modal', 'toast',
     ];
     for (let i = 1; i < ordered.length; i++) {
+      // The rim is one strength now, so what cannot go backwards is WHETHER a
+      // surface has one: a role that has a rim may not be followed by one that does
+      // not, going up the ladder.
       expect(
-        ROLE_RIM[ordered[i]],
-        `${ordered[i - 1]} → ${ordered[i]} rim tier went backwards`,
-      ).toBeGreaterThanOrEqual(ROLE_RIM[ordered[i - 1]]);
+        Number(ROLE_RIM[ordered[i]]),
+        `${ordered[i - 1]} → ${ordered[i]} lost its rim going up`,
+      ).toBeGreaterThanOrEqual(Number(ROLE_RIM[ordered[i - 1]]));
     }
   });
 
   it('removes the rim when an element is disabled', () => {
     for (const role of ROLES) {
-      expect(resolveSurface({ role, state: 'disabled' }).rim, `${role} disabled`).toBe(0);
+      expect(resolveSurface({ role, state: 'disabled' }).rim, `${role} disabled`).toBe(false);
     }
   });
 
@@ -374,13 +377,13 @@ describe('the rim — it inverts at the ceiling, like the border does', () => {
   // invisible and nothing said so. The border already solved this by inverting
   // below the ceiling; the rim had no equivalent.
   it('a rim at the ceiling is not flat', () => {
-    const r = getDirectionalRim(8, 3, false)!;
+    const r = getDirectionalRim(8, true, false)!;
     expect(r.top).not.toBe(r.side);
     expect(r.bot).not.toBe(r.side);
   });
 
   it('and it is darker than its surface, because there is no room above', () => {
-    const r = getDirectionalRim(8, 3, false)!;
+    const r = getDirectionalRim(8, true, false)!;
     const surface = getLadderColor(8);
     for (const c of [r.top, r.side, r.bot]) {
       expect(oklchLightness(c), `${c} vs ${surface}`).toBeLessThan(oklchLightness(surface));
@@ -388,14 +391,14 @@ describe('the rim — it inverts at the ceiling, like the border does', () => {
   });
 
   it('a rim below the ceiling still lights from above', () => {
-    const r = getDirectionalRim(3, 2, false)!;
+    const r = getDirectionalRim(3, true, false)!;
     expect(oklchLightness(r.top)).toBeGreaterThan(oklchLightness(r.bot));
   });
 
   it('every floating role gets a rim that can be seen', () => {
     for (const role of FLOATING_ROLES) {
       const s = resolveSurface({ role });
-      if (s.rim === 0) continue;
+      if (!s.rim) continue;
       const r = getDirectionalRim(Math.round(s.level), s.rim, false)!;
       expect(r.top !== r.side || r.side !== r.bot, `${role} has a flat rim`).toBe(true);
     }
@@ -487,5 +490,57 @@ describe('the interaction variables have a producer', () => {
   it('the values are variables, so they follow a theme', () => {
     const v = resolveInteractionVars({ role: 'control', on: 'work' });
     expect(v['--liminal-surface-idle']).toContain('var(--liminal-');
+  });
+});
+
+/**
+ * THE RIM IS ONE STRENGTH, AND IT IS A LIGHT.
+ *
+ * Measured by eye at three boundaries — the canvas to layer one, layer one to layer
+ * two, layer two to layer three — the reader's answer was the same at all of them:
+ * 1.5. "For the essence and the principles of the rim, along with being LIMINAL, my
+ * eye is stuck on 1.5."
+ *
+ * AND ONE STRENGTH IS WHAT THE SYSTEM DOES EVERYWHERE ELSE. Each treatment has
+ * exactly one value, and the three edge treatments sit one step apart:
+ *
+ *   separator   0.5 steps   a hint
+ *   edge        1.0 steps   a border
+ *   rim         1.5 steps   a light
+ */
+describe('the rim — one strength, and it is a light', () => {
+  const EDGE_THRESHOLD = 0.48 * PERCEPTUAL_QUANTUM;
+
+  it('the top sits one and a half steps above its own surface', () => {
+    expect(RIM.t).toBe(1.5);
+    expect(RIM.s).toBe(1);
+    expect(RIM.b).toBe(0.5);
+  });
+
+  it('and it is brighter than the border, because a light is brighter than a border', () => {
+    const rimTop = (RIM.t * LADDER_STEP) / PERCEPTUAL_QUANTUM;
+    const border = (1 * LADDER_STEP) / PERCEPTUAL_QUANTUM;
+    expect(rimTop, 'the rim is not stronger than the border').toBeGreaterThan(border);
+    expect(rimTop / (EDGE_THRESHOLD / PERCEPTUAL_QUANTUM), 'rim against the edge threshold').toBeGreaterThan(2.5);
+  });
+
+  it('the three edge treatments sit one step apart, and none of them is the same', () => {
+    // A hint, a border, a light — the system's own ladder of treatments, in steps.
+    expect([0.5, 1, 1.5]).toEqual([0.5, 1, 1.5]);
+    expect(new Set([0.5, 1, RIM.t]).size).toBe(3);
+  });
+
+  it('a role either has a rim or does not — there is no tier to pick', () => {
+    expect(new Set(Object.values(ROLE_RIM)).size).toBe(2);
+    for (const role of Object.keys(ROLE_RIM) as (keyof typeof ROLE_RIM)[]) {
+      expect(typeof ROLE_RIM[role], `${role}`).toBe('boolean');
+    }
+  });
+
+  it('and it is never flat, at any level', () => {
+    for (let n = 1; n <= 8; n++) {
+      const r = getDirectionalRim(n, true, false)!;
+      expect(r.top !== r.side || r.side !== r.bot, `S${n} has a flat rim`).toBe(true);
+    }
   });
 });

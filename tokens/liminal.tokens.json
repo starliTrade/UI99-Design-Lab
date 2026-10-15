@@ -100,55 +100,21 @@
       }
     },
     "rim": {
-      "rim1": {
-        "top": {
-          "$value": "#080a0c",
-          "$type": "color",
-          "$description": "100% — the light comes from above"
-        },
-        "side": {
-          "$value": "#080a0c",
-          "$type": "color",
-          "$description": "55%"
-        },
-        "bottom": {
-          "$value": "#07090b",
-          "$type": "color",
-          "$description": "the host surface itself"
-        }
-      },
-      "rim2": {
-        "top": {
-          "$value": "#0b0d0f",
-          "$type": "color",
-          "$description": "100% — the light comes from above"
-        },
-        "side": {
-          "$value": "#0a0c0e",
-          "$type": "color",
-          "$description": "55%"
-        },
-        "bottom": {
-          "$value": "#090b0d",
-          "$type": "color",
-          "$description": "the host surface itself"
-        }
-      },
-      "rim3": {
+      "rim": {
         "top": {
           "$value": "#0e1013",
           "$type": "color",
-          "$description": "100% — the light comes from above"
+          "$description": "100% — +1.5 steps, the light comes from above"
         },
         "side": {
           "$value": "#0d0f12",
           "$type": "color",
-          "$description": "55%"
+          "$description": "55% — +1.0 steps"
         },
         "bottom": {
           "$value": "#0c0e10",
           "$type": "color",
-          "$description": "the host surface itself"
+          "$description": "100% — +0.5 steps"
         }
       }
     },
