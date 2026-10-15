@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import {
   resolveSurface,
   ROLE_LEVEL,
@@ -16,6 +18,7 @@ import {
 import { LADDER, HALF, PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR, LADDER_STEP } from '../liminal-ladder';
 import { getDirectionalRim, getLadderColor, RIM } from '../spec-engine';
 import { contrastRatioHex, oklchLightness } from '../liminal-color-math';
+import { mistCssVars } from '../liminal-mist';
 
 const ROLES = Object.keys(ROLE_LEVEL) as SurfaceRole[];
 const STATES: SurfaceState[] = ['idle', 'hover', 'focus', 'active', 'disabled'];
@@ -602,5 +605,58 @@ describe('the rim at the ceiling', () => {
     for (let n = 1; n <= 8; n++) {
       expect(new Set(stops(n)).size, `S${n} is flat`).toBe(3);
     }
+  });
+});
+
+/**
+ * SURFACE LIGHT IS NOT A SYSTEM, AND THAT IS A DECISION.
+ *
+ * Measured at three boundaries with five spans, the reader's answer was "not needed"
+ * and "floating only". The engine already does exactly that — `resolveSurface` returns
+ * a FLAT fill for every role, and the light lives in the mist, which is a separate
+ * layer only floating surfaces opt into.
+ *
+ * So there is nothing to change. And it is written down anyway, because "flat" is a
+ * CHOICE rather than the absence of a decision: a system that has no surface light and
+ * does not know why is a system that is flat by accident, and the first person to add
+ * a gradient will add it without knowing they broke a rule.
+ */
+describe('surface light — settled surfaces are flat, and that is the rule', () => {
+  it('every role resolves to a flat fill, none of them a gradient', () => {
+    for (const role of Object.keys(ROLE_LEVEL) as (keyof typeof ROLE_LEVEL)[]) {
+      const s = resolveSurface({ role });
+      expect(s.background ?? '', `${role} has a gradient fill`).not.toContain('linear-gradient');
+    }
+  });
+
+  it('and the light lives in the mist, which is a SEPARATE layer', () => {
+    /**
+     * The mist is where the light is, and it is not part of a surface's fill: a
+     * floating surface opts into the mist layer and gets a gradient, and a settled
+     * surface never does. The restriction is by USE, not by the API — `mistCssVars`
+     * will compute for any role, and the components only call it for the four that
+     * float. Asserted as the two facts that are true.
+     */
+    for (const role of FLOATING_ROLES) {
+      const vars = mistCssVars(role);
+      const top = vars['--liminal-mist-fill-top'];
+      const bottom = vars['--liminal-mist-fill-bottom'];
+      expect(top, `${role} has no fill top`).toBeTruthy();
+      expect(top, `${role}'s mist is flat, not a light`).not.toBe(bottom);
+    }
+    // And the surface resolver — what a settled surface is built from — never returns
+    // one. That is the rule, and it is the first assertion in this block.
+    for (const role of ['canvas', 'chrome', 'work', 'panel', 'control'] as const) {
+      expect(resolveSurface({ role }).background ?? '', `${role}`).not.toContain('linear-gradient');
+    }
+  });
+
+  it('and the eye’s readings are recorded, in case it is ever revisited', () => {
+    // If it were used: the canvas boundary wanted a span of 1 step, and the two deeper
+    // ones 0.5 — higher surfaces need LESS light, because their fill already separates
+    // them. The policy carries the numbers.
+    const policy = readFileSync(resolve(process.cwd(), 'LIMINAL-POLICY.md'), 'utf8');
+    expect(policy).toContain('نور سطح — یک سیستم **نیست**');
+    expect(policy, 'the eye’s readings are not recorded').toContain('هرچه بالاتر، **نور کمتر**');
   });
 });
