@@ -544,3 +544,63 @@ describe('the rim — one strength, and it is a light', () => {
     }
   });
 });
+
+/**
+ * AND THE CEILING: WHEN THERE IS ROOM BUT NOT ENOUGH, THE RIM SCALES.
+ *
+ * The rim's top sits 1.5 steps above its surface, so a surface at S7 has one step of
+ * room and a surface at S8 has none. The old rule inverted whenever `n + 1.5` went
+ * past the ceiling, which meant the MODAL — one step below the top — got a rim DARKER
+ * than its own surface: measured, S7's top resolved to #121417 against a surface of
+ * #131518. A dark edge reads as CUT IN, which is the opposite of what a raised surface
+ * says.
+ *
+ * So the shape compresses into the room available and only the DIRECTION is kept, and
+ * a surface with no room at all still inverts — below is the only direction left.
+ */
+describe('the rim at the ceiling', () => {
+  const stops = (n: number): [string, string, string] => {
+    const found = getDirectionalRim(n, true, false)!.cssBackground.match(/oklch\([^)]+\)/g) ?? [];
+    expect(found.length, `S${n} has three stops`).toBe(3);
+    return [found[0]!, found[1]!, found[2]!];
+  };
+
+  it('the modal keeps its direction — its top is brighter than its bottom', () => {
+    const [top, , bot] = stops(7);
+    const L = (s: string) => Number(s.match(/oklch\(([\d.]+)/)![1]);
+    expect(L(top), 'the modal’s rim lights from below').toBeGreaterThan(L(bot));
+  });
+
+  it('and it keeps THREE distinct stops, which rounding to the grid destroyed', () => {
+    // `getLadderColor` rounds to the nearest half-step, and at S7 the compressed rim
+    // is 1 / 0.67 / 0.33 — all three rounded to the same half-step, so the edge lost
+    // its direction exactly where it had least room.
+    expect(new Set(stops(7)).size, 'the modal’s rim is flat').toBe(3);
+  });
+
+  it('the toast has no room at all, so its rim goes DARK — and keeps its direction', () => {
+    /**
+     * "Inverts" is the wrong word for what happens here, and the test says so.
+     *
+     * At S8 there is no room above, so all three stops move BELOW the surface: the
+     * edge is darker than what it edges, which reads as CUT IN. The gradient's
+     * direction does not flip — the top is still the brightest of the three.
+     *
+     * AND THAT IS AN OPEN QUESTION, not a settled rule: a toast floats, and a floating
+     * surface should catch light on its edge. The ladder's ceiling bounds SURFACES;
+     * whether it should bound the LIGHT a surface catches is a decision nobody has
+     * made yet.
+     */
+    const [top, , bot] = stops(8);
+    const L = (s: string) => Number(s.match(/oklch\(([\d.]+)/)![1]);
+    const surface = oklchLightness(getLadderColor(8));
+    for (const c of [top, bot]) expect(L(c), 'the toast’s rim is darker than its surface').toBeLessThan(surface);
+    expect(L(top), 'and it still reads top-bright').toBeGreaterThan(L(bot));
+  });
+
+  it('and every level has three distinct stops, none of them flat', () => {
+    for (let n = 1; n <= 8; n++) {
+      expect(new Set(stops(n)).size, `S${n} is flat`).toBe(3);
+    }
+  });
+});

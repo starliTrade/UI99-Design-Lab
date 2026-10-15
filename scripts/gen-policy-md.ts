@@ -22,6 +22,7 @@ import {
   ROLE_LEVEL, ROLE_RIM, ROLE_SHADOW, resolveBorderLevel, FLOATING_ROLES,
 } from '../src/engine/liminal-surface';
 import { shadowModel, shadowPeakAlpha } from '../src/engine/liminal-shadow';
+import { getDirectionalRim, RIM } from '../src/engine/spec-engine';
 import { oklchToHex } from '../src/engine/liminal-color-math';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -83,6 +84,20 @@ const blocks: Record<string, string> = {
       const a2 = shadowModel(h, rgbAt(2));
       const a3 = shadowModel(h, rgbAt(3));
       return `| S${h} ${role} | ${h} | \`${a2.near.toFixed(1)}px\` | \`${a2.far.toFixed(0)}px\` | \`α ${a2.nearAlpha.toFixed(4)}\` | \`α ${a3.nearAlpha.toFixed(4)}\` | **\`−1.000q\`** |`;
+    }),
+  ].join('\n'),
+
+  'rim': [
+    '| سطح | بالا (`+1.5`) | پهلو (`+1`) | پایین (`+0.5`) | یادداشت |',
+    '|---|---|---|---|---|',
+    ...Array.from({ length: 8 }, (_, i) => {
+      const n = i + 1;
+      const r = getDirectionalRim(n, true, false)!;
+      // The EXACT stops, because a compressed rim has to keep three of them.
+      const stops = r.cssBackground.match(/oklch\([^)]+\)/g) ?? [];
+      const room = 8 - n;
+      const note = room >= RIM.t ? '' : room <= 0 ? '**معکوس** — از پایین نور می‌دهد' : `فشرده به ${room} پله`;
+      return `| S${n} | \`${stops[0]}\` | \`${stops[1]}\` | \`${stops[2]}\` | ${note} |`;
     }),
   ].join('\n'),
 

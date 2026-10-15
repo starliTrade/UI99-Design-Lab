@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { LADDER, HALF, getLadderColor, getLadderVar, FOCUS_RING_COLOR } from './liminal-ladder';
+import { LADDER, HALF, getLadderColor, getLadderColorExact, getLadderVar, FOCUS_RING_COLOR } from './liminal-ladder';
 import { resolveTextAlpha, type TextRole } from './liminal-contrast';
 
 // Re-exported so existing imports keep working; the definitions live in
@@ -60,7 +60,24 @@ export function getDirectionalRim(
   // the ceiling got a flat rim: measured, a toast's top, side and bottom all
   // resolved to `#15171a`, which is the surface itself. The rim was invisible
   // and nothing said so.
-  const atCeiling = n + RIM.t > LADDER.length - 1;
+  const MAX = LADDER.length - 1;
+  const room = MAX - n;
+  const atCeiling = room <= 0;
+  /**
+   * WHEN THERE IS ROOM BUT NOT ENOUGH, THE RIM SCALES — IT DOES NOT INVERT.
+   *
+   * The rim's top sits 1.5 steps above its surface, so a surface at S7 has 1 step of
+   * room and a surface at S8 has none. The old rule inverted whenever `n + 1.5` went
+   * past the ceiling, which meant the MODAL — one step below the top — got a rim
+   * DARKER than its own surface: measured, S7's top resolved to #121417 against a
+   * surface of #131518. A dark edge reads as CUT IN, which is the opposite of what a
+   * raised surface should say.
+   *
+   * So the shape is scaled to the room available and only the DIRECTION is kept: at
+   * S7 the rim is 1 / 0.67 / 0.33 instead of 1.5 / 1 / 0.5. And a surface with no
+   * room at all — the toast — still inverts, because below is the only direction left.
+   */
+  const scale = atCeiling ? 0 : Math.min(1, room / RIM.t);
 
   if (concave) {
     top = getLadderColor(n - 0.5);
@@ -71,9 +88,9 @@ export function getDirectionalRim(
     side = getLadderColor(n - RIM.s);
     bot = getLadderColor(n - RIM.t);
   } else {
-    top = getLadderColor(n + RIM.t);
-    side = getLadderColor(n + RIM.s);
-    bot = getLadderColor(n + RIM.b);
+    top = getLadderColor(n + RIM.t * scale);
+    side = getLadderColor(n + RIM.s * scale);
+    bot = getLadderColor(n + RIM.b * scale);
   }
 
   const bg = getLadderColor(n);
@@ -83,9 +100,10 @@ export function getDirectionalRim(
   // they are the computed values the contract and the tests read — while the
   // gradient a component puts in a style object reads the CSS layer, so it
   // follows a theme.
-  const vTop = getLadderVar(concave ? n - 0.5 : atCeiling ? n - RIM.b : n + RIM.t);
-  const vSide = getLadderVar(concave ? n : atCeiling ? n - RIM.s : n + RIM.s);
-  const vBot = getLadderVar(concave ? n + 0.5 : atCeiling ? n - RIM.t : n + RIM.b);
+  // EXACT, not rounded: a compressed rim has to keep three distinct stops.
+  const vTop = getLadderColorExact(concave ? n - 0.5 : atCeiling ? n - RIM.b : n + RIM.t * scale);
+  const vSide = getLadderColorExact(concave ? n : atCeiling ? n - RIM.s : n + RIM.s * scale);
+  const vBot = getLadderColorExact(concave ? n + 0.5 : atCeiling ? n - RIM.t : n + RIM.b * scale);
   const vBg = getLadderVar(n);
   const gradVar = `linear-gradient(${vBg}, ${vBg}) padding-box, linear-gradient(180deg, ${vTop} 0%, ${vSide} 55%, ${vBot} 100%) border-box`;
 

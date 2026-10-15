@@ -102,6 +102,19 @@ export const LADDER_EXACT: readonly string[] = Array.from({ length: LADDER_SIZE 
 );
 
 /** The half-steps, exact — the value a border, a state shift and a nesting floor land on. */
+/**
+ * ANY LEVEL, EXACTLY — including one that is not on the half-step grid.
+ *
+ * `getLadderColor` rounds to the nearest half-step, which is right for a surface: the
+ * ladder has nine of them and a surface is one. It is wrong for a rim at the ceiling,
+ * where the shape has to COMPRESS into the room available: at S7 the rim is 1 / 0.67 /
+ * 0.33 steps, and rounding all three to the grid gave 1 / 0.5 / 0.5 — two stops
+ * instead of three, so the edge lost its direction exactly where it had least room.
+ */
+export function getLadderColorExact(level: number): string {
+  return `oklch(${(CANVAS_L + level * LADDER_STEP).toFixed(7)} ${LADDER_CHROMA} ${LADDER_HUE})`;
+}
+
 export const HALF_EXACT: readonly string[] = Array.from({ length: LADDER_SIZE - 1 }, (_, n) =>
   `oklch(${(CANVAS_L + (n + 0.5) * LADDER_STEP).toFixed(7)} ${LADDER_CHROMA} ${LADDER_HUE})`,
 );
