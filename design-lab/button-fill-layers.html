@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060709" />
+<title>LIMINAL — fill باتن روی هر لایه</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.9);
+    font:15px/1.8 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:26px 16px 64px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:20px;font-weight:700;margin:0 0 8px;letter-spacing:-.02em;text-align:center}
+  .sub{color:rgba(255,255,255,.58);font-size:13px;max-width:80ch;text-align:center;margin-bottom:8px;line-height:2}
+  .formula{color:#7fd0a0;font-size:12.5px;text-align:center;margin-bottom:22px;
+           font-family:ui-monospace,Menlo,monospace;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+
+  .rows{width:100%;max-width:640px;display:flex;flex-direction:column;gap:12px}
+  .row{background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border);
+       border-radius:14px;overflow:hidden}
+  .head{display:flex;justify-content:space-between;align-items:baseline;
+        padding:10px 14px 8px;font-size:12px}
+  .head .name{font-weight:600}
+  .head .lv{color:rgba(255,255,255,.42);font-family:ui-monospace,Menlo,monospace;font-size:11px}
+  /* the host band, full bleed inside the card */
+  .stage{padding:22px 14px;display:flex;align-items:center;justify-content:center}
+  .btn{padding:10px 22px;border-radius:10px;font-size:14px;font-weight:600;
+       display:inline-flex;align-items:center;justify-content:center}
+  .foot{display:flex;justify-content:space-between;align-items:baseline;
+        padding:8px 14px 11px;font-size:11px;color:rgba(255,255,255,.45);
+        font-family:ui-monospace,Menlo,monospace;border-top:1px solid var(--liminal-role-panel-border)}
+  .foot .d{color:#7fd0a0}
+  .note{max-width:640px;margin-top:22px;color:rgba(255,255,255,.5);font-size:13px;line-height:2;text-align:center}
+</style>
+</head>
+<body>
+  <h1>fill باتن، روی هر لایه</h1>
+  <p class="sub">
+    باتن عدد خودش را ندارد: <b>پلهٔ بعدیِ همان نردبان</b> است. روی هر لایه، fill از میزبان
+    خودش ساخته می‌شود.
+  </p>
+  <div class="formula">L(button) = L(host) + 1.1416q</div>
+
+  <div class="rows" id="rows"></div>
+
+  <p class="note" id="note"></p>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const CANVAS_L = num('--liminal-canvas-l'), STEP = num('--liminal-step');
+  const C = num('--liminal-chroma'), H = num('--liminal-hue'), Q = num('--liminal-q');
+  const at = (level) => `oklch(${(CANVAS_L + level * STEP).toFixed(7)} ${C} ${H})`;
+  const stepQ = (STEP / Q).toFixed(4);
+  const MAX = 8;
+
+  const ROLE = ['بوم', 'لایه ۱ · chrome', 'لایه ۲ · work', 'لایه ۳ · panel',
+                'لایه ۴ · control', 'menu', 'popover', 'modal', 'toast'];
+
+  const rows = document.getElementById('rows');
+  for (let host = 0; host <= 7; host++) {
+    const level = Math.min(MAX, host + 1);
+    const clamped = host + 1 > MAX;
+    const el = document.createElement('div'); el.className = 'row';
+    el.innerHTML = `
+      <div class="head">
+        <span class="name">${ROLE[host]}</span>
+        <span class="lv">میزبان S${host} · باتن S${level}</span>
+      </div>
+      <div class="stage" style="background:${S(host)}">
+        <span class="btn" style="background:${at(level)};color:${at(Math.min(MAX, level + 3))}">دکمه</span>
+      </div>
+      <div class="foot">
+        <span>${S(host)} → ${at(level).slice(0, 22)}…</span>
+        <span class="d">+${stepQ}q</span>
+      </div>`;
+    rows.appendChild(el);
+  }
+
+  // And the one case where the ceiling bites.
+  const last = document.createElement('div'); last.className = 'row';
+  last.innerHTML = `
+    <div class="head">
+      <span class="name">${ROLE[8]}</span>
+      <span class="lv">میزبان S8 · باتن S8 ← سقف</span>
+    </div>
+    <div class="stage" style="background:${S(8)}">
+      <span class="btn" style="background:${at(8)};color:${at(8)};border:1px solid ${at(8.5)}">دکمه</span>
+    </div>
+    <div class="foot">
+      <span>بالای سقف جایی نیست — باتن روی میزبانش می‌افتد</span>
+      <span class="d" style="color:#e0b070">+۰.۰۰q</span>
+    </div>`;
+  rows.appendChild(last);
+
+  document.getElementById('note').innerHTML =
+    `و روی <b>${ROLE[8]}</b> سقف می‌گیرد: <code>S8 + 1 = S9</code> وجود ندارد، پس باتن روی
+     <b>خودِ میزبانش</b> می‌افتد. این همان تصمیم <b>سقف سخت</b> است — طرح تنزل می‌کند، نه
+     اینکه پالت گسترش پیدا کند.`;
+</script>
+</body>
+</html>
