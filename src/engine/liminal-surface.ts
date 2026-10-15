@@ -503,8 +503,22 @@ function borderLevel(request: BorderRequest): number {
    */
   const offset = kind === 'separator' ? 0.5 : 1;
   const above = base + offset;
-  // At the ceiling there is no room above, so the border inverts and goes below.
-  return above > MAX_LEVEL ? Math.max(0, base - offset) : above;
+  /**
+   * AT THE CEILING THERE IS NO ROOM ABOVE, SO THE BORDER INVERTS AND GOES BELOW —
+   * but it must stay BETWEEN the surface and the level under it.
+   *
+   * The old inversion was `base - offset`, which at the ceiling put an EDGE exactly
+   * on the surface below it: the toast's border landed on S7, which is its own host,
+   * and measured 0.0000q from it. A border that is the colour of what it borders is
+   * not a border; it is invisible, and the toast had none.
+   *
+   * So the inverted border is capped at half a step down: at the ceiling an EDGE
+   * degenerates into a SEPARATOR, because half a step is all the room there is. That
+   * is the honest answer — there is no room for a full border up there, so the
+   * strongest available one is drawn.
+   */
+  // The cap is a FLOOR on the level: do not go further than half a step down.
+  return above > MAX_LEVEL ? Math.max(0, base - Math.min(offset, 0.5)) : above;
 }
 
 export function resolveBorder(request: BorderRequest): string {

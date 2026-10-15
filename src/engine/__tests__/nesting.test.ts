@@ -176,3 +176,35 @@ describe('the border — a separator is a hint, an edge is a border', () => {
     }
   });
 });
+
+/**
+ * AND THE CEILING, WHERE THERE IS NO ROOM ABOVE.
+ *
+ * The inversion used to be `base - offset`, which put the toast's EDGE exactly on
+ * S7 — its own host — and measured 0.0000q from it. A border the colour of what it
+ * borders is not a border. The inverted border is capped at half a step down, so at
+ * the ceiling an edge degenerates into a separator: half a step is all the room
+ * there is, and the strongest available border is drawn.
+ */
+describe('the border at the ceiling', () => {
+  const level = (role: 'toast', kind: 'separator' | 'edge') => resolveBorderLevel({ role, kind });
+
+  it('never lands on the surface below it', () => {
+    for (const kind of ['separator', 'edge'] as const) {
+      const l = level('toast', kind);
+      expect(l, `toast ${kind} lands on or below its host`).toBeGreaterThan(ROLE_LEVEL.toast - 1);
+      expect(l, `toast ${kind} is above the ceiling`).toBeLessThanOrEqual(ROLE_LEVEL.toast);
+    }
+  });
+
+  it('an edge degenerates into a separator, because half a step is the room there is', () => {
+    expect(level('toast', 'edge')).toBe(ROLE_LEVEL.toast - 0.5);
+    expect(level('toast', 'separator')).toBe(ROLE_LEVEL.toast - 0.5);
+  });
+
+  it('and it is still visible — the defect was 0.0000q from the host', () => {
+    const l = level('toast', 'edge');
+    const fromHost = (l - (ROLE_LEVEL.toast - 1)) * (LADDER_STEP / PERCEPTUAL_QUANTUM);
+    expect(fromHost, 'the border is the colour of what it borders').toBeGreaterThan(0.5);
+  });
+});
