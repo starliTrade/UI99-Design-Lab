@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060709" />
+<title>LIMINAL — نقش‌های متن و رنگ‌های معنایی</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.9);
+    font:15px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:22px 12px 64px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:19px;font-weight:700;margin:0 0 8px;text-align:center;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:12.5px;max-width:88ch;text-align:center;margin-bottom:20px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+  .q{width:100%;max-width:740px;border-radius:15px;padding:16px;margin-bottom:13px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:13.5px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.45);font-size:11.5px;margin-bottom:14px;line-height:2}
+  .band{padding:16px;border-radius:11px;margin-bottom:9px}
+  .lbl{font-size:10px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.4);margin-bottom:8px}
+  .sem{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .pill{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:13px;font-weight:600}
+  .glyph{font-size:14px;font-weight:700}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{font:inherit;font-size:12px;padding:9px 14px;border-radius:10px;cursor:pointer;
+       background:transparent;color:rgba(255,255,255,.7);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+</style>
+</head>
+<body>
+  <h1>نقش‌های متن و رنگ‌های معنایی</h1>
+  <p class="sub">
+    <b>نقش‌های متن</b> آلفایشان <b>از لایه</b> می‌آید ✓ · و <b>رنگ‌های معنایی</b> روی هر سطح
+    <b>بالای آستانه</b>اند ✓ — پس ثابت می‌مانند. و هر کدام یک <b>کانال غیررنگی</b> هم دارند.
+  </p>
+
+  <div class="q">
+    <h2>۱. نقش‌های متن — روی هر سطح</h2>
+    <div class="why">هر نقش، آلفای خودش را نسبت به سطحی که رویش نشسته حل می‌کند</div>
+    <div id="roles"></div>
+  </div>
+
+  <div class="q">
+    <h2>۲. رنگ‌های معنایی — روی هر سطح</h2>
+    <div class="why">
+      <code>solid</code> · <code>text</code> · <code>subtle</code> · <code>border</code> — و
+      <b>glyph</b> که معنی را وقتی رنگ نمی‌تواند حمل می‌کند
+    </div>
+    <div id="semantics"></div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۱ — آیا نقش‌های متن روی هر سطح درست‌اند؟</h2>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="yes">بله — درست‌اند</button>
+      <button class="opt" data-q="1" data-v="tune">باید تنظیم شوند</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۲ — و رنگ‌های معنایی؟</h2>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="yes">بله — و کانال غیررنگی درست است</button>
+      <button class="opt" data-q="2" data-v="tune">باید تنظیم شوند</button>
+    </div>
+  </div>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const ALPHA = { primary: 0.89, secondary: 0.79, tertiary: 0.79, quaternary: 0.44 };
+  const ROLE_FA = { primary: 'primary — متن اصلی', secondary: 'secondary — متن دوم', tertiary: 'tertiary — متن سوم', quaternary: 'quaternary — متن چهارم' };
+
+  const roles = document.getElementById('roles');
+  for (const [name, lv] of [['بوم',0],['سطح کار',2],['پنل',3],['modal',7],['toast',8]]) {
+    roles.innerHTML += `<div class="band" style="background:${S(lv)}">
+      <div class="lbl">${name} · S${lv}</div>
+      ${['primary','secondary','tertiary','quaternary'].map((r) =>
+        `<div style="font-size:14px;color:rgba(255,255,255,${ALPHA[r]})">${ROLE_FA[r]}</div>`).join('')}
+    </div>`;
+  }
+
+  const SEM = [
+    { name: 'SUCCESS', glyph: '✓', solid: '#00875d', text: '#54e5aa' },
+    { name: 'WARNING', glyph: '!', solid: '#946a00', text: '#ffc348' },
+    { name: 'DANGER',  glyph: '×', solid: '#ba4646', text: '#ffbdb6' },
+    { name: 'INFO',    glyph: 'i', solid: '#3271c8', text: '#a4d1ff' },
+  ];
+  const semantics = document.getElementById('semantics');
+  for (const [name, lv] of [['بوم',0],['سطح کار',2],['پنل',3],['modal',7],['toast',8]]) {
+    semantics.innerHTML += `<div class="band" style="background:${S(lv)}">
+      <div class="lbl">${name} · S${lv}</div>
+      <div class="sem">
+        ${SEM.map((s) => `
+          <span class="pill" style="background:${s.solid};color:#fff">
+            <span class="glyph">${s.glyph}</span>${s.name}
+          </span>
+          <span style="color:${s.text};font-size:13px">${s.glyph} ${s.name}</span>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed', 'true'); answers[q] = b.dataset.v;
+  });
+</script>
+</body>
+</html>
