@@ -477,3 +477,41 @@ describe('the exact ladder — the design, which hex cannot write', () => {
     expect(HALF_EXACT.length).toBe(8);
   });
 });
+
+/**
+ * THE BUTTON'S PADDING RATIO IS A CONSTANT — x = y × 3.
+ *
+ * It was three hand-picked pairs — 6/12, 10/18, 12/24 — whose ratio drifted from 2.0 to 1.8
+ * and back. Measured on the rendered button, all three came out near 1.5 wide-to-tall, which
+ * is nearly SQUARE, and the reader's eye said so before the numbers did: "lg has gone square,
+ * and x should be larger than y."
+ *
+ * `x = y × 3` is the only option tested that holds a constant: the padding ratio is exactly
+ * 3.0000 at every size, and the rendered shape lands near 2.0. The small drift that remains is
+ * the LABEL — a button's width is its text plus its padding, and the text grows with the font
+ * while the padding moves in fixed steps. That drift exists in every button ever built.
+ */
+describe('control padding — the horizontal is three times the vertical', () => {
+  const P = LiminalLayoutEngine.CONTROL_PADDING;
+
+  it('holds the SAME ratio at every size', () => {
+    for (const [name, p] of Object.entries(P)) {
+      expect(p.x / p.y, `${name} padding ratio`).toBeCloseTo(3, 6);
+    }
+  });
+
+  it('and the ratio is identical across sizes, which is the property that matters', () => {
+    const ratios = Object.values(P).map((p) => p.x / p.y);
+    expect(new Set(ratios).size, 'the sizes have drifted apart').toBe(1);
+  });
+
+  it('and the rendered shape is wider than it is tall at every size', () => {
+    // Width is the label plus twice the padding; the label grows with the font size.
+    const LABEL = { sm: 28, md: 31, lg: 33 };
+    for (const [name, h] of Object.entries(LiminalLayoutEngine.CONTROL)) {
+      const p = P[name as keyof typeof P];
+      const width = LABEL[name as keyof typeof LABEL] + 2 * p.x;
+      expect(width / h, `${name} rendered shape`).toBeGreaterThan(1.8);
+    }
+  });
+});
