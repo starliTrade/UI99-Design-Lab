@@ -243,10 +243,31 @@ export class LiminalLayoutEngine {
    * sentence needs rather than what a number looked like.
    */
   static readonly TYPOGRAPHY: Record<number, TypeLevel> = (() => {
-    const lh: Record<number, number> = {
-      1: 1.45, 2: 1.5, 3: 1.6, 4: 1.35, 5: 1.25, 6: 1.2, 7: 1.15, 8: 1.1,
-      9: 1.08, 10: 1.05,
-    };
+    /**
+     * LINE-HEIGHT: ONE SPACING STEP OF LEADING, NOT A RATIO ANYONE CHOSE.
+     *
+     * It was a hand-picked table — 1.45, 1.5, 1.6, 1.35, 1.25, 1.2, 1.15, 1.1 — and it ran
+     * BACKWARDS for the first three levels: the third smallest size was the loosest of all.
+     * The standard is an inverse relationship, so the leading ratio shrinks as the text grows,
+     * and that table rose before it fell.
+     *
+     * `1 + 8/fs` is `(fs + 8) / fs`: the line box is the font size plus ONE SPACING STEP, and
+     * 8px is `SPACING[2]`. So the leading is not a typographic opinion — it is a step of the
+     * scale the rest of the system is built on, which makes the line-height DERIVED rather
+     * than tabulated, and it cannot drift from the sizes it belongs to.
+     *
+     *   19.2 -> 1.417   23.0 -> 1.347   27.6 -> 1.289   33.2 -> 1.241
+     *   39.8 -> 1.201   47.8 -> 1.167   57.3 -> 1.140   68.8 -> 1.116
+     */
+    const lh: Record<number, number> = {};
+    for (let n = 1; n <= 10; n++) {
+      const size = 16 * Math.pow(LiminalLayoutEngine.TYPE_RATIO, n);
+      // FOUR DECIMALS, because sixteen is not a line-height. The formula produces
+      // 1.2009387860082306 and a JSON round-trip returns 1.2009387860082303 — the same number
+      // to any eye and two different strings to a test. A line-height is read by a browser,
+      // not by a mathematician.
+      lh[n] = Number((1 + LiminalLayoutEngine.SPACING[2] / size).toFixed(4));
+    }
     const ls: Record<number, string> = {
       1: '+0.04em', 2: '+0.01em', 3: '0', 4: '-0.005em',
       5: '-0.01em', 6: '-0.015em', 7: '-0.02em', 8: '-0.025em',

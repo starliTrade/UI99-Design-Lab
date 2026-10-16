@@ -156,34 +156,34 @@
   --liminal-type-ratio: 1.2; /* fixed — this is the design */
   --liminal-type-base: clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem); /* fluid 14→16.5px; rem-based for WCAG 1.4.4 */
   --liminal-fs-1: calc(var(--liminal-type-base) * 0.694444);
-  --liminal-lh-1: 1.45; /* unitless multiplier */
+  --liminal-lh-1: 1.4167; /* unitless multiplier */
   --liminal-weight-1: 400;
   --liminal-fs-2: calc(var(--liminal-type-base) * 0.833333);
-  --liminal-lh-2: 1.5; /* unitless multiplier */
+  --liminal-lh-2: 1.3472; /* unitless multiplier */
   --liminal-weight-2: 500;
   --liminal-fs-3: var(--liminal-type-base);
-  --liminal-lh-3: 1.6; /* unitless multiplier */
+  --liminal-lh-3: 1.2894; /* unitless multiplier */
   --liminal-weight-3: 400;
   --liminal-fs-4: calc(var(--liminal-type-base) * 1.200000);
-  --liminal-lh-4: 1.35; /* unitless multiplier */
+  --liminal-lh-4: 1.2411; /* unitless multiplier */
   --liminal-weight-4: 600;
   --liminal-fs-5: calc(var(--liminal-type-base) * 1.440000);
-  --liminal-lh-5: 1.25; /* unitless multiplier */
+  --liminal-lh-5: 1.2009; /* unitless multiplier */
   --liminal-weight-5: 600;
   --liminal-fs-6: calc(var(--liminal-type-base) * 1.728000);
-  --liminal-lh-6: 1.2; /* unitless multiplier */
+  --liminal-lh-6: 1.1674; /* unitless multiplier */
   --liminal-weight-6: 600;
   --liminal-fs-7: calc(var(--liminal-type-base) * 2.073600);
-  --liminal-lh-7: 1.15; /* unitless multiplier */
+  --liminal-lh-7: 1.1395; /* unitless multiplier */
   --liminal-weight-7: 600;
   --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
-  --liminal-lh-8: 1.1; /* unitless multiplier */
+  --liminal-lh-8: 1.1163; /* unitless multiplier */
   --liminal-weight-8: 700;
   --liminal-fs-9: calc(var(--liminal-type-base) * 2.985984);
-  --liminal-lh-9: 1.08; /* unitless multiplier */
+  --liminal-lh-9: 1.0969; /* unitless multiplier */
   --liminal-weight-9: 700;
   --liminal-fs-10: calc(var(--liminal-type-base) * 3.583181);
-  --liminal-lh-10: 1.05; /* unitless multiplier */
+  --liminal-lh-10: 1.0808; /* unitless multiplier */
   --liminal-weight-10: 700;
 
   /* ── 12b. FONTS ──────────────────────────────────────────────── */
@@ -367,34 +367,34 @@
   --liminal-type-ratio: 1.2; /* fixed — this is the design */
   --liminal-type-base: clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem); /* fluid 14→16.5px; rem-based for WCAG 1.4.4 */
   --liminal-fs-1: calc(var(--liminal-type-base) * 0.694444);
-  --liminal-lh-1: 1.45; /* unitless multiplier */
+  --liminal-lh-1: 1.4167; /* unitless multiplier */
   --liminal-weight-1: 400;
   --liminal-fs-2: calc(var(--liminal-type-base) * 0.833333);
-  --liminal-lh-2: 1.5; /* unitless multiplier */
+  --liminal-lh-2: 1.3472; /* unitless multiplier */
   --liminal-weight-2: 500;
   --liminal-fs-3: var(--liminal-type-base);
-  --liminal-lh-3: 1.6; /* unitless multiplier */
+  --liminal-lh-3: 1.2894; /* unitless multiplier */
   --liminal-weight-3: 400;
   --liminal-fs-4: calc(var(--liminal-type-base) * 1.200000);
-  --liminal-lh-4: 1.35; /* unitless multiplier */
+  --liminal-lh-4: 1.2411; /* unitless multiplier */
   --liminal-weight-4: 600;
   --liminal-fs-5: calc(var(--liminal-type-base) * 1.440000);
-  --liminal-lh-5: 1.25; /* unitless multiplier */
+  --liminal-lh-5: 1.2009; /* unitless multiplier */
   --liminal-weight-5: 600;
   --liminal-fs-6: calc(var(--liminal-type-base) * 1.728000);
-  --liminal-lh-6: 1.2; /* unitless multiplier */
+  --liminal-lh-6: 1.1674; /* unitless multiplier */
   --liminal-weight-6: 600;
   --liminal-fs-7: calc(var(--liminal-type-base) * 2.073600);
-  --liminal-lh-7: 1.15; /* unitless multiplier */
+  --liminal-lh-7: 1.1395; /* unitless multiplier */
   --liminal-weight-7: 600;
   --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
-  --liminal-lh-8: 1.1; /* unitless multiplier */
+  --liminal-lh-8: 1.1163; /* unitless multiplier */
   --liminal-weight-8: 700;
   --liminal-fs-9: calc(var(--liminal-type-base) * 2.985984);
-  --liminal-lh-9: 1.08; /* unitless multiplier */
+  --liminal-lh-9: 1.0969; /* unitless multiplier */
   --liminal-weight-9: 700;
   --liminal-fs-10: calc(var(--liminal-type-base) * 3.583181);
-  --liminal-lh-10: 1.05; /* unitless multiplier */
+  --liminal-lh-10: 1.0808; /* unitless multiplier */
   --liminal-weight-10: 700;
 
   /* ── 12b. FONTS ──────────────────────────────────────────────── */

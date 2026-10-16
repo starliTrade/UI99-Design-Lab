@@ -646,7 +646,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.45,
+        "$value": 1.4167,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -671,7 +671,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.5,
+        "$value": 1.3472,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -696,7 +696,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.6,
+        "$value": 1.2894,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -721,7 +721,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.35,
+        "$value": 1.2411,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -746,7 +746,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.25,
+        "$value": 1.2009,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -771,7 +771,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.2,
+        "$value": 1.1674,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -796,7 +796,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.15,
+        "$value": 1.1395,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -821,7 +821,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.1,
+        "$value": 1.1163,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -846,7 +846,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.08,
+        "$value": 1.0969,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -871,7 +871,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.05,
+        "$value": 1.0808,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
