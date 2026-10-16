@@ -173,13 +173,24 @@ describe('surface decision engine — the state rule', () => {
 });
 
 describe('surface decision engine — the focus rule', () => {
-  it('shows a ring only on focus', () => {
+  /**
+   * THE FOCUS IS A DOUBLE EDGE NOW, NOT A BRIGHT RING.
+   *
+   * It used to be 2px of the brand — 15.7:1 to 17:1 against the surfaces, where WCAG asks for
+   * 3:1, and the reader's word for it was "destroyed, jarring, in your face". No ladder level
+   * could replace it: the ladder's highest step is 1.10:1 against the work plane. So the focus
+   * became a SHAPE — an inner border, a 2px gap, and an outer line — and both lines are ladder
+   * levels, so it adds no lightness at all.
+   */
+  it('shows a DOUBLE EDGE only on focus, and both lines are ladder levels', () => {
     for (const state of STATES) {
       const r = resolveSurface({ role: 'control', state });
       if (state === 'focus') {
-        expect(r.outline, 'focus must produce a ring').toContain(FOCUS_RING_COLOR);
+        expect(r.outline, 'focus must produce an outer line').toContain('var(--liminal-s');
+        expect(r.border, 'focus must produce an inner border').toContain('var(--liminal-s');
+        expect(r.outlineOffset, 'and a gap between them').toBe('2px');
       } else {
-        expect(r.outline, `${state} must not produce a ring`).toBe('none');
+        expect(r.outline, `${state} must not produce an outer line`).toBe('none');
       }
     }
   });

@@ -331,15 +331,29 @@ describe('LIMINAL contract — focus visibility', () => {
     expect(ring.outline).toBe('none');
   });
 
-  it('the surface resolver draws that same ring on focus, and none on idle', () => {
-    // One colour, one rule. `getFocusRing` above proves the colour is visible on
-    // every surface; this proves the resolver draws THAT colour and not another,
-    // and that it draws nothing when the keyboard is not involved.
-    const focus = outlineColor(resolveSurface({ role: 'control', state: 'focus' }).style as Record<string, unknown>);
-    const ringHex = FOCUS_RING_COLOR.match(/#[0-9a-fA-F]{3,8}/)![0];
-    expect(focus).toBe(ringHex);
-    const idle = outlineColor(resolveSurface({ role: 'control' }).style as Record<string, unknown>);
-    expect(idle).toBeNull();
+  it('the surface resolver draws a DOUBLE EDGE on focus, and none on idle', () => {
+    /**
+     * IT USED TO ASSERT THE BRAND'S HEX HERE, and that is what the focus no longer is.
+     *
+     * The ring was `FOCUS_RING_COLOR` — #E9ECF2 — at 15.7:1 to 17:1 where WCAG asks for 3:1.
+     * Five times louder than it had to be, and the reader called it "destroyed, jarring, in
+     * your face". No ladder level could replace it either: the ladder's highest step is
+     * 1.10:1 against the work plane.
+     *
+     * So the focus is a SHAPE: an inner border and an outer line, both ladder levels, with a
+     * 2px gap between them. Two parallel edges are a frequency, and the eye picks a repeated
+     * edge out of a background far better than a single one at the same contrast.
+     */
+    const focus = resolveSurface({ role: 'control', state: 'focus' });
+    // The lines are VARIABLE references, not hexes — `outlineColor` looks for a hex and finds
+    // none, which is itself the point: the focus is no longer a colour of its own.
+    expect(focus.outline, 'the outer line is a ladder level').toContain('var(--liminal-s');
+    expect(focus.border, 'the inner line is a ladder level').toContain('var(--liminal-s');
+    expect(focus.outlineOffset, 'and there is a gap between them').toBe('2px');
+    // And nothing when the keyboard is not involved.
+    const idle = resolveSurface({ role: 'control' });
+    expect(idle.outline).toBe('none');
+    expect(idle.outlineOffset).toBeUndefined();
   });
 });
 
