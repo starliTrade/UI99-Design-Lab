@@ -18,7 +18,9 @@ import { resolve } from 'node:path';
 import { LADDER, WELLS, PERCEPTUAL_QUANTUM, LADDER_EXACT, HALF_EXACT, CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from '../src/engine/liminal-ladder';
 import { ROLE_LEVEL, ROLE_RIM, ROLE_SHADOW, FLOAT_SHADOWS, FLOATING_ROLES, resolveBorderHex } from '../src/engine/liminal-surface';
 import { floatShadow } from '../src/engine/liminal-shadow';
+import { oklchToRgb } from '../src/engine/liminal-color-math';
 import { LiminalMotionEngine as M } from '../src/engine/liminal-motion-engine';
+import { LiminalLayoutEngine } from '../src/engine/liminal-layout-engine';
 import { LiminalLayoutEngine as L } from '../src/engine/liminal-layout-engine';
 import { oklchLightness } from '../src/engine/liminal-color-math';
 
@@ -72,7 +74,13 @@ w('  /* ── the floating shadows, named by role ─────────�
 FLOATING_ROLES.forEach((role) => w(`  --liminal-shadow-${role}: ${FLOAT_SHADOWS[role]};`));
 // And the model at every height a settled surface can sit at, so a test page can
 // ask for the shadow of a surface one step above the canvas.
-for (let h = 1; h <= 4; h++) w(`  --liminal-shadow-surface-${['one','two','three','four'][h - 1]}: ${floatShadow(h)};`);
+// The shadow's alpha is solved per HOST now, so the lab needs one too — the work plane,
+// which is what a surface one step above it falls on.
+const LAB_HOST = (() => {
+  const { r, g, b } = oklchToRgb({ L: CANVAS_L + 2 * LADDER_STEP, C: LADDER_CHROMA, h: LADDER_HUE });
+  return [r, g, b];
+})();
+for (let h = 1; h <= 4; h++) w(`  --liminal-shadow-surface-${['one','two','three','four'][h - 1]}: ${floatShadow(h, LAB_HOST)};`);
 
 w('');
 w('  /* ── motion, and the duration a floating surface derives ─────────── */');
@@ -81,6 +89,16 @@ Object.entries(M.EASING).forEach(([k, v]) => w(`  --liminal-ease-${k}: ${v};`));
 FLOATING_ROLES.forEach((role) => w(`  --liminal-float-enter-${role}: ${M.floatEnter(role)};`));
 
 w('');
+w('  /* ── the size system: spacing, control, radius ──────────────────── */');
+Object.entries(LiminalLayoutEngine.SPACING).forEach(([k, v]) => w(`  --liminal-space-${k}: ${v}px;`));
+Object.entries(LiminalLayoutEngine.CONTROL).forEach(([k, v]) => w(`  --liminal-control-${k}: ${v}px;`));
+Object.entries(LiminalLayoutEngine.CONTROL_PADDING).forEach(([k, v]) => {
+  w(`  --liminal-pad-${k}-y: ${v.y}px;`);
+  w(`  --liminal-pad-${k}-x: ${v.x}px;`);
+});
+Object.entries(LiminalLayoutEngine.RADIUS).forEach(([k, v]) => w(`  --liminal-radius-${k}: ${v}px;`));
+w(`  --liminal-ratio: ${Math.SQRT2};`);
+
 w('  /* ── the measured constants ─────────────────────────────────────── */');
 w(`  --liminal-q: ${PERCEPTUAL_QUANTUM};`);
 // The two numbers a page needs to compute an offset that is NOT on the ladder
