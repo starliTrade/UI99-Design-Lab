@@ -197,11 +197,35 @@ export const FLOAT_SHADOWS = Object.fromEntries(
  * perceptual quantum: a hover should be *felt*, not *seen*. If it were a full
  * step it would compete with the hierarchy itself.
  */
+/**
+ * HOW FAR A STATE MOVES A SURFACE — and every value is a WHOLE STEP.
+ *
+ * The ladder has two vocabularies and they were being mixed. Its INTEGER steps are
+ * SURFACES: the colour of a layer. Its HALF-STEPS are BORDERS: the colour of a line. A
+ * state moves a SURFACE, so it has to land on an integer — and the old table shifted by
+ * half a step, which meant a hovered button was filled with the colour of a separator.
+ * Measured: hover resolved to #0c0e10, which is exactly `HALF[3]`. A surface filled with
+ * a border's colour reads as a wide line rather than as a surface, which is what the
+ * reader saw and called "not beautiful".
+ *
+ * AND HALF A STEP WAS BELOW THE THRESHOLD ANYWAY. A state change is a SURFACE change, so
+ * its threshold is the flat-surface quantum, one quantum — not the edge threshold of
+ * 0.48q. Half a step is 0.5708q: invisible. It is the border's finding again, in a
+ * different place. A state that cannot be seen is not a state.
+ *
+ *   hover   +1 step   1.1416q   over the threshold — the surface lifts
+ *   focus   +1 step   the same, because focus and hover are both "attention is here"
+ *   active  -2 steps  2.2831q   the surface SINKS, and further than a hover lifts,
+ *                               because pressing says more than pointing
+ *
+ * Measured by eye at four layers, and chosen for the LIMINAL reading: hover one, active
+ * two. The asymmetry is deliberate — a press is a bigger event than a hover.
+ */
 export const STATE_SHIFT: Record<SurfaceState, number> = {
   idle: 0,
-  hover: 0.5,
-  focus: 0.5,
-  active: -0.5,
+  hover: 1,
+  focus: 1,
+  active: -2,
   disabled: 0,
 };
 

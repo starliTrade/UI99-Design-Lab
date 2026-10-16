@@ -124,15 +124,34 @@ describe('surface decision engine — the rim rule', () => {
 });
 
 describe('surface decision engine — the state rule', () => {
-  it('keeps every state shift below the perceptual quantum', () => {
-    // A state change must be felt, not seen. A full step would compete with the
-    // hierarchy itself.
+  /**
+   * THE OLD ASSERTION HERE SAID "below the perceptual quantum", AND IT WAS PROTECTING THE
+   * DEFECT.
+   *
+   * It held that every state shift must be under one quantum — "a state change must be
+   * felt, not seen; a full step would compete with the hierarchy". That was true of the
+   * numbers and wrong about the system: a state change moves a SURFACE, so its threshold
+   * is the flat-surface quantum, and half a step is 0.5708q — invisible. Measured by eye
+   * at four layers, and the reader chose one step up and two down.
+   *
+   * The property this file holds now is the opposite: every shift is a WHOLE STEP, so it
+   * lands on a real ladder level and clears the threshold.
+   */
+  it('every state shift is a WHOLE step — a surface, not a border', () => {
+    for (const state of STATES) {
+      const shift = STATE_SHIFT[state];
+      expect(Number.isInteger(shift), `${state} shift is ${shift} steps, not a whole one`).toBe(true);
+    }
+  });
+
+  it('and every shift clears the flat-surface threshold', () => {
+    // A state change is a SURFACE change, so its threshold is one quantum — not the edge
+    // threshold of 0.48q. Half a step was 0.5708q, which is below it.
     for (const state of STATES) {
       const shift = Math.abs(STATE_SHIFT[state]);
-      expect(
-        shift * PERCEPTUAL_QUANTUM,
-        `${state} shift is ${shift} steps`,
-      ).toBeLessThan(PERCEPTUAL_QUANTUM);
+      if (shift === 0) continue;
+      expect(shift * (PERCEPTUAL_QUANTUM * 1.1416), `${state} is below the threshold`)
+        .toBeGreaterThan(PERCEPTUAL_QUANTUM);
     }
   });
 
@@ -339,12 +358,12 @@ describe('the ladder ceiling is derived from the ladder', () => {
   });
 
   it('INVERTS at the ceiling, because there is no room above', () => {
-    // It used to clamp — and clamping plus rounding meant a hover on a toast
-    // did nothing at all (8 + 0.5 → 8.5 → round → 8 → the idle fill). The
-    // border has inverted at the ceiling since it was written; the surface does
-    // now too. A hover at the top of the ladder becomes a press.
+    // It used to clamp — and clamping plus rounding meant a hover on a toast did nothing
+    // at all. The border has inverted at the ceiling since it was written; the surface
+    // does now too, and the inversion mirrors the shift: a hover of one step becomes a
+    // press of one step, and it is still a whole step.
     const hover = resolveSurface({ role: 'toast', state: 'hover' });
-    expect(hover.level).toBe(TOP - 0.5);
+    expect(hover.level).toBe(TOP - Math.abs(STATE_SHIFT.hover));
     expect(hover.backgroundHex).not.toBe(resolveSurface({ role: 'toast' }).backgroundHex);
   });
 });
