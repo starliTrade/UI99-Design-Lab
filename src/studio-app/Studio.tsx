@@ -31,6 +31,7 @@ import {
 import { CANVAS_L, LADDER_STEP, PERCEPTUAL_QUANTUM, BRAND_HEX } from '../engine/liminal-ladder';
 import { SURFACE_TINT, getTextStyle } from '../engine/spec-engine';
 import { oklchLightness } from '../engine/liminal-color-math';
+import { SurfaceProvider } from '../engine/liminal-surface-context';
 
 const LAYERS: SurfaceRole[] = ['canvas', 'chrome', 'work', 'panel', 'control', 'menu', 'popover', 'modal', 'toast'];
 const FORCEABLE: Record<string, string> = { hover: 'hover', focus: 'focus', active: 'active', disabled: 'disabled' };
@@ -156,6 +157,17 @@ export function Studio() {
             <span>{fixture.name}</span>
             <span>{layer} · S{ROLE_LEVEL[layer]}</span>
           </div>
+          {/*
+            THE PREVIEW HAS TO DECLARE ITS HOST, or the component inside resolves against
+            the context's default — which is `work` — and every layer shows the same
+            values. That was a real bug: the studio changed the band's background and the
+            component inside still thought it sat on the work plane, so a button read S3
+            on every layer and the page looked like the engine was broken.
+
+            `SurfaceProvider` is how the system says it: a surface declares itself once and
+            everything inside reads the host from context, at any depth.
+          */}
+          <SurfaceProvider role={layer}>
           <div style={{ background: layerSurface.background, padding: 22 }}>
             {shownVariants.map((variant) => (
               <div key={variant ?? 'only'} style={{ marginBottom: shownVariants.length > 1 ? 18 : 0 }}>
@@ -185,6 +197,7 @@ export function Studio() {
               </div>
             ))}
           </div>
+          </SurfaceProvider>
         </div>
 
         {/* ── the layer ─────────────────────────────────────────────── */}
