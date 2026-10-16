@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060709" />
+<title>LIMINAL — تایپوگرافی</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.9);
+    font:15px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:22px 12px 64px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:19px;font-weight:700;margin:0 0 8px;text-align:center;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:12.5px;max-width:88ch;text-align:center;margin-bottom:20px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+  .q{width:100%;max-width:740px;border-radius:15px;padding:16px;margin-bottom:13px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:13.5px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.45);font-size:11.5px;margin-bottom:14px;line-height:2}
+  table{width:100%;border-collapse:collapse;font-family:ui-monospace,Menlo,monospace;font-size:11.5px}
+  th{text-align:start;font-weight:500;color:rgba(255,255,255,.34);font-size:10.5px;padding:5px}
+  td{padding:5px;border-top:1px solid var(--liminal-role-panel-border)}
+  .ok{color:#7fd0a0} .warn{color:#e0b070}
+  .spec{padding:14px 12px;border-radius:11px;background:var(--liminal-s2);margin-bottom:10px}
+  .spec .lbl{font-size:10px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.4);margin-bottom:6px}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{font:inherit;font-size:12px;padding:9px 14px;border-radius:10px;cursor:pointer;
+       background:transparent;color:rgba(255,255,255,.7);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+</style>
+</head>
+<body>
+  <h1>تایپوگرافی — مقیاس، ارتفاع خط، نقش‌ها</h1>
+  <p class="sub">
+    مقیاس یک <b>نسبت ثابت</b> دارد (<code>۱.۲</code>) ✓ · آلفا <b>از لایه</b> می‌آید ✓ ·
+    ولی <b>ارتفاع خط دستچین است</b> و برای سه سطح اول خلاف جهت می‌رود.
+  </p>
+
+  <div class="q">
+    <h2>۱. ارتفاع خط — فعلی در برابر فرمول</h2>
+    <div class="why">
+      <code>lh = 1 + ۸/fs</code> یعنی <b>جعبهٔ خط = فونت + یک پلهٔ فاصله</b>
+    </div>
+    <div class="spec">
+      <div class="lbl">فعلی — دستچین</div>
+      <div id="cur" style="font-size:15px"></div>
+    </div>
+    <div class="spec">
+      <div class="lbl">فرمول — <code>(fs + 8) / fs</code></div>
+      <div id="fml" style="font-size:15px"></div>
+    </div>
+    <table><thead><tr><th>سطح</th><th>اندازه</th><th>فعلی</th><th>فرمول</th><th>اختلاف</th></tr></thead><tbody id="lhTable"></tbody></table>
+  </div>
+
+  <div class="q">
+    <h2>۲. مقیاس — نسبت <code>۱.۲</code></h2>
+    <div id="scale"></div>
+  </div>
+
+  <div class="q">
+    <h2>۳. و نقش‌های متن روی هر سطح</h2>
+    <div class="why">آلفا از لایه می‌آید — هر نقش روی هر سطح، آلفای خودش</div>
+    <div id="roles"></div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۱ — ارتفاع خط از کجا؟</h2>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="current">جدول فعلی بماند</button>
+      <button class="opt" data-q="1" data-v="formula">فرمول <code>1 + ۸/fs</code></button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۲ — و آیا مقیاس <code>۱.۲</code> درست است؟</h2>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="keep">بله — بماند</button>
+      <button class="opt" data-q="2" data-v="tune">باید تنظیم شود</button>
+    </div>
+  </div>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const RATIO = 1.2, BASE = 16;
+  const CUR = { 1: 1.45, 2: 1.5, 3: 1.6, 4: 1.35, 5: 1.25, 6: 1.2, 7: 1.15, 8: 1.1 };
+  const fs = (n) => BASE * Math.pow(RATIO, n);
+  const fml = (n) => 1 + 8 / fs(n);
+
+  // ۱. the two line-height samples, at level 3 (where they differ most)
+  const TEXT = 'این یک متن چندخطی است تا فاصلهٔ خطوط دیده شود. فاصلهٔ خطوط در تایپوگرافی، ریتم خواندن را می‌سازد و اگر غلط باشد، متن خسته‌کننده می‌شود.';
+  const n = 3;
+  document.getElementById('cur').innerHTML = `<div style="font-size:${fs(n)}px;line-height:${CUR[n]}">${TEXT}</div>`;
+  document.getElementById('fml').innerHTML = `<div style="font-size:${fs(n)}px;line-height:${fml(n)}">${TEXT}</div>`;
+
+  const t = document.getElementById('lhTable');
+  for (let i = 1; i <= 8; i++) {
+    const d = CUR[i] - fml(i);
+    t.innerHTML += `<tr><td>${i}</td><td>${fs(i).toFixed(1)}px</td><td>${CUR[i].toFixed(2)}</td>
+      <td>${fml(i).toFixed(3)}</td><td class="${Math.abs(d) > 0.1 ? 'warn' : 'ok'}">${d >= 0 ? '+' : ''}${d.toFixed(3)}</td></tr>`;
+  }
+
+  // ۲. the scale
+  const scale = document.getElementById('scale');
+  for (let i = 0; i <= 9; i++) {
+    scale.innerHTML += `<div style="font-size:${fs(i)}px;line-height:${fml(i)};color:${S(8)};margin-bottom:6px">
+      ${fs(i).toFixed(1)}px — نمونهٔ متن</div>`;
+  }
+
+  // ۳. the roles on each surface
+  const roles = document.getElementById('roles');
+  const ALPHA = { primary: 0.89, secondary: 0.79, tertiary: 0.79, quaternary: 0.44 };
+  for (const [name, lv] of [['بوم',0],['سطح کار',2],['پنل',3],['modal',7]]) {
+    roles.innerHTML += `<div style="padding:12px;border-radius:10px;background:${S(lv)};margin-bottom:8px">
+      <div style="font-size:10px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.4);margin-bottom:6px">${name} · S${lv}</div>
+      ${['primary','secondary','tertiary','quaternary'].map((r) =>
+        `<div style="font-size:14px;color:rgba(255,255,255,${ALPHA[r]})">${r} — متن روی این سطح</div>`).join('')}
+    </div>`;
+  }
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed', 'true'); answers[q] = b.dataset.v;
+  });
+</script>
+</body>
+</html>
