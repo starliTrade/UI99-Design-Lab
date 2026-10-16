@@ -50,10 +50,19 @@ export function Studio() {
   const [name, setName] = useState('Button');
   const [layer, setLayer] = useState<SurfaceRole>('work');
   const [states, setStates] = useState<string[] | null>(null);
+  const [variants, setVariants] = useState<string[] | null>(null);
 
   const fixture = FIXTURES.find((f) => f.name === name) ?? FIXTURES[0];
   const allStates = fixture?.states.length ? fixture.states : ['default'];
   const shown = states ?? allStates;
+  /**
+   * AND THE VARIANTS TOO. The first version rendered `variants[0]` and nothing else, so a
+   * Button showed `primary` and the reader had to ask where `danger`, `outline` and `link`
+   * went. A component's variants are the thing being reviewed — showing one of them is
+   * showing a different component.
+   */
+  const allVariants: (string | undefined)[] = fixture?.variants?.length ? fixture.variants : [undefined];
+  const shownVariants = variants ? allVariants.filter((v) => v !== undefined && variants.includes(v)) : allVariants;
 
   const layerSurface = resolveSurface({ role: layer });
   const control = resolveSurface({ role: 'control', on: layer });
@@ -89,6 +98,33 @@ export function Studio() {
           />
         </Row>
 
+        {/* ── which variants ─────────────────────────────────────────── */}
+        {allVariants.length > 1 && (
+          <div style={{ marginTop: 14 }}>
+            <div style={{ fontSize: 11.5, color: T.tertiary, marginBottom: 8 }}>واریانت‌ها</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {allVariants.map((v) => {
+                if (v === undefined) return null;
+                const on = shownVariants.includes(v);
+                return (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => {
+                      const current = shownVariants.filter((x): x is string => x !== undefined);
+                      const next = on ? current.filter((x) => x !== v) : [...current, v];
+                      setVariants(next.length ? next : allVariants.filter((x): x is string => x !== undefined));
+                    }}
+                    style={chip(on)}
+                  >
+                    {v}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* ── which states ───────────────────────────────────────────── */}
         {allStates.length > 1 && (
           <div style={{ marginTop: 14 }}>
@@ -121,16 +157,33 @@ export function Studio() {
             <span>{layer} · S{ROLE_LEVEL[layer]}</span>
           </div>
           <div style={{ background: layerSurface.background, padding: 22 }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center' }}>
-              {shown.map((s) => (
-                <div key={s} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                  <div {...(FORCEABLE[s] ? { 'data-liminal-force': FORCEABLE[s] } : {})}>
-                    {fixture.render(s, fixture.sizes[0], fixture.variants?.[0])}
+            {shownVariants.map((variant) => (
+              <div key={variant ?? 'only'} style={{ marginBottom: shownVariants.length > 1 ? 18 : 0 }}>
+                {variant !== undefined && (
+                  <div
+                    style={{
+                      fontSize: 10.5,
+                      fontFamily: 'ui-monospace,Menlo,monospace',
+                      color: T.quaternary,
+                      marginBottom: 10,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {variant}
                   </div>
-                  <span style={{ fontSize: 10.5, fontFamily: 'ui-monospace,Menlo,monospace', color: T.quaternary }}>{s}</span>
+                )}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center' }}>
+                  {shown.map((s) => (
+                    <div key={s} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                      <div {...(FORCEABLE[s] ? { 'data-liminal-force': FORCEABLE[s] } : {})}>
+                        {fixture.render(s, fixture.sizes[0], variant)}
+                      </div>
+                      <span style={{ fontSize: 10.5, fontFamily: 'ui-monospace,Menlo,monospace', color: T.quaternary }}>{s}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
 
