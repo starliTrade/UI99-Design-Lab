@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060709" />
+<title>LIMINAL — فوکوس: ضخامت، فاصله، شدت</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.9);
+    font:15px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:22px 12px 64px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:19px;font-weight:700;margin:0 0 8px;text-align:center;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:12.5px;max-width:84ch;text-align:center;margin-bottom:20px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+  .q{width:100%;max-width:680px;border-radius:15px;padding:16px;margin-bottom:13px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:13.5px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.45);font-size:11.5px;margin-bottom:14px;line-height:2}
+  .band{padding:24px 12px;border-radius:11px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;gap:10px;align-items:center}
+  .btn{padding:10px 20px;border-radius:10px;font-size:13.5px;font-weight:600}
+  .cap{font-size:9.5px;color:rgba(255,255,255,.45);text-align:center;line-height:1.85;font-family:ui-monospace,Menlo,monospace}
+  .cap b{color:rgba(255,255,255,.8);font-size:10.5px;font-family:system-ui;display:block}
+  .ok{color:#7fd0a0} .no{color:#e07070} .warn{color:#e0b070}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{font:inherit;font-size:12px;padding:9px 14px;border-radius:10px;cursor:pointer;
+       background:transparent;color:rgba(255,255,255,.7);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+</style>
+</head>
+<body>
+  <h1>فوکوس — ضخامت، فاصله، شدت</h1>
+  <p class="sub">
+    نازک‌تر · محو‌تر · و یک فاصلهٔ <b>در حد فقط معنی</b>. همه از <b>فام و کرمای خودمان</b>.
+  </p>
+
+  <div class="q">
+    <h2>۱. ضخامت — با فاصلهٔ ۱ پیکسل و شدت ۳.۱:۱</h2>
+    <div class="why">۱ پیکسل · ۱.۵ پیکسل · ۲ پیکسل</div>
+    <div class="band" id="b1" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۲. فاصله — با ضخامت ۱ پیکسل و شدت ۳.۱:۱</h2>
+    <div class="why">۰ · ۱ · ۲ · ۳ پیکسل — «فقط معنی فاصله»</div>
+    <div class="band" id="b2" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۳. شدت — با ضخامت ۱ و فاصلهٔ ۱</h2>
+    <div class="why">۳.۱:۱ · ۳.۹:۱ · ۴.۸:۱ · ۵.۸:۱</div>
+    <div class="band" id="b3" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۱ — ضخامت؟</h2>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="1">۱ پیکسل</button>
+      <button class="opt" data-q="1" data-v="1.5">۱.۵ پیکسل</button>
+      <button class="opt" data-q="1" data-v="2">۲ پیکسل</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۲ — فاصله؟</h2>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="0">۰ — چسبیده</button>
+      <button class="opt" data-q="2" data-v="1">۱ پیکسل</button>
+      <button class="opt" data-q="2" data-v="2">۲ پیکسل</button>
+      <button class="opt" data-q="2" data-v="3">۳ پیکسل</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۳ — شدت؟</h2>
+    <div class="opts" id="q3">
+      <button class="opt" data-q="3" data-v="3.1">۳.۱:۱ — کف دسترس‌پذیری</button>
+      <button class="opt" data-q="3" data-v="3.9">۳.۹:۱</button>
+      <button class="opt" data-q="3" data-v="4.8">۴.۸:۱</button>
+      <button class="opt" data-q="3" data-v="5.8">۵.۸:۱</button>
+    </div>
+  </div>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const CANVAS_L = num('--liminal-canvas-l'), STEP = num('--liminal-step');
+  const C = num('--liminal-chroma'), H = num('--liminal-hue');
+  const at = (level) => `oklch(${(CANVAS_L + level * STEP).toFixed(7)} ${C} ${H})`;
+
+  /** The system's own hue and chroma at a given lightness — a grey of this system. */
+  const sysRing = (L) => {
+    const a = C * Math.cos((H * Math.PI) / 180), bb = C * Math.sin((H * Math.PI) / 180);
+    const l_ = L + 0.3963377774 * a + 0.2158037573 * bb;
+    const m_ = L - 0.1055613458 * a - 0.0638541728 * bb;
+    const s_ = L - 0.0894841775 * a - 1.2914855480 * bb;
+    const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
+    const lin = [
+      +4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+      -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+      -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s,
+    ];
+    return '#' + lin.map((v) => {
+      const c = v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(Math.max(0, v), 1 / 2.4) - 0.055;
+      return Math.max(0, Math.min(255, Math.round(c * 255))).toString(16).padStart(2, '0');
+    }).join('');
+  };
+
+  const HOST = 2, FILL = 3;
+  const base = `background:${S(FILL)};color:${at(8)}`;
+  const ring = (w, off, L) => `${base};border:1px solid transparent;outline:${w}px solid ${sysRing(L)};outline-offset:${off}px`;
+
+  function draw(id, items) {
+    const band = document.getElementById(id);
+    for (const it of items) {
+      const el = document.createElement('div'); el.className = 'cell';
+      el.innerHTML = `<span class="btn" style="${it.css}">دکمه</span>
+        <div class="cap"><b>${it.name}</b><span class="${it.tone || 'ok'}">${it.note || ''}</span></div>`;
+      band.appendChild(el);
+    }
+  }
+
+  draw('b1', [
+    { name: '۱ پیکسل', css: ring(1, 1, 0.50) },
+    { name: '۱.۵ پیکسل', css: ring(1.5, 1, 0.50) },
+    { name: '۲ پیکسل (فعلی)', css: ring(2, 1, 0.50) },
+  ]);
+  draw('b2', [
+    { name: 'فاصله ۰', css: ring(1, 0, 0.50) },
+    { name: 'فاصله ۱', css: ring(1, 1, 0.50) },
+    { name: 'فاصله ۲ (فعلی)', css: ring(1, 2, 0.50) },
+    { name: 'فاصله ۳', css: ring(1, 3, 0.50) },
+  ]);
+  draw('b3', [
+    { name: '۳.۱:۱', css: ring(1, 1, 0.50) },
+    { name: '۳.۹:۱', css: ring(1, 1, 0.55) },
+    { name: '۴.۸:۱', css: ring(1, 1, 0.60) },
+    { name: '۵.۸:۱', css: ring(1, 1, 0.65) },
+  ]);
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed','true'); answers[q] = b.dataset.v;
+  });
+</script>
+</body>
+</html>
