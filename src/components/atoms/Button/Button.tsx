@@ -100,7 +100,7 @@ export const buttonVariants = createVariants({
         padding: `${LiminalLayoutEngine.SPACING[3]}px ${LiminalLayoutEngine.SPACING[5]}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(3),
         minHeight: CONTROL.lg,
-        borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
+        borderRadius: `${LiminalLayoutEngine.CONTROL_RADIUS.lg}px`,
         lineHeight: 1.5,
       },
       icon: {
@@ -264,12 +264,15 @@ export const Button = createLiminalComponent<ButtonProps>(
         padding: `${CONTROL_PADDING.sm.y}px ${CONTROL_PADDING.sm.x}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
         minHeight: CONTROL.sm,
+        // The corner follows the HEIGHT, so a small button is tighter than a large one.
+        borderRadius: `${LiminalLayoutEngine.CONTROL_RADIUS.sm}px`,
         lineHeight: 1.4,
       },
       md: {
         padding: `${CONTROL_PADDING.md.y}px ${CONTROL_PADDING.md.x}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
         minHeight: CONTROL.md, // mobile touch target compliant
+        borderRadius: `${LiminalLayoutEngine.CONTROL_RADIUS.md}px`,
         lineHeight: 1.5,
       },
       lg: {
@@ -407,6 +410,8 @@ export const Button = createLiminalComponent<ButtonProps>(
         ? LiminalMotionEngine.getTransition('opacity', 'fast')
         : LiminalMotionEngine.TRANSITION.normal,
       padding: isIconOnly ? 0 : (variantBase.padding || sizeStyles[size].padding),
+      // The SIZE's radius, not the variant's — a corner is a function of the control's height.
+      borderRadius: sizeStyles[size].borderRadius ?? variantBase.borderRadius,
       ...customStyle,
     } as CSSProperties;
 

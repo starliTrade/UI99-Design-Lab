@@ -515,3 +515,53 @@ describe('control padding — the horizontal is three times the vertical', () =>
     }
   });
 });
+
+/**
+ * THE RADIUS FOLLOWS THE HEIGHT — and the three numbers are a FORMULA.
+ *
+ * The standard is "the radius scales with the element's height": a 32px control takes 8, a
+ * 44px control 10, a 52px control 12. Smaller elements get tighter corners and larger ones
+ * softer, so the corner stays PROPORTIONAL to the shape.
+ *
+ * AND LIMINAL HAD THE OPPOSITE: every control size took the same radius, 10 — so a 32px button
+ * and a 52px button had identical corners, which is the one thing the standard says not to do.
+ *
+ * `round(h / 8.8) * 2` reproduces the mapping exactly, so the scale is not written down and
+ * cannot drift from the heights it belongs to.
+ */
+describe('control radius — derived from the height', () => {
+  it('reproduces the standard mapping exactly', () => {
+    expect(LiminalLayoutEngine.controlRadius(32)).toBe(8);
+    expect(LiminalLayoutEngine.controlRadius(44)).toBe(10);
+    expect(LiminalLayoutEngine.controlRadius(52)).toBe(12);
+  });
+
+  it('and the named radii ARE those values, computed rather than listed', () => {
+    expect(LiminalLayoutEngine.CONTROL_RADIUS.sm).toBe(LiminalLayoutEngine.controlRadius(LiminalLayoutEngine.CONTROL.sm));
+    expect(LiminalLayoutEngine.CONTROL_RADIUS.md).toBe(LiminalLayoutEngine.controlRadius(LiminalLayoutEngine.CONTROL.md));
+    expect(LiminalLayoutEngine.CONTROL_RADIUS.lg).toBe(LiminalLayoutEngine.controlRadius(LiminalLayoutEngine.CONTROL.lg));
+  });
+
+  it('grows with the height, so no two sizes share a corner', () => {
+    const r = Object.values(LiminalLayoutEngine.CONTROL_RADIUS);
+    expect(new Set(r).size, 'two sizes share a radius').toBe(r.length);
+    expect(r[0]).toBeLessThan(r[1]);
+    expect(r[1]).toBeLessThan(r[2]);
+  });
+
+  it('and a fourth size would get its own radius without anyone picking one', () => {
+    // The point of deriving it: adding a size does not mean choosing a corner.
+    expect(LiminalLayoutEngine.controlRadius(64)).toBe(14);
+    expect(LiminalLayoutEngine.controlRadius(24)).toBe(6);
+  });
+
+  it('and nesting stays concentric: inner = max(4, outer − padding)', () => {
+    // The other half of the standard, and the one LIMINAL already had. It is a GEOMETRIC
+    // relationship — two curves sharing a centre — so it does not know about layers.
+    expect(LiminalLayoutEngine.getConcentricRadius(16, 10)).toBe(6);
+    expect(LiminalLayoutEngine.getConcentricRadius(20, 10)).toBe(10);
+    expect(LiminalLayoutEngine.getConcentricRadius(24, 16)).toBe(8);
+    // And it never goes below the floor, however large the padding.
+    expect(LiminalLayoutEngine.getConcentricRadius(16, 40)).toBe(4);
+  });
+});

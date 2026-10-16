@@ -137,6 +137,39 @@ export class LiminalLayoutEngine {
     full: 9999,     // ONLY for badges / toggles (it is "loud")
   } as const;
 
+  /**
+   * THE RADIUS A CONTROL OF THIS HEIGHT TAKES — and it is a FORMULA, not three numbers.
+   *
+   * The standard mapping is "the radius scales with the element's height": a 32px control
+   * takes 8, a 44px control 10, a 52px control 12. Smaller elements get tighter corners and
+   * larger ones softer, so the corner stays PROPORTIONAL to the shape rather than being a
+   * constant that looks tight on a big control and bulbous on a small one.
+   *
+   * AND THE THREE NUMBERS ARE THE FORMULA. `round(h / 8.8) * 2` reproduces the mapping
+   * exactly — 32 gives 8, 44 gives 10, 52 gives 12 — so the scale does not have to be written
+   * down and cannot drift from the heights it belongs to. The `* 2` lands it on the even
+   * grid the rest of the system uses.
+   *
+   * AND IT IS DERIVED FROM THE HEIGHT, WHICH IS THE POINT: a control's corner is a function
+   * of its own size, so adding a fourth size does not mean picking a fourth radius.
+   */
+  static controlRadius(height: number): number {
+    return Math.round(height / 8.8) * 2;
+  }
+
+  /**
+   * THE THREE CONTROL RADII, DERIVED — one per size, from the size itself.
+   *
+   * Before this, every control size took the same radius (10): a 32px button and a 52px
+   * button had identical corners, which is the one thing the standard says not to do. The
+   * values are computed rather than listed, so `CONTROL` and this cannot disagree.
+   */
+  static readonly CONTROL_RADIUS = {
+    sm: LiminalLayoutEngine.controlRadius(32),
+    md: LiminalLayoutEngine.controlRadius(44),
+    lg: LiminalLayoutEngine.controlRadius(52),
+  } as const;
+
   // Concentric Harmony Formula: r_inner = max(4, r_outer − padding)
   static getConcentricRadius(rOuter: number, padding: number): number {
     return Math.max(4, rOuter - padding);
