@@ -167,12 +167,33 @@ export const BRAND_ALPHA = {
   subtle: 'rgba(233, 236, 242, 0.08)',
 } as const;
 
+/**
+ * Z-INDEX IS THE LADDER LEVEL — it is not a second system.
+ *
+ * It was five hand-picked round numbers — 1000, 2000, 3000, 4000, 9999 — and it was the one
+ * place in this engine where a number carried no information. An eye test settled it by
+ * showing NOTHING: four stages, the round numbers and `z = level` and `z = level × 10` and
+ * `z = level` with a stacking context, and all four looked identical. Which is the finding —
+ * the VALUES do not matter, the ORDER does, and the order is the layer hierarchy the engine
+ * already has.
+ *
+ *   panel S3 < menu S5 < modal S7 < toast S8
+ *
+ * So a surface's stacking order IS its level, and there is nothing to choose.
+ *
+ * AND EVERY SURFACE CREATES A STACKING CONTEXT, which is the half that removes the most magic.
+ * With `isolation: isolate` on each surface, a CHILD is above its parent by construction, so a
+ * dropdown inside a modal needs no number at all — it is inside the modal's context. z-index
+ * then only has to order SIBLINGS, which is what the level already does.
+ */
 export const Z_INDEX = {
-  dropdown: 1000,
-  modal: 2000,
-  tooltip: 3000,
-  popover: 4000,
-  floating: 9999, // برای Combobox/MultiSelect
+  canvas: 0, chrome: 1, work: 2, panel: 3, control: 4,
+  menu: 5, popover: 6, modal: 7, toast: 8,
+  // The two names the components used, kept as aliases so nothing breaks — and both now
+  // resolve to a ladder level rather than to a round number.
+  dropdown: 5,
+  tooltip: 6,
+  floating: 5,
 } as const;
 
 export type LiminalState = 'idle' | 'hover' | 'focus' | 'active' | 'disabled';

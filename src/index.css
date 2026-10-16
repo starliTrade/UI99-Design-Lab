@@ -205,11 +205,18 @@
   --liminal-ease-linear: linear;
 
   /* ── 14. LAYER ───────────────────────────────────────────────── */
-  --liminal-z-dropdown: 1000;
-  --liminal-z-modal: 2000;
-  --liminal-z-tooltip: 3000;
-  --liminal-z-popover: 4000;
-  --liminal-z-floating: 9999;
+  --liminal-z-canvas: 0;
+  --liminal-z-chrome: 1;
+  --liminal-z-work: 2;
+  --liminal-z-panel: 3;
+  --liminal-z-control: 4;
+  --liminal-z-menu: 5;
+  --liminal-z-popover: 6;
+  --liminal-z-modal: 7;
+  --liminal-z-toast: 8;
+  --liminal-z-dropdown: 5;
+  --liminal-z-tooltip: 6;
+  --liminal-z-floating: 5;
 }
 
 /* The system is dark-only today; this scope exists so a theme can be swapped. */
@@ -409,11 +416,18 @@
   --liminal-ease-linear: linear;
 
   /* ── 14. LAYER ───────────────────────────────────────────────── */
-  --liminal-z-dropdown: 1000;
-  --liminal-z-modal: 2000;
-  --liminal-z-tooltip: 3000;
-  --liminal-z-popover: 4000;
-  --liminal-z-floating: 9999;
+  --liminal-z-canvas: 0;
+  --liminal-z-chrome: 1;
+  --liminal-z-work: 2;
+  --liminal-z-panel: 3;
+  --liminal-z-control: 4;
+  --liminal-z-menu: 5;
+  --liminal-z-popover: 6;
+  --liminal-z-modal: 7;
+  --liminal-z-toast: 8;
+  --liminal-z-dropdown: 5;
+  --liminal-z-tooltip: 6;
+  --liminal-z-floating: 5;
 }
 /* @liminal-generated:end */
 @import "tailwindcss";

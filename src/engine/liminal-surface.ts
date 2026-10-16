@@ -464,6 +464,11 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
     transform: concave ? 'translateY(0.5px)' : undefined,
     transition: LiminalMotionEngine.TRANSITION.normal,
     boxSizing: 'border-box',
+    // A STACKING CONTEXT ON EVERY SURFACE, so a child is above its parent by construction
+    // and z-index only has to order siblings. This is what removes the magic numbers: a
+    // dropdown inside a modal needs none, because it is inside the modal's context.
+    isolation: 'isolate',
+    zIndex: level,
   };
 
   return {

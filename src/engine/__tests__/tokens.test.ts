@@ -5,7 +5,8 @@ import {
   getTextAlpha,
   TEXT_HIERARCHY,
 } from '../spec-engine';
-import { resolveSurface } from '../liminal-surface';
+import { resolveSurface, ROLE_LEVEL } from '../liminal-surface';
+import { Z_INDEX } from '../spec-engine';
 import { TEXT_ROLE_SPEC, whiteAlphaApcaOn } from '../liminal-contrast';
 import {
   PERCEPTUAL_QUANTUM,
@@ -563,5 +564,45 @@ describe('control radius — derived from the height', () => {
     expect(LiminalLayoutEngine.getConcentricRadius(24, 16)).toBe(8);
     // And it never goes below the floor, however large the padding.
     expect(LiminalLayoutEngine.getConcentricRadius(16, 40)).toBe(4);
+  });
+});
+
+/**
+ * Z-INDEX IS THE LADDER LEVEL — it is not a second system.
+ *
+ * It was five hand-picked round numbers — 1000, 2000, 3000, 4000, 9999 — and it was the one
+ * place in this engine where a number carried no information. An eye test settled it by
+ * showing NOTHING: four stages, the round numbers and `z = level` and `z = level × 10` and
+ * `z = level` with a stacking context, and all four looked identical.
+ *
+ * Which is the finding — the VALUES do not matter, the ORDER does, and the order is the layer
+ * hierarchy the engine already has.
+ */
+describe('z-index — the ladder level, and a stacking context on every surface', () => {
+  it('every role takes its own level', () => {
+    for (const role of ['canvas', 'chrome', 'work', 'panel', 'control', 'menu', 'popover', 'modal', 'toast'] as const) {
+      expect(Z_INDEX[role], `${role}`).toBe(ROLE_LEVEL[role]);
+    }
+  });
+
+  it('and the order is the hierarchy, which is the only thing that matters', () => {
+    const ordered = ['canvas', 'chrome', 'work', 'panel', 'control', 'menu', 'popover', 'modal', 'toast'] as const;
+    for (let i = 1; i < ordered.length; i++) {
+      expect(Z_INDEX[ordered[i]], `${ordered[i - 1]} → ${ordered[i]}`).toBeGreaterThan(Z_INDEX[ordered[i - 1]]);
+    }
+  });
+
+  it('the old round numbers are gone — no value is above the ladder', () => {
+    expect(Math.max(...Object.values(Z_INDEX)), 'a round number survived').toBeLessThanOrEqual(8);
+  });
+
+  it('and every surface creates a stacking context', () => {
+    // This is the half that removes the most magic: a child is above its parent by
+    // construction, so a dropdown inside a modal needs no number at all.
+    for (const role of ['panel', 'menu', 'modal', 'toast'] as const) {
+      const s = resolveSurface({ role });
+      expect(s.style.isolation, `${role} does not isolate`).toBe('isolate');
+      expect(s.style.zIndex, `${role} has no z-index`).toBe(ROLE_LEVEL[role]);
+    }
   });
 });
