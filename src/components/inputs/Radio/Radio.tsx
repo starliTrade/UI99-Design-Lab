@@ -1,13 +1,8 @@
-import { resolveSurface } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import React from 'react';
 import type { CSSProperties, KeyboardEvent, ChangeEvent } from 'react';
-import {
-  getDirectionalRim,
-  getTextStyle,
-  getLadderColor,
-  LADDER,
-} from '../../../engine/spec-engine';
+import { getLadderVar, getTextStyle } from '../../../engine/spec-engine';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -18,6 +13,14 @@ export interface RadioProps {
   onChange: () => void;
   disabled?: boolean;
   label?: string;
+  /**
+   * The validation message for the GROUP this radio belongs to.
+   *
+   * A radio validates as a set — "choose a plan" — and the message belongs on
+   * each member so a screen reader meets it wherever the reader is. It is a
+   * STRING, not a boolean: an error the reader cannot read is a red dot.
+   */
+  error?: string;
   name: string;
   value: string;
   id?: string;
@@ -30,6 +33,7 @@ export function Radio({
   onChange,
   disabled = false,
   label,
+  error,
   name,
   value,
   id,
@@ -43,14 +47,18 @@ export function Radio({
 
   const host = useHostSurface();
 
-  const offRim = getDirectionalRim(2, 2, false);
+  // The fill an unselected control rests in: a named role, not a hand-picked pair.
+  const offRim = resolveSurface({ role: 'well' }).rimColors;
 
-  const boxBg = checked
+  const errorId = error ? `${id ?? `${name}-${value}`}-error` : undefined;
+
+  const boxBg = error
+    ? SEMANTICS.DANGER.subtle
+    : checked
     ? SEMANTICS.SUCCESS.subtle
     : offRim
     ? offRim.cssBackground
-    : LADDER[2];
-  const hoverBg = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
+    : getLadderVar(ROLE_LEVEL.well);
 
   const circleStyle: CSSProperties = {
     width: ICON_SIZES.md,
@@ -64,15 +72,20 @@ export function Radio({
     transition: LiminalMotionEngine.TRANSITION.normal,
     // The layer owns the surface — see data-liminal-surface. An inline
     // background beats the CSS rule, so this line cancelled the hover.
-    '--liminal-surface-idle': boxBg,
-    // A CHECKED box keeps its fill on hover.
-    '--liminal-surface-hover': checked ? boxBg : hoverBg,
-    '--liminal-surface-active': checked ? boxBg : hoverBg,
+    //
+    // A CHECKED box keeps its fill in EVERY state; an unchecked one lifts on
+    // hover and sinks below its rest on press.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: boxBg,
+      frozen: checked ? boxBg : undefined,
+    }),
     border: checked
       ? `1px solid ${SEMANTICS.SUCCESS.border}`
       : offRim
       ? '1px solid transparent'
-      : `1px solid ${LADDER[3]}`,
+      : `1px solid ${resolveBorder({ role: 'well', kind: 'edge' })}`,
   } as CSSProperties;
 
   const dotStyle: CSSProperties = {
@@ -133,6 +146,8 @@ export function Radio({
         value={value}
         checked={checked}
         disabled={disabled}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={errorId}
         onChange={handleChange}
         tabIndex={disabled ? -1 : 0}
         style={{
@@ -149,6 +164,16 @@ export function Radio({
       </span>
 
       {label && <span style={labelStyle}>{label}</span>}
+      {/* The message sits with the radio it belongs to, so a screen reader
+          meets it wherever the reader is in the set. A radio validates as a
+          GROUP — "choose a plan" — and the group is the one that should render
+          it once; this is the per-member fallback for a consumer that does
+          not wrap them. */}
+      {error && (
+        <span id={errorId} role="alert" style={{ ...labelStyle, color: SEMANTICS.DANGER.text }}>
+          {error}
+        </span>
+      )}
     </label>
   );
 }

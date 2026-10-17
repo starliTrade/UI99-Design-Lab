@@ -1,9 +1,8 @@
 import React from 'react';
 import type { CSSProperties, ReactNode, MouseEvent } from 'react';
-import { getLadderColor, getDirectionalRim } from '../../../engine/spec-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
-import { resolveBorder, resolveSurface } from '../../../engine/liminal-surface';
+import { resolveBorder, resolveSurface, resolveInteractionVars } from '../../../engine/liminal-surface';
 
 export interface TableRowProps {
   children: ReactNode;
@@ -24,18 +23,17 @@ export function TableRow({
   const reducedMotion = useReducedMotion();
 
   // A row separator: a seam inside the work surface.
-  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
-  const selectedRim = getDirectionalRim(2, 1, false);
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'separator' });
+  const selectedRim = resolveSurface({ role: 'work' }).rimColors;
 
   let rowBg = 'transparent';
   if (isSelected) {
     rowBg = selectedRim ? selectedRim.cssBackground : resolveSurface({ role: 'work', state: 'hover' }).background;
   }
-
   const rowStyle: CSSProperties = {
-    '--liminal-surface-idle': rowBg,
-    '--liminal-surface-hover': resolveSurface({ role: 'work', state: 'hover' }).background,
-    '--liminal-surface-active': resolveSurface({ role: 'work', state: 'hover' }).background,
+    // A row is a seam in the work surface: it lifts on hover and sinks below the
+    // seam on press, like every other control.
+    ...resolveInteractionVars({ role: 'work', idle: rowBg }),
     // NO `background` here. An inline style beats a CSS rule, so this line was
     // silently cancelling the layer's :hover — the row has had no hover state
     // since the Step 2.1 migration, and nothing caught it because the property

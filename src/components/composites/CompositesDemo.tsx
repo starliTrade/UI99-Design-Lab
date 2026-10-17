@@ -8,7 +8,7 @@ import { Button } from '../atoms/Button';
 import { Badge } from '../atoms/Badge';
 import { Input } from '../inputs/Input';
 import { Divider } from '../containers/Divider';
-import { getTextStyle, getLiminalStyle } from '../../engine/spec-engine';
+import { getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import {
   Tray,
@@ -22,6 +22,7 @@ import {
   Lock,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
+import { resolveSurface } from '../../engine/liminal-surface';
 
 export function CompositesDemo() {
   const [formSaved, setFormSaved] = useState<boolean>(false);
@@ -31,7 +32,7 @@ export function CompositesDemo() {
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
-  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
+  const containerStyle = resolveSurface({ role: 'chrome', interactive: false }).style;
 
   return (
     <div

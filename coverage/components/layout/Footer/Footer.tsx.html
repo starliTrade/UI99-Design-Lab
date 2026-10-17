@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>4/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -133,7 +133,10 @@
 <a name='L68'></a><a href='#L68'>68</a>
 <a name='L69'></a><a href='#L69'>69</a>
 <a name='L70'></a><a href='#L70'>70</a>
-<a name='L71'></a><a href='#L71'>71</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -156,11 +159,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -175,16 +176,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -194,7 +190,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -216,19 +222,19 @@ export interface FooterProps {
   style?: CSSProperties;
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >Footer({</span>
+export function Footer({
   left,
   children,
-  className = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span>
-  style: customStyle = <span class="branch-0 cbranch-no" title="branch not covered" >{},</span>
+  className = '',
+  style: customStyle = {},
 }: FooterProps) {
   const SPACING = LiminalLayoutEngine.SPACING;
 &nbsp;
   // rimSide half-step S1.5 (#090A0D) for top border (harmonious with Divider)
   // The footer is chrome: its top edge separates it from the work surface.
-  const borderTopColor = <span class="cstat-no" title="statement not covered" >resolveBorder({ role: 'chrome', kind: 'hairline' });</span>
+  const borderTopColor = resolveBorder({ role: 'chrome', kind: 'hairline' });
 &nbsp;
-  const footerStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
+  const footerStyle: CSSProperties = {
     marginTop: `${SPACING[8]}px`, // 64px
     paddingTop: `${SPACING[5]}px`, // 24px
     paddingBottom: `${SPACING[5]}px`, // 24px
@@ -245,17 +251,20 @@ export function <span class="fstat-no" title="function not covered" >Footer({</s
     ...customStyle,
   };
 &nbsp;
-  const leftStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
-    fontSize: '12px',
+  const leftStyle: CSSProperties = {
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
     lineHeight: 1.5,
-    color: getTextStyle('quaternary', 1).color,
+    // Read text, not a placeholder: quaternary's floor is APCA Lc 30, which is
+    // the minimum for ANY text. A footer is read. WCAG measured 4.06:1 there,
+    // under the 4.5 AA asks for.
+    color: getTextStyle('tertiary', 1).color,
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`,
   };
 &nbsp;
-  const linksContainerStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
-    fontSize: '12px',
+  const linksContainerStyle: CSSProperties = {
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
     lineHeight: 1.5,
     display: 'flex',
     alignItems: 'center',
@@ -264,10 +273,10 @@ export function <span class="fstat-no" title="function not covered" >Footer({</s
     color: getTextStyle('tertiary', 1).color,
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;div className={`liminal-footer ${className}`} style={footerStyle}&gt;
-      {left &amp;&amp; &lt;div style={leftStyle}&gt;{left}&lt;/div&gt;}
-      {children &amp;&amp; &lt;nav style={linksContainerStyle}&gt;{children}&lt;/nav&gt;}
+      {left &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >&lt;div style={leftStyle}&gt;{left}&lt;/div&gt;}</span>
+      {children &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >&lt;nav style={linksContainerStyle}&gt;{children}&lt;/nav&gt;}</span>
     &lt;/div&gt;
   );
 }
@@ -280,7 +289,7 @@ export default Footer;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-12T16:51:02.542Z
+                at 2026-10-13T20:49:08.265Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

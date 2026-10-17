@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef, useId } from 'react';
 import type { CSSProperties, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import {
-  getLiminalStyle,
-  getDirectionalRim,
   getTextStyle,
   LiminalState,
 } from '../../../engine/spec-engine';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
@@ -75,6 +73,9 @@ export function Textarea({
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  // The text sits on the surface that HOSTS the field, not on the field.
+  // `surfaceLevel` below is a hand-picked pair for the validation tint's
+  // rim and is recorded for gap 8 (21 hand-picked numbers).
   const surfaceLevel = 2;
 
 
@@ -84,8 +85,6 @@ export function Textarea({
   // the pointer or the keyboard is doing.
   const host = useHostSurface();
   const idleSurface = resolveSurface({ role: 'control', on: host }).background;
-  const hoverSurface = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
-  const focusSurface = resolveSurface({ role: 'control', state: 'focus', on: host }).background;
 
   const ringColor = error
     ? SEMANTICS.DANGER.solid
@@ -95,30 +94,40 @@ export function Textarea({
 
   let background = idleSurface;
   const borderColor = resolveBorder({ role: 'control', kind: 'edge', on: host });
-  let border = `1px solid ${borderColor}`;
 
   if (!disabled) {
     if (error) {
-      border = `1px solid ${SEMANTICS.DANGER.border}`;
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
-        background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
+        // The engine's own subtle tint, not a colour invented here. Two of these
+        // were hand-picked (#e5637a and #34c08b) and copied into four
+        // components — colours that exist nowhere in the engine.
+        background = `linear-gradient(${LiminalColorEngine.SEMANTICS.DANGER.subtle}, ${LiminalColorEngine.SEMANTICS.DANGER.subtle}), ${baseRim.cssBackground}`;
       }
     } else if (success) {
-      border = `1px solid ${SEMANTICS.SUCCESS.border}`;
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
-        background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
+        background = `linear-gradient(${LiminalColorEngine.SEMANTICS.SUCCESS.subtle}, ${LiminalColorEngine.SEMANTICS.SUCCESS.subtle}), ${baseRim.cssBackground}`;
       }
     }
   }
 
   const fieldWrapperStyle = {
-    '--liminal-surface-idle': background,
-    '--liminal-surface-hover': disabled || error || success ? background : hoverSurface,
-    '--liminal-surface-focus': disabled || error || success ? background : focusSurface,
-    '--liminal-border-idle': borderColor,
-    '--liminal-border-focus': ringColor,
+    // The layer owns the surface AND the border colour — see
+    // data-liminal-surface / data-liminal-focus-within.
+    //
+    // An invalid or successful field keeps its own fill in EVERY state: the
+    // tint is the message, and a hover that washed it out would erase it.
+    // `frozen` also gives the pressed state a value; it had none, so pressing a
+    // field fell through to `transparent`.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: background,
+      frozen: disabled || error || success ? background : undefined,
+      border: borderColor,
+      borderFocus: ringColor,
+    }),
     display: 'flex',
     flexDirection: 'column',
     padding: `${SPACING[3]}px`, // 12px
@@ -143,7 +152,7 @@ export function Textarea({
     border: 'none',
     outline: 'none',
     boxShadow: 'none',
-    color: getTextStyle('primary', surfaceLevel).color,
+    color: getTextStyle('primary', ROLE_LEVEL[host]).color,
     fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
     lineHeight: 1.6,
     fontFamily: 'inherit',
@@ -158,7 +167,7 @@ export function Textarea({
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
-    color: getTextStyle('secondary', surfaceLevel).color,
+    color: getTextStyle('secondary', ROLE_LEVEL[host]).color,
     marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
   };
@@ -171,7 +180,7 @@ export function Textarea({
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('tertiary', surfaceLevel).color,
+      : getTextStyle('tertiary', ROLE_LEVEL[host]).color,
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -188,7 +197,7 @@ export function Textarea({
     ? SEMANTICS.DANGER.text
     : isCountWarning
     ? SEMANTICS.WARNING.text
-    : getTextStyle('tertiary', surfaceLevel).color;
+    : getTextStyle('tertiary', ROLE_LEVEL[host]).color;
 
   // A visible label must be programmatically associated with its control.
   // Without a generated id, `htmlFor` is undefined and screen readers announce
@@ -218,10 +227,9 @@ export function Textarea({
       )}
 
       <div
-        // The wrapper sets `--liminal-surface-hover` and never opted in, so the
-        // layer's hover rule could not reach it: the variable was published and
-        // nothing read it. `data-liminal-focus-within` gives focus; this is what
-        // gives hover and the idle fill.
+        // The wrapper publishes all six variables through the producer.
+        // `data-liminal-surface` gives hover and the idle fill;
+        // `data-liminal-focus-within` gives focus.
         data-liminal-surface=""
         data-liminal-focus-within=""
         data-liminal-disabled={disabled ? "" : undefined}

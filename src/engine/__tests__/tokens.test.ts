@@ -3,9 +3,10 @@ import {
   LADDER,
   HALF,
   getTextAlpha,
-  getLiminalStyle,
   TEXT_HIERARCHY,
 } from '../spec-engine';
+import { resolveSurface, ROLE_LEVEL } from '../liminal-surface';
+import { Z_INDEX } from '../spec-engine';
 import { TEXT_ROLE_SPEC, whiteAlphaApcaOn } from '../liminal-contrast';
 import {
   PERCEPTUAL_QUANTUM,
@@ -14,6 +15,9 @@ import {
   LADDER_CHROMA,
   LADDER_HUE,
   LADDER_SIZE,
+  FOCUS_RING_COLOR,
+  LADDER_EXACT,
+  HALF_EXACT,
 } from '../liminal-ladder';
 import { LiminalColorEngine } from '../liminal-color-engine';
 import { LiminalLayoutEngine } from '../liminal-layout-engine';
@@ -215,7 +219,7 @@ describe('LIMINAL contract — text hierarchy contrast', () => {
 });
 
 describe('LIMINAL contract — type scale is derived, not hand-picked', () => {
-  const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+  const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
   it('every level is exactly ratio^(n − base) times the base', () => {
     // The ratio is the design; if a level drifts from it, the scale stops
@@ -232,7 +236,7 @@ describe('LIMINAL contract — type scale is derived, not hand-picked', () => {
   });
 
   it('the scale is monotonic — each level is larger than the last', () => {
-    for (let n = 1; n < 8; n++) {
+    for (let n = 1; n < 10; n++) {
       expect(LiminalLayoutEngine.typeScale(n + 1)).toBeGreaterThan(LiminalLayoutEngine.typeScale(n));
     }
   });
@@ -328,38 +332,29 @@ describe('LIMINAL contract — focus visibility', () => {
     expect(ring.outline).toBe('none');
   });
 
-  it('resolveInteractiveSurface keeps the ring visible in the focus state', () => {
-    for (const surface of SURFACES) {
-      const style = LiminalComponentEngine.resolveInteractiveSurface({
-        surfaceLevel: surface.index,
-        state: 'focus',
-        isKeyboardFocused: true,
-      });
-      const color = outlineColor(style as Record<string, unknown>);
-      expect(color, `S${surface.index} focus state must expose a ring color`).not.toBeNull();
-      const ratio = contrastRatioHex(color as string, surface.hex);
-      expect(
-        ratio,
-        `interactive focus ring on S${surface.index} = ${ratio.toFixed(2)}:1`,
-      ).toBeGreaterThanOrEqual(NON_TEXT_MIN);
-    }
-  });
-
-  it('getLiminalStyle never emits a dark-on-dark focus ring', () => {
-    for (const surface of SURFACES) {
-      const resolved = getLiminalStyle({
-        surfaceLevel: surface.index,
-        interactive: true,
-        state: 'focus',
-      });
-      const color = outlineColor(resolved.style as Record<string, unknown>);
-      if (color === null) continue;
-      const ratio = contrastRatioHex(color, surface.hex);
-      expect(
-        ratio,
-        `getLiminalStyle focus ring ${color} on S${surface.index} = ${ratio.toFixed(2)}:1`,
-      ).toBeGreaterThanOrEqual(NON_TEXT_MIN);
-    }
+  it('the surface resolver draws a DOUBLE EDGE on focus, and none on idle', () => {
+    /**
+     * IT USED TO ASSERT THE BRAND'S HEX HERE, and that is what the focus no longer is.
+     *
+     * The ring was `FOCUS_RING_COLOR` — #E9ECF2 — at 15.7:1 to 17:1 where WCAG asks for 3:1.
+     * Five times louder than it had to be, and the reader called it "destroyed, jarring, in
+     * your face". No ladder level could replace it either: the ladder's highest step is
+     * 1.10:1 against the work plane.
+     *
+     * So the focus is a SHAPE: an inner border and an outer line, both ladder levels, with a
+     * 2px gap between them. Two parallel edges are a frequency, and the eye picks a repeated
+     * edge out of a background far better than a single one at the same contrast.
+     */
+    const focus = resolveSurface({ role: 'control', state: 'focus' });
+    // The lines are VARIABLE references, not hexes — `outlineColor` looks for a hex and finds
+    // none, which is itself the point: the focus is no longer a colour of its own.
+    expect(focus.outline, 'the outer line is a ladder level').toContain('var(--liminal-s');
+    expect(focus.border, 'the inner line is a ladder level').toContain('var(--liminal-s');
+    expect(focus.outlineOffset, 'and there is a gap between them').toBe('2px');
+    // And nothing when the keyboard is not involved.
+    const idle = resolveSurface({ role: 'control' });
+    expect(idle.outline).toBe('none');
+    expect(idle.outlineOffset).toBeUndefined();
   });
 });
 
@@ -446,3 +441,168 @@ function parseColor(color: string): { r: number; g: number; b: number } {
   }
   throw new Error(`parseColor: unsupported color "${color}"`);
 }
+
+
+/**
+ * THE LADDER THE BROWSER PAINTS IS THE LADDER THAT WAS DESIGNED.
+ *
+ * The target was always a constant — 0.009475 of L, the same for every step — and
+ * the realised hex ladder is 1.07q to 1.21q. That spread is not the design; it is
+ * 8-bit sRGB failing to write it, off by up to 0.199q at S4. `oklch()` carries
+ * full precision, so the stylesheet publishes both and the exact value wins.
+ */
+describe('the exact ladder — the design, which hex cannot write', () => {
+  /** The L out of an `oklch(L C H)` string. */
+  const lightness = (s: string) => Number(s.match(/oklch\(([\d.]+)/)![1]);
+
+  it('every step is EXACTLY the same, which the hex ladder is not', () => {
+    const steps = LADDER_EXACT.slice(1).map((s, i) => lightness(s) - lightness(LADDER_EXACT[i]));
+    for (const d of steps) expect(d).toBeCloseTo(LADDER_STEP, 9);
+    expect(lightness(LADDER_EXACT[0])).toBeCloseTo(CANVAS_L, 9);
+    expect(LADDER_STEP / PERCEPTUAL_QUANTUM).toBeCloseTo(1.1416, 3);
+  });
+
+  it('and the hex ladder is measurably off the design — which is why it exists', () => {
+    // If the hexes were exact, the exact ladder would be pointless. This asserts
+    // the error is real, so the second declaration is not decoration.
+    const worst = Math.max(
+      ...LADDER.map((hex, n) => Math.abs(oklchLightness(hex) - lightness(LADDER_EXACT[n])) / PERCEPTUAL_QUANTUM),
+    );
+    expect(worst, 'the hex ladder is further from the design than this').toBeGreaterThan(0.1);
+  });
+
+  it('the half-steps are exact too, because a border lands on one', () => {
+    for (let i = 0; i < HALF_EXACT.length; i++) {
+      expect(lightness(HALF_EXACT[i]) - lightness(HALF_EXACT[0])).toBeCloseTo(i * LADDER_STEP, 7);
+    }
+    expect(HALF_EXACT.length).toBe(8);
+  });
+});
+
+/**
+ * THE BUTTON'S PADDING RATIO IS A CONSTANT — x = y × 3.
+ *
+ * It was three hand-picked pairs — 6/12, 10/18, 12/24 — whose ratio drifted from 2.0 to 1.8
+ * and back. Measured on the rendered button, all three came out near 1.5 wide-to-tall, which
+ * is nearly SQUARE, and the reader's eye said so before the numbers did: "lg has gone square,
+ * and x should be larger than y."
+ *
+ * `x = y × 3` is the only option tested that holds a constant: the padding ratio is exactly
+ * 3.0000 at every size, and the rendered shape lands near 2.0. The small drift that remains is
+ * the LABEL — a button's width is its text plus its padding, and the text grows with the font
+ * while the padding moves in fixed steps. That drift exists in every button ever built.
+ */
+describe('control padding — the horizontal is three times the vertical', () => {
+  const P = LiminalLayoutEngine.CONTROL_PADDING;
+
+  it('holds the SAME ratio at every size', () => {
+    for (const [name, p] of Object.entries(P)) {
+      expect(p.x / p.y, `${name} padding ratio`).toBeCloseTo(3, 6);
+    }
+  });
+
+  it('and the ratio is identical across sizes, which is the property that matters', () => {
+    const ratios = Object.values(P).map((p) => p.x / p.y);
+    expect(new Set(ratios).size, 'the sizes have drifted apart').toBe(1);
+  });
+
+  it('and the rendered shape is wider than it is tall at every size', () => {
+    // Width is the label plus twice the padding; the label grows with the font size.
+    const LABEL = { sm: 28, md: 31, lg: 33 };
+    for (const [name, h] of Object.entries(LiminalLayoutEngine.CONTROL)) {
+      const p = P[name as keyof typeof P];
+      const width = LABEL[name as keyof typeof LABEL] + 2 * p.x;
+      expect(width / h, `${name} rendered shape`).toBeGreaterThan(1.8);
+    }
+  });
+});
+
+/**
+ * THE RADIUS FOLLOWS THE HEIGHT — and the three numbers are a FORMULA.
+ *
+ * The standard is "the radius scales with the element's height": a 32px control takes 8, a
+ * 44px control 10, a 52px control 12. Smaller elements get tighter corners and larger ones
+ * softer, so the corner stays PROPORTIONAL to the shape.
+ *
+ * AND LIMINAL HAD THE OPPOSITE: every control size took the same radius, 10 — so a 32px button
+ * and a 52px button had identical corners, which is the one thing the standard says not to do.
+ *
+ * `round(h / 8.8) * 2` reproduces the mapping exactly, so the scale is not written down and
+ * cannot drift from the heights it belongs to.
+ */
+describe('control radius — derived from the height', () => {
+  it('reproduces the standard mapping exactly', () => {
+    expect(LiminalLayoutEngine.controlRadius(32)).toBe(8);
+    expect(LiminalLayoutEngine.controlRadius(44)).toBe(10);
+    expect(LiminalLayoutEngine.controlRadius(52)).toBe(12);
+  });
+
+  it('and the named radii ARE those values, computed rather than listed', () => {
+    expect(LiminalLayoutEngine.CONTROL_RADIUS.sm).toBe(LiminalLayoutEngine.controlRadius(LiminalLayoutEngine.CONTROL.sm));
+    expect(LiminalLayoutEngine.CONTROL_RADIUS.md).toBe(LiminalLayoutEngine.controlRadius(LiminalLayoutEngine.CONTROL.md));
+    expect(LiminalLayoutEngine.CONTROL_RADIUS.lg).toBe(LiminalLayoutEngine.controlRadius(LiminalLayoutEngine.CONTROL.lg));
+  });
+
+  it('grows with the height, so no two sizes share a corner', () => {
+    const r = Object.values(LiminalLayoutEngine.CONTROL_RADIUS);
+    expect(new Set(r).size, 'two sizes share a radius').toBe(r.length);
+    expect(r[0]).toBeLessThan(r[1]);
+    expect(r[1]).toBeLessThan(r[2]);
+  });
+
+  it('and a fourth size would get its own radius without anyone picking one', () => {
+    // The point of deriving it: adding a size does not mean choosing a corner.
+    expect(LiminalLayoutEngine.controlRadius(64)).toBe(14);
+    expect(LiminalLayoutEngine.controlRadius(24)).toBe(6);
+  });
+
+  it('and nesting stays concentric: inner = max(4, outer − padding)', () => {
+    // The other half of the standard, and the one LIMINAL already had. It is a GEOMETRIC
+    // relationship — two curves sharing a centre — so it does not know about layers.
+    expect(LiminalLayoutEngine.getConcentricRadius(16, 10)).toBe(6);
+    expect(LiminalLayoutEngine.getConcentricRadius(20, 10)).toBe(10);
+    expect(LiminalLayoutEngine.getConcentricRadius(24, 16)).toBe(8);
+    // And it never goes below the floor, however large the padding.
+    expect(LiminalLayoutEngine.getConcentricRadius(16, 40)).toBe(4);
+  });
+});
+
+/**
+ * Z-INDEX IS THE LADDER LEVEL — it is not a second system.
+ *
+ * It was five hand-picked round numbers — 1000, 2000, 3000, 4000, 9999 — and it was the one
+ * place in this engine where a number carried no information. An eye test settled it by
+ * showing NOTHING: four stages, the round numbers and `z = level` and `z = level × 10` and
+ * `z = level` with a stacking context, and all four looked identical.
+ *
+ * Which is the finding — the VALUES do not matter, the ORDER does, and the order is the layer
+ * hierarchy the engine already has.
+ */
+describe('z-index — the ladder level, and a stacking context on every surface', () => {
+  it('every role takes its own level', () => {
+    for (const role of ['canvas', 'chrome', 'work', 'panel', 'control', 'menu', 'popover', 'modal', 'toast'] as const) {
+      expect(Z_INDEX[role], `${role}`).toBe(ROLE_LEVEL[role]);
+    }
+  });
+
+  it('and the order is the hierarchy, which is the only thing that matters', () => {
+    const ordered = ['canvas', 'chrome', 'work', 'panel', 'control', 'menu', 'popover', 'modal', 'toast'] as const;
+    for (let i = 1; i < ordered.length; i++) {
+      expect(Z_INDEX[ordered[i]], `${ordered[i - 1]} → ${ordered[i]}`).toBeGreaterThan(Z_INDEX[ordered[i - 1]]);
+    }
+  });
+
+  it('the old round numbers are gone — no value is above the ladder', () => {
+    expect(Math.max(...Object.values(Z_INDEX)), 'a round number survived').toBeLessThanOrEqual(8);
+  });
+
+  it('and every surface creates a stacking context', () => {
+    // This is the half that removes the most magic: a child is above its parent by
+    // construction, so a dropdown inside a modal needs no number at all.
+    for (const role of ['panel', 'menu', 'modal', 'toast'] as const) {
+      const s = resolveSurface({ role });
+      expect(s.style.isolation, `${role} does not isolate`).toBe('isolate');
+      expect(s.style.zIndex, `${role} has no z-index`).toBe(ROLE_LEVEL[role]);
+    }
+  });
+});

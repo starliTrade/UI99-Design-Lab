@@ -40,5 +40,24 @@ jobs:
       - name: Test (design contract + components)
         run: bun run test
 
-      - name: Build
+      - name: Component standard (ratchet)
+        # COMPONENT-CONTRACT.md states ten things a component must have. Measured
+        # today: 55 components, 0 complete. A gate demanding 55/55 would fail
+        # everything and get turned off, so this is a RATCHET: the number may
+        # improve and may not walk backwards.
+        run: bun scripts/verify-component-standard.mjs --ratchet
+
+      - name: Build (the docs app)
         run: bun run build
+
+      - name: Build (the library)
+        # A different build from the app: `src/index.ts` as a library, React
+        # external, types emitted by tsc. It can succeed while shipping
+        # something nobody can use, which is what the next step checks.
+        run: bun run build:lib
+
+      - name: Package coherence
+        # Every path the manifest promises must exist, React must not be
+        # bundled, the stylesheet must be reachable, and the sizes are printed
+        # because this project had no bundle measurement at all until now.
+        run: bun run verify:package

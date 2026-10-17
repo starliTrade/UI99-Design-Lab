@@ -43,7 +43,7 @@ const FAINT = 'rgba(233,236,242,0.28)';
 const LINE = 'rgba(233,236,242,0.10)';
 
 const surface = resolveSurface({ role: 'control', on: 'work' }).background;
-const rim = resolveBorder({ role: 'control', kind: 'hairline', on: 'work' });
+const rim = resolveBorder({ role: 'control', kind: 'separator', on: 'work' });
 const label = getTextStyle('primary', HOST + 1).color;
 
 /** The geometry every candidate shares — derived, so only colour is in question. */

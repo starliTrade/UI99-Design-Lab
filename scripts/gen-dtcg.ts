@@ -18,7 +18,8 @@ import { fileURLToPath } from 'node:url';
 import { LiminalLayoutEngine as L } from '../src/engine/liminal-layout-engine';
 import { LiminalMotionEngine as M } from '../src/engine/liminal-motion-engine';
 import { LiminalColorEngine as C } from '../src/engine/liminal-color-engine';
-import { LADDER, HALF, SHADOWS, SURFACE_TINT, VEIL, getDirectionalRim, getTextStyle } from '../src/engine/spec-engine';
+import { LADDER, HALF, SURFACE_TINT, VEIL, getDirectionalRim, getTextStyle } from '../src/engine/spec-engine';
+import { FLOAT_SHADOWS } from '../src/engine/liminal-surface';
 import { LADDER_STEP, LADDER_CHROMA, LADDER_HUE, CANVAS_L, PERCEPTUAL_QUANTUM, RELIABLE_BOUNDARY, WELLS } from '../src/engine/liminal-ladder';
 import { PERSIAN_FONT_STACK, PERSIAN_LINE_HEIGHT_FLOOR } from '../src/engine/liminal-persian';
 import { TEXT_ROLE_SPEC } from '../src/engine/liminal-contrast';
@@ -46,17 +47,24 @@ ladder.penumbra = color(WELLS.penumbra, 'the soft dark under a lifted surface');
 ladder.umbra = color(WELLS.umbra, 'the tight dark where a surface touches the canvas');
 
 const rim: Group = {};
-[1, 2, 3].forEach((t) => {
-  const r = getDirectionalRim(t as 1, t as 1, false)!;
-  rim[`rim${t}`] = {
-    top: color(r.top, '100% — the light comes from above'),
-    side: color(r.side, '55%'),
-    bottom: color(r.bot, 'the host surface itself'),
+// ONE rim, not three tiers: measured by eye at three boundaries, the answer was the
+// same at every one of them.
+{
+  const r = getDirectionalRim(3, true, false)!;
+  rim.rim = {
+    top: color(r.top, '100% — +1.5 steps, the light comes from above'),
+    side: color(r.side, '55% — +1.0 steps'),
+    bottom: color(r.bot, '100% — +0.5 steps'),
   } as Group;
-});
+}
 
 const shadow: Group = {};
-Object.entries(SHADOWS).forEach(([e, v]) => (shadow[`e${e}`] = str(v, 'boxShadow', e === '1' ? 'dropdown, header' : e === '2' ? 'featured card, popover' : e === '3' ? 'modal, drawer sheet' : 'toast, max floating anchor')));
+// NAMED BY ROLE, not by a tier number. `shadow.menu` says what it is for;
+// `shadow.e1` needed a comment to say the same thing, which is a name that was
+// never written.
+Object.entries(FLOAT_SHADOWS).forEach(([role, v]) =>
+  (shadow[role] = str(v, 'boxShadow', `the ${role} — a floating surface at its own height`)),
+);
 
 const tint: Group = {};
 Object.entries(SURFACE_TINT).forEach(([k, v]) => (tint[k] = color(v, 'a fill, never for type')));

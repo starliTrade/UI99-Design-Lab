@@ -28,7 +28,7 @@ export function PageSection({
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
   // rimSide half-step S1.5 (#090A0D) for top divider
-  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'separator' });
 
   const wrapperStyle: CSSProperties = {
     display: 'flex',

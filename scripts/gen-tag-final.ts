@@ -46,13 +46,13 @@ const GEOM = `
 
 const tag = (item: any, host: number) => {
   const bg = resolveSurface({ role: 'control', on: ROLE[host] as any }).background;
-  const rim = resolveBorder({ role: 'control', kind: 'hairline', on: ROLE[host] as any });
+  const rim = resolveBorder({ role: 'control', kind: 'separator', on: ROLE[host] as any });
   return `<span class="tag" style="${GEOM}background:${bg};border:1px solid ${rim};color:${item.hex}">${item.label} ${item.hue}</span>`;
 };
 
 const ladderRow = (host: number) => {
   const bg = resolveSurface({ role: 'control', on: ROLE[host] as any }).background;
-  const rim = resolveBorder({ role: 'control', kind: 'hairline', on: ROLE[host] as any });
+  const rim = resolveBorder({ role: 'control', kind: 'separator', on: ROLE[host] as any });
   return `
     <div class="lrow">
       <div class="lhead">
@@ -123,7 +123,7 @@ const html = `<!doctype html>
     <tbody>
       ${Array.from({ length: 9 }, (_, host) => {
         const bg = resolveSurface({ role: 'control', on: ROLE[host] as any }).background;
-        const rim = resolveBorder({ role: 'control', kind: 'hairline', on: ROLE[host] as any });
+        const rim = resolveBorder({ role: 'control', kind: 'separator', on: ROLE[host] as any });
         const worstW = Math.min(...SP.map((s: any) => contrastRatioHex(s.hex, bg)));
         const worstA = Math.min(...SP.map((s: any) => apcaMagnitude(s.hex, bg)));
         return `<tr><td>S${host} · ${ROLE[host]}</td><td>${rim}</td>

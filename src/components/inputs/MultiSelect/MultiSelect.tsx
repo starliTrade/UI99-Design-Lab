@@ -1,16 +1,10 @@
 import React, { useState, useEffect, useRef, useId, useCallback } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 import { CaretDown, Check, X } from '@phosphor-icons/react';
-import {
-  getLiminalStyle,
-  getDirectionalRim,
-  getTextStyle,
-  getLadderColor,
-  SHADOWS,
+import {getTextStyle,
   Z_INDEX,
-  LiminalState,
-} from '../../../engine/spec-engine';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+  LiminalState} from '../../../engine/spec-engine';
+import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
@@ -121,6 +115,9 @@ export function MultiSelect({
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  // The text sits on the surface that HOSTS the field, not on the field.
+  // `surfaceLevel` below is a hand-picked pair for the validation tint's
+  // rim and is recorded for gap 8 (21 hand-picked numbers).
   const surfaceLevel = 2;
 
   const currentValues = value !== undefined ? value : internalValues;
@@ -310,8 +307,6 @@ export function MultiSelect({
   // The interaction states are CSS's job now (:hover, :focus-within).
   const host = useHostSurface();
   const idleSurface = resolveSurface({ role: 'control', on: host }).background;
-  const hoverSurface = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
-  const focusSurface = resolveSurface({ role: 'control', state: 'focus', on: host }).background;
 
   const ringColor = error
     ? SEMANTICS.DANGER.solid
@@ -321,26 +316,41 @@ export function MultiSelect({
 
 
   let background = idleSurface;
-  let border = `1px solid ${resolveBorder({ role: 'control', kind: 'edge', on: host })}`;
+  let borderColor = resolveBorder({ role: 'control', kind: 'edge', on: host });
 
   if (!disabled) {
     if (error) {
-      border = `1px solid ${SEMANTICS.DANGER.border}`;
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      borderColor = SEMANTICS.DANGER.border;
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
-        background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
+        // The engine's own subtle tint, not a colour invented here. Two of these
+        // were hand-picked (#e5637a and #34c08b) and copied into four
+        // components — colours that exist nowhere in the engine.
+        background = `linear-gradient(${LiminalColorEngine.SEMANTICS.DANGER.subtle}, ${LiminalColorEngine.SEMANTICS.DANGER.subtle}), ${baseRim.cssBackground}`;
       }
     } else if (success) {
-      border = `1px solid ${SEMANTICS.SUCCESS.border}`;
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      borderColor = SEMANTICS.SUCCESS.border;
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
-        background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
+        background = `linear-gradient(${LiminalColorEngine.SEMANTICS.SUCCESS.subtle}, ${LiminalColorEngine.SEMANTICS.SUCCESS.subtle}), ${baseRim.cssBackground}`;
       }
     }
   }
 
   // Field Wrapper Container style (matches Input.tsx with flex wrap for chips)
   const fieldWrapperStyle: CSSProperties = {
+    // The layer owns the surface AND the border colour. This wrapper opted into
+    // `data-liminal-focus-within` and published NONE of the six variables, so
+    // the rule it opted into resolved to `transparent` — and the inline
+    // `background` and `border` below beat it anyway. The focus state was inert.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: background,
+      frozen: disabled || error || success ? background : undefined,
+      border: borderColor,
+      borderFocus: ringColor,
+    }),
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
@@ -351,8 +361,10 @@ export function MultiSelect({
     boxSizing: 'border-box',
     width: '100%',
     transition: reducedMotion ? 'none' : LiminalMotionEngine.TRANSITION.slow,
-    background,
-    border,
+    // Only the width and style. `borderColor` belongs to the layer, which
+    // changes it on focus — an inline shorthand would cancel that too.
+    borderWidth: 1,
+    borderStyle: 'solid',
     opacity: disabled ? 0.5 : 1,
     cursor: disabled ? 'not-allowed' : 'text',
     position: 'relative',
@@ -363,7 +375,7 @@ export function MultiSelect({
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
-    color: getTextStyle('secondary', surfaceLevel).color,
+    color: getTextStyle('secondary', ROLE_LEVEL[host]).color,
     marginBottom: `${SPACING[1]}px`,
     userSelect: 'none',
   };
@@ -376,7 +388,7 @@ export function MultiSelect({
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('tertiary', surfaceLevel).color,
+      : getTextStyle('tertiary', ROLE_LEVEL[host]).color,
     marginTop: `${SPACING[1]}px`,
   };
 
@@ -437,6 +449,10 @@ export function MultiSelect({
             }
           }
         }}
+        // The wrapper publishes all six variables through the producer.
+        // `data-liminal-surface` gives hover and the idle fill;
+        // `data-liminal-focus-within` gives focus.
+        data-liminal-surface=""
         data-liminal-focus-within=""
         data-liminal-disabled={disabled ? "" : undefined}
       >
@@ -445,7 +461,7 @@ export function MultiSelect({
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              color: getTextStyle('tertiary', surfaceLevel).color,
+              color: getTextStyle('tertiary', ROLE_LEVEL[host]).color,
               flexShrink: 0,
             }}
           >
@@ -539,7 +555,7 @@ export function MultiSelect({
             border: 'none',
             background: 'transparent',
             outline: 'none',
-            color: getTextStyle('primary', surfaceLevel).color,
+            color: getTextStyle('primary', ROLE_LEVEL[host]).color,
             fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
             lineHeight: TYPOGRAPHY[3].lh,
             fontFamily: 'inherit',
@@ -566,7 +582,7 @@ export function MultiSelect({
               padding: 0,
               margin: 0,
               cursor: 'pointer',
-              color: getTextStyle('tertiary', surfaceLevel).color,
+              color: getTextStyle('tertiary', ROLE_LEVEL[host]).color,
               transition: reducedMotion
                 ? 'none'
                 : LiminalMotionEngine.getTransition('color', 'fast'),
@@ -604,8 +620,8 @@ export function MultiSelect({
               ? 'none'
               : LiminalMotionEngine.getTransition('transform', 'normal'),
             color: isOpen
-              ? getTextStyle('secondary', surfaceLevel).color
-              : getTextStyle('tertiary', surfaceLevel).color,
+              ? getTextStyle('secondary', ROLE_LEVEL[host]).color
+              : getTextStyle('tertiary', ROLE_LEVEL[host]).color,
           }}
         >
           <LiminalIcon icon={CaretDown} size="sm" weight="light" />

@@ -62,7 +62,7 @@ export function Tag({
     LiminalColorEngine.EXTENDED_SPECTRUM[7];
 
   const background = resolveSurface({ role: 'control', on: hostRole }).background;
-  const rim = resolveBorder({ role: 'control', kind: 'hairline', on: hostRole });
+  const rim = resolveBorder({ role: 'control', kind: 'separator', on: hostRole });
 
   const tagStyle: CSSProperties = {
     display: 'inline-flex',

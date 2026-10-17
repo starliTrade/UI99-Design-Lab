@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060709" />
+<title>LIMINAL — پالت رنگی</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.9);
+    font:15px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:22px 12px 64px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:19px;font-weight:700;margin:0 0 8px;text-align:center;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:12.5px;max-width:90ch;text-align:center;margin-bottom:20px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+  .q{width:100%;max-width:780px;border-radius:15px;padding:16px;margin-bottom:13px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:13.5px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.45);font-size:11.5px;margin-bottom:14px;line-height:2}
+  .swatches{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+  .sw{width:46px;height:46px;border-radius:9px;display:flex;align-items:flex-end;justify-content:center;
+      font-size:8px;font-family:ui-monospace,Menlo,monospace;color:rgba(0,0,0,.45);padding-bottom:3px}
+  .lbl{font-size:10.5px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.45);text-align:center;margin-bottom:10px}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{font:inherit;font-size:12px;padding:9px 14px;border-radius:10px;cursor:pointer;
+       background:transparent;color:rgba(255,255,255,.7);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+</style>
+</head>
+<body>
+  <h1>پالت رنگی — مدل ادراکی</h1>
+  <p class="sub">
+    کروما در OKLCH بین فام‌ها <b>یکنواخت نیست</b>. پس هر فام روی <b>همان کسری از گاموت خودش</b>
+    می‌نشیند — و آن‌وقت همه به یک اندازه رنگی دیده می‌شوند.
+  </p>
+
+  <div id="rows"></div>
+
+  <div class="q">
+    <h2>سؤال ۱ — کدام شدت؟ (کسری از گاموت)</h2>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="0.3">۳۰٪ — خیلی نرم</button>
+      <button class="opt" data-q="1" data-v="0.45">۴۵٪</button>
+      <button class="opt" data-q="1" data-v="0.6">۶۰٪ — متعادل</button>
+      <button class="opt" data-q="1" data-v="0.75">۷۵٪</button>
+      <button class="opt" data-q="1" data-v="0.9">۹۰٪ — پرشده</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۲ — و کدام روشنایی؟</h2>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="0.45">۰.۴۵ — عمیق</button>
+      <button class="opt" data-q="2" data-v="0.55">۰.۵۵</button>
+      <button class="opt" data-q="2" data-v="0.65">۰.۶۵ — متعادل</button>
+      <button class="opt" data-q="2" data-v="0.75">۰.۷۵ — روشن</button>
+      <button class="opt" data-q="2" data-v="0.85">۰.۸۵ — پاستل</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۳ — و چند فام؟</h2>
+    <div class="opts" id="q3">
+      <button class="opt" data-q="3" data-v="8">۸ فام</button>
+      <button class="opt" data-q="3" data-v="12">۱۲ فام</button>
+      <button class="opt" data-q="3" data-v="16">۱۶ فام</button>
+    </div>
+  </div>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+
+  /** OKLCH -> sRGB, and the gamut's own maximum chroma at a lightness and hue. */
+  const toRgb = (L, C, h) => {
+    const a = C * Math.cos((h * Math.PI) / 180), bb = C * Math.sin((h * Math.PI) / 180);
+    const l_ = L + 0.3963377774 * a + 0.2158037573 * bb;
+    const m_ = L - 0.1055613458 * a - 0.0638541728 * bb;
+    const s_ = L - 0.0894841775 * a - 1.2914855480 * bb;
+    const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
+    return [
+      +4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+      -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+      -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s,
+    ];
+  };
+  const inGamut = (rgb) => rgb.every((v) => v >= -0.001 && v <= 1.001);
+  const maxChroma = (L, h) => {
+    let lo = 0, hi = 0.4;
+    for (let i = 0; i < 40; i++) {
+      const mid = (lo + hi) / 2;
+      if (inGamut(toRgb(L, mid, h))) lo = mid; else hi = mid;
+    }
+    return lo;
+  };
+  const toHex = (L, C, h) => '#' + toRgb(L, C, h).map((v) => {
+    const c = v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(Math.max(0, v), 1 / 2.4) - 0.055;
+    return Math.max(0, Math.min(255, Math.round(c * 255))).toString(16).padStart(2, '0');
+  }).join('');
+
+  const rows = document.getElementById('rows');
+  const COMBOS = [
+    { L: 0.45, f: 0.6 }, { L: 0.55, f: 0.6 }, { L: 0.65, f: 0.6 },
+    { L: 0.55, f: 0.3 }, { L: 0.55, f: 0.45 }, { L: 0.55, f: 0.75 }, { L: 0.55, f: 0.9 },
+    { L: 0.75, f: 0.6 }, { L: 0.85, f: 0.6 },
+  ];
+  for (const c of COMBOS) {
+    const sw = Array.from({ length: 12 }, (_, i) => {
+      const h = 15 + i * 30;
+      return toHex(c.L, maxChroma(c.L, h) * c.f, h);
+    });
+    rows.innerHTML += `<div class="q">
+      <div class="lbl">L ${c.L} · ${Math.round(c.f * 100)}٪ گاموت</div>
+      <div class="swatches">${sw.map((x) => `<span class="sw" style="background:${x}">${x.slice(1)}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed', 'true'); answers[q] = b.dataset.v;
+  });
+</script>
+</body>
+</html>

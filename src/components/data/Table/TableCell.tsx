@@ -24,7 +24,7 @@ export function TableCell({
   const SPACING = LiminalLayoutEngine.SPACING;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   // A row separator: a seam inside the work surface.
-  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'separator' });
 
   const tdStyle: CSSProperties = {
     padding: `${SPACING[3]}px ${SPACING[4]}px`,

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LiminalMotionEngine, MotionDurationKey, MotionEasingKey } from '../../engine/liminal-motion-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
-import { getLiminalStyle, getTextStyle } from '../../engine/spec-engine';
+import { getTextStyle } from '../../engine/spec-engine';
 import { Button } from './Button';
 import {
   Play,
@@ -17,6 +17,7 @@ import {
   Sliders,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
+import { resolveSurface } from '../../engine/liminal-surface';
 
 export function MotionDemo() {
   const [playRace, setPlayRace] = useState<boolean>(false);
@@ -46,8 +47,8 @@ export function MotionDemo() {
     setKeyframeKey((k) => k + 1);
   };
 
-  const panelStyle = getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style;
-  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
+  const panelStyle = resolveSurface({ role: 'work', interactive: false }).style;
+  const containerStyle = resolveSurface({ role: 'chrome', interactive: false }).style;
 
   return (
     <div className="space-y-6 font-mono text-xs">
@@ -293,7 +294,7 @@ export function MotionDemo() {
             key={keyframeKey}
             className="p-5 rounded-2xl flex flex-col items-center justify-center gap-2 shadow-2xl"
             style={{
-              ...getLiminalStyle({ surfaceLevel: 3, isContainer: true }).style,
+              ...resolveSurface({ role: 'panel', interactive: false }).style,
               borderRadius: `${LiminalLayoutEngine.RADIUS.card}px`,
               animation: `${activeKeyframe} ${LiminalMotionEngine.DURATION.slower}ms ${LiminalMotionEngine.EASING.out} both`,
             }}

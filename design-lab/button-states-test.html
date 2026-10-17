@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060709" />
+<title>LIMINAL — حالت‌های باتن</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.9);
+    font:15px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:24px 14px 64px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:19px;font-weight:700;margin:0 0 8px;text-align:center;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:12.5px;max-width:82ch;text-align:center;margin-bottom:22px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+  .q{width:100%;max-width:620px;border-radius:15px;padding:18px;margin-bottom:14px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:14px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.45);font-size:12px;margin-bottom:16px;line-height:2}
+  .band{padding:22px 12px;border-radius:11px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;gap:9px;align-items:center}
+  .btn{padding:10px 20px;border-radius:10px;font-size:13.5px;font-weight:600;border:1px solid transparent}
+  .cap{font-size:10px;color:rgba(255,255,255,.45);text-align:center;line-height:1.8}
+  .cap b{color:rgba(255,255,255,.78);font-size:11px}
+  .cap .ok{color:#7fd0a0} .cap .no{color:#e0b070}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{font:inherit;font-size:12px;padding:9px 14px;border-radius:10px;cursor:pointer;
+       background:transparent;color:rgba(255,255,255,.7);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+</style>
+</head>
+<body>
+  <h1>حالت‌های باتن — روی سطح کار</h1>
+  <p class="sub">
+    موتور امروز <b>نیم‌پله</b> جابه‌جا می‌کند (<code>۰.۵۷q</code>) — و آستانهٔ <b>سطح تخت</b>
+    <code>۱q</code> است. پس hover و active <b>زیر آستانه‌اند</b>. کدام درست است؟
+  </p>
+
+  <div class="q">
+    <h2>۱. جابه‌جایی <code>۰.۵</code> پله — فعلی</h2>
+    <div class="why">hover <code>+۰.۵۷q</code> · active <code>−۰.۵۷q</code> — هر دو زیر آستانه</div>
+    <div class="band" id="b1" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۲. جابه‌جایی <code>۱</code> پله</h2>
+    <div class="why">hover <code>+۱.۱۴q</code> · active <code>−۱.۱۴q</code> — روی آستانه</div>
+    <div class="band" id="b2" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۳. جابه‌جایی <code>۱.۵</code> پله</h2>
+    <div class="why">hover <code>+۱.۷۱q</code> · active <code>−۱.۷۱q</code> — بالای آستانه</div>
+    <div class="band" id="b3" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۱ — جابه‌جایی هر حالت چقدر باشد؟</h2>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="0.5">۰.۵ پله — فعلی</button>
+      <button class="opt" data-q="1" data-v="1">۱ پله — روی آستانه</button>
+      <button class="opt" data-q="1" data-v="1.5">۱.۵ پله</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۲ — و آیا hover و active باید یک اندازه باشند؟</h2>
+    <div class="why">یا active باید بیشتر باشد، چون «فشرده شدن» را می‌گوید؟</div>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="same">یک اندازه — hover و active هر دو</button>
+      <button class="opt" data-q="2" data-v="active-more">active بیشتر — فشار باید واضح‌تر باشد</button>
+      <button class="opt" data-q="2" data-v="active-less">active کمتر — برگشتن به سطح، نه رفتن بالاتر</button>
+    </div>
+  </div>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const CANVAS_L = num('--liminal-canvas-l'), STEP = num('--liminal-step');
+  const C = num('--liminal-chroma'), H = num('--liminal-hue'), Q = num('--liminal-q');
+  const at = (level) => `oklch(${(CANVAS_L + level * STEP).toFixed(7)} ${C} ${H})`;
+  const MAX = 8;
+  const HOST = 2, FILL = 3;
+
+  function band(id, shift) {
+    const host = document.getElementById(id);
+    const states = [
+      ['idle', FILL, 'حالت عادی'],
+      ['hover', Math.min(MAX, FILL + shift), 'hover'],
+      ['active', Math.max(0, FILL - shift), 'active'],
+      ['disabled', FILL - 1, 'disabled'],
+    ];
+    for (const [name, level, label] of states) {
+      const d = ((level - FILL) * STEP / Q);
+      const el = document.createElement('div'); el.className = 'cell';
+      const cls = name === 'idle' || name === 'disabled' ? '' : (Math.abs(d) >= 1 ? 'ok' : 'no');
+      el.innerHTML = `<span class="btn" style="background:${at(level)};color:${at(Math.min(MAX, FILL + 3))}">دکمه</span>
+        <div class="cap"><b>${label}</b><br><span class="${cls}">${d === 0 ? '—' : (d > 0 ? '+' : '') + d.toFixed(2) + 'q'}</span></div>`;
+      host.appendChild(el);
+    }
+  }
+  band('b1', 0.5);
+  band('b2', 1);
+  band('b3', 1.5);
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed','true'); answers[q] = b.dataset.v;
+  });
+</script>
+</body>
+</html>

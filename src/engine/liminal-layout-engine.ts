@@ -5,6 +5,9 @@ import type { CSSProperties } from 'react';
  * Layout, Geometry, and Typography Engine.
  */
 
+/** The steps of the type scale. 1–8 are the interface; 9–10 are the headline band. */
+export type TypeLevelIndex = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
 export interface TypeLevel {
   fs: number; // font-size (px)
   lh: number; // line-height multiplier
@@ -92,10 +95,27 @@ export class LiminalLayoutEngine {
    * be named rather than scattered — three controls were using `6px 12px`,
    * `10px 18px` and `9px 12px` as literals.
    */
+  /**
+   * CONTROL PADDING — AND THE HORIZONTAL IS THREE TIMES THE VERTICAL.
+   *
+   * It was three hand-picked pairs — `6/12`, `10/18`, `12/24` — whose ratio drifted from 2.0
+   * to 1.8 and back to 2.0. Measured on the rendered button, all three came out near 1.5
+   * wide-to-tall, which is nearly SQUARE, and the reader's eye said so before the numbers
+   * did: "lg has gone square, and x should be larger than y."
+   *
+   * `x = y × 3` is the only option tested that HOLDS A CONSTANT — the padding ratio is exactly
+   * 3.0000 at every size, and the rendered shape lands at 2.00, 2.07 and 2.02. The small drift
+   * is the LABEL, not the system: a button's width is its text plus its padding, and the text
+   * grows with the font while the padding moves in fixed steps. That drift exists in every
+   * button ever built.
+   *
+   * AND THE RATIO IS THE PROPERTY, NOT THE NUMBERS. 6/10/12 are unchanged; only the horizontal
+   * follows from them now, so a size cannot drift out of shape on its own.
+   */
   static readonly CONTROL_PADDING = {
-    sm: { y: 6, x: 12 },
-    md: { y: 10, x: 18 },
-    lg: { y: 12, x: 24 },
+    sm: { y: 6, x: 18 },
+    md: { y: 10, x: 30 },
+    lg: { y: 12, x: 36 },
   } as const;
 
   // == 2. RADIUS ==
@@ -115,6 +135,39 @@ export class LiminalLayoutEngine {
     24: 24,
     container: 24,  // container / page-wrapper
     full: 9999,     // ONLY for badges / toggles (it is "loud")
+  } as const;
+
+  /**
+   * THE RADIUS A CONTROL OF THIS HEIGHT TAKES — and it is a FORMULA, not three numbers.
+   *
+   * The standard mapping is "the radius scales with the element's height": a 32px control
+   * takes 8, a 44px control 10, a 52px control 12. Smaller elements get tighter corners and
+   * larger ones softer, so the corner stays PROPORTIONAL to the shape rather than being a
+   * constant that looks tight on a big control and bulbous on a small one.
+   *
+   * AND THE THREE NUMBERS ARE THE FORMULA. `round(h / 8.8) * 2` reproduces the mapping
+   * exactly — 32 gives 8, 44 gives 10, 52 gives 12 — so the scale does not have to be written
+   * down and cannot drift from the heights it belongs to. The `* 2` lands it on the even
+   * grid the rest of the system uses.
+   *
+   * AND IT IS DERIVED FROM THE HEIGHT, WHICH IS THE POINT: a control's corner is a function
+   * of its own size, so adding a fourth size does not mean picking a fourth radius.
+   */
+  static controlRadius(height: number): number {
+    return Math.round(height / 8.8) * 2;
+  }
+
+  /**
+   * THE THREE CONTROL RADII, DERIVED — one per size, from the size itself.
+   *
+   * Before this, every control size took the same radius (10): a 32px button and a 52px
+   * button had identical corners, which is the one thing the standard says not to do. The
+   * values are computed rather than listed, so `CONTROL` and this cannot disagree.
+   */
+  static readonly CONTROL_RADIUS = {
+    sm: LiminalLayoutEngine.controlRadius(32),
+    md: LiminalLayoutEngine.controlRadius(44),
+    lg: LiminalLayoutEngine.controlRadius(52),
   } as const;
 
   // Concentric Harmony Formula: r_inner = max(4, r_outer − padding)
@@ -168,21 +221,69 @@ export class LiminalLayoutEngine {
   }
 
   /** The scale at the reference base — for docs, previews and static renders. */
+  /**
+   * THE SCALE HAS TEN LEVELS, AND THE TOP TWO ARE THE HEADLINE BAND.
+   *
+   * It had eight. Eight is the whole of an interface — meta, label, body, lead,
+   * h3, h2, h1, display — and the largest of them is 41px at the reference base.
+   * That is right for a product UI and it is not enough for a page that has to
+   * state its claim in one line: a headline at 41px is a heading, not a
+   * statement.
+   *
+   * So the scale continues. The RATIO does not change — 1.2, the same ratio
+   * every other level uses — and nothing below moves by a single pixel. Two
+   * levels are added where the scale already pointed:
+   *
+   *   9   display-lg   48px at the reference base
+   *   10  display-xl   59px
+   *
+   * Measured against a reference in the wild: a product page's headline is 84px
+   * at weight 700 with -0.01em tracking and a 1.1 line-height. Level 10 is 59px
+   * and level 12 would be 85px — the band is here, and the site takes what its
+   * sentence needs rather than what a number looked like.
+   */
   static readonly TYPOGRAPHY: Record<number, TypeLevel> = (() => {
-    const lh: Record<number, number> = { 1: 1.45, 2: 1.5, 3: 1.6, 4: 1.35, 5: 1.25, 6: 1.2, 7: 1.15, 8: 1.1 };
+    /**
+     * LINE-HEIGHT: ONE SPACING STEP OF LEADING, NOT A RATIO ANYONE CHOSE.
+     *
+     * It was a hand-picked table — 1.45, 1.5, 1.6, 1.35, 1.25, 1.2, 1.15, 1.1 — and it ran
+     * BACKWARDS for the first three levels: the third smallest size was the loosest of all.
+     * The standard is an inverse relationship, so the leading ratio shrinks as the text grows,
+     * and that table rose before it fell.
+     *
+     * `1 + 8/fs` is `(fs + 8) / fs`: the line box is the font size plus ONE SPACING STEP, and
+     * 8px is `SPACING[2]`. So the leading is not a typographic opinion — it is a step of the
+     * scale the rest of the system is built on, which makes the line-height DERIVED rather
+     * than tabulated, and it cannot drift from the sizes it belongs to.
+     *
+     *   19.2 -> 1.417   23.0 -> 1.347   27.6 -> 1.289   33.2 -> 1.241
+     *   39.8 -> 1.201   47.8 -> 1.167   57.3 -> 1.140   68.8 -> 1.116
+     */
+    const lh: Record<number, number> = {};
+    for (let n = 1; n <= 10; n++) {
+      const size = 16 * Math.pow(LiminalLayoutEngine.TYPE_RATIO, n);
+      // FOUR DECIMALS, because sixteen is not a line-height. The formula produces
+      // 1.2009387860082306 and a JSON round-trip returns 1.2009387860082303 — the same number
+      // to any eye and two different strings to a test. A line-height is read by a browser,
+      // not by a mathematician.
+      lh[n] = Number((1 + LiminalLayoutEngine.SPACING[2] / size).toFixed(4));
+    }
     const ls: Record<number, string> = {
       1: '+0.04em', 2: '+0.01em', 3: '0', 4: '-0.005em',
       5: '-0.01em', 6: '-0.015em', 7: '-0.02em', 8: '-0.025em',
+      9: '-0.028em', 10: '-0.03em',
     };
     const weight: Record<number, 400 | 500 | 600 | 700> = {
       1: 400, 2: 500, 3: 400, 4: 600, 5: 600, 6: 600, 7: 600, 8: 700,
+      9: 700, 10: 700,
     };
     const role: Record<number, string> = {
       1: 'meta, quaternary', 2: 'label, tertiary', 3: 'body, secondary',
       4: 'lead, h4', 5: 'h3', 6: 'h2', 7: 'h1', 8: 'display',
+      9: 'display-lg', 10: 'display-xl',
     };
     const out: Record<number, TypeLevel> = {};
-    for (let n = 1; n <= 8; n++) {
+    for (let n = 1; n <= 10; n++) {
       out[n] = {
         fs: Math.round(this.TYPE_BASE_REF * this.typeScale(n) * 100) / 100,
         lh: lh[n],
@@ -195,7 +296,7 @@ export class LiminalLayoutEngine {
     return out;
   })();
 
-  static getTypeStyle(level: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8, isCaps: boolean = false): CSSProperties {
+  static getTypeStyle(level: TypeLevelIndex, isCaps: boolean = false): CSSProperties {
     const t = this.TYPOGRAPHY[level];
     return {
       // Derived from the fluid base so inline styles respond to the viewport too.

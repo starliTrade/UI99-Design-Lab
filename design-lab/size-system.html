@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060709" />
+<title>LIMINAL — سیستم سایز</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.9);
+    font:15px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:22px 12px 64px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:19px;font-weight:700;margin:0 0 8px;text-align:center;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:12.5px;max-width:88ch;text-align:center;margin-bottom:20px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+  .q{width:100%;max-width:740px;border-radius:15px;padding:16px;margin-bottom:13px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:13.5px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.45);font-size:11.5px;margin-bottom:14px;line-height:2}
+  table{width:100%;border-collapse:collapse;font-family:ui-monospace,Menlo,monospace;font-size:11.5px}
+  th{text-align:start;font-weight:500;color:rgba(255,255,255,.34);font-size:10.5px;padding:6px 6px}
+  td{padding:6px 6px;border-top:1px solid var(--liminal-role-panel-border)}
+  .ok{color:#7fd0a0} .warn{color:#e0b070}
+  .band{padding:22px 10px;border-radius:11px;display:flex;gap:18px;justify-content:center;flex-wrap:wrap;align-items:center}
+  .cell{display:flex;flex-direction:column;gap:10px;align-items:center}
+  .btn{background:var(--liminal-s3);color:var(--liminal-s8);border:1px solid transparent;
+       display:inline-flex;align-items:center;justify-content:center;font-weight:600;
+       border-radius:var(--liminal-radius-control)}
+  .cap{font-size:9.5px;color:rgba(255,255,255,.45);text-align:center;line-height:1.85;font-family:ui-monospace,Menlo,monospace}
+  .cap b{color:rgba(255,255,255,.8);font-size:10.5px;font-family:system-ui;display:block}
+  .bar{height:12px;border-radius:3px;background:var(--liminal-s6);display:block}
+  input[type=range]{width:100%;accent-color:#e9ecf2}
+  .demo{padding:16px 12px;border-radius:11px;background:var(--liminal-s2);display:flex;flex-direction:column;gap:7px}
+  .demo .row{display:flex;align-items:center;gap:10px}
+  .demo .lbl{font-size:10px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.45);width:26px}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{font:inherit;font-size:12px;padding:9px 14px;border-radius:10px;cursor:pointer;
+       background:transparent;color:rgba(255,255,255,.7);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+</style>
+</head>
+<body>
+  <h1>سیستم سایز</h1>
+  <p class="sub">
+    <b>یک نسبت ثابت</b> · <b>درونیابی سیّال</b> · و <b>بدون رُند کردن</b> — چون رُند، نسبت را میشکند.
+    همه از توکن‌های موتور.
+  </p>
+
+  <div class="q">
+    <h2>۱. مقیاس — نسبت <code>√۲</code>، بدون رُند</h2>
+    <div class="why">
+      هر دو پله دو برابر. و <code>4px × √2 = 5.6569px</code> یک مقدار معتبر CSS است — پس
+      <b>لازم نیست رُند شود</b>، همان‌طور که نردبان رنگی لازم نیست هگز شود.
+    </div>
+    <table><thead><tr><th>پله</th><th>مقدار</th><th>در برابر قبلی</th></tr></thead><tbody id="scale"></tbody></table>
+  </div>
+
+  <div class="q">
+    <h2>۲. کنترل‌ها — سه سایز</h2>
+    <div class="why">ارتفاع و پدینگ، از توکن‌های موتور</div>
+    <div class="band" id="controls" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۳. رادیوس — و فرمول همگام‌مرکزی</h2>
+    <div class="why"><code>r_inner = max(4, r_outer − padding)</code> — یک کارت با یک کنترل داخلش</div>
+    <div class="band" id="radii" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۴. و روی هر لایه — سه سایز</h2>
+    <div class="why">همان کنترل، روی شش سطح</div>
+    <div id="layers"></div>
+  </div>
+
+  <div class="q">
+    <h2>۵. رفتار سیّال — زنده</h2>
+    <div class="why">عرض را عوض کن: کل مقیاس درونیابی می‌شود، نه پرش در breakpoint</div>
+    <div class="demo">
+      <input type="range" id="vp" min="360" max="1440" value="390" />
+      <div id="vpLabel" style="font-size:11px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.5);text-align:center"></div>
+      <div id="fluidRows"></div>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال — این سیستم سایز است؟</h2>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="yes">بله — بسازش و در سیاست بنویس</button>
+      <button class="opt" data-q="1" data-v="tune">نزدیک است، ولی باید تنظیم شود</button>
+      <button class="opt" data-q="1" data-v="no">نه — نسبت دیگری لازم است</button>
+    </div>
+  </div>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const RATIO = num('--liminal-ratio') || Math.SQRT2;
+  const BASE = num('--liminal-space-1') || 4;
+
+  // ۱. the scale
+  const scale = document.getElementById('scale');
+  let prev = null;
+  for (let n = 0; n < 10; n++) {
+    const v = BASE * Math.pow(RATIO, n);
+    scale.innerHTML += `<tr><td>${n}</td><td>${v.toFixed(4)}px</td>
+      <td class="ok">${prev === null ? '—' : '×' + (v / prev).toFixed(4)}</td></tr>`;
+    prev = v;
+  }
+
+  // ۲. the controls
+  const controls = document.getElementById('controls');
+  for (const [name, h, py, px] of [
+    ['sm', num('--liminal-control-sm'), num('--liminal-pad-sm-y'), num('--liminal-pad-sm-x')],
+    ['md', num('--liminal-control-md'), num('--liminal-pad-md-y'), num('--liminal-pad-md-x')],
+    ['lg', num('--liminal-control-lg'), num('--liminal-pad-lg-y'), num('--liminal-pad-lg-x')],
+  ]) {
+    const el = document.createElement('div'); el.className = 'cell';
+    el.innerHTML = `<span class="btn" style="height:${h}px;padding:${py}px ${px}px;font-size:${name === 'sm' ? 13 : name === 'md' ? 14 : 15}px">دکمه</span>
+      <div class="cap"><b>${name} · ${h}px</b><span class="warn">y${py} x${px}</span></div>`;
+    controls.appendChild(el);
+  }
+
+  // ۳. the concentric radius
+  const radii = document.getElementById('radii');
+  const rOuter = num('--liminal-radius-card') || 16;
+  const pad = num('--liminal-pad-md-y') || 10;
+  const rInner = Math.max(4, rOuter - pad);
+  radii.innerHTML = `
+    <div class="cell"><span style="width:180px;height:110px;border-radius:${rOuter}px;background:${S(4)};display:flex;align-items:center;justify-content:center;padding:${pad}px">
+      <span class="btn" style="height:44px;padding:10px 18px;border-radius:${rInner}px">دکمه</span></span>
+      <div class="cap"><b>کارت ${rOuter}px · دکمه ${rInner}px</b><span class="ok">max(4, ${rOuter} − ${pad})</span></div></div>`;
+
+  // ۴. on every layer
+  const layers = document.getElementById('layers');
+  for (const [name, lv] of [['بوم',0],['chrome',1],['سطح کار',2],['پنل',3],['منو',5],['modal',7]]) {
+    const el = document.createElement('div'); el.className = 'q';
+    el.style.background = S(lv);
+    el.innerHTML = `<div style="font-size:11px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.45);margin-bottom:10px">${name} · S${lv}</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        ${[['sm',32,6,12,13],['md',44,10,18,14],['lg',52,12,24,15]].map(([n,h,py,px,fs]) =>
+          `<span class="btn" style="height:${h}px;padding:${py}px ${px}px;font-size:${fs}px;background:${S(Math.min(8,lv+1))}">${n}</span>`).join('')}
+      </div>`;
+    layers.appendChild(el);
+  }
+
+  // ۵. fluid
+  const vp = document.getElementById('vp');
+  const label = document.getElementById('vpLabel');
+  const rows = document.getElementById('fluidRows');
+  const MIN_VP = 360, MAX_VP = 1440, MIN_BASE = 4, MAX_BASE = 8;
+  function render() {
+    const w = Number(vp.value);
+    const t = Math.max(0, Math.min(1, (w - MIN_VP) / (MAX_VP - MIN_VP)));
+    const base = MIN_BASE + (MAX_BASE - MIN_BASE) * t;
+    label.textContent = `${w}px — پایه ${base.toFixed(2)}px`;
+    rows.innerHTML = '';
+    for (let n = 0; n < 7; n++) {
+      const v = base * Math.pow(RATIO, n);
+      rows.innerHTML += `<div class="row"><span class="lbl">${n}</span><span class="bar" style="width:${v}px"></span><span class="lbl" style="width:auto">${v.toFixed(2)}px</span></div>`;
+    }
+  }
+  vp.addEventListener('input', render);
+  render();
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed', 'true'); answers[q] = b.dataset.v;
+  });
+</script>
+</body>
+</html>

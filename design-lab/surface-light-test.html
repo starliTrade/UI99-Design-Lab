@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — نور سطح</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.89);
+    font:14px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:26px 20px 60px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:20px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.6);font-size:13px;max-width:82ch;text-align:center;margin-bottom:22px}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+  .q{width:100%;max-width:1120px;border-radius:16px;padding:20px 22px;margin-bottom:18px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:14px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.42);font-size:12px;margin-bottom:18px}
+  /* The host is a full-bleed BAND, not an object: a surface you judge light ON
+     must not itself look like a thing. */
+  .band{padding:30px 0;display:flex;gap:30px;justify-content:center;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;gap:9px;align-items:center}
+  .panel{width:186px;height:118px;border-radius:12px;border:1px solid transparent}
+  .cap{font-size:10.5px;color:rgba(255,255,255,.42);text-align:center;line-height:1.7}
+  .cap b{color:rgba(255,255,255,.6)}
+  .opt{font:inherit;font-size:12px;padding:8px 14px;border-radius:10px;cursor:pointer;
+    background:transparent;color:rgba(255,255,255,.6);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  button.primary{font:inherit;font-size:13px;font-weight:600;color:var(--liminal-s0);
+    background:var(--liminal-s8);border:none;border-radius:10px;padding:11px 22px;cursor:pointer;margin-top:6px}
+</style>
+</head>
+<body>
+  <h1>نور سطح</h1>
+  <p class="sub">
+    <b>مه</b> یک گرادیان عمودی دارد — نور از بالا می‌آید و ته در پایین می‌نشیند. ولی <b>پنل، کارت و
+    کنترل تخت‌اند</b>: هیچ نوری نمی‌گیرند. سؤال: آیا یک لایه‌ی <b>نشسته</b> هم باید همان نور را
+    داشته باشد؟ و چقدر؟
+  </p>
+
+  <div class="band" id="bandWork" style="background:var(--liminal-s2)"></div>
+  <p class="cap" style="text-align:center">میزبان: <b>سطح کار S2</b> — پنل S3</p>
+
+  <div class="band" id="bandCanvas" style="background:var(--liminal-s0)"></div>
+  <p class="cap" style="text-align:center">میزبان: <b>بوم S0</b> — همان پنل S3</p>
+
+  <div class="q" style="margin-top:24px">
+    <h2>سؤال ۱ — در هر میزبان، کدام شدت «نور» است؟</h2>
+    <div class="why">«نور» یعنی: سطح روشن‌تر به نظر می‌رسد، ولی خودِ گرادیان دیده نمی‌شود.</div>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="W-flat">سطح کار: تخت (فعلی)</button>
+      <button class="opt" data-q="1" data-v="W-half">سطح کار: نیم‌پله</button>
+      <button class="opt" data-q="1" data-v="W-one">سطح کار: یک پله</button>
+      <button class="opt" data-q="1" data-v="W-two">سطح کار: دو پله</button>
+    </div>
+    <div class="opts" id="q1b" style="margin-top:8px">
+      <button class="opt" data-q="1b" data-v="C-flat">بوم: تخت (فعلی)</button>
+      <button class="opt" data-q="1b" data-v="C-half">بوم: نیم‌پله</button>
+      <button class="opt" data-q="1b" data-v="C-one">بوم: یک پله</button>
+      <button class="opt" data-q="1b" data-v="C-two">بوم: دو پله</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۲ — قاعده چه باشد؟</h2>
+    <div class="why">این تصمیم کل سیستم سطوح را عوض می‌کند.</div>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="floating-only">نور فقط برای <b>سطوح شناور</b> — نشسته‌ها تخت بمانند (فعلی)</button>
+      <button class="opt" data-q="2" data-v="all">نور برای <b>هر سطح</b> — هر لایه نور خودش را داشته باشد</button>
+      <button class="opt" data-q="2" data-v="by-height">نور از <b>ارتفاع</b> بیاید — مثل ریم و سایه و حرکت</button>
+    </div>
+  </div>
+
+  <button class="primary" onclick="copyAnswers()">کپی جواب‌ها</button>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const H = (n) => css.getPropertyValue(`--liminal-s${n}-5`).trim();
+
+  /** A vertical light: the top is lifted `steps` above the surface, the bottom is
+   *  the surface itself. That is what the mist does, expressed in ladder steps. */
+  const lit = (level, steps) => {
+    if (steps === 0) return S(level);
+    const top = Number.isInteger(level + steps) ? S(level + steps) : H(Math.floor(level + steps));
+    return `linear-gradient(180deg, ${top} 0%, ${S(level)} 100%)`;
+  };
+
+  function cell(host, level, steps, cap){
+    const el = document.createElement('div'); el.className='cell';
+    el.innerHTML = `<div class="panel" style="background:${lit(level, steps)}"></div>
+      <div class="cap">${cap}</div>`;
+    return el;
+  }
+
+  const W = document.getElementById('bandWork'), C = document.getElementById('bandCanvas');
+  W.appendChild(cell(2,3,0,`<b>تخت</b><br>فقط S3`));
+  W.appendChild(cell(2,3,0.5,`<b>نیم‌پله</b><br>بالا S3.5`));
+  W.appendChild(cell(2,3,1,`<b>یک پله</b><br>بالا S4`));
+  W.appendChild(cell(2,3,2,`<b>دو پله</b><br>بالا S5`));
+
+  C.appendChild(cell(0,3,0,`<b>تخت</b><br>فقط S3`));
+  C.appendChild(cell(0,3,0.5,`<b>نیم‌پله</b><br>بالا S3.5`));
+  C.appendChild(cell(0,3,1,`<b>یک پله</b><br>بالا S4`));
+  C.appendChild(cell(0,3,2,`<b>دو پله</b><br>بالا S5`));
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed','true'); answers[q] = b.dataset.v;
+  });
+  function copyAnswers(){
+    const out = { at:new Date().toISOString(), kind:'surface-light-2q', answers };
+    navigator.clipboard?.writeText(JSON.stringify(out,null,2));
+    alert('کپی شد:\n' + JSON.stringify(answers));
+  }
+</script>
+</body>
+</html>

@@ -15,7 +15,6 @@
 import {
   LADDER,
   TEXT_HIERARCHY,
-  SHADOWS,
   RIM,
   FOCUS_RING_COLOR,
   getDirectionalRim,
@@ -31,6 +30,7 @@ import {
   LADDER_CHROMA,
   LADDER_HUE, WELLS } from './liminal-ladder';
 import { oklchLightness } from './liminal-color-math';
+import { FLOAT_SHADOWS } from './liminal-surface';
 
 /** Locked constants of the system. */
 export const CONTRACT = {
@@ -88,10 +88,11 @@ const spectrumList = LiminalColorEngine.EXTENDED_SPECTRUM.map(
   (h) => `H${h.hue} ${h.hex}`,
 ).join(', ');
 
-function rimLine(level: 1 | 2 | 3, surface: number): string {
-  const rim = getDirectionalRim(surface, level);
-  if (!rim) return `Rim ${level}: none`;
-  return `Rim ${level} (S${surface}): Top ${rim.top} | Side ${rim.side} | Bottom ${rim.bot}`;
+/** ONE rim now — the tiers were a choice the eye did not have. */
+function rimLine(surface: number): string {
+  const rim = getDirectionalRim(surface, true);
+  if (!rim) return `S${surface}: no rim`;
+  return `S${surface}: Top ${rim.top} | Side ${rim.side} | Bottom ${rim.bot}`;
 }
 
 /**
@@ -124,16 +125,16 @@ export function getContractSections(): ContractSection[] {
       id: 'rim',
       title: '2) DIRECTIONAL RIM',
       body:
-        `180° specular gradient, top-weighted: Top ${RIM[2].t}Δ > Side ${RIM[2].s}Δ > Bottom ${RIM[2].b}Δ. ` +
-        `${rimLine(1, 1)}. ${rimLine(2, 2)}. ${rimLine(3, 3)}. ` +
-        `Concave inversion on press. Rim 0 = no rim (disabled).`,
+        `180° specular gradient, top-weighted: Top ${RIM.t}Δ > Side ${RIM.s}Δ > Bottom ${RIM.b}Δ. ` +
+        `${rimLine(1)}. ${rimLine(2)}. ${rimLine(3)}. ` +
+        `Concave inversion on press. A role either has a rim or does not.`,
     },
     {
       id: 'shadow',
       title: '3) SUB-CANVAS SHADOW',
       body:
         `Dual layer: ambient S-1 ${WELLS.penumbra} + contact S-2 ${WELLS.umbra}. Floating and featured elements only. ` +
-        `E1 ${SHADOWS[1]} · E2 ${SHADOWS[2]} · E3 ${SHADOWS[3]} · E4 ${SHADOWS[4]}.`,
+        Object.entries(FLOAT_SHADOWS).map(([role, v]) => `${role}: ${v}`).join(' · ') + '.',
     },
     {
       id: 'states',

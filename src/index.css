@@ -1,6 +1,7 @@
 @import "./engine/liminal-mist.css";
 @import "./engine/liminal-bidi.css";
 @import "./engine/liminal-fonts.css";
+@import "./engine/liminal-fonts-latin.css";
 @import "./engine/liminal-motion.css";
 @import "./engine/liminal-forced-colors.css";
 @import "./engine/liminal-interaction.css";
@@ -12,41 +13,58 @@
 
   /* ── 1. TONAL LADDER ─────────────────────────────────────────── */
   --liminal-s0: #060709; /* canvas */
+  --liminal-s0: oklch(0.1280000 0.0069 258.4);
   --liminal-s1: #07090b;
+  --liminal-s1: oklch(0.1374750 0.0069 258.4);
   --liminal-s2: #090b0d;
+  --liminal-s2: oklch(0.1469500 0.0069 258.4);
   --liminal-s3: #0b0d0f;
+  --liminal-s3: oklch(0.1564250 0.0069 258.4);
   --liminal-s4: #0d0f12;
+  --liminal-s4: oklch(0.1659000 0.0069 258.4);
   --liminal-s5: #0f1114;
+  --liminal-s5: oklch(0.1753750 0.0069 258.4);
   --liminal-s6: #111316;
+  --liminal-s6: oklch(0.1848500 0.0069 258.4);
   --liminal-s7: #131518;
+  --liminal-s7: oklch(0.1943250 0.0069 258.4);
   --liminal-s8: #15171a;
+  --liminal-s8: oklch(0.2038000 0.0069 258.4);
   --liminal-s0-5: #07080a;
+  --liminal-s0-5: oklch(0.1327375 0.0069 258.4);
   --liminal-s1-5: #080a0c;
+  --liminal-s1-5: oklch(0.1422125 0.0069 258.4);
   --liminal-s2-5: #0a0c0e;
+  --liminal-s2-5: oklch(0.1516875 0.0069 258.4);
   --liminal-s3-5: #0c0e10;
+  --liminal-s3-5: oklch(0.1611625 0.0069 258.4);
   --liminal-s4-5: #0e1013;
+  --liminal-s4-5: oklch(0.1706375 0.0069 258.4);
   --liminal-s5-5: #101215;
+  --liminal-s5-5: oklch(0.1801125 0.0069 258.4);
   --liminal-s6-5: #121417;
+  --liminal-s6-5: oklch(0.1895875 0.0069 258.4);
   --liminal-s7-5: #141619;
+  --liminal-s7-5: oklch(0.1990625 0.0069 258.4);
   --liminal-s-minus-1: #030406; /* penumbra */
   --liminal-s-minus-2: #010203; /* contact umbra */
 
   /* ── 2. RIM ──────────────────────────────────────────────────── */
-  --liminal-rim-1-top: #080a0c;
-  --liminal-rim-1-side: #080a0c;
-  --liminal-rim-1-bottom: #07090b;
-  --liminal-rim-2-top: #0b0d0f;
-  --liminal-rim-2-side: #0a0c0e;
-  --liminal-rim-2-bottom: #090b0d;
+  --liminal-rim-1-top: #0a0c0e;
+  --liminal-rim-1-side: #090b0d;
+  --liminal-rim-1-bottom: #080a0c;
+  --liminal-rim-2-top: #0c0e10;
+  --liminal-rim-2-side: #0b0d0f;
+  --liminal-rim-2-bottom: #0a0c0e;
   --liminal-rim-3-top: #0e1013;
   --liminal-rim-3-side: #0d0f12;
   --liminal-rim-3-bottom: #0c0e10;
 
   /* ── 3. SHADOW ───────────────────────────────────────────────── */
-  --liminal-shadow-e1: 0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);
-  --liminal-shadow-e2: 0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26);
-  --liminal-shadow-e3: 0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30);
-  --liminal-shadow-e4: 0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34);
+  --liminal-shadow-menu: 0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-popover: 0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-modal: 0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-toast: 0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991);
 
   /* ── 4. SURFACE TINT (fills — never for type) ────────────────── */
   --liminal-tint-faint: rgba(255, 255, 255, 0.01);
@@ -138,32 +156,38 @@
   --liminal-type-ratio: 1.2; /* fixed — this is the design */
   --liminal-type-base: clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem); /* fluid 14→16.5px; rem-based for WCAG 1.4.4 */
   --liminal-fs-1: calc(var(--liminal-type-base) * 0.694444);
-  --liminal-lh-1: 1.45; /* unitless multiplier */
+  --liminal-lh-1: 1.4167; /* unitless multiplier */
   --liminal-weight-1: 400;
   --liminal-fs-2: calc(var(--liminal-type-base) * 0.833333);
-  --liminal-lh-2: 1.5; /* unitless multiplier */
+  --liminal-lh-2: 1.3472; /* unitless multiplier */
   --liminal-weight-2: 500;
   --liminal-fs-3: var(--liminal-type-base);
-  --liminal-lh-3: 1.6; /* unitless multiplier */
+  --liminal-lh-3: 1.2894; /* unitless multiplier */
   --liminal-weight-3: 400;
   --liminal-fs-4: calc(var(--liminal-type-base) * 1.200000);
-  --liminal-lh-4: 1.35; /* unitless multiplier */
+  --liminal-lh-4: 1.2411; /* unitless multiplier */
   --liminal-weight-4: 600;
   --liminal-fs-5: calc(var(--liminal-type-base) * 1.440000);
-  --liminal-lh-5: 1.25; /* unitless multiplier */
+  --liminal-lh-5: 1.2009; /* unitless multiplier */
   --liminal-weight-5: 600;
   --liminal-fs-6: calc(var(--liminal-type-base) * 1.728000);
-  --liminal-lh-6: 1.2; /* unitless multiplier */
+  --liminal-lh-6: 1.1674; /* unitless multiplier */
   --liminal-weight-6: 600;
   --liminal-fs-7: calc(var(--liminal-type-base) * 2.073600);
-  --liminal-lh-7: 1.15; /* unitless multiplier */
+  --liminal-lh-7: 1.1395; /* unitless multiplier */
   --liminal-weight-7: 600;
   --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
-  --liminal-lh-8: 1.1; /* unitless multiplier */
+  --liminal-lh-8: 1.1163; /* unitless multiplier */
   --liminal-weight-8: 700;
+  --liminal-fs-9: calc(var(--liminal-type-base) * 2.985984);
+  --liminal-lh-9: 1.0969; /* unitless multiplier */
+  --liminal-weight-9: 700;
+  --liminal-fs-10: calc(var(--liminal-type-base) * 3.583181);
+  --liminal-lh-10: 1.0808; /* unitless multiplier */
+  --liminal-weight-10: 700;
 
   /* ── 12b. FONTS ──────────────────────────────────────────────── */
-  --liminal-font-en: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --liminal-font-en: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --liminal-font-fa: Vazirmatn, "Vazirmatn RD", "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif;
   --liminal-line-height-fa-floor: 1.5625; /* from Vazirmatn metrics */
 
@@ -181,11 +205,18 @@
   --liminal-ease-linear: linear;
 
   /* ── 14. LAYER ───────────────────────────────────────────────── */
-  --liminal-z-dropdown: 1000;
-  --liminal-z-modal: 2000;
-  --liminal-z-tooltip: 3000;
-  --liminal-z-popover: 4000;
-  --liminal-z-floating: 9999;
+  --liminal-z-canvas: 0;
+  --liminal-z-chrome: 1;
+  --liminal-z-work: 2;
+  --liminal-z-panel: 3;
+  --liminal-z-control: 4;
+  --liminal-z-menu: 5;
+  --liminal-z-popover: 6;
+  --liminal-z-modal: 7;
+  --liminal-z-toast: 8;
+  --liminal-z-dropdown: 5;
+  --liminal-z-tooltip: 6;
+  --liminal-z-floating: 5;
 }
 
 /* The system is dark-only today; this scope exists so a theme can be swapped. */
@@ -193,41 +224,58 @@
 
   /* ── 1. TONAL LADDER ─────────────────────────────────────────── */
   --liminal-s0: #060709; /* canvas */
+  --liminal-s0: oklch(0.1280000 0.0069 258.4);
   --liminal-s1: #07090b;
+  --liminal-s1: oklch(0.1374750 0.0069 258.4);
   --liminal-s2: #090b0d;
+  --liminal-s2: oklch(0.1469500 0.0069 258.4);
   --liminal-s3: #0b0d0f;
+  --liminal-s3: oklch(0.1564250 0.0069 258.4);
   --liminal-s4: #0d0f12;
+  --liminal-s4: oklch(0.1659000 0.0069 258.4);
   --liminal-s5: #0f1114;
+  --liminal-s5: oklch(0.1753750 0.0069 258.4);
   --liminal-s6: #111316;
+  --liminal-s6: oklch(0.1848500 0.0069 258.4);
   --liminal-s7: #131518;
+  --liminal-s7: oklch(0.1943250 0.0069 258.4);
   --liminal-s8: #15171a;
+  --liminal-s8: oklch(0.2038000 0.0069 258.4);
   --liminal-s0-5: #07080a;
+  --liminal-s0-5: oklch(0.1327375 0.0069 258.4);
   --liminal-s1-5: #080a0c;
+  --liminal-s1-5: oklch(0.1422125 0.0069 258.4);
   --liminal-s2-5: #0a0c0e;
+  --liminal-s2-5: oklch(0.1516875 0.0069 258.4);
   --liminal-s3-5: #0c0e10;
+  --liminal-s3-5: oklch(0.1611625 0.0069 258.4);
   --liminal-s4-5: #0e1013;
+  --liminal-s4-5: oklch(0.1706375 0.0069 258.4);
   --liminal-s5-5: #101215;
+  --liminal-s5-5: oklch(0.1801125 0.0069 258.4);
   --liminal-s6-5: #121417;
+  --liminal-s6-5: oklch(0.1895875 0.0069 258.4);
   --liminal-s7-5: #141619;
+  --liminal-s7-5: oklch(0.1990625 0.0069 258.4);
   --liminal-s-minus-1: #030406; /* penumbra */
   --liminal-s-minus-2: #010203; /* contact umbra */
 
   /* ── 2. RIM ──────────────────────────────────────────────────── */
-  --liminal-rim-1-top: #080a0c;
-  --liminal-rim-1-side: #080a0c;
-  --liminal-rim-1-bottom: #07090b;
-  --liminal-rim-2-top: #0b0d0f;
-  --liminal-rim-2-side: #0a0c0e;
-  --liminal-rim-2-bottom: #090b0d;
+  --liminal-rim-1-top: #0a0c0e;
+  --liminal-rim-1-side: #090b0d;
+  --liminal-rim-1-bottom: #080a0c;
+  --liminal-rim-2-top: #0c0e10;
+  --liminal-rim-2-side: #0b0d0f;
+  --liminal-rim-2-bottom: #0a0c0e;
   --liminal-rim-3-top: #0e1013;
   --liminal-rim-3-side: #0d0f12;
   --liminal-rim-3-bottom: #0c0e10;
 
   /* ── 3. SHADOW ───────────────────────────────────────────────── */
-  --liminal-shadow-e1: 0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);
-  --liminal-shadow-e2: 0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26);
-  --liminal-shadow-e3: 0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30);
-  --liminal-shadow-e4: 0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34);
+  --liminal-shadow-menu: 0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-popover: 0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-modal: 0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-toast: 0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991);
 
   /* ── 4. SURFACE TINT (fills — never for type) ────────────────── */
   --liminal-tint-faint: rgba(255, 255, 255, 0.01);
@@ -319,32 +367,38 @@
   --liminal-type-ratio: 1.2; /* fixed — this is the design */
   --liminal-type-base: clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem); /* fluid 14→16.5px; rem-based for WCAG 1.4.4 */
   --liminal-fs-1: calc(var(--liminal-type-base) * 0.694444);
-  --liminal-lh-1: 1.45; /* unitless multiplier */
+  --liminal-lh-1: 1.4167; /* unitless multiplier */
   --liminal-weight-1: 400;
   --liminal-fs-2: calc(var(--liminal-type-base) * 0.833333);
-  --liminal-lh-2: 1.5; /* unitless multiplier */
+  --liminal-lh-2: 1.3472; /* unitless multiplier */
   --liminal-weight-2: 500;
   --liminal-fs-3: var(--liminal-type-base);
-  --liminal-lh-3: 1.6; /* unitless multiplier */
+  --liminal-lh-3: 1.2894; /* unitless multiplier */
   --liminal-weight-3: 400;
   --liminal-fs-4: calc(var(--liminal-type-base) * 1.200000);
-  --liminal-lh-4: 1.35; /* unitless multiplier */
+  --liminal-lh-4: 1.2411; /* unitless multiplier */
   --liminal-weight-4: 600;
   --liminal-fs-5: calc(var(--liminal-type-base) * 1.440000);
-  --liminal-lh-5: 1.25; /* unitless multiplier */
+  --liminal-lh-5: 1.2009; /* unitless multiplier */
   --liminal-weight-5: 600;
   --liminal-fs-6: calc(var(--liminal-type-base) * 1.728000);
-  --liminal-lh-6: 1.2; /* unitless multiplier */
+  --liminal-lh-6: 1.1674; /* unitless multiplier */
   --liminal-weight-6: 600;
   --liminal-fs-7: calc(var(--liminal-type-base) * 2.073600);
-  --liminal-lh-7: 1.15; /* unitless multiplier */
+  --liminal-lh-7: 1.1395; /* unitless multiplier */
   --liminal-weight-7: 600;
   --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
-  --liminal-lh-8: 1.1; /* unitless multiplier */
+  --liminal-lh-8: 1.1163; /* unitless multiplier */
   --liminal-weight-8: 700;
+  --liminal-fs-9: calc(var(--liminal-type-base) * 2.985984);
+  --liminal-lh-9: 1.0969; /* unitless multiplier */
+  --liminal-weight-9: 700;
+  --liminal-fs-10: calc(var(--liminal-type-base) * 3.583181);
+  --liminal-lh-10: 1.0808; /* unitless multiplier */
+  --liminal-weight-10: 700;
 
   /* ── 12b. FONTS ──────────────────────────────────────────────── */
-  --liminal-font-en: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --liminal-font-en: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --liminal-font-fa: Vazirmatn, "Vazirmatn RD", "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif;
   --liminal-line-height-fa-floor: 1.5625; /* from Vazirmatn metrics */
 
@@ -362,11 +416,18 @@
   --liminal-ease-linear: linear;
 
   /* ── 14. LAYER ───────────────────────────────────────────────── */
-  --liminal-z-dropdown: 1000;
-  --liminal-z-modal: 2000;
-  --liminal-z-tooltip: 3000;
-  --liminal-z-popover: 4000;
-  --liminal-z-floating: 9999;
+  --liminal-z-canvas: 0;
+  --liminal-z-chrome: 1;
+  --liminal-z-work: 2;
+  --liminal-z-panel: 3;
+  --liminal-z-control: 4;
+  --liminal-z-menu: 5;
+  --liminal-z-popover: 6;
+  --liminal-z-modal: 7;
+  --liminal-z-toast: 8;
+  --liminal-z-dropdown: 5;
+  --liminal-z-tooltip: 6;
+  --liminal-z-floating: 5;
 }
 /* @liminal-generated:end */
 @import "tailwindcss";
@@ -378,29 +439,36 @@
 @layer base {
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: #030406;
-    color: #eef0f3;
+    background-color: var(--liminal-s-minus-1);
+    color: var(--liminal-text-primary);
   }
 
   code, pre, .font-mono {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 }
 
 /* Custom delicate scrollbars */
+/* A selection is an alpha overlay on whatever it sits on — which is exactly
+   what the engine's tint scale is, so it is a tint and not a colour. */
+::selection {
+  background: var(--liminal-tint-strong);
+  color: var(--liminal-text-primary);
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #030406;
+  background: var(--liminal-s-minus-1);
 }
 ::-webkit-scrollbar-thumb {
-  background: #151922;
-  border-radius: 9999px;
+  background: var(--liminal-tint-medium);
+  border-radius: var(--liminal-radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #232a38;
+  background: var(--liminal-tint-strong);
 }
 
 /* Hide scrollbar for horizontal mobile rails */

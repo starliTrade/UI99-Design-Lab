@@ -1,0 +1,50 @@
+/**
+ * LIMINAL · BUBBLE — the tail
+ *
+ * A triangle drawn with borders, positioned LOGICALLY. `inset-inline-start` and
+ * `inset-inline-end` flip with the document direction, so a tail that points at
+ * its sender points at them in Arabic too — and the text inside the bubble is
+ * untouched, because a mirrored word is a broken word.
+ *
+ * The colour arrives as a variable the component sets from the engine; this file
+ * contains no value of its own.
+ */
+.liminal-bubble[data-tail] {
+  position: relative;
+}
+
+.liminal-bubble[data-tail]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+/* THEM: the tail is on the START edge — the left in English, the right in Arabic. */
+.liminal-bubble[data-tail][data-from='them']::after {
+  inset-inline-start: -6px;
+  border-width: 0 8px 8px 0;
+  border-color: transparent var(--liminal-bubble-tail) transparent transparent;
+}
+
+/* ME: on the END edge. */
+.liminal-bubble[data-tail][data-from='me']::after {
+  inset-inline-end: -6px;
+  border-width: 0 0 8px 8px;
+  border-color: transparent transparent transparent var(--liminal-bubble-tail);
+}
+
+/* The document direction flips which physical side each logical edge is, so the
+   border geometry has to flip with it — the one place a physical value is the
+   correct answer, because a triangle's shape is not a direction. */
+[dir='rtl'] .liminal-bubble[data-tail][data-from='them']::after {
+  border-width: 0 0 8px 8px;
+  border-color: transparent transparent transparent var(--liminal-bubble-tail);
+}
+
+[dir='rtl'] .liminal-bubble[data-tail][data-from='me']::after {
+  border-width: 0 8px 8px 0;
+  border-color: transparent var(--liminal-bubble-tail) transparent transparent;
+}

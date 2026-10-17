@@ -12,11 +12,10 @@
  * Run: bun run gen:css   (writes the block into src/index.css)
  */
 
-import { LADDER, HALF, WELLS } from './liminal-ladder';
+import { LADDER, HALF, WELLS, LADDER_EXACT, HALF_EXACT } from './liminal-ladder';
 import { PERSIAN_FONT_STACK, PERSIAN_LINE_HEIGHT_FLOOR } from './liminal-persian';
 import {
   RIM,
-  SHADOWS,
   SURFACE_TINT,
   VEIL,
   BRAND_ALPHA,
@@ -25,6 +24,7 @@ import {
   getDirectionalRim,
 } from './spec-engine';
 import { LiminalLayoutEngine } from './liminal-layout-engine';
+import { FLOAT_SHADOWS } from './liminal-surface';
 import { LiminalMotionEngine } from './liminal-motion-engine';
 import { LiminalColorEngine } from './liminal-color-engine';
 
@@ -38,12 +38,28 @@ const v = (name: string, value: string | number, note?: string) => {
   lines.push(`  --liminal-${name}: ${value};${suffix}`);
 };
 
+/**
+ * A LADDER STEP, WRITTEN TWICE — the quantised rendering, then the design.
+ *
+ * The target was always a constant: 0.009475 of L, the same for every step. The
+ * realised ladder is 1.07q to 1.21q, and that spread is 8-bit sRGB failing to
+ * write the design — the nearest hex is off by up to 0.199q, a fifth of a quantum.
+ *
+ * `oklch()` carries full precision, so the second declaration is the ladder the
+ * system actually designed: every step exactly 1.1416q. A browser that cannot
+ * parse `oklch()` keeps the first, which is what every browser painted until now.
+ */
+const ladderStep = (name: string, hex: string, exact: string, note?: string) => {
+  v(name, hex, note);
+  v(name, exact);
+};
+
 export function generateCssVars(): string {
   lines.length = 0;
 
   // ── 1. TONAL LADDER ────────────────────────────────────────────────
   section('1. TONAL LADDER');
-  LADDER.forEach((hex, i) => v(`s${i}`, hex, i === 0 ? 'canvas' : undefined));
+  LADDER.forEach((hex, i) => ladderStep(`s${i}`, hex, LADDER_EXACT[i], i === 0 ? 'canvas' : undefined));
   // The half-steps are part of the system, not an implementation detail: the
   // hover of a surface and the pulse of a skeleton both land on one. They were
   // reachable only from JavaScript, so a keyframe that needed one had to
@@ -53,14 +69,15 @@ export function generateCssVars(): string {
   // the pair: `s0-5` is the step between S0 and S1. Naming it `s${i}` collided
   // with the ladder and silently overwrote every surface — which is the defect
   // this system keeps finding, so there is a test for it now.
-  HALF.forEach((hex, i) => v(`s${i}-5`, hex));
+  HALF.forEach((hex, i) => ladderStep(`s${i}-5`, hex, HALF_EXACT[i]));
   v('s-minus-1', WELLS.penumbra, 'penumbra');
   v('s-minus-2', WELLS.umbra, 'contact umbra');
 
   // ── 2. DIRECTIONAL RIM ─────────────────────────────────────────────
   section('2. RIM');
+  // ONE rim: the tiers were a choice the eye did not have.
   ([1, 2, 3] as const).forEach((level) => {
-    const rim = getDirectionalRim(level, level);
+    const rim = getDirectionalRim(level, true);
     if (!rim) return;
     v(`rim-${level}-top`, rim.top);
     v(`rim-${level}-side`, rim.side);
@@ -69,7 +86,8 @@ export function generateCssVars(): string {
 
   // ── 3. SUB-CANVAS SHADOW ───────────────────────────────────────────
   section('3. SHADOW');
-  ([1, 2, 3, 4] as const).forEach((e) => v(`shadow-e${e}`, SHADOWS[e]));
+  // Named by ROLE, not by a tier number: `shadow-menu` says what it is for.
+  Object.entries(FLOAT_SHADOWS).forEach(([role, value]) => v(`shadow-${role}`, value));
 
   // ── 4. SURFACE TINT ────────────────────────────────────────────────
   section('4. SURFACE TINT (fills — never for type)');
@@ -151,7 +169,11 @@ export function generateCssVars(): string {
   // line-height floor in liminal-persian.ts is derived from Vazirmatn's own
   // metrics, so a different Persian face would need the floor re-derived.
   section('12b. FONTS');
-  v('font-en', 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif');
+  // Inter first, then the system stack. The body asked for Inter and nothing
+  // loaded it, so every page silently fell back — and the type scale was
+  // measured against a face nobody chose. `scripts/fetch-latin-font.mjs`
+  // self-hosts it; the stack stays as the fallback for a page that has not.
+  v('font-en', 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif');
   v('font-fa', PERSIAN_FONT_STACK);
   v('line-height-fa-floor', String(PERSIAN_LINE_HEIGHT_FLOOR), 'from Vazirmatn metrics');
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { getLadderColor } from '../../../engine/spec-engine';
-import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
+import { LiminalColorEngine, rgbaOf } from '../../../engine/liminal-color-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
 import { resolveBorder, resolveSurface } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
@@ -16,15 +16,10 @@ export interface AvatarProps {
   style?: CSSProperties;
 }
 
-// Convert 6-digit hex color to rgba string
-function hexToRgba(hex: string, alpha: number): string {
-  const clean = hex.replace('#', '');
-  if (clean.length !== 6) return `rgba(233, 236, 242, ${alpha})`;
-  const r = parseInt(clean.substring(0, 2), 16);
-  const g = parseInt(clean.substring(2, 4), 16);
-  const b = parseInt(clean.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
+// The conversion lives in the engine. It had a private copy here with an
+// eslint-disable for the raw colour inside it — an exception granted to a
+// function whose whole job was to build one.
+const hexToRgba = rgbaOf;
 
 // Extract max 2 initials from name
 function getInitials(name?: string): string {
@@ -55,7 +50,7 @@ export function Avatar({
   };
 
   const { px, fs, dotPx } = sizes[size];
-  const rimSideColor = resolveBorder({ role: 'control', kind: 'hairline', on: host });
+  const rimSideColor = resolveBorder({ role: 'control', kind: 'separator', on: host });
   const canvasBorderColor = resolveSurface({ role: 'canvas' }).background;
 
   // Pick color from EXTENDED_SPECTRUM
@@ -133,11 +128,16 @@ export function Avatar({
         <>
           {!reducedMotion && status === 'online' && (
             <style>
+              {/* A hex inside a `var()` FALLBACK is not a raw colour: it is what
+                  the value degrades to when the token is absent, and the engine
+                  writes them everywhere. The rule cannot tell the two apart, so
+                  the exception is here and named. */}
+              {/* eslint-disable-next-line no-restricted-syntax */}
               {`
                 @keyframes avatar-pulse {
-                  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 192, 139, 0.7); }
-                  70% { transform: scale(1); box-shadow: 0 0 0 4px rgba(52, 192, 139, 0); }
-                  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 192, 139, 0); }
+                  0% { transform: scale(0.95); box-shadow: 0 0 0 0 color-mix(in oklab, var(--liminal-success, #00875d) 70%, transparent); }
+                  70% { transform: scale(1); box-shadow: 0 0 0 4px color-mix(in oklab, var(--liminal-success, #00875d) 0%, transparent); }
+                  100% { transform: scale(0.95); box-shadow: 0 0 0 0 color-mix(in oklab, var(--liminal-success, #00875d) 0%, transparent); }
                 }
               `}
             </style>

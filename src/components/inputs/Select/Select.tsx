@@ -3,11 +3,9 @@ import { useDirection } from '../../../engine/liminal-direction';
 import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { CaretDown } from '@phosphor-icons/react';
 import {
-  getLiminalStyle,
-  getDirectionalRim,
   getTextStyle,
-  LiminalState, getLadderColor } from '../../../engine/spec-engine';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+  LiminalState } from '../../../engine/spec-engine';
+import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
@@ -63,7 +61,7 @@ export interface SelectProps {
  * - Phosphor CaretDown icon with <LiminalIcon size="sm" weight="light" />
  * - In RTL: CaretDown placed on the left side
  * - Wrapped in flex container matching Input.tsx architecture (rim and focus ring around whole component)
- * - Icon color: getTextStyle('tertiary', surfaceLevel), hover: getTextStyle('secondary', surfaceLevel)
+ * - Icon color: getTextStyle('tertiary', ROLE_LEVEL[host]), hover: getTextStyle('secondary', ROLE_LEVEL[host])
  * - Motion: LiminalMotionEngine.getTransition('color', 'fast'), disabled on reduced-motion
  */
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select(
@@ -124,6 +122,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  // The text sits on the surface that HOSTS the field, not on the field.
+  // `surfaceLevel` below is a hand-picked pair for the validation tint's
+  // rim and is recorded for gap 8 (21 hand-picked numbers).
   const surfaceLevel = 2;
 
   // The direction comes from the document, not from a prop. `DirProvider` puts
@@ -144,8 +145,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   const fieldId = id ?? autoId;
 
   const idleSurface = resolveSurface({ role: 'control', on: host }).background;
-  const hoverSurface = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
-  const focusSurface = resolveSurface({ role: 'control', state: 'focus', on: host }).background;
 
   const ringColor = error
     ? SEMANTICS.DANGER.solid
@@ -155,20 +154,20 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
 
   let background = idleSurface;
   const borderColor = resolveBorder({ role: 'control', kind: 'edge', on: host });
-  let border = `1px solid ${borderColor}`;
 
   if (!disabled) {
     if (error) {
-      border = `1px solid ${SEMANTICS.DANGER.border}`;
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
-        background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
+        // The engine's own subtle tint, not a colour invented here. Two of these
+        // were hand-picked (#e5637a and #34c08b) and copied into four
+        // components — colours that exist nowhere in the engine.
+        background = `linear-gradient(${LiminalColorEngine.SEMANTICS.DANGER.subtle}, ${LiminalColorEngine.SEMANTICS.DANGER.subtle}), ${baseRim.cssBackground}`;
       }
     } else if (success) {
-      border = `1px solid ${SEMANTICS.SUCCESS.border}`;
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
-        background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
+        background = `linear-gradient(${LiminalColorEngine.SEMANTICS.SUCCESS.subtle}, ${LiminalColorEngine.SEMANTICS.SUCCESS.subtle}), ${baseRim.cssBackground}`;
       }
     }
   }
@@ -176,11 +175,21 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
   // Flex container style (matching Input.tsx):
   // display: flex, alignItems: center, gap: SPACING[2] (8px), padding: SPACING[3] (12px)
   const containerStyle = {
-    '--liminal-surface-idle': background,
-    '--liminal-surface-hover': disabled || error || success ? background : hoverSurface,
-    '--liminal-surface-focus': disabled || error || success ? background : focusSurface,
-    '--liminal-border-idle': borderColor,
-    '--liminal-border-focus': ringColor,
+    // The layer owns the surface AND the border colour — see
+    // data-liminal-surface / data-liminal-focus-within.
+    //
+    // An invalid or successful field keeps its own fill in EVERY state: the
+    // tint is the message, and a hover that washed it out would erase it.
+    // `frozen` also gives the pressed state a value; it had none, so pressing a
+    // field fell through to `transparent`.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: background,
+      frozen: disabled || error || success ? background : undefined,
+      border: borderColor,
+      borderFocus: ringColor,
+    }),
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
@@ -213,8 +222,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     border: 'none',
     outline: 'none',
     color: effectiveValue
-      ? getTextStyle('primary', surfaceLevel).color
-      : getTextStyle('quaternary', surfaceLevel).color,
+      ? getTextStyle('primary', ROLE_LEVEL[host]).color
+      : getTextStyle('quaternary', ROLE_LEVEL[host]).color,
     fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
     lineHeight: TYPOGRAPHY[3].lh,
     fontFamily: 'inherit',
@@ -230,7 +239,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
-    color: getTextStyle('secondary', surfaceLevel).color,
+    color: getTextStyle('secondary', ROLE_LEVEL[host]).color,
     marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
     textAlign: 'start',
@@ -244,7 +253,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('tertiary', surfaceLevel).color,
+      : getTextStyle('tertiary', ROLE_LEVEL[host]).color,
     marginTop: `${SPACING[1]}px`, // 4px
     textAlign: 'start',
   };
@@ -265,11 +274,11 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     onBlur?.(e);
   };
 
-  // Caret icon color logic: getTextStyle('tertiary', surfaceLevel), hover: getTextStyle('secondary', surfaceLevel)
+  // Caret icon color logic: getTextStyle('tertiary', ROLE_LEVEL[host]), hover: getTextStyle('secondary', ROLE_LEVEL[host])
   const isCaretActiveHover = false; // the caret is driven by CSS now
   const caretColor = isCaretActiveHover
-    ? getTextStyle('secondary', surfaceLevel).color
-    : getTextStyle('tertiary', surfaceLevel).color;
+    ? getTextStyle('secondary', ROLE_LEVEL[host]).color
+    : getTextStyle('tertiary', ROLE_LEVEL[host]).color;
 
   const caretNode = (
     <div
@@ -308,10 +317,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
       )}
 
       <div
-        // The wrapper sets `--liminal-surface-hover` and never opted in, so the
-        // layer's hover rule could not reach it: the variable was published and
-        // nothing read it. `data-liminal-focus-within` gives focus; this is what
-        // gives hover and the idle fill.
+        // The wrapper publishes all six variables through the producer.
+        // `data-liminal-surface` gives hover and the idle fill;
+        // `data-liminal-focus-within` gives focus.
         data-liminal-surface=""
         data-liminal-focus-within=""
         data-liminal-disabled={disabled ? "" : undefined}
@@ -324,7 +332,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
               display: 'flex',
               alignItems: 'center',
               flexShrink: 0,
-              color: getTextStyle('tertiary', surfaceLevel).color,
+              color: getTextStyle('tertiary', ROLE_LEVEL[host]).color,
             }}
           >
             {prefix}
@@ -381,7 +389,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
               display: 'flex',
               alignItems: 'center',
               flexShrink: 0,
-              color: getTextStyle('tertiary', surfaceLevel).color,
+              color: getTextStyle('tertiary', ROLE_LEVEL[host]).color,
             }}
           >
             {suffix}

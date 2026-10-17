@@ -1,0 +1,36 @@
+/**
+ * LIMINAL · SCROLL AREA — the scrollbar
+ *
+ * `::-webkit-scrollbar` and `scrollbar-color` cannot be reached from a style
+ * attribute, so the two rules live here and every colour arrives as a variable
+ * the engine publishes. The file contains no value of its own.
+ */
+.liminal-scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: var(--liminal-s4) transparent;
+}
+
+.liminal-scroll-area::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.liminal-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.liminal-scroll-area::-webkit-scrollbar-thumb {
+  background: var(--liminal-s4);
+  border-radius: 999px;
+}
+
+.liminal-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: var(--liminal-s5);
+}
+
+/* The focus ring is the layer's, on this element, because it is the element that
+   scrolls. */
+.liminal-scroll-area:focus-visible {
+  outline: 2px solid var(--liminal-brand, #E9ECF2);
+  outline-offset: 2px;
+}

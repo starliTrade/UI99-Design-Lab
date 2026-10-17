@@ -105,37 +105,45 @@
 
   /* type — the size is fluid, so the utility is a var() and not a px */
   --text-liminal-1: calc(var(--liminal-type-base) * 0.694444);
-  --text-liminal-1--line-height: 1.45;
+  --text-liminal-1--line-height: 1.4167;
   --text-liminal-1--letter-spacing: +0.04em;
   --text-liminal-1--font-weight: 400;
   --text-liminal-2: calc(var(--liminal-type-base) * 0.833333);
-  --text-liminal-2--line-height: 1.5;
+  --text-liminal-2--line-height: 1.3472;
   --text-liminal-2--letter-spacing: +0.01em;
   --text-liminal-2--font-weight: 500;
   --text-liminal-3: var(--liminal-type-base);
-  --text-liminal-3--line-height: 1.6;
+  --text-liminal-3--line-height: 1.2894;
   --text-liminal-3--letter-spacing: 0;
   --text-liminal-3--font-weight: 400;
   --text-liminal-4: calc(var(--liminal-type-base) * 1.200000);
-  --text-liminal-4--line-height: 1.35;
+  --text-liminal-4--line-height: 1.2411;
   --text-liminal-4--letter-spacing: -0.005em;
   --text-liminal-4--font-weight: 600;
   --text-liminal-5: calc(var(--liminal-type-base) * 1.440000);
-  --text-liminal-5--line-height: 1.25;
+  --text-liminal-5--line-height: 1.2009;
   --text-liminal-5--letter-spacing: -0.01em;
   --text-liminal-5--font-weight: 600;
   --text-liminal-6: calc(var(--liminal-type-base) * 1.728000);
-  --text-liminal-6--line-height: 1.2;
+  --text-liminal-6--line-height: 1.1674;
   --text-liminal-6--letter-spacing: -0.015em;
   --text-liminal-6--font-weight: 600;
   --text-liminal-7: calc(var(--liminal-type-base) * 2.073600);
-  --text-liminal-7--line-height: 1.15;
+  --text-liminal-7--line-height: 1.1395;
   --text-liminal-7--letter-spacing: -0.02em;
   --text-liminal-7--font-weight: 600;
   --text-liminal-8: calc(var(--liminal-type-base) * 2.488320);
-  --text-liminal-8--line-height: 1.1;
+  --text-liminal-8--line-height: 1.1163;
   --text-liminal-8--letter-spacing: -0.025em;
   --text-liminal-8--font-weight: 700;
+  --text-liminal-9: calc(var(--liminal-type-base) * 2.985984);
+  --text-liminal-9--line-height: 1.0969;
+  --text-liminal-9--letter-spacing: -0.028em;
+  --text-liminal-9--font-weight: 700;
+  --text-liminal-10: calc(var(--liminal-type-base) * 3.583181);
+  --text-liminal-10--line-height: 1.0808;
+  --text-liminal-10--letter-spacing: -0.03em;
+  --text-liminal-10--font-weight: 700;
 
   /* fonts */
   --font-liminal: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;

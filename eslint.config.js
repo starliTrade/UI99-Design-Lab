@@ -7,7 +7,7 @@ import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'node_modules/**', 'design-lab/**', 'coverage/**'],
+    ignores: ['dist/**', 'dist-lib/**', 'node_modules/**', 'design-lab/**', 'coverage/**'],
   },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
@@ -91,6 +91,21 @@ export default tseslint.config(
           selector: 'Literal[value=/rgba?\\(/]',
           message: 'Raw rgb()/rgba() colour. Use the engine (LiminalColorEngine / getTextStyle).',
         },
+        // ── THE BLIND SPOT ────────────────────────────────────────────────────
+        // A template literal is not a `Literal` node: it is a `TemplateLiteral`
+        // with `TemplateElement` quasis. So the two rules above read every plain
+        // string and not one backtick — and three components carried a hard-coded
+        // danger tint inside a template literal while lint reported zero errors.
+        // A guard with a hole is worse than no guard: it is a promise.
+        {
+          selector: 'TemplateElement[value.raw=/#[0-9a-fA-F]{3,8}\\b/]',
+          message:
+            'Raw hex colour in a template literal. Use the engine: getLadderColor(), LiminalColorEngine, or getTextStyle().',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/rgba?\\(/]',
+          message: 'Raw rgb()/rgba() colour in a template literal. Use the engine (LiminalColorEngine / getTextStyle).',
+        },
         // A raw pixel value in a LAYOUT property. The colour ban above covers
         // hex and rgba; this covers the other half, which was slipping through
         // in 88 places — `padding: '6px 12px'`, `minHeight: '44px'`,
@@ -124,10 +139,18 @@ export default tseslint.config(
         // which the layer does not own — a false positive is a guard nobody
         // keeps.
         {
+          // BACKGROUND ONLY, for `data-liminal-surface`.
+          //
+          // The layer's rule for this attribute sets `background` and nothing
+          // else, so an inline `border` does not conflict with it — and the
+          // FileUpload's dashed drop zone needs one. The rule flagged it, and a
+          // guard that fires on a correct line is a guard someone turns off.
+          // `border` belongs in the `focus-within` rule below, because THAT
+          // layer rule does set `border-color`.
           selector:
-            "JSXOpeningElement:has(JSXAttribute[name.name='data-liminal-surface']) JSXAttribute[name.name='style'] Property[key.name=/^(background|backgroundColor|border|borderColor)$/]",
+            "JSXOpeningElement:has(JSXAttribute[name.name='data-liminal-surface']) JSXAttribute[name.name='style'] Property[key.name=/^(background|backgroundColor)$/]",
           message:
-            'This element opts into data-liminal-surface AND sets background or border inline. An inline style beats the layer\'s rule. Set --liminal-surface-idle instead and remove this line.',
+            'This element opts into data-liminal-surface AND sets a background inline. An inline style beats the layer\'s rule. Set --liminal-surface-idle instead and remove this line.',
         },
         {
           selector:

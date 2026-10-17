@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060709" />
+<title>LIMINAL — پالت از رنگ‌های تأییدشده</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.9);
+    font:15px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:22px 10px 64px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:19px;font-weight:700;margin:0 0 8px;text-align:center;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:12.5px;max-width:92ch;text-align:center;margin-bottom:20px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+  .q{width:100%;max-width:900px;border-radius:15px;padding:14px;margin-bottom:13px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:13.5px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.45);font-size:11.5px;margin-bottom:12px;line-height:2}
+  .row{display:flex;gap:3px;align-items:center;margin-bottom:3px}
+  .name{width:82px;flex-shrink:0;font-size:9.5px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.42)}
+  .sw{flex:1;height:40px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+      font-size:7.5px;font-family:ui-monospace,Menlo,monospace;color:rgba(0,0,0,.4)}
+  .sw.mark{outline:2px solid rgba(255,255,255,.55);outline-offset:1px}
+  .hdr{display:flex;gap:3px;margin-bottom:6px}
+  .hdr span{flex:1;text-align:center;font-size:8.5px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.3)}
+  .hdr span:first-child{width:82px;flex:none}
+  .demo{padding:16px;border-radius:11px;margin-bottom:9px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .btn{padding:8px 16px;border-radius:9px;font-size:13px;font-weight:600;border:1px solid transparent}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{font:inherit;font-size:12px;padding:9px 14px;border-radius:10px;cursor:pointer;
+       background:transparent;color:rgba(255,255,255,.7);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+</style>
+</head>
+<body>
+  <h1>پالت — از رنگ‌های تأییدشده</h1>
+  <p class="sub">
+    <b>پلهٔ متن = رنگ‌های خودت، دقیقاً</b> (کادر سفید). و پله‌های پایین‌تر از آن‌ها مشتق می‌شوند —
+    هر فام با <b>کسری از گاموتِ خودش</b>، پس شخصیتش حفظ می‌شود.
+  </p>
+
+  <div class="q">
+    <h2>پالت — ۱۲ فام × ۷ پله</h2>
+    <div class="hdr"><span></span><span>−۴۸</span><span>−۴۰</span><span>−۳۲</span><span>−۲۴</span><span>−۱۶</span><span>−۸</span><span>تأییدشده</span></div>
+    <div id="grid"></div>
+  </div>
+
+  <div class="q">
+    <h2>و روی هر سطح — دکمه با fill از پلهٔ ۳ و متن از پلهٔ ۷</h2>
+    <div id="demos"></div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال — این درست است؟</h2>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="yes">بله — بسازش</button>
+      <button class="opt" data-q="1" data-v="tune">نزدیک است، ولی باید تنظیم شود</button>
+      <button class="opt" data-q="1" data-v="no">نه</button>
+    </div>
+  </div>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+
+  const toRgb = (L, C, h) => {
+    const a = C * Math.cos((h * Math.PI) / 180), bb = C * Math.sin((h * Math.PI) / 180);
+    const l_ = L + 0.3963377774 * a + 0.2158037573 * bb;
+    const m_ = L - 0.1055613458 * a - 0.0638541728 * bb;
+    const s_ = L - 0.0894841775 * a - 1.2914855480 * bb;
+    const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
+    return [
+      +4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+      -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+      -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s,
+    ];
+  };
+  const inGamut = (rgb) => rgb.every((v) => v >= -0.001 && v <= 1.001);
+  const maxChroma = (L, h) => {
+    let lo = 0, hi = 0.4;
+    for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; if (inGamut(toRgb(L, mid, h))) lo = mid; else hi = mid; }
+    return lo;
+  };
+  const toHex = (L, C, h) => '#' + toRgb(L, C, h).map((v) => {
+    const c = v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(Math.max(0, v), 1 / 2.4) - 0.055;
+    return Math.max(0, Math.min(255, Math.round(c * 255))).toString(16).padStart(2, '0');
+  }).join('');
+
+  /** THE APPROVED COLOURS, exactly — they are the design, not a starting point to improve. */
+  const APPROVED = [
+    { name: 'Ruby',     hex: '#E88A93', L: 0.7349, C: 0.1149, h: 14.1 },
+    { name: 'Coral',    hex: '#E8A87C', L: 0.7823, C: 0.0957, h: 55.3 },
+    { name: 'Amber',    hex: '#D9BE6E', L: 0.8076, C: 0.1046, h: 91.3 },
+    { name: 'Lime',     hex: '#A8CC74', L: 0.7988, C: 0.1216, h: 127.1 },
+    { name: 'Emerald',  hex: '#74CE8E', L: 0.7784, C: 0.1265, h: 151.8 },
+    { name: 'Teal',     hex: '#5FCDBB', L: 0.7789, C: 0.1047, h: 181.2 },
+    { name: 'Cyan',     hex: '#56C6E0', L: 0.7721, C: 0.1072, h: 215.6 },
+    { name: 'Sapphire', hex: '#6FA8EC', L: 0.7202, C: 0.1165, h: 253.6 },
+    { name: 'Indigo',   hex: '#8B9CF0', L: 0.7139, C: 0.1242, h: 274.1 },
+    { name: 'Violet',   hex: '#A98BEA', L: 0.7023, C: 0.1383, h: 297.3 },
+    { name: 'Fuchsia',  hex: '#C983D6', L: 0.7109, C: 0.1391, h: 321.2 },
+    { name: 'Rose',     hex: '#E083AE', L: 0.7218, C: 0.1247, h: 351.5 },
+  ];
+  const STEP = 8; // hundredths of L per level
+  const levels = (c) => Array.from({ length: 7 }, (_, i) => {
+    const L = c.L - (6 - i) * (STEP / 100);
+    const f = c.C / maxChroma(c.L, c.h);
+    return toHex(L, maxChroma(L, c.h) * f, c.h);
+  });
+
+  const grid = document.getElementById('grid');
+  for (const c of APPROVED) {
+    const ls = levels(c);
+    grid.innerHTML += `<div class="row"><span class="name">${c.name}</span>` +
+      ls.map((x, i) => `<span class="sw ${i === 6 ? 'mark' : ''}" style="background:${x}">${x.slice(1)}</span>`).join('') +
+      `</div>`;
+  }
+
+  const demos = document.getElementById('demos');
+  for (const [name, lv] of [['بوم',0],['سطح کار',2],['پنل',3],['modal',7],['toast',8]]) {
+    demos.innerHTML += `<div class="demo" style="background:${S(lv)}">
+      <div style="font-size:10px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.4);width:100%">${name} · S${lv}</div>
+      ${APPROVED.slice(0, 6).map((c) => { const ls = levels(c); return `
+        <span class="btn" style="background:${ls[2]};color:${ls[6]}">دکمه</span>`; }).join('')}
+    </div>`;
+  }
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed', 'true'); answers[q] = b.dataset.v;
+  });
+</script>
+</body>
+</html>

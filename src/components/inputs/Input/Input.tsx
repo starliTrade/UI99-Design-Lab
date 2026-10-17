@@ -2,12 +2,10 @@ import React, { useState, useEffect, useRef, useId } from 'react';
 import type { CSSProperties, ReactNode, ChangeEvent, FocusEvent, KeyboardEvent, MouseEvent } from 'react';
 import { Eye, EyeSlash, X } from '@phosphor-icons/react';
 import {
-  getLiminalStyle,
-  getDirectionalRim,
   getTextStyle,
   LiminalState,
 } from '../../../engine/spec-engine';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { LiminalColorEngine } from '../../../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
@@ -171,6 +169,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
+  // The text sits on the surface that HOSTS the field, not on the field.
+  // `surfaceLevel` below is a hand-picked pair for the validation tint's
+  // rim and is recorded for gap 8 (21 hand-picked numbers).
   const surfaceLevel = 2;
 
   const rawLeft = prefix ?? leftIcon;
@@ -184,8 +185,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   // than on what the pointer or the keyboard is doing.
   const host = useHostSurface();
   const idleSurface = resolveSurface({ role: 'control', on: host }).background;
-  const hoverSurface = resolveSurface({ role: 'control', state: 'hover', on: host }).background;
-  const focusSurface = resolveSurface({ role: 'control', state: 'focus', on: host }).background;
 
   const ringColor = error
     ? SEMANTICS.DANGER.solid
@@ -195,31 +194,41 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
 
   let background = idleSurface;
   const borderColor = resolveBorder({ role: 'control', kind: 'edge', on: host });
-  let border = `1px solid ${borderColor}`;
 
   if (!disabled) {
     if (error) {
-      border = `1px solid ${SEMANTICS.DANGER.border}`;
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
-        background = `linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), ${baseRim.cssBackground}`;
+        // The engine's own subtle tint, not a colour invented here. Two of these
+        // were hand-picked (#e5637a and #34c08b) and copied into four
+        // components — colours that exist nowhere in the engine.
+        background = `linear-gradient(${LiminalColorEngine.SEMANTICS.DANGER.subtle}, ${LiminalColorEngine.SEMANTICS.DANGER.subtle}), ${baseRim.cssBackground}`;
       }
     } else if (success) {
-      border = `1px solid ${SEMANTICS.SUCCESS.border}`;
-      const baseRim = getDirectionalRim(surfaceLevel, surfaceLevel, false);
+      const baseRim = resolveSurface({ role: 'control', on: host }).rimColors;
       if (baseRim) {
-        background = `linear-gradient(rgba(52, 192, 139, 0.08), rgba(52, 192, 139, 0.08)), ${baseRim.cssBackground}`;
+        background = `linear-gradient(${LiminalColorEngine.SEMANTICS.SUCCESS.subtle}, ${LiminalColorEngine.SEMANTICS.SUCCESS.subtle}), ${baseRim.cssBackground}`;
       }
     }
   }
 
   // WS-2 Container style: flex, items-center, gap 8px (SPACING[2]), padding 12px (SPACING[3]), disabled opacity 0.5
   const fieldWrapperStyle = {
-    '--liminal-surface-idle': background,
-    '--liminal-surface-hover': disabled || error || success ? background : hoverSurface,
-    '--liminal-surface-focus': disabled || error || success ? background : focusSurface,
-    '--liminal-border-idle': borderColor,
-    '--liminal-border-focus': ringColor,
+    // The layer owns the surface AND the border colour — see
+    // data-liminal-surface / data-liminal-focus-within.
+    //
+    // An invalid or successful field keeps its own fill in EVERY state: the
+    // tint is the message, and a hover that washed it out would erase it.
+    // `frozen` also gives the pressed state a value; it had none, so pressing a
+    // field fell through to `transparent`.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: background,
+      frozen: disabled || error || success ? background : undefined,
+      border: borderColor,
+      borderFocus: ringColor,
+    }),
     display: 'flex',
     alignItems: 'center',
     gap: `${SPACING[2]}px`, // 8px
@@ -258,7 +267,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     background: 'transparent',
     border: 'none',
     outline: 'none',
-    color: getTextStyle('primary', surfaceLevel).color,
+    color: getTextStyle('primary', ROLE_LEVEL[host]).color,
     fontSize: LiminalLayoutEngine.getTypeSizeCss(3), // 16px
     lineHeight: TYPOGRAPHY[3].lh,
     fontFamily: 'inherit',
@@ -272,7 +281,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     lineHeight: TYPOGRAPHY[2].lh,
     letterSpacing: TYPOGRAPHY[2].ls,
     fontWeight: 500,
-    color: getTextStyle('secondary', surfaceLevel).color,
+    color: getTextStyle('secondary', ROLE_LEVEL[host]).color,
     marginBottom: `${SPACING[1]}px`, // 4px
     userSelect: 'none',
   };
@@ -285,7 +294,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       ? SEMANTICS.DANGER.text
       : success
       ? SEMANTICS.SUCCESS.text
-      : getTextStyle('tertiary', surfaceLevel).color,
+      : getTextStyle('tertiary', ROLE_LEVEL[host]).color,
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -306,8 +315,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   // happened in every other user of the pattern. The target is `primary`:
   // `secondary` derives to the same alpha as `tertiary` (both 0.790), so a
   // secondary hover would not have changed anything even once the rule worked.
-  const toggleIconIdle = getTextStyle('tertiary', surfaceLevel).color;
-  const toggleIconHover = getTextStyle('primary', surfaceLevel).color;
+  const toggleIconIdle = getTextStyle('tertiary', ROLE_LEVEL[host]).color;
+  const toggleIconHover = getTextStyle('primary', ROLE_LEVEL[host]).color;
 
   const toggleButtonStyle: CSSProperties = {
     display: 'inline-flex',
@@ -355,8 +364,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   ) : null;
 
   // Clear Action (WS-4) — same treatment as the toggle above.
-  const clearIconIdle = getTextStyle('tertiary', surfaceLevel).color;
-  const clearIconHover = getTextStyle('primary', surfaceLevel).color;
+  const clearIconIdle = getTextStyle('tertiary', ROLE_LEVEL[host]).color;
+  const clearIconHover = getTextStyle('primary', ROLE_LEVEL[host]).color;
 
   const clearButtonStyle: CSSProperties = {
     display: 'inline-flex',
@@ -421,7 +430,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   const renderAdornment = (node: ReactNode) => {
     if (node === null || node === undefined || node === false) return null;
 
-    const tertiaryColor = getTextStyle('tertiary', surfaceLevel).color;
+    const tertiaryColor = getTextStyle('tertiary', ROLE_LEVEL[host]).color;
 
     // Text prefix/suffix: 13px (TYPOGRAPHY[2].fs), color tertiary
     if (typeof node === 'string' || typeof node === 'number') {
@@ -483,7 +492,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     ? SEMANTICS.DANGER.text
     : isCountWarning
     ? SEMANTICS.WARNING.text
-    : getTextStyle('tertiary', surfaceLevel).color;
+    : getTextStyle('tertiary', ROLE_LEVEL[host]).color;
 
   // A visible label must be programmatically associated with its control.
   // Without a generated id, `htmlFor` is undefined and screen readers announce
@@ -514,10 +523,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
 
       <div
         data-liminal-disabled={disabled ? "" : undefined}
-        // The wrapper sets `--liminal-surface-hover` and never opted in, so the
-        // layer's hover rule could not reach it: the variable was published and
-        // nothing read it. `data-liminal-focus-within` gives focus; this is what
-        // gives hover and the idle fill.
+        // The wrapper publishes all six variables through the producer.
+        // `data-liminal-surface` gives hover and the idle fill;
+        // `data-liminal-focus-within` gives focus.
         data-liminal-surface=""
         data-liminal-focus-within=""
         style={fieldWrapperStyle}
@@ -539,6 +547,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
           maxLength={maxLength}
           autoComplete={autoComplete}
           aria-describedby={ariaDescribedBy ?? (rest['aria-describedby'] as string | undefined)}
+          // AN ERROR IS AN INVALID STATE, not only a message.
+          //
+          // `error` rendered the text and never said the control was invalid, so
+          // a screen reader announced the field without the state that matters.
+          // `Checkbox`, `Radio` and `Slider` all set this; the Input, which the
+          // other three are modelled on, did not. A consumer can still override
+          // it through `rest`, which is spread last.
+          aria-invalid={error ? true : undefined}
           role={role}
           aria-expanded={ariaExpanded}
           aria-haspopup={ariaHasPopup}

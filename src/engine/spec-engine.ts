@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { LADDER, HALF, getLadderColor, getLadderVar, FOCUS_RING_COLOR } from './liminal-ladder';
+import { LADDER, HALF, getLadderColor, getLadderColorExact, getLadderVar, FOCUS_RING_COLOR } from './liminal-ladder';
 import { resolveTextAlpha, type TextRole } from './liminal-contrast';
 
 // Re-exported so existing imports keep working; the definitions live in
@@ -12,12 +12,29 @@ export { LADDER, HALF, getLadderColor, getLadderVar, FOCUS_RING_COLOR };
  * این سند، قرارداد کامل و قفل‌شده‌ی سیستم است. هیچ مقداری خارج از این سند مجاز نیست.
  */
 
-export const RIM = {
-  0: { t: 0, s: 0, b: 0 },
-  1: { t: 0.5, s: 0.25, b: 0 },
-  2: { t: 1.0, s: 0.5, b: 0 },
-  3: { t: 1.5, s: 1.0, b: 0.5 },
-} as const;
+/**
+ * THE RIM — ONE STRENGTH, AND IT IS A LIGHT.
+ *
+ *   top    +1.5 steps = 1.71q   2.73x the edge threshold
+ *   side   +1.0 steps = 1.14q
+ *   bottom +0.5 steps = 0.57q
+ *
+ * It was four tiers — 0, 0.5, 1, 1.5 — and a role table that picked one. Measured by
+ * eye at three boundaries, the reader's answer was the same at all of them: 1.5. "For
+ * the essence and the principles of the rim, along with being LIMINAL, my eye is
+ * stuck on 1.5."
+ *
+ * AND ONE STRENGTH IS WHAT THE SYSTEM ALREADY DOES EVERYWHERE ELSE:
+ *
+ *   separator   0.5 steps   a hint
+ *   edge        1.0 steps   a border
+ *   rim         1.5 steps   a light
+ *   shadow      1 quantum   a shadow
+ *
+ * Each treatment has exactly one strength, and the three edge treatments sit one step
+ * apart. A table of tiers implied a choice that, measured, was not there.
+ */
+export const RIM = { t: 1.5, s: 1.0, b: 0.5 } as const;
 
 export interface DirectionalRimResult {
   top: string;
@@ -32,10 +49,10 @@ export interface DirectionalRimResult {
 
 export function getDirectionalRim(
   n: number,
-  rim: 0 | 1 | 2 | 3,
+  hasRim: boolean,
   concave: boolean = false
 ): DirectionalRimResult | null {
-  if (rim === 0) return null;
+  if (!hasRim) return null;
   let top: string, side: string, bot: string;
 
   // At the ceiling there is no room above, so the rim INVERTS and lights from
@@ -43,20 +60,37 @@ export function getDirectionalRim(
   // the ceiling got a flat rim: measured, a toast's top, side and bottom all
   // resolved to `#15171a`, which is the surface itself. The rim was invisible
   // and nothing said so.
-  const atCeiling = n + RIM[rim].t > LADDER.length - 1;
+  const MAX = LADDER.length - 1;
+  const room = MAX - n;
+  const atCeiling = room <= 0;
+  /**
+   * WHEN THERE IS ROOM BUT NOT ENOUGH, THE RIM SCALES — IT DOES NOT INVERT.
+   *
+   * The rim's top sits 1.5 steps above its surface, so a surface at S7 has 1 step of
+   * room and a surface at S8 has none. The old rule inverted whenever `n + 1.5` went
+   * past the ceiling, which meant the MODAL — one step below the top — got a rim
+   * DARKER than its own surface: measured, S7's top resolved to #121417 against a
+   * surface of #131518. A dark edge reads as CUT IN, which is the opposite of what a
+   * raised surface should say.
+   *
+   * So the shape is scaled to the room available and only the DIRECTION is kept: at
+   * S7 the rim is 1 / 0.67 / 0.33 instead of 1.5 / 1 / 0.5. And a surface with no
+   * room at all — the toast — still inverts, because below is the only direction left.
+   */
+  const scale = atCeiling ? 0 : Math.min(1, room / RIM.t);
 
   if (concave) {
     top = getLadderColor(n - 0.5);
     side = getLadderColor(n);
     bot = getLadderColor(n + 0.5);
   } else if (atCeiling) {
-    top = getLadderColor(n - RIM[rim].b);
-    side = getLadderColor(n - RIM[rim].s);
-    bot = getLadderColor(n - RIM[rim].t);
+    top = getLadderColor(n - RIM.b);
+    side = getLadderColor(n - RIM.s);
+    bot = getLadderColor(n - RIM.t);
   } else {
-    top = getLadderColor(n + RIM[rim].t);
-    side = getLadderColor(n + RIM[rim].s);
-    bot = getLadderColor(n + RIM[rim].b);
+    top = getLadderColor(n + RIM.t * scale);
+    side = getLadderColor(n + RIM.s * scale);
+    bot = getLadderColor(n + RIM.b * scale);
   }
 
   const bg = getLadderColor(n);
@@ -66,9 +100,10 @@ export function getDirectionalRim(
   // they are the computed values the contract and the tests read — while the
   // gradient a component puts in a style object reads the CSS layer, so it
   // follows a theme.
-  const vTop = getLadderVar(concave ? n - 0.5 : atCeiling ? n - RIM[rim].b : n + RIM[rim].t);
-  const vSide = getLadderVar(concave ? n : atCeiling ? n - RIM[rim].s : n + RIM[rim].s);
-  const vBot = getLadderVar(concave ? n + 0.5 : atCeiling ? n - RIM[rim].t : n + RIM[rim].b);
+  // EXACT, not rounded: a compressed rim has to keep three distinct stops.
+  const vTop = getLadderColorExact(concave ? n - 0.5 : atCeiling ? n - RIM.b : n + RIM.t * scale);
+  const vSide = getLadderColorExact(concave ? n : atCeiling ? n - RIM.s : n + RIM.s * scale);
+  const vBot = getLadderColorExact(concave ? n + 0.5 : atCeiling ? n - RIM.t : n + RIM.b * scale);
   const vBg = getLadderVar(n);
   const gradVar = `linear-gradient(${vBg}, ${vBg}) padding-box, linear-gradient(180deg, ${vTop} 0%, ${vSide} 55%, ${vBot} 100%) border-box`;
 
@@ -83,12 +118,13 @@ export function getDirectionalRim(
   };
 }
 
-export const SHADOWS = {
-  1: '0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22)',
-  2: '0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26)',
-  3: '0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30)',
-  4: '0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)',
-} as const;
+/**
+ * THE SHADOW SCALE IS GONE — see `liminal-shadow.ts` for the one model.
+ *
+ * A floating surface takes `floatShadow(height)`; an object resting on a surface
+ * takes `REST_SHADOW`. There is no `SHADOWS[1..4]` any more, because that record
+ * was the second answer to a question that already had one.
+ */
 
 /**
  * SURFACE TINTS — white laid over a surface to lift it.
@@ -131,109 +167,55 @@ export const BRAND_ALPHA = {
   subtle: 'rgba(233, 236, 242, 0.08)',
 } as const;
 
+/**
+ * Z-INDEX IS THE LADDER LEVEL — it is not a second system.
+ *
+ * It was five hand-picked round numbers — 1000, 2000, 3000, 4000, 9999 — and it was the one
+ * place in this engine where a number carried no information. An eye test settled it by
+ * showing NOTHING: four stages, the round numbers and `z = level` and `z = level × 10` and
+ * `z = level` with a stacking context, and all four looked identical. Which is the finding —
+ * the VALUES do not matter, the ORDER does, and the order is the layer hierarchy the engine
+ * already has.
+ *
+ *   panel S3 < menu S5 < modal S7 < toast S8
+ *
+ * So a surface's stacking order IS its level, and there is nothing to choose.
+ *
+ * AND EVERY SURFACE CREATES A STACKING CONTEXT, which is the half that removes the most magic.
+ * With `isolation: isolate` on each surface, a CHILD is above its parent by construction, so a
+ * dropdown inside a modal needs no number at all — it is inside the modal's context. z-index
+ * then only has to order SIBLINGS, which is what the level already does.
+ */
 export const Z_INDEX = {
-  dropdown: 1000,
-  modal: 2000,
-  tooltip: 3000,
-  popover: 4000,
-  floating: 9999, // برای Combobox/MultiSelect
+  canvas: 0, chrome: 1, work: 2, panel: 3, control: 4,
+  menu: 5, popover: 6, modal: 7, toast: 8,
+  // The two names the components used, kept as aliases so nothing breaks — and both now
+  // resolve to a ladder level rather than to a round number.
+  dropdown: 5,
+  tooltip: 6,
+  floating: 5,
 } as const;
 
 export type LiminalState = 'idle' | 'hover' | 'focus' | 'active' | 'disabled';
 export type TextLevel = 'primary' | 'secondary' | 'tertiary' | 'quaternary';
 
-export interface LiminalStyleElement {
-  surfaceLevel: number;
-  containerLevel?: number;
-  isContainer?: boolean;
-  interactive?: boolean;
-  isFeatured?: boolean;
-  isFloating?: boolean;
-  isInput?: boolean;
-  elevation?: 1 | 2 | 3 | 4;
-  state?: LiminalState;
-  concave?: boolean;
-}
-
 /**
- * The deepest surface the ladder allows.
+ * THE DEPTH API WAS HERE, AND IT IS GONE.
  *
- * Derived, never written down. This was a literal `5` in three places — correct
- * when the ladder had six steps, and silently wrong once it grew to nine.
- * Anything at S6, S7 or S8 was clamped onto S5, so `getLiminalStyle` could only
- * produce six distinct surfaces while `liminal-surface.resolveSurface` could
- * produce nine. Two engines, two answers for the same depth.
+ * `getLiminalStyle({ surfaceLevel })` took a raw depth and returned a surface.
+ * `liminal-surface.resolveSurface({ role })` takes a ROLE and returns one. They
+ * disagreed: at level 3 the old one still drew a rim of 1, which the contract
+ * says belongs to chrome and work, while the new one draws 2. Two answers for
+ * the same depth, and a component could pick either.
  *
- * A hard-coded ceiling is the same defect class as a hard-coded breakpoint: a
- * number that used to be right, left sitting where the thing it described has
- * changed underneath it.
+ * Every call site now declares what it IS — `role: 'chrome'`, `role: 'work'`,
+ * `role: 'panel'` — and the governing principle already said why: values become
+ * tokens, selections become names, raw numbers are forbidden.
+ *
+ * The rule that made this a defect rather than a preference: a hard-coded
+ * ceiling (`Math.min(5, ...)`) outlived the ladder growing to nine steps, so
+ * S6, S7 and S8 were silently flattened onto S5.
  */
-const MAX_SURFACE_LEVEL = LADDER.length - 1;
-
-export function getLiminalStyle(el: LiminalStyleElement) {
-  const baseN = Math.max(0, Math.min(MAX_SURFACE_LEVEL, el.surfaceLevel));
-  let n = baseN;
-  const container = el.containerLevel ?? Math.max(0, baseN - 1);
-  let rim: 0 | 1 | 2 | 3 = el.isContainer ? 1 : (el.interactive || el.isFeatured) ? 2 : 0;
-  let concave = el.concave ?? false;
-  let outline = 'none';
-  let outlineOffset = '0px';
-  let transform = 'none';
-  let opacity = 1;
-  let cursor = el.isInput ? 'text' : el.interactive ? 'pointer' : 'default';
-  let shadow = 'none';
-
-  const st = el.state ?? 'idle';
-
-  if (st === 'hover') {
-    n = Math.min(MAX_SURFACE_LEVEL, n + 0.5);
-  }
-  if (st === 'focus') {
-    n = Math.min(MAX_SURFACE_LEVEL, n + 0.5);
-    rim = 3;
-    outline = `2px solid ${FOCUS_RING_COLOR}`;
-    outlineOffset = '2px';
-  }
-  if (st === 'active') {
-    n = Math.max(0, n - 0.5);
-    rim = 2;
-    concave = true;
-    transform = 'translateY(0.5px)';
-  }
-  if (st === 'disabled') {
-    n = container;
-    rim = 0;
-    opacity = 0.25;
-    cursor = 'not-allowed';
-  }
-
-  if (el.isFloating && el.elevation) {
-    shadow = SHADOWS[el.elevation];
-  } else if (el.isFeatured) {
-    shadow = SHADOWS[2];
-  }
-
-  const rd = getDirectionalRim(n, rim, concave);
-
-  return {
-    n,
-    bg: getLadderColor(n),
-    rimLevel: rim,
-    isConcave: concave,
-    state: st,
-    opacity,
-    style: {
-      background: rd ? rd.cssBackground : getLadderColor(n),
-      border: rd ? '1px solid transparent' : 'none',
-      boxShadow: shadow,
-      outline,
-      outlineOffset,
-      transform,
-      opacity,
-      cursor,
-    } as CSSProperties,
-  };
-}
 
 // 5) TEXT HIERARCHY — DERIVED, NOT HAND-PICKED
 //

@@ -9,7 +9,8 @@ import {
   CSS_VARS_START,
   CSS_VARS_END,
 } from '../liminal-css-vars';
-import { LADDER, TEXT_HIERARCHY, SURFACE_TINT, VEIL, SHADOWS, Z_INDEX, HALF } from '../spec-engine';
+import {LADDER, TEXT_HIERARCHY, SURFACE_TINT, VEIL, Z_INDEX, HALF} from '../spec-engine';
+import { FLOAT_SHADOWS } from '../liminal-surface';
 import { LiminalLayoutEngine } from '../liminal-layout-engine';
 import { LiminalMotionEngine } from '../liminal-motion-engine';
 import { LiminalColorEngine } from '../liminal-color-engine';
@@ -49,8 +50,8 @@ describe('CSS variable layer — generated, complete, in sync', () => {
   });
 
   it('exposes every shadow', () => {
-    Object.entries(SHADOWS).forEach(([k, val]) =>
-      expect(css).toContain(`--liminal-shadow-e${k}: ${val};`),
+    Object.entries(FLOAT_SHADOWS).forEach(([k, val]) =>
+      expect(css).toContain(`--liminal-shadow-${k}: ${val};`),
     );
   });
 
@@ -199,10 +200,33 @@ describe('the CSS layer — a value published twice is a value that can disagree
     });
   });
 
-  it('declares no variable twice inside the root block', () => {
-    const names = [...rootBlock.matchAll(/--liminal-([a-z0-9-]+):/g)].map((m) => m[1]);
-    const seen = new Set<string>();
-    const dupes = names.filter((n) => (seen.has(n) ? true : (seen.add(n), false)));
-    expect(dupes).toEqual([]);
+  it('declares no variable twice BY ACCIDENT — a fallback pair is not an accident', () => {
+    /**
+     * This guard was written for a real defect: `HALF[i]` was published as
+     * `--liminal-s${i}`, which collided with the ladder and silently overwrote
+     * every surface.
+     *
+     * AND A LADDER STEP IS NOW DECLARED TWICE ON PURPOSE:
+     *
+     *   --liminal-s3: #0b0d0f;                     the quantised rendering
+     *   --liminal-s3: oklch(0.156425 0.0069 258.4); the design
+     *
+     * The second wins where the browser can parse it, and the first stands where
+     * it cannot — the standard pair for a custom property. So the guard asks the
+     * precise question now: is every duplicate a hex followed by an `oklch()`?
+     * Anything else is still a collision.
+     */
+    const decls = [...rootBlock.matchAll(/--liminal-([a-z0-9-]+):\s*([^;]+);/g)].map((m) => ({ name: m[1], value: m[2].trim() }));
+    const byName = new Map<string, string[]>();
+    for (const d of decls) byName.set(d.name, [...(byName.get(d.name) ?? []), d.value]);
+    const accidents = [...byName.entries()]
+      .filter(([, values]) => values.length > 1)
+      .filter(([, values]) => !(values.length === 2 && /^#[0-9a-f]{6}$/i.test(values[0]) && values[1].startsWith('oklch(')))
+      .map(([name, values]) => `${name}: ${values.join(' | ')}`);
+    expect(accidents, 'a duplicate that is not a hex-then-oklch fallback pair').toEqual([]);
+    // And the guard has to prove it is looking at real pairs, or it would pass by
+    // finding none — which is the lesson every guard in this repo has learned.
+    const pairs = [...byName.values()].filter((v) => v.length === 2 && v[1].startsWith('oklch('));
+    expect(pairs.length, 'ladder steps published as a fallback pair').toBeGreaterThan(8);
   });
 });

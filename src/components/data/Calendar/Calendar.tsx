@@ -3,15 +3,12 @@ import type { CSSProperties } from 'react';
 import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { Button } from '../../atoms/Button';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
-import {
-  getLadderColor,
-  getTextStyle,
-  SHADOWS,
-} from '../../../engine/spec-engine';
+import {getLadderColor,
+  getTextStyle} from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useReducedMotion } from '../../../engine/liminal-hooks';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 import { useDirection, pick } from '../../../engine/liminal-direction';
 import {
@@ -24,6 +21,7 @@ import {
   formatJalali,
 } from '../../../engine/liminal-jalali';
 import { toPersianDigits } from '../../../engine/liminal-persian';
+import { floatingShadow } from '../../../engine/liminal-surface';
 
 /** A layout decision this component owns, not a system token. */
 const CALENDAR_WIDTH = 320;
@@ -211,8 +209,8 @@ export function Calendar({
     padding: `${SPACING[3]}px`,
     borderRadius: `${RADIUS.card}px`,
     background: resolveSurface({ role: 'control', on: host }).background,
-    border: `1px solid ${resolveBorder({ role: 'control', kind: 'hairline', on: host })}`,
-    boxShadow: SHADOWS[3],
+    border: `1px solid ${resolveBorder({ role: 'control', kind: 'separator', on: host })}`,
+    boxShadow: floatingShadow('popover'),
     boxSizing: 'border-box',
     userSelect: 'none',
     ...customStyle,
@@ -374,9 +372,16 @@ function DayCell({ date, label, ariaLabel, selected, today, onClick, reducedMoti
   const hoverBg = resolveSurface({ role: 'control', on: host }).background;
 
   const cellStyle = {
-    '--liminal-surface-idle': idleBg,
-    '--liminal-surface-hover': hoverBg,
-    '--liminal-surface-active': hoverBg,
+    // A selected cell keeps its raised surface; an unselected one lies flat and
+    // lifts to the control surface on hover. Both states are explicit because
+    // the resting fill is the caller's own — the engine cannot derive a lift
+    // from a colour it did not choose.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: idleBg,
+      hover: hoverBg,
+    }),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — حالت هر لایه، و مشتق</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.89);
+    font:14px/1.8 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:30px 20px 64px;display:flex;flex-direction:column;align-items:center;
+  }
+  h1{font-size:20px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:13px;max-width:90ch;text-align:center;margin-bottom:8px}
+  .note{color:rgba(255,255,255,.42);font-size:12px;max-width:90ch;text-align:center;margin-bottom:24px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+  .q{width:100%;max-width:1180px;border-radius:16px;padding:20px 22px;margin-bottom:16px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:14px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.42);font-size:12px;margin-bottom:16px}
+  .band{padding:30px 0;display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;gap:8px;align-items:center}
+  .surf{width:150px;height:96px;border-radius:11px;border:1px solid transparent}
+  .cap{font-size:10.5px;color:rgba(255,255,255,.45);text-align:center;line-height:1.75}
+  .cap b{color:rgba(255,255,255,.78);font-size:11.5px}
+  .verdict{font-size:10px;margin-top:2px}
+  .picked{color:#7fd0a0}
+  .rejected{color:rgba(255,255,255,.28)}
+  table{width:100%;border-collapse:collapse;margin-top:6px}
+  th{text-align:start;font-weight:500;color:rgba(255,255,255,.34);font-size:10.5px;padding:6px 8px}
+  td{padding:6px 8px;border-top:1px solid var(--liminal-role-panel-border);font-size:12px}
+  .yes{color:#7fd0a0}
+</style>
+</head>
+<body>
+  <h1>حالت هر لایه — و مشتق</h1>
+  <p class="sub">
+    هر چهار حالت، در هر سه عمق. و زیر هر کدام، حکمِ <b>مشتق</b>: موتور برای یک
+    <b>ناحیه</b> کدام را انتخاب می‌کند.
+  </p>
+  <p class="note">
+    <b>مشتق:</b> سه واقعیت خوانده می‌شود — ارتفاع بالای میزبان · در جریان است یا بیرونش ·
+    کلاس محتوا — و حالت از آن‌ها می‌آید. <b>«ساده» همیشه یک جواب معتبر است.</b>
+  </p>
+
+  <div class="q">
+    <h2>۱. لایهٔ ۱ روی بوم — ارتفاع ۱</h2>
+    <div class="why">میزبان: بوم <code>S0</code> · اختلاف سطح تنها: <code>۱.۱۴q</code> — روی آستانه</div>
+    <div class="band" id="bandA" style="background:var(--liminal-s0)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۲. لایهٔ ۲ روی لایهٔ ۱ — ارتفاع ۱</h2>
+    <div class="why">میزبان: <code>S1</code> · همان اختلاف سطح، ولی میزبان خودش یک ناحیه است</div>
+    <div class="band" id="bandB" style="background:var(--liminal-s1)"></div>
+  </div>
+
+  <div class="q">
+    <h2>۳. لایهٔ ۳ روی لایهٔ ۲ — ارتفاع ۱</h2>
+    <div class="why">میزبان: <code>S2</code></div>
+    <div class="band" id="bandC" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>مشتق — چه چیزی را انتخاب می‌کند</h2>
+    <table>
+      <thead><tr><th>اگر لایه…</th><th>حالت</th><th>چون</th></tr></thead>
+      <tbody>
+        <tr><td><b>یک ناحیه روی بوم</b> (ارتفاع ۱)</td><td class="yes">مرز</td><td>اختلاف سطح تنها روی آستانه است؛ مرز چیزی است که آن را خوانا می‌کند</td></tr>
+        <tr><td><b>یک ناحیه داخل ناحیه</b></td><td class="yes">ساده</td><td>میزبان خودش یک سطح است و اختلاف سطح کافی است</td></tr>
+        <tr><td><b>یک کنترل</b></td><td class="yes">مرز + ریم</td><td>باید مثل یک شیء روی میزبانش خوانده شود</td></tr>
+        <tr><td><b>محتوای گذرا</b> (توست، تولتیپ)</td><td class="yes">سایه + ریم</td><td>بیرون جریان است، پس سایه می‌اندازد</td></tr>
+        <tr><td><b>خالی</b></td><td class="yes">ساده</td><td>هیچ چیزی نیست که به خوانا شدن نیاز داشته باشد</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="q">
+    <h2>و سؤال‌ها</h2>
+    <div class="opts" id="q1" style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="opt" data-q="1" data-v="yes">مشتق درست است — بسازش</button>
+      <button class="opt" data-q="1" data-v="adjust">نزدیک است، ولی باید عوض شود</button>
+      <button class="opt" data-q="1" data-v="no">درست نیست — از پایه بازبینی شود</button>
+    </div>
+  </div>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const CANVAS_L = num('--liminal-canvas-l'), STEP = num('--liminal-step');
+  const C = num('--liminal-chroma'), H = num('--liminal-hue'), Q = num('--liminal-q');
+  const at = (level) => `oklch(${(CANVAS_L + level * STEP).toFixed(7)} ${C} ${H})`;
+  const shadow = (host) => `0 3.5px 10px rgba(1,2,3,0.1326), 0 2px 3.5px rgba(1,2,3,0.1326)`;
+
+  /** The four states, built from the engine's own numbers. */
+  const STATES = {
+    plain:    (n) => ({ bg: S(n), extra: '' }),
+    border:   (n) => ({ bg: S(n), extra: `border-color:${at(n + 1)}` }),
+    shadow:   (n) => ({ bg: S(n), extra: `box-shadow:${shadow()}` }),
+    rim:      (n) => ({ bg: `linear-gradient(${S(n)}, ${S(n)}) padding-box, linear-gradient(180deg, ${at(n + 1.5)} 0%, ${at(n + 1)} 55%, ${at(n + 0.5)} 100%) border-box`, extra: '' }),
+  };
+  const LABEL = { plain: 'ساده', border: 'مرزدار', shadow: 'سایه‌دار', rim: 'ریم‌دار' };
+
+  /** What the derivation picks for a REGION at this depth. */
+  const picks = (depth) => depth === 1 ? 'border' : 'plain';
+
+  function fill(bandId, host, level, depth) {
+    const band = document.getElementById(bandId);
+    for (const key of ['plain', 'border', 'shadow', 'rim']) {
+      const st = STATES[key](level);
+      const el = document.createElement('div'); el.className = 'cell';
+      const chosen = picks(depth) === key;
+      el.innerHTML = `<div class="surf" style="${st.extra};background:${st.bg}"></div>
+        <div class="cap"><b>${LABEL[key]}</b>
+          <div class="verdict ${chosen ? 'picked' : 'rejected'}">${chosen ? '✓ مشتق انتخاب می‌کند' : '✗ برای یک ناحیه نه'}</div>
+        </div>`;
+      band.appendChild(el);
+    }
+  }
+  fill('bandA', 0, 1, 1);
+  fill('bandB', 1, 2, 2);
+  fill('bandC', 2, 3, 3);
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed','true'); answers[q] = b.dataset.v;
+  });
+</script>
+</body>
+</html>

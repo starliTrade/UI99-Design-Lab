@@ -11,6 +11,18 @@ import { mistCssVars } from '../../../engine/liminal-mist';
 export interface AlertProps {
   semantic: 'success' | 'warning' | 'danger' | 'info';
   title?: string;
+  /**
+   * The DOCUMENT level of the title, when the title is a heading.
+   *
+   * It was `<h4>`, hard-coded — which is a decision about the page the alert is
+   * dropped into, made by a component that cannot see the page. On the studio's
+   * index the sections are `h2`, so an `h4` skipped a level and axe reported
+   * `heading-order`: a screen reader's outline showed a gap.
+   *
+   * `Accordion` already takes a `headingLevel` for the same reason. The default
+   * is unchanged, so nothing that renders an Alert today moves.
+   */
+  headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   children: ReactNode;
   actions?: ReactNode;
   closable?: boolean;
@@ -23,6 +35,7 @@ export interface AlertProps {
 export function Alert({
   semantic,
   title,
+  headingLevel = 4,
   children,
   actions,
   closable = true,
@@ -134,7 +147,8 @@ export function Alert({
 
       {/* Content */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        {title && <h4 style={titleStyle}>{title}</h4>}
+        {title &&
+          React.createElement(`h${headingLevel}`, { style: titleStyle }, title)}
         {children && <div style={messageStyle}>{children}</div>}
 
         {actions && (

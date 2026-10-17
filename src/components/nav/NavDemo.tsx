@@ -11,7 +11,6 @@ import { Badge } from '../atoms/Badge';
 import { Input } from '../inputs/Input';
 import {
   getTextStyle,
-  getLiminalStyle,
   getLadderColor,
 } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
@@ -60,6 +59,7 @@ import {
   ContextMenuLabel,
   ContextMenuShortcut,
 } from './ContextMenu';
+import { resolveSurface } from '../../engine/liminal-surface';
 
 export function NavDemo() {
   const [activeNav, setActiveNav] = useState<string>('gateways');
@@ -74,7 +74,7 @@ export function NavDemo() {
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
-  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
+  const containerStyle = resolveSurface({ role: 'chrome', interactive: false }).style;
 
   const breadcrumbItems = [
     { label: 'Infrastructure', href: '#infra' },

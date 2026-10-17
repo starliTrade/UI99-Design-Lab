@@ -27,9 +27,21 @@ describe('persian — the line-height floor comes from the font, not from taste'
     expect(PERSIAN_LINE_HEIGHT_FLOOR).toBeCloseTo(1.5625, 4);
   });
 
-  it('seven of the eight Latin levels sit below it — which is the finding', () => {
+  /**
+   * AND NOW ALL EIGHT SIT BELOW IT, which the line-height formula made true.
+   *
+   * The old table was hand-picked and level 3 happened to be 1.60 — above the floor — so
+   * exactly one level survived. The formula is `1 + 8/fs`: the line box is the font size plus
+   * one spacing step, and its loosest value is 1.4167 at the smallest size. So EVERY Latin
+   * level is below what Vazirmatn's own metrics need, and the Persian path is the only thing
+   * standing between the script and clipped glyphs.
+   *
+   * That is not a defect in the formula — it is the two scripts having different needs, and
+   * the floor is derived from the FONT rather than from taste precisely so this can be seen.
+   */
+  it('and now ALL eight Latin levels sit below it — the formula is looser than the font needs', () => {
     const clipped = [1, 2, 3, 4, 5, 6, 7, 8].filter((n) => L.TYPOGRAPHY[n].lh < PERSIAN_LINE_HEIGHT_FLOOR);
-    expect(clipped).toEqual([1, 2, 4, 5, 6, 7, 8]);
+    expect(clipped).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
   });
 
   it('never returns a value below the floor for Persian', () => {
@@ -38,9 +50,10 @@ describe('persian — the line-height floor comes from the font, not from taste'
     }
   });
 
-  it('leaves body copy at its designed 1.60, which is already above the floor', () => {
-    expect(lineHeightFor(3, 'fa')).toBe(1.6);
-    expect(lineHeightFor(3, 'en')).toBe(1.6);
+  it('raises Persian body copy to the FLOOR, and leaves English at the formula', () => {
+    // Persian takes the floor because the formula is below it; English takes the formula.
+    expect(lineHeightFor(3, 'fa')).toBe(PERSIAN_LINE_HEIGHT_FLOOR);
+    expect(lineHeightFor(3, 'en')).toBeCloseTo(1.2894, 3);
   });
 
   it('returns the designed value for English, unchanged', () => {

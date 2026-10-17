@@ -1,9 +1,9 @@
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import {
-  getLiminalStyle,
   getTextStyle,
 } from '../../../engine/spec-engine';
+import { resolveSurface } from '../../../engine/liminal-surface';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 
 /** A layout decision this component owns, not a system token. */
@@ -33,12 +33,9 @@ export function PageHeader({
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
   // Surface 1 with Rim 1 (flat zero-shadow container)
-  const limStyle = getLiminalStyle({
-    surfaceLevel: 1,
-    isContainer: true,
-    interactive: false,
-    state: 'idle',
-  });
+  // A structural surface: the level of the frame around the work, with a quiet
+  // edge, and it does not answer the pointer.
+  const limStyle = resolveSurface({ role: 'chrome', interactive: false });
 
   const containerStyle: CSSProperties = {
     ...limStyle.style,

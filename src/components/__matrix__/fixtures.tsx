@@ -2,22 +2,48 @@ import React from 'react';
 import { Button } from '../atoms/Button/Button';
 import { Badge } from '../atoms/Badge/Badge';
 import { Tag } from '../atoms/Tag/Tag';
+import { Text, Heading } from '../atoms/Typography/Typography';
 import { Toggle } from '../atoms/Toggle/Toggle';
+import { ToggleGroup } from '../inputs/ToggleGroup/ToggleGroup';
+import { Spinner } from '../atoms/Spinner/Spinner';
+import { Kbd } from '../atoms/Kbd/Kbd';
+import { Label } from '../atoms/Label/Label';
+import { Collapsible } from '../containers/Collapsible/Collapsible';
+import { Accordion } from '../containers/Accordion/Accordion';
 import { Mist } from '../atoms/Mist/Mist';
 import { Input } from '../inputs/Input/Input';
 import { Textarea } from '../inputs/Textarea/Textarea';
+import { Slider } from '../inputs/Slider/Slider';
+import { NumberInput } from '../inputs/NumberInput/NumberInput';
+import { OTP } from '../inputs/OTP/OTP';
+import { Rating } from '../inputs/Rating/Rating';
+import { FileUpload } from '../inputs/FileUpload/FileUpload';
 import { Checkbox } from '../inputs/Checkbox/Checkbox';
 import { Radio } from '../inputs/Radio/Radio';
 import { Select } from '../inputs/Select/Select';
 import { Card } from '../containers/Card/Card';
+import { ButtonGroup } from '../containers/ButtonGroup/ButtonGroup';
+import { InputGroup } from '../inputs/InputGroup/InputGroup';
 import { Panel } from '../containers/Panel/Panel';
 import { Divider } from '../containers/Divider/Divider';
+import { Popover } from '../containers/Popover/Popover';
+import { HoverCard } from '../containers/HoverCard/HoverCard';
+import { Drawer } from '../containers/Drawer/Drawer';
+import { AlertDialog } from '../feedback/AlertDialog/AlertDialog';
+import { DatePicker } from '../data/Calendar/DatePicker';
+import { AvatarGroup } from '../data/AvatarGroup/AvatarGroup';
+import { Tabs, TabPanel } from '../nav/Tabs/Tabs';
+import { Stepper } from '../nav/Stepper/Stepper';
 import { Avatar } from '../data/Avatar/Avatar';
 import { Stat } from '../data/Stat/Stat';
+import { Item } from '../data/Item/Item';
+import { Marker } from '../atoms/Marker/Marker';
 import { Progress } from '../data/Progress/Progress';
 import { Alert } from '../feedback/Alert/Alert';
 import { Skeleton } from '../composites/Skeleton/Skeleton';
 import { EmptyState } from '../composites/EmptyState/EmptyState';
+import { Message, MessageList } from '../composites/Message/Message';
+import { MessageScroller } from '../composites/MessageScroller/MessageScroller';
 import { Pagination } from '../data/Pagination/Pagination';
 import { NavItem } from '../nav/NavItem/NavItem';
 import { Breadcrumb } from '../nav/Breadcrumb/Breadcrumb';
@@ -30,6 +56,7 @@ import { MultiSelect } from '../inputs/MultiSelect/MultiSelect';
 import { CommandPalette } from '../nav/CommandPalette/CommandPalette';
 import { Table, TableHeader, TableRow, TableHead, TableCell } from '../data/Table';
 import { Calendar } from '../data/Calendar/Calendar';
+import { TreeView } from '../data/TreeView/TreeView';
 import { FilterBar } from '../data/FilterBar/FilterBar';
 import { AppShell } from '../layout/AppShell/AppShell';
 import { Footer } from '../layout/Footer/Footer';
@@ -41,6 +68,11 @@ import { Topbar } from '../nav/Topbar/Topbar';
 import { ErrorPage } from '../composites/ErrorPage/ErrorPage';
 import { FormLayout } from '../composites/FormLayout/FormLayout';
 import { Form, Field } from '../composites/Form/Form';
+import { VisuallyHidden } from '../layout/VisuallyHidden/VisuallyHidden';
+import { FocusScope } from '../layout/FocusScope/FocusScope';
+import { AspectRatio } from '../layout/AspectRatio/AspectRatio';
+import { ScrollArea } from '../layout/ScrollArea/ScrollArea';
+import { Stack } from '../layout/Stack/Stack';
 
 /**
  * THE COMPONENT MATRIX
@@ -57,6 +89,21 @@ import { Form, Field } from '../composites/Form/Form';
 export interface ComponentFixture {
   /** The component's name, as a consumer would say it. */
   name: string;
+  /**
+   * WHICH KIND OF THING IT IS.
+   *
+   * WHICH KIND OF THING IT IS, and therefore which criteria apply.
+   *
+   *   input    something the reader types into or picks with.
+   *            size · variant · disabled · error
+   *   action   something the reader presses.
+   *            size · variant · disabled — an `error` on a Button is a prop
+   *            with no meaning, and demanding one pushes components to invent it
+   *   surface  a container. role · tokens · fixture
+   *
+   * Defaults to 'surface', so only the controls have to say so.
+   */
+  kind?: 'input' | 'action' | 'surface';
   /** The category, for grouping on the page. */
   group: string;
   /** The sizes the component actually supports. Empty means it has none. */
@@ -86,24 +133,24 @@ const FEEDBACK_STATES = ['info', 'success', 'warning', 'danger'];
 
 export const FIXTURES: ComponentFixture[] = [
   {
-    name: 'Button', group: 'اتم‌ها', sizes: ['sm', 'md', 'lg'], states: INTERACTIVE, expected: INTERACTIVE,
+    name: 'Button', kind: 'action', group: 'Atoms', sizes: ['sm', 'md', 'lg'], states: INTERACTIVE, expected: INTERACTIVE,
     variants: ['primary', 'secondary', 'ghost', 'danger', 'outline', 'link'],
     render: (state, size, variant) => (
       <Button size={(size ?? 'md') as 'sm'} disabled={state === 'disabled'} variant={(variant ?? 'primary') as 'primary'}>
-        {state === 'default' ? 'دکمه' : state}
+        {state === 'default' ? 'Button' : state}
       </Button>
     ),
   },
   {
-    name: 'Input', group: 'ورودی‌ها', sizes: ['sm', 'md', 'lg'], states: INPUT_STATES, expected: INPUT_STATES,
+    name: 'Input', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: INPUT_STATES, expected: INPUT_STATES,
     render: (state, size) => (
       <Input
         size={(size ?? 'md') as 'sm'}
-        label="نام کاربری"
+        label="Username"
         // `hint` is not an Input prop — it lives on `Field`. Recorded rather
         // than worked around: an input that cannot say what it wants is a gap.
-        helperText={state === 'error' ? undefined : '۳ تا ۲۰ کاراکتر'}
-        error={state === 'error' ? 'این نام قبلاً گرفته شده' : undefined}
+        helperText={state === 'error' ? undefined : '3–20 characters'}
+        error={state === 'error' ? 'That name is taken' : undefined}
         disabled={state === 'disabled'}
         readOnly={state === 'readonly'}
         defaultValue={state === 'default' ? '' : 'starli'}
@@ -111,212 +158,649 @@ export const FIXTURES: ComponentFixture[] = [
     ),
   },
   {
-    name: 'Textarea', group: 'ورودی‌ها', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'FileUpload', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'filled', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state, size) => (
+      <FileUpload
+        files={state === 'filled' ? [new File(['x'], 'report.pdf')] : []}
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'That file is too large' : undefined}
+        label="Attachment"
+        hint="PDF, up to 10MB"
+      />
+    ),
+  },
+  {
+    name: 'Rating', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'rated', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state, size) => (
+      <Rating
+        value={state === 'rated' ? 4 : 0}
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'Choose a rating' : undefined}
+        label="How was it?"
+        showValue
+      />
+    ),
+  },
+  {
+    name: 'OTP', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'filled', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state, size) => (
+      <OTP
+        value={state === 'filled' ? '482913' : ''}
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'That code has expired' : undefined}
+        label="Verification code"
+      />
+    ),
+  },
+  {
+    name: 'NumberInput', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'disabled', 'readonly', 'error'], expected: INPUT_STATES,
+    render: (state, size) => (
+      <NumberInput
+        value={12}
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        min={0}
+        max={99}
+        disabled={state === 'disabled'}
+        readOnly={state === 'readonly'}
+        error={state === 'error' ? 'Out of range' : undefined}
+        label="Quantity"
+      />
+    ),
+  },
+  {
+    name: 'Slider', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state, size) => (
+      <Slider
+        value={40}
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'Out of range' : undefined}
+        label="Volume"
+        showValue
+      />
+    ),
+  },
+  {
+    name: 'Textarea', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
       <Textarea
-        label="درباره"
-        error={state === 'error' ? 'حداکثر ۲۰۰ کاراکتر' : undefined}
+        label="About"
+        error={state === 'error' ? 'Up to 200 characters' : undefined}
         disabled={state === 'disabled'}
         rows={2}
       />
     ),
   },
   {
-    name: 'Select', group: 'ورودی‌ها', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'Select', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state) => (
       <Select
-        label="مسیر"
-        options={[{ value: 'a', label: 'تهران' }, { value: 'b', label: 'شیراز' }]}
-        error={state === 'error' ? 'یک مسیر انتخاب کن' : undefined}
+        label="Route"
+        options={[{ value: 'a', label: 'Tehran' }, { value: 'b', label: 'Shiraz' }]}
+        error={state === 'error' ? 'Pick a route' : undefined}
         disabled={state === 'disabled'}
       />
     ),
   },
   {
-    name: 'Checkbox', group: 'ورودی‌ها', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
+    name: 'Checkbox', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled', 'error'], expected: INTERACTIVE,
     render: (state) => (
-      <Checkbox checked={state === 'checked'} disabled={state === 'disabled'} onChange={noop} label="می‌پذیرم" />
+      <Checkbox
+        checked={state === 'checked'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'You must accept the terms' : undefined}
+        onChange={noop}
+        label="I accept"
+      />
     ),
   },
   {
-    name: 'Radio', group: 'ورودی‌ها', sizes: [], states: ['default', 'checked', 'disabled'], expected: INTERACTIVE,
+    name: 'Radio', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'checked', 'disabled', 'error'], expected: INTERACTIVE,
     render: (state) => (
-      <Radio checked={state === 'checked'} disabled={state === 'disabled'} onChange={noop} name="m" value="a" label="گزینه" />
+      <Radio
+        checked={state === 'checked'}
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'Choose one' : undefined}
+        onChange={noop}
+        name="m"
+        value="a"
+        label="Option"
+      />
     ),
   },
   {
-    name: 'Toggle', group: 'اتم‌ها', sizes: [], states: ['off', 'on', 'disabled'], expected: INTERACTIVE,
+    name: 'Spinner', group: 'Atoms', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    render: (_s, size) => <Spinner label="Loading projects" size={(size ?? 'md') as 'sm'} />,
+  },
+  {
+    name: 'Kbd', group: 'Atoms', sizes: ['sm', 'md'], states: ['default'], expected: [],
+    render: (_s, size) => <Kbd keys={['⌘', 'K']} size={(size ?? 'md') as 'sm'} />,
+  },
+  {
+    name: 'Label', group: 'Atoms', sizes: [], states: ['default', 'required', 'error', 'disabled'], expected: [],
     render: (state) => (
-      <Toggle checked={state === 'on'} disabled={state === 'disabled'} onChange={noop} aria-label="فعال" />
+      <Label
+        htmlFor="demo-field"
+        required={state === 'required'}
+        error={state === 'error' ? 'That name is taken' : undefined}
+        disabled={state === 'disabled'}
+      >
+        Project name
+      </Label>
     ),
   },
   {
-    name: 'Badge', group: 'اتم‌ها', sizes: [], states: ['neutral', 'success', 'warning', 'danger', 'info'], expected: [],
-    variants: ['neutral', 'success', 'warning', 'danger', 'info'],
-    render: (state) => <Badge semantic={state === 'neutral' ? undefined : (state as 'success')}>برچسب</Badge>,
-  },
-  {
-    name: 'Tag', group: 'اتم‌ها', sizes: [], states: ['default'], expected: [],
-    render: () => <Tag>طراحی</Tag>,
-  },
-  {
-    name: 'Alert', group: 'بازخورد', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
+    name: 'Accordion', group: 'Containers', sizes: [], states: ['closed', 'open'], expected: [],
     render: (state) => (
-      <Alert semantic={state as 'info'} title={state} onClose={noop}>پیام</Alert>
+      <Accordion
+        type="single"
+        defaultOpen={state === 'open' ? ['one'] : []}
+        items={[
+          { id: 'one', title: 'Shipping', content: <span>Two to five days.</span> },
+          { id: 'two', title: 'Returns', content: <span>Thirty days.</span> },
+        ]}
+      />
     ),
   },
   {
-    name: 'Progress', group: 'داده', sizes: ['sm', 'md', 'lg'], states: ['default', 'success', 'warning', 'danger'], expected: [],
+    name: 'Collapsible', group: 'Containers', sizes: [], states: ['closed', 'open'], expected: [],
+    render: (state) => (
+      <Collapsible title="Advanced settings" defaultOpen={state === 'open'}>
+        <span>Nothing here yet.</span>
+      </Collapsible>
+    ),
+  },
+  {
+    name: 'ToggleGroup', kind: 'input', group: 'Inputs', sizes: ['sm', 'md', 'lg'], states: ['default', 'chosen', 'disabled', 'error'], expected: INPUT_STATES,
     render: (state, size) => (
-      <Progress value={62} label="آپلود" size={(size ?? 'md') as 'sm'} semantic={state === 'default' ? undefined : (state as 'success')} />
+      <ToggleGroup
+        label="View"
+        type="single"
+        size={(size ?? 'md') as 'sm'}
+        disabled={state === 'disabled'}
+        value={state === 'chosen' ? 'grid' : ''}
+        error={state === 'error' ? 'Choose a view' : undefined}
+        onChange={noop}
+        items={[
+          { value: 'list', label: 'List' },
+          { value: 'grid', label: 'Grid' },
+          { value: 'board', label: 'Board' },
+        ]}
+      />
     ),
   },
   {
-    name: 'Avatar', group: 'داده', // Avatar has three sizes, not the icon engine's five. Recorded as-is.
+    /**
+     * THE STATES ARE RENDERED NOW, NOT JUST DECLARED.
+     *
+     * It was `states: ['off', 'on', 'disabled']` with `expected: INTERACTIVE`,
+     * which scored 20% — and the 20% was honest: the fixture named three states
+     * and the system expects four, and `hover` and `focus` were missing from
+     * both halves. A state the fixture cannot render is a state nobody reviews.
+     *
+     * `data-liminal-force` is the engine's review harness: it replays the
+     * interaction layer's own declarations through an attribute, so the hover
+     * here IS the hover, not a picture of it.
+     */
+    name: 'Toggle', kind: 'action', group: 'Atoms', sizes: ['sm', 'md', 'lg'],
+    states: ['default', 'on', 'hover', 'focus', 'disabled'], expected: INTERACTIVE,
+    render: (state, size) => (
+      <span data-liminal-force={state === 'hover' || state === 'focus' ? state : undefined}>
+        <Toggle
+          size={(size ?? 'md') as 'sm'}
+          checked={state === 'on'}
+          disabled={state === 'disabled'}
+          onChange={noop}
+          aria-label="Enabled"
+        />
+      </span>
+    ),
+  },
+  {
+    name: 'Badge', group: 'Atoms', sizes: [], states: ['neutral', 'success', 'warning', 'danger', 'info'], expected: [],
+    variants: ['neutral', 'success', 'warning', 'danger', 'info'],
+    render: (state) => <Badge semantic={state === 'neutral' ? undefined : (state as 'success')}>Badge</Badge>,
+  },
+  {
+    name: 'Typography', group: 'Atoms', sizes: ['1', '3', '5', '7'], states: ['default'], expected: [],
+    render: (_s, size) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <Heading level={2}>A heading</Heading>
+        <Text level={(Number(size) || 3) as 1} tone="secondary">Body copy at the chosen step.</Text>
+      </div>
+    ),
+  },
+  {
+    name: 'Marker', group: 'Atoms', sizes: [], states: ['default', 'muted', 'semantic'], expected: [],
+    render: (state) => (
+      <Marker muted={state === 'muted'} semantic={state === 'semantic' ? 'danger' : undefined}>
+        {state === 'semantic' ? '3 failed' : '12'}
+      </Marker>
+    ),
+  },
+  {
+    name: 'Tag', group: 'Atoms', sizes: [], states: ['default'], expected: [],
+    render: () => <Tag>Design</Tag>,
+  },
+  {
+    name: 'AvatarGroup', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
+    render: (_s, size) => (
+      <AvatarGroup size={(size ?? 'md') as 'sm'}>
+        <Avatar name="Starli" />
+        <Avatar name="Trade" />
+      </AvatarGroup>
+    ),
+  },
+  {
+    name: 'DatePicker', kind: 'input', group: 'Data', sizes: [], states: ['default', 'disabled', 'error'], expected: [],
+    render: (state) => (
+      <DatePicker
+        label="Date"
+        disabled={state === 'disabled'}
+        error={state === 'error' ? 'Pick a date' : undefined}
+      />
+    ),
+  },
+  {
+    name: 'Stepper', group: 'Navigation', sizes: ['sm', 'md', 'lg'], states: ['default', 'error'], expected: [],
+    render: (state, size) => (
+      <Stepper
+        current={state === 'error' ? 'two' : 'two'}
+        size={(size ?? 'md') as 'sm'}
+        steps={[
+          { id: 'one', label: 'Account', state: 'complete' },
+          { id: 'two', label: 'Details', state: state === 'error' ? 'error' : undefined },
+          { id: 'three', label: 'Confirm' },
+        ]}
+      />
+    ),
+  },
+  {
+    name: 'Tabs', kind: 'action', group: 'Navigation', sizes: ['sm', 'md'], states: ['default'], expected: [],
+    render: (_s, size) => (
+      <Tabs
+        value="a"
+        onChange={noop}
+        size={(size ?? 'md') as 'sm'}
+        items={[{ id: 'a', label: 'Overview' }, { id: 'b', label: 'Settings' }]}
+      >
+        {/* THE PANEL IS PART OF THE FIXTURE, because a tab without one is a
+            broken reference: `aria-controls` pointed at an id that was never
+            rendered, and axe reports `aria-valid-attr-value` — critical. A
+            screen reader following it lands nowhere. */}
+        <TabPanel value="a">Overview panel</TabPanel>
+      </Tabs>
+    ),
+  },
+  {
+    name: 'Alert', group: 'Feedback', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
+    render: (state) => (
+      // `headingLevel={3}`: the fixture is rendered under an `h2` in the index
+      // and under an `h1` on a component page, and the default `h4` skipped a
+      // level in both. The level is the host page's decision, so the host says.
+      <Alert semantic={state as 'info'} title={state} headingLevel={3} onClose={noop}>Message</Alert>
+    ),
+  },
+  {
+    name: 'Progress', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default', 'success', 'warning', 'danger'], expected: [],
+    render: (state, size) => (
+      <Progress value={62} label="Upload" size={(size ?? 'md') as 'sm'} semantic={state === 'default' ? undefined : (state as 'success')} />
+    ),
+  },
+  {
+    name: 'Avatar', group: 'Data', // Avatar has three sizes, not the icon engine's five. Recorded as-is.
     sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
     render: (_s, size) => <Avatar name="Starli Trade" size={(size ?? 'md') as 'md'} />,
   },
   {
-    name: 'Stat', group: 'داده', sizes: [], states: ['default'], expected: [],
-    render: () => <Stat label="درخواست‌ها" value="۱٬۲۰۴" />,
+    name: 'Item', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default', 'selected', 'disabled'], expected: [],
+    render: (state, size) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, width: 240 }}>
+        <Item
+          size={(size ?? 'md') as 'sm'}
+          selected={state === 'selected' ? 'option' : 'none'}
+          disabled={state === 'disabled'}
+          onClick={noop}
+          start={<span aria-hidden>◆</span>}
+          end={<Marker muted>12</Marker>}
+          description="Everything assigned to you"
+        >
+          Inbox
+        </Item>
+        <Item onClick={noop}>Drafts</Item>
+      </div>
+    ),
   },
   {
-    name: 'Card', group: 'ظرف‌ها', sizes: [], states: ['default'], expected: [],
-    render: () => <Card>محتوای کارت</Card>,
+    name: 'Stat', group: 'Data', sizes: [], states: ['default'], expected: [],
+    render: () => <Stat label="Requests" value="1,204" />,
   },
   {
-    name: 'Panel', group: 'ظرف‌ها', sizes: [], states: ['default'], expected: [],
-    render: () => <Panel title="پنل">محتوا</Panel>,
+    name: 'ButtonGroup', group: 'Containers', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <ButtonGroup label="Actions">
+        <Button variant="secondary">Save</Button>
+        <Button variant="secondary">Duplicate</Button>
+        <Button variant="secondary">Delete</Button>
+      </ButtonGroup>
+    ),
   },
   {
-    name: 'Divider', group: 'ظرف‌ها', sizes: [], states: ['default'], expected: [],
+    name: 'InputGroup', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state) => (
+      <InputGroup prefix="$" suffix="USD" disabled={state === 'disabled'}>
+        <Input label="Amount" error={state === 'error' ? 'Too large' : undefined} />
+      </InputGroup>
+    ),
+  },
+  {
+    name: 'Card', group: 'Containers', sizes: [], states: ['default'], expected: [],
+    render: () => <Card>Card content</Card>,
+  },
+  {
+    name: 'Panel', group: 'Containers', sizes: [], states: ['default'], expected: [],
+    render: () => <Panel title="Panel">Content</Panel>,
+  },
+  {
+    name: 'Divider', group: 'Containers', sizes: [], states: ['default'], expected: [],
     render: () => <div style={{ width: 200 }}><Divider /></div>,
   },
   {
-    name: 'Skeleton', group: 'کمکی', sizes: [], states: ['text', 'circle', 'rect'], expected: [],
+    name: 'Skeleton', group: 'Utilities', sizes: [], states: ['text', 'circle', 'rect'], expected: [],
     variants: ['text', 'circle', 'rect'],
     render: (state) => <Skeleton variant={state as 'text'} width={160} />,
   },
   {
-    name: 'EmptyState', group: 'کمکی', sizes: [], states: ['default'], expected: [],
-    render: () => <EmptyState title="چیزی نیست" />,
+    name: 'MessageScroller', group: 'Composites', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <MessageScroller label="Conversation" maxHeight={6} style={{ width: 280 }}>
+        <MessageList label="Messages">
+          {Array.from({ length: 8 }, (_, i) => (
+            <Message key={i} from={i % 2 ? 'me' : 'them'} name={i % 2 ? 'You' : 'Starli'}>
+              Message {i + 1}
+            </Message>
+          ))}
+        </MessageList>
+      </MessageScroller>
+    ),
   },
   {
-    name: 'Mist', group: 'اتم‌ها', sizes: [], states: ['default'], expected: [],
-    render: () => <Mist aria-label="شناور">مه</Mist>,
+    name: 'Message', group: 'Composites', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <MessageList label="Conversation">
+        <Message from="them" name="Starli" meta="09:12">Did the build pass?</Message>
+        <Message from="me" name="You" meta="09:13" tail={false}>It did — 852 tests.</Message>
+      </MessageList>
+    ),
   },
   {
-    name: 'Pagination', group: 'داده', sizes: [], states: ['default'], expected: INTERACTIVE,
+    name: 'EmptyState', group: 'Utilities', sizes: [], states: ['default'], expected: [],
+    render: () => <EmptyState title="Nothing here" />,
+  },
+  {
+    name: 'Mist', group: 'Atoms', sizes: [], states: ['default'], expected: [],
+    render: () => <Mist aria-label="Floating">Mist</Mist>,
+  },
+  {
+    name: 'Pagination', group: 'Data', sizes: [], states: ['default'], expected: INTERACTIVE,
     // Pagination has no `disabled` prop — recorded as a gap rather than faked.
     render: () => <Pagination currentPage={2} totalPages={5} onPageChange={noop} />,
   },
   {
-    name: 'NavItem', group: 'ناوبری', sizes: [], states: ['default', 'active', 'disabled'], expected: INTERACTIVE,
-    render: (state) => <NavItem active={state === 'active'} disabled={state === 'disabled'}>داشبورد</NavItem>,
+    name: 'NavItem', group: 'Navigation', sizes: [], states: ['default', 'active', 'disabled'], expected: INTERACTIVE,
+    render: (state) => <NavItem active={state === 'active'} disabled={state === 'disabled'}>Dashboard</NavItem>,
   },
   {
-    name: 'Breadcrumb', group: 'ناوبری', sizes: [], states: ['default'], expected: [],
-    render: () => <Breadcrumb items={[{ label: 'خانه', href: '/' }, { label: 'پروژه' }]} />,
+    name: 'Breadcrumb', group: 'Navigation', sizes: [], states: ['default'], expected: [],
+    render: () => <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Projects' }]} />,
   },
   // ── the rest of the library ──────────────────────────────────────────────
   {
-    name: 'Modal', group: 'ظرف‌ها', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
-    render: (_s, size) => <Modal open title="گفت‌وگو" size={(size ?? 'md') as 'sm'} onClose={noop}>محتوا</Modal>,
-  },
-  {
-    name: 'Sheet', group: 'ظرف‌ها', sizes: ['sm', 'md', 'lg'], states: ['default'], expected: [],
-    render: (_s, size) => <Sheet open title="کشو" size={(size ?? 'md') as 'sm'} onClose={noop}>محتوا</Sheet>,
-  },
-  {
-    name: 'Toast', group: 'بازخورد', sizes: [], states: FEEDBACK_STATES, expected: FEEDBACK_STATES,
-    render: (state) => <Toast open title={state} message="پیام" semantic={state as 'info'} onClose={noop} />,
-  },
-  {
-    name: 'SimpleTooltip', group: 'بازخورد', sizes: [], states: ['default'], expected: [],
-    render: () => <SimpleTooltip content="راهنما"><Button>نگه‌دار</Button></SimpleTooltip>,
-  },
-  {
-    name: 'Combobox', group: 'ورودی‌ها', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
-    render: (state) => (
-      <Combobox label="شهر" options={[{ value: 'a', label: 'تهران' }]} onChange={noop}
-        error={state === 'error' ? 'انتخاب کن' : undefined} disabled={state === 'disabled'} />
+    // CLOSED FIRST, like Popover, Drawer, HoverCard and AlertDialog.
+    //
+    // A fixture is rendered by four tools, and three of them render `states[0]`:
+    // the Components index, the matrix and the studio. With `['default']` and
+    // `open` hard-coded, the index rendered a MODAL — a full-screen overlay with
+    // a backdrop — over the grid of every component, so the page that is meant
+    // to show all 74 of them showed one. The four overlays that already had
+    // `['closed', 'open']` were the ones that behaved.
+    name: 'Modal', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['closed', 'open'], expected: [],
+    render: (state, size) => (
+      <Modal open={state === 'open'} title="Dialog" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Modal>
     ),
   },
   {
-    name: 'MultiSelect', group: 'ورودی‌ها', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    name: 'Popover', group: 'Containers', sizes: [], states: ['closed', 'open'], expected: [],
     render: (state) => (
-      <MultiSelect label="برچسب‌ها" options={[{ value: 'a', label: 'طراحی' }]} onChange={noop}
-        error={state === 'error' ? 'یکی انتخاب کن' : undefined} disabled={state === 'disabled'} />
+      // The closed state is UNCONTROLLED, so a reader can actually open it.
+      // Passing `open={false}` would make the preview a picture of a popover
+      // that cannot be opened — and the studio's whole job is that you can.
+      <Popover
+        trigger={<Button variant="secondary">Open</Button>}
+        {...(state === 'open' ? { open: true } : {})}
+        aria-label="Details"
+      >
+        <span>Popover content</span>
+      </Popover>
     ),
   },
   {
-    name: 'CommandPalette', group: 'ناوبری', sizes: [], states: ['default'], expected: [],
-    render: () => <CommandPalette isOpen onClose={noop} groups={[{ title: 'دستورها', items: [{ id: 'a', label: 'ذخیره', action: noop }] }]} />,
+    name: 'Drawer', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['closed', 'open'], expected: [],
+    render: (state, size) => (
+      <Drawer open={state === 'open'} side="end" size={(size ?? 'md') as 'sm'} title="Filters">
+        <span>Drawer content</span>
+      </Drawer>
+    ),
   },
   {
-    name: 'Table', group: 'داده', sizes: [], states: ['default'], expected: [],
+    name: 'HoverCard', group: 'Containers', sizes: [], states: ['closed', 'open'], expected: [],
+    render: (state) => (
+      // Uncontrolled when closed, so a reader can actually hover it open.
+      <HoverCard
+        trigger={<Button variant="secondary">Hover me</Button>}
+        {...(state === 'open' ? { open: true } : {})}
+        aria-label="Details"
+      >
+        <span>Hover card content</span>
+      </HoverCard>
+    ),
+  },
+  {
+    name: 'Sheet', group: 'Containers', sizes: ['sm', 'md', 'lg'], states: ['closed', 'open'], expected: [],
+    render: (state, size) => (
+      <Sheet open={state === 'open'} title="Sheet" size={(size ?? 'md') as 'sm'} onClose={noop}>Content</Sheet>
+    ),
+  },
+  {
+    name: 'AlertDialog', group: 'Feedback', sizes: [], states: ['closed', 'open'], expected: [],
+    render: (state) => (
+      <AlertDialog
+        open={state === 'open'}
+        title="Delete this project?"
+        description="This cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        destructive
+      />
+    ),
+  },
+  {
+    // A toast is shown or it is not, and it is PORTALLED: four of them rendered
+    // open floated over the Components index in the corner of the page, above
+    // the grid they were supposed to be part of.
+    name: 'Toast', group: 'Feedback', sizes: [], states: ['closed', ...FEEDBACK_STATES], expected: FEEDBACK_STATES,
+    render: (state) => (
+      <Toast
+        open={state !== 'closed'}
+        title={state === 'closed' ? 'info' : state}
+        message="Message"
+        semantic={(state === 'closed' ? 'info' : state) as 'info'}
+        onClose={noop}
+      />
+    ),
+  },
+  {
+    name: 'SimpleTooltip', group: 'Feedback', sizes: [], states: ['default'], expected: [],
+    render: () => <SimpleTooltip content="Tooltip"><Button>Hover me</Button></SimpleTooltip>,
+  },
+  {
+    name: 'Combobox', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state) => (
+      <Combobox label="City" options={[{ value: 'a', label: 'Tehran' }]} onChange={noop}
+        error={state === 'error' ? 'Choose one' : undefined} disabled={state === 'disabled'} />
+    ),
+  },
+  {
+    name: 'MultiSelect', kind: 'input', group: 'Inputs', sizes: [], states: ['default', 'disabled', 'error'], expected: INPUT_STATES,
+    render: (state) => (
+      <MultiSelect label="Labels" options={[{ value: 'a', label: 'Design' }]} onChange={noop}
+        error={state === 'error' ? 'Choose one' : undefined} disabled={state === 'disabled'} />
+    ),
+  },
+  {
+    name: 'CommandPalette', group: 'Navigation', sizes: [], states: ['closed', 'open'], expected: [],
+    render: (state) => (
+      <CommandPalette
+        isOpen={state === 'open'}
+        onClose={noop}
+        groups={[{ title: 'Commands', items: [{ id: 'a', label: 'Save', action: noop }] }]}
+      />
+    ),
+  },
+  {
+    name: 'Table', group: 'Data', sizes: [], states: ['default'], expected: [],
     render: () => (
       <Table>
-        <TableHeader><TableRow><TableHead>نام</TableHead><TableHead>وضعیت</TableHead></TableRow></TableHeader>
-        <tbody><TableRow><TableCell>ستارلی</TableCell><TableCell>فعال</TableCell></TableRow></tbody>
+        <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
+        <tbody><TableRow><TableCell>Starli</TableCell><TableCell>Active</TableCell></TableRow></tbody>
       </Table>
     ),
   },
   {
-    name: 'Calendar', group: 'داده', sizes: [], states: ['gregorian', 'jalali'], expected: [],
+    name: 'TreeView', group: 'Data', sizes: ['sm', 'md', 'lg'], states: ['default', 'expanded'], expected: [],
+    render: (state, size) => (
+      <TreeView
+        label="Files"
+        size={(size ?? 'md') as 'sm'}
+        expanded={state === 'expanded' ? ['src'] : []}
+        nodes={[
+          {
+            id: 'src',
+            label: 'src',
+            children: [
+              { id: 'engine', label: 'engine' },
+              { id: 'components', label: 'components' },
+            ],
+          },
+          { id: 'readme', label: 'README.md' },
+        ]}
+      />
+    ),
+  },
+  {
+    name: 'Calendar', group: 'Data', sizes: [], states: ['gregorian', 'jalali'], expected: [],
     render: (state) => state === 'jalali'
       ? <Calendar calendar="jalali" lang="fa" month={new Date(Date.UTC(2026, 9, 1))} />
       : <Calendar month={new Date(Date.UTC(2026, 9, 1))} />,
   },
   {
-    name: 'FilterBar', group: 'داده', sizes: [], states: ['empty', 'active'], expected: [],
+    name: 'FilterBar', group: 'Data', sizes: [], states: ['empty', 'active'], expected: [],
     render: (state) => (
-      <FilterBar activeFilters={state === 'active' ? [{ id: 'a', label: 'فعال', value: 'x' }] : []} onRemoveFilter={noop} onClearAll={noop}>
+      <FilterBar activeFilters={state === 'active' ? [{ id: 'a', label: 'Active', value: 'x' }] : []} onRemoveFilter={noop} onClearAll={noop}>
         <span />
       </FilterBar>
     ),
   },
   {
-    name: 'AppShell', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
-    render: () => <AppShell><span>محتوا</span></AppShell>,
+    name: 'AppShell', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <AppShell><span>Content</span></AppShell>,
   },
   {
-    name: 'Sidebar', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
-    render: () => <Sidebar><NavItem>داشبورد</NavItem></Sidebar>,
+    name: 'Sidebar', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <Sidebar><NavItem>Dashboard</NavItem></Sidebar>,
   },
   {
-    name: 'Topbar', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    name: 'Topbar', group: 'Layout', sizes: [], states: ['default'], expected: [],
     render: () => <Topbar logo={<span>LIMINAL</span>} />,
   },
   {
-    name: 'Footer', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
+    name: 'Footer', group: 'Layout', sizes: [], states: ['default'], expected: [],
     render: () => <Footer />,
   },
   {
-    name: 'PageHeader', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
-    render: () => <PageHeader title="صفحه" />,
+    name: 'PageHeader', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <PageHeader title="Page" />,
   },
   {
-    name: 'PageSection', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
-    render: () => <PageSection title="بخش">محتوا</PageSection>,
+    name: 'PageSection', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <PageSection title="Section">Content</PageSection>,
   },
   {
-    name: 'Grid', group: 'چیدمان', sizes: [], states: ['default'], expected: [],
-    render: () => <Grid><GridCol col={6}>نیمه</GridCol><GridCol col={6}>نیمه</GridCol></Grid>,
+    name: 'Stack', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <Stack gap={2} direction="row">
+        <span>One</span>
+        <span>Two</span>
+      </Stack>
+    ),
   },
   {
-    name: 'ErrorPage', group: 'کمکی', sizes: [], states: ['default'], expected: [],
-    render: () => <ErrorPage code="۴۰۴" title="پیدا نشد" />,
+    name: 'AspectRatio', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <AspectRatio ratio={16 / 9} style={{ width: 160 }}>
+        <span>16:9</span>
+      </AspectRatio>
+    ),
   },
   {
-    name: 'FormLayout', group: 'کمکی', sizes: [], states: ['default'], expected: [],
-    render: () => <FormLayout><FormLayout.Section title="بخش"><FormLayout.Field label="فیلد"><Input /></FormLayout.Field></FormLayout.Section></FormLayout>,
+    name: 'ScrollArea', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <ScrollArea maxHeight={6} label="Scrollable content" style={{ width: 200 }}>
+        <Stack gap={2}>
+          {Array.from({ length: 12 }, (_, i) => (
+            <span key={i}>Row {i + 1}</span>
+          ))}
+        </Stack>
+      </ScrollArea>
+    ),
   },
   {
-    name: 'Form', group: 'کمکی', sizes: [], states: ['default', 'error'], expected: [],
+    name: 'FocusScope', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => (
+      <FocusScope active={false}>
+        <span>Scoped</span>
+      </FocusScope>
+    ),
+  },
+  {
+    name: 'VisuallyHidden', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <VisuallyHidden>Screen reader only</VisuallyHidden>,
+  },
+  {
+    name: 'Grid', group: 'Layout', sizes: [], states: ['default'], expected: [],
+    render: () => <Grid><GridCol col={6}>Half</GridCol><GridCol col={6}>Half</GridCol></Grid>,
+  },
+  {
+    name: 'ErrorPage', group: 'Utilities', sizes: [], states: ['default'], expected: [],
+    render: () => <ErrorPage code="404" title="Not found" />,
+  },
+  {
+    name: 'FormLayout', group: 'Utilities', sizes: [], states: ['default'], expected: [],
+    render: () => <FormLayout><FormLayout.Section title="Section"><FormLayout.Field label="Field"><Input /></FormLayout.Field></FormLayout.Section></FormLayout>,
+  },
+  {
+    name: 'Form', group: 'Utilities', sizes: [], states: ['default', 'error'], expected: [],
     render: (state) => (
-      <Form validators={{ n: (v) => (String(v ?? '').trim() ? undefined : 'لازم است') }}>
-        <Field name="n" label="نام" required hint={state === 'error' ? undefined : 'نام کامل'}><Input /></Field>
+      <Form validators={{ n: (v) => (String(v ?? '').trim() ? undefined : 'Required') }}>
+        <Field name="n" label="Name" required hint={state === 'error' ? undefined : 'Full name'}><Input /></Field>
       </Form>
     ),
   },

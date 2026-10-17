@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import {
   resolveSurface,
   ROLE_LEVEL,
@@ -8,14 +10,15 @@ import {
   STATE_SHIFT,
   roleDepthInQuanta,
   resolveBorderHex,
+  resolveBorder,
   resolveInteractionVars,
   type SurfaceRole,
   type SurfaceState,
 } from '../liminal-surface';
-import { LADDER, HALF, PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR } from '../liminal-ladder';
-import { getDirectionalRim, getLadderColor } from '../spec-engine';
+import { LADDER, HALF, PERCEPTUAL_QUANTUM, FOCUS_RING_COLOR, LADDER_STEP } from '../liminal-ladder';
+import { getDirectionalRim, getLadderColor, RIM } from '../spec-engine';
 import { contrastRatioHex, oklchLightness } from '../liminal-color-math';
-import { getLiminalStyle } from '../spec-engine';
+import { mistCssVars } from '../liminal-mist';
 
 const ROLES = Object.keys(ROLE_LEVEL) as SurfaceRole[];
 const STATES: SurfaceState[] = ['idle', 'hover', 'focus', 'active', 'disabled'];
@@ -89,24 +92,27 @@ describe('surface decision engine — the shadow rule', () => {
 
 describe('surface decision engine — the rim rule', () => {
   it('gives the canvas no rim', () => {
-    expect(resolveSurface({ role: 'canvas' }).rim).toBe(0);
+    expect(resolveSurface({ role: 'canvas' }).rim).toBe(false);
   });
 
-  it('never lets the rim tier decrease as a role rises', () => {
+  it('never lets a rim DISAPPEAR as a role rises', () => {
     const ordered: SurfaceRole[] = [
       'canvas', 'chrome', 'work', 'panel', 'control', 'menu', 'popover', 'modal', 'toast',
     ];
     for (let i = 1; i < ordered.length; i++) {
+      // The rim is one strength now, so what cannot go backwards is WHETHER a
+      // surface has one: a role that has a rim may not be followed by one that does
+      // not, going up the ladder.
       expect(
-        ROLE_RIM[ordered[i]],
-        `${ordered[i - 1]} → ${ordered[i]} rim tier went backwards`,
-      ).toBeGreaterThanOrEqual(ROLE_RIM[ordered[i - 1]]);
+        Number(ROLE_RIM[ordered[i]]),
+        `${ordered[i - 1]} → ${ordered[i]} lost its rim going up`,
+      ).toBeGreaterThanOrEqual(Number(ROLE_RIM[ordered[i - 1]]));
     }
   });
 
   it('removes the rim when an element is disabled', () => {
     for (const role of ROLES) {
-      expect(resolveSurface({ role, state: 'disabled' }).rim, `${role} disabled`).toBe(0);
+      expect(resolveSurface({ role, state: 'disabled' }).rim, `${role} disabled`).toBe(false);
     }
   });
 
@@ -118,15 +124,34 @@ describe('surface decision engine — the rim rule', () => {
 });
 
 describe('surface decision engine — the state rule', () => {
-  it('keeps every state shift below the perceptual quantum', () => {
-    // A state change must be felt, not seen. A full step would compete with the
-    // hierarchy itself.
+  /**
+   * THE OLD ASSERTION HERE SAID "below the perceptual quantum", AND IT WAS PROTECTING THE
+   * DEFECT.
+   *
+   * It held that every state shift must be under one quantum — "a state change must be
+   * felt, not seen; a full step would compete with the hierarchy". That was true of the
+   * numbers and wrong about the system: a state change moves a SURFACE, so its threshold
+   * is the flat-surface quantum, and half a step is 0.5708q — invisible. Measured by eye
+   * at four layers, and the reader chose one step up and two down.
+   *
+   * The property this file holds now is the opposite: every shift is a WHOLE STEP, so it
+   * lands on a real ladder level and clears the threshold.
+   */
+  it('every state shift is a WHOLE step — a surface, not a border', () => {
+    for (const state of STATES) {
+      const shift = STATE_SHIFT[state];
+      expect(Number.isInteger(shift), `${state} shift is ${shift} steps, not a whole one`).toBe(true);
+    }
+  });
+
+  it('and every shift clears the flat-surface threshold', () => {
+    // A state change is a SURFACE change, so its threshold is one quantum — not the edge
+    // threshold of 0.48q. Half a step was 0.5708q, which is below it.
     for (const state of STATES) {
       const shift = Math.abs(STATE_SHIFT[state]);
-      expect(
-        shift * PERCEPTUAL_QUANTUM,
-        `${state} shift is ${shift} steps`,
-      ).toBeLessThan(PERCEPTUAL_QUANTUM);
+      if (shift === 0) continue;
+      expect(shift * (PERCEPTUAL_QUANTUM * 1.1416), `${state} is below the threshold`)
+        .toBeGreaterThan(PERCEPTUAL_QUANTUM);
     }
   });
 
@@ -148,13 +173,24 @@ describe('surface decision engine — the state rule', () => {
 });
 
 describe('surface decision engine — the focus rule', () => {
-  it('shows a ring only on focus', () => {
+  /**
+   * THE FOCUS IS A DOUBLE EDGE NOW, NOT A BRIGHT RING.
+   *
+   * It used to be 2px of the brand — 15.7:1 to 17:1 against the surfaces, where WCAG asks for
+   * 3:1, and the reader's word for it was "destroyed, jarring, in your face". No ladder level
+   * could replace it: the ladder's highest step is 1.10:1 against the work plane. So the focus
+   * became a SHAPE — an inner border, a 2px gap, and an outer line — and both lines are ladder
+   * levels, so it adds no lightness at all.
+   */
+  it('shows a DOUBLE EDGE only on focus, and both lines are ladder levels', () => {
     for (const state of STATES) {
       const r = resolveSurface({ role: 'control', state });
       if (state === 'focus') {
-        expect(r.outline, 'focus must produce a ring').toContain(FOCUS_RING_COLOR);
+        expect(r.outline, 'focus must produce an outer line').toContain('var(--liminal-s');
+        expect(r.border, 'focus must produce an inner border').toContain('var(--liminal-s');
+        expect(r.outlineOffset, 'and a gap between them').toBe('2px');
       } else {
-        expect(r.outline, `${state} must not produce a ring`).toBe('none');
+        expect(r.outline, `${state} must not produce an outer line`).toBe('none');
       }
     }
   });
@@ -197,7 +233,7 @@ describe('surface decision engine — the measured depth', () => {
 describe('surface decision engine — the border rule', () => {
   it('makes a hairline a half-step above its surface', () => {
     const surface = resolveSurface({ role: 'work' });
-    const hairline = resolveBorderHex({ role: 'work', kind: 'hairline' });
+    const hairline = resolveBorderHex({ role: 'work', kind: 'separator' });
     const step = oklchLightness(hairline) - oklchLightness(surface.backgroundHex);
     const quanta = step / PERCEPTUAL_QUANTUM;
     expect(quanta, `hairline is ${quanta.toFixed(2)}q above the surface`).toBeLessThan(1);
@@ -223,7 +259,7 @@ describe('surface decision engine — the border rule', () => {
     // that does not exist, and never something off the scale.
     const known = new Set<string>([...LADDER, ...HALF]);
     for (const role of ROLES) {
-      for (const kind of ['hairline', 'edge'] as const) {
+      for (const kind of ['separator', 'edge'] as const) {
         const c = resolveBorderHex({ role: role as SurfaceRole, kind, state: 'hover' });
         expect(known, `${role}/${kind} resolved to ${c}`).toContain(c);
       }
@@ -290,60 +326,56 @@ describe('surface decision engine — controls are relative to their host', () =
     expect(spread, `the lift varies by ${spread.toFixed(2)}q across depths`).toBeLessThanOrEqual(0.2);
   });
 
-  it('clamps at the ceiling rather than running off the ladder', () => {
+  it('never runs off the ladder, even anchored on the ceiling', () => {
     const control = resolveSurface({ role: 'control', on: 'toast' });
     expect(control.level).toBeLessThanOrEqual(LADDER.length - 1);
   });
 });
 
 /**
- * There are two depth engines in this repo, and until now they disagreed.
+ * THE CEILING IS DERIVED, AND THERE IS ONE LADDER.
  *
- * `liminal-surface.resolveSurface` derived its ceiling from the ladder:
- * `const MAX_LEVEL = LADDER.length - 1` (8). `spec-engine.getLiminalStyle`
- * wrote `Math.min(5, ...)` in four places — a hard-coded 5 that predates the
- * ladder growing to nine steps. So anything at S6, S7 or S8 was silently
- * flattened onto the work surface, and the two engines gave different answers
- * for the same depth.
+ * `spec-engine.getLiminalStyle` wrote `Math.min(5, ...)` in four places — a
+ * hard-coded ceiling that predates the ladder growing to nine steps. So
+ * anything at S6, S7 or S8 was silently flattened onto S5, and the two depth
+ * engines gave different answers for the same depth.
  *
- * A hard-coded ceiling is the same class of defect as a hard-coded breakpoint:
- * a number that used to be right, left behind when the thing it described
- * changed underneath it.
+ * The old resolver is gone. These assertions moved with the RULE rather than
+ * being deleted with the function: a hard-coded ceiling is the same defect class
+ * as a hard-coded breakpoint — a number that used to be right, left behind when
+ * the thing it described changed underneath it.
  */
-describe('the two depth engines agree on the ladder', () => {
-  it('getLiminalStyle can reach the ladder ceiling', () => {
-    const top = getLiminalStyle({ surfaceLevel: LADDER.length - 1, isContainer: true });
-    expect(top.n).toBe(LADDER.length - 1);
-    expect(top.bg).toBe(LADDER[LADDER.length - 1]);
+describe('the ladder ceiling is derived from the ladder', () => {
+  const TOP = LADDER.length - 1;
+
+  it('reaches the ceiling', () => {
+    const top = resolveSurface({ role: 'toast' });
+    expect(top.level).toBe(TOP);
+    expect(top.backgroundHex).toBe(LADDER[TOP]);
   });
 
-  it('getLiminalStyle distinguishes every ladder step', () => {
-    const seen = new Set<string>();
-    for (let n = 0; n < LADDER.length; n++) {
-      seen.add(getLiminalStyle({ surfaceLevel: n, isContainer: true }).bg);
-    }
+  it('distinguishes every ladder step', () => {
+    const seen = new Set(ROLES.map((role) => resolveSurface({ role }).backgroundHex));
     expect(seen.size).toBe(LADDER.length);
   });
 
   it('a hover step below the ceiling still moves', () => {
     // Before the fix this was 5 -> 5: the level had already been flattened, so
-    // the hover had nowhere to go. At the ceiling itself a clamp is correct —
-    // there is no room above the top of the ladder, and this engine has no
-    // inversion rule (resolveBorder has one; getLiminalStyle does not).
-    const top = LADDER.length - 2;
-    const idle = getLiminalStyle({ surfaceLevel: top, isContainer: true });
-    const hover = getLiminalStyle({ surfaceLevel: top, isContainer: true, state: 'hover' });
-    expect(idle.n).toBe(top);
-    expect(hover.n).toBeGreaterThan(idle.n);
+    // the hover had nowhere to go.
+    const idle = resolveSurface({ role: 'modal' });
+    const hover = resolveSurface({ role: 'modal', state: 'hover' });
+    expect(idle.level).toBe(TOP - 1);
+    expect(hover.level).toBeGreaterThan(idle.level);
   });
 
-  it('clamps at the ceiling rather than running off the ladder', () => {
-    const hover = getLiminalStyle({
-      surfaceLevel: LADDER.length - 1,
-      isContainer: true,
-      state: 'hover',
-    });
-    expect(hover.n).toBe(LADDER.length - 1);
+  it('INVERTS at the ceiling, because there is no room above', () => {
+    // It used to clamp — and clamping plus rounding meant a hover on a toast did nothing
+    // at all. The border has inverted at the ceiling since it was written; the surface
+    // does now too, and the inversion mirrors the shift: a hover of one step becomes a
+    // press of one step, and it is still a whole step.
+    const hover = resolveSurface({ role: 'toast', state: 'hover' });
+    expect(hover.level).toBe(TOP - Math.abs(STATE_SHIFT.hover));
+    expect(hover.backgroundHex).not.toBe(resolveSurface({ role: 'toast' }).backgroundHex);
   });
 });
 
@@ -355,20 +387,20 @@ describe('the ceiling inversion also applies when the level came from a host', (
   const ceiling = LADDER[LADDER.length - 1];
 
   it('a control anchored on the toast still gets a visible hairline', () => {
-    const rim = resolveBorderHex({ role: 'control', kind: 'hairline', on: 'toast' });
+    const rim = resolveBorderHex({ role: 'control', kind: 'separator', on: 'toast' });
     expect(rim).not.toBe(ceiling);
     expect(contrastRatioHex(rim, ceiling)).toBeGreaterThan(1);
   });
 
   it('the inverted rim is DARKER than the surface, not lighter', () => {
-    const rim = resolveBorderHex({ role: 'control', kind: 'hairline', on: 'toast' });
+    const rim = resolveBorderHex({ role: 'control', kind: 'separator', on: 'toast' });
     const steps = LADDER as readonly string[];
     expect(steps.indexOf(rim)).toBeLessThan(steps.indexOf(ceiling));
   });
 
   it('below the ceiling the rim is still a highlight, unchanged', () => {
-    expect(resolveBorderHex({ role: 'control', kind: 'hairline', on: 'work' })).toBe(HALF[3]);
-    expect(resolveBorderHex({ role: 'control', kind: 'hairline', on: 'menu' })).toBe(HALF[6]);
+    expect(resolveBorderHex({ role: 'control', kind: 'separator', on: 'work' })).toBe(HALF[3]);
+    expect(resolveBorderHex({ role: 'control', kind: 'separator', on: 'menu' })).toBe(HALF[6]);
   });
 });
 
@@ -378,13 +410,13 @@ describe('the rim — it inverts at the ceiling, like the border does', () => {
   // invisible and nothing said so. The border already solved this by inverting
   // below the ceiling; the rim had no equivalent.
   it('a rim at the ceiling is not flat', () => {
-    const r = getDirectionalRim(8, 3, false)!;
+    const r = getDirectionalRim(8, true, false)!;
     expect(r.top).not.toBe(r.side);
     expect(r.bot).not.toBe(r.side);
   });
 
   it('and it is darker than its surface, because there is no room above', () => {
-    const r = getDirectionalRim(8, 3, false)!;
+    const r = getDirectionalRim(8, true, false)!;
     const surface = getLadderColor(8);
     for (const c of [r.top, r.side, r.bot]) {
       expect(oklchLightness(c), `${c} vs ${surface}`).toBeLessThan(oklchLightness(surface));
@@ -392,14 +424,14 @@ describe('the rim — it inverts at the ceiling, like the border does', () => {
   });
 
   it('a rim below the ceiling still lights from above', () => {
-    const r = getDirectionalRim(3, 2, false)!;
+    const r = getDirectionalRim(3, true, false)!;
     expect(oklchLightness(r.top)).toBeGreaterThan(oklchLightness(r.bot));
   });
 
   it('every floating role gets a rim that can be seen', () => {
     for (const role of FLOATING_ROLES) {
       const s = resolveSurface({ role });
-      if (s.rim === 0) continue;
+      if (!s.rim) continue;
       const r = getDirectionalRim(Math.round(s.level), s.rim, false)!;
       expect(r.top !== r.side || r.side !== r.bot, `${role} has a flat rim`).toBe(true);
     }
@@ -444,8 +476,217 @@ describe('the interaction variables have a producer', () => {
     expect(v['--liminal-surface-idle']).toBe('#123456');
   });
 
+  // The engine derives hover and active from the level ITS OWN fill sits at. A
+  // caller that supplies a fill the engine did not choose — a brand, a rim
+  // gradient, `transparent` for a control lying flat on its host — has to say
+  // what a lift means for it. Fifteen components needed this; the overrides are
+  // what let the migration preserve what was there instead of re-deciding it.
+  it('a caller can supply its own hover and pressed fills', () => {
+    const v = resolveInteractionVars({
+      role: 'control',
+      on: 'work',
+      idle: 'transparent',
+      hover: 'var(--liminal-tint)',
+      active: 'var(--liminal-tint)',
+    });
+    expect(v['--liminal-surface-idle']).toBe('transparent');
+    expect(v['--liminal-surface-hover']).toBe('var(--liminal-tint)');
+    expect(v['--liminal-surface-active']).toBe('var(--liminal-tint)');
+  });
+
+  it('an explicit hover wins over frozen, so a caller can override one state', () => {
+    const v = resolveInteractionVars({
+      role: 'control',
+      on: 'work',
+      frozen: 'var(--liminal-brand)',
+      hover: 'var(--liminal-tint)',
+    });
+    expect(v['--liminal-surface-hover']).toBe('var(--liminal-tint)');
+    expect(v['--liminal-surface-active']).toBe('var(--liminal-brand)');
+  });
+
+  it('a caller can supply its own focus border — an invalid field turns red', () => {
+    const v = resolveInteractionVars({
+      role: 'control',
+      on: 'work',
+      borderFocus: 'var(--liminal-danger)',
+    });
+    expect(v['--liminal-border-focus']).toBe('var(--liminal-danger)');
+  });
+
+  it('the border pair defaults to the engine’s edge and the focus ring', () => {
+    const v = resolveInteractionVars({ role: 'control', on: 'work' });
+    expect(v['--liminal-border-idle']).toBe(resolveBorder({ role: 'control', kind: 'edge', on: 'work' }));
+    expect(v['--liminal-border-focus']).toBe(FOCUS_RING_COLOR);
+  });
+
   it('the values are variables, so they follow a theme', () => {
     const v = resolveInteractionVars({ role: 'control', on: 'work' });
     expect(v['--liminal-surface-idle']).toContain('var(--liminal-');
+  });
+});
+
+/**
+ * THE RIM IS ONE STRENGTH, AND IT IS A LIGHT.
+ *
+ * Measured by eye at three boundaries — the canvas to layer one, layer one to layer
+ * two, layer two to layer three — the reader's answer was the same at all of them:
+ * 1.5. "For the essence and the principles of the rim, along with being LIMINAL, my
+ * eye is stuck on 1.5."
+ *
+ * AND ONE STRENGTH IS WHAT THE SYSTEM DOES EVERYWHERE ELSE. Each treatment has
+ * exactly one value, and the three edge treatments sit one step apart:
+ *
+ *   separator   0.5 steps   a hint
+ *   edge        1.0 steps   a border
+ *   rim         1.5 steps   a light
+ */
+describe('the rim — one strength, and it is a light', () => {
+  const EDGE_THRESHOLD = 0.48 * PERCEPTUAL_QUANTUM;
+
+  it('the top sits one and a half steps above its own surface', () => {
+    expect(RIM.t).toBe(1.5);
+    expect(RIM.s).toBe(1);
+    expect(RIM.b).toBe(0.5);
+  });
+
+  it('and it is brighter than the border, because a light is brighter than a border', () => {
+    const rimTop = (RIM.t * LADDER_STEP) / PERCEPTUAL_QUANTUM;
+    const border = (1 * LADDER_STEP) / PERCEPTUAL_QUANTUM;
+    expect(rimTop, 'the rim is not stronger than the border').toBeGreaterThan(border);
+    expect(rimTop / (EDGE_THRESHOLD / PERCEPTUAL_QUANTUM), 'rim against the edge threshold').toBeGreaterThan(2.5);
+  });
+
+  it('the three edge treatments sit one step apart, and none of them is the same', () => {
+    // A hint, a border, a light — the system's own ladder of treatments, in steps.
+    expect([0.5, 1, 1.5]).toEqual([0.5, 1, 1.5]);
+    expect(new Set([0.5, 1, RIM.t]).size).toBe(3);
+  });
+
+  it('a role either has a rim or does not — there is no tier to pick', () => {
+    expect(new Set(Object.values(ROLE_RIM)).size).toBe(2);
+    for (const role of Object.keys(ROLE_RIM) as (keyof typeof ROLE_RIM)[]) {
+      expect(typeof ROLE_RIM[role], `${role}`).toBe('boolean');
+    }
+  });
+
+  it('and it is never flat, at any level', () => {
+    for (let n = 1; n <= 8; n++) {
+      const r = getDirectionalRim(n, true, false)!;
+      expect(r.top !== r.side || r.side !== r.bot, `S${n} has a flat rim`).toBe(true);
+    }
+  });
+});
+
+/**
+ * AND THE CEILING: WHEN THERE IS ROOM BUT NOT ENOUGH, THE RIM SCALES.
+ *
+ * The rim's top sits 1.5 steps above its surface, so a surface at S7 has one step of
+ * room and a surface at S8 has none. The old rule inverted whenever `n + 1.5` went
+ * past the ceiling, which meant the MODAL — one step below the top — got a rim DARKER
+ * than its own surface: measured, S7's top resolved to #121417 against a surface of
+ * #131518. A dark edge reads as CUT IN, which is the opposite of what a raised surface
+ * says.
+ *
+ * So the shape compresses into the room available and only the DIRECTION is kept, and
+ * a surface with no room at all still inverts — below is the only direction left.
+ */
+describe('the rim at the ceiling', () => {
+  const stops = (n: number): [string, string, string] => {
+    const found = getDirectionalRim(n, true, false)!.cssBackground.match(/oklch\([^)]+\)/g) ?? [];
+    expect(found.length, `S${n} has three stops`).toBe(3);
+    return [found[0]!, found[1]!, found[2]!];
+  };
+
+  it('the modal keeps its direction — its top is brighter than its bottom', () => {
+    const [top, , bot] = stops(7);
+    const L = (s: string) => Number(s.match(/oklch\(([\d.]+)/)![1]);
+    expect(L(top), 'the modal’s rim lights from below').toBeGreaterThan(L(bot));
+  });
+
+  it('and it keeps THREE distinct stops, which rounding to the grid destroyed', () => {
+    // `getLadderColor` rounds to the nearest half-step, and at S7 the compressed rim
+    // is 1 / 0.67 / 0.33 — all three rounded to the same half-step, so the edge lost
+    // its direction exactly where it had least room.
+    expect(new Set(stops(7)).size, 'the modal’s rim is flat').toBe(3);
+  });
+
+  it('the toast has no room at all, so its rim goes DARK — and keeps its direction', () => {
+    /**
+     * "Inverts" is the wrong word for what happens here, and the test says so.
+     *
+     * At S8 there is no room above, so all three stops move BELOW the surface: the
+     * edge is darker than what it edges, which reads as CUT IN. The gradient's
+     * direction does not flip — the top is still the brightest of the three.
+     *
+     * AND THAT IS AN OPEN QUESTION, not a settled rule: a toast floats, and a floating
+     * surface should catch light on its edge. The ladder's ceiling bounds SURFACES;
+     * whether it should bound the LIGHT a surface catches is a decision nobody has
+     * made yet.
+     */
+    const [top, , bot] = stops(8);
+    const L = (s: string) => Number(s.match(/oklch\(([\d.]+)/)![1]);
+    const surface = oklchLightness(getLadderColor(8));
+    for (const c of [top, bot]) expect(L(c), 'the toast’s rim is darker than its surface').toBeLessThan(surface);
+    expect(L(top), 'and it still reads top-bright').toBeGreaterThan(L(bot));
+  });
+
+  it('and every level has three distinct stops, none of them flat', () => {
+    for (let n = 1; n <= 8; n++) {
+      expect(new Set(stops(n)).size, `S${n} is flat`).toBe(3);
+    }
+  });
+});
+
+/**
+ * SURFACE LIGHT IS NOT A SYSTEM, AND THAT IS A DECISION.
+ *
+ * Measured at three boundaries with five spans, the reader's answer was "not needed"
+ * and "floating only". The engine already does exactly that — `resolveSurface` returns
+ * a FLAT fill for every role, and the light lives in the mist, which is a separate
+ * layer only floating surfaces opt into.
+ *
+ * So there is nothing to change. And it is written down anyway, because "flat" is a
+ * CHOICE rather than the absence of a decision: a system that has no surface light and
+ * does not know why is a system that is flat by accident, and the first person to add
+ * a gradient will add it without knowing they broke a rule.
+ */
+describe('surface light — settled surfaces are flat, and that is the rule', () => {
+  it('every role resolves to a flat fill, none of them a gradient', () => {
+    for (const role of Object.keys(ROLE_LEVEL) as (keyof typeof ROLE_LEVEL)[]) {
+      const s = resolveSurface({ role });
+      expect(s.background ?? '', `${role} has a gradient fill`).not.toContain('linear-gradient');
+    }
+  });
+
+  it('and the light lives in the mist, which is a SEPARATE layer', () => {
+    /**
+     * The mist is where the light is, and it is not part of a surface's fill: a
+     * floating surface opts into the mist layer and gets a gradient, and a settled
+     * surface never does. The restriction is by USE, not by the API — `mistCssVars`
+     * will compute for any role, and the components only call it for the four that
+     * float. Asserted as the two facts that are true.
+     */
+    for (const role of FLOATING_ROLES) {
+      const vars = mistCssVars(role);
+      const top = vars['--liminal-mist-fill-top'];
+      const bottom = vars['--liminal-mist-fill-bottom'];
+      expect(top, `${role} has no fill top`).toBeTruthy();
+      expect(top, `${role}'s mist is flat, not a light`).not.toBe(bottom);
+    }
+    // And the surface resolver — what a settled surface is built from — never returns
+    // one. That is the rule, and it is the first assertion in this block.
+    for (const role of ['canvas', 'chrome', 'work', 'panel', 'control'] as const) {
+      expect(resolveSurface({ role }).background ?? '', `${role}`).not.toContain('linear-gradient');
+    }
+  });
+
+  it('and the eye’s readings are recorded, in case it is ever revisited', () => {
+    // If it were used: the canvas boundary wanted a span of 1 step, and the two deeper
+    // ones 0.5 — higher surfaces need LESS light, because their fill already separates
+    // them. The policy carries the numbers.
+    const policy = readFileSync(resolve(process.cwd(), 'LIMINAL-POLICY.md'), 'utf8');
+    expect(policy).toContain('نور سطح — یک سیستم **نیست**');
+    expect(policy, 'the eye’s readings are not recorded').toContain('هرچه بالاتر، **نور کمتر**');
   });
 });

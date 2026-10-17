@@ -1,4 +1,4 @@
-import { CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE, PERCEPTUAL_QUANTUM } from './liminal-ladder';
+import { LADDER, HALF, CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE, PERCEPTUAL_QUANTUM } from './liminal-ladder';
 import { hexToRgb, rgbToOklch, oklchToRgb, rgbToHex } from './liminal-color-math';
 import { LiminalLayoutEngine as L } from './liminal-layout-engine';
 import { LiminalMotionEngine as M } from './liminal-motion-engine';
@@ -6,19 +6,39 @@ import { LiminalColorEngine as C } from './liminal-color-engine';
 
 /**
  * LIMINAL · THEME
- * «تم یک بازنویسیِ CSS است — نه یک نسخه‌ی دوم از سیستم.»
+ * «تم یک مقیاس است، نه یک رنگ.»
  *
- * The roadmap's definition of done for this phase: a designer changes the brand
- * hue and the whole system updates, mathematically and consistently.
+ * ─────────────────────────────────────────────────────────────────────────────
+ * IT USED TO REGENERATE THE LADDER AT A HUE. IT NO LONGER DOES.
  *
- * Three things a theme may change, and one it may not.
+ * LIMINAL's identity is MONOCHROME — the code says so about the brand
+ * ("Monochrome identity. LOCKED.") and the ladder proves it: chroma 0.0069, a
+ * pure luminance ramp. Measured, a hue theme turns that ramp green, purple or
+ * red:
  *
- *   brandHue    the ladder regenerates. The STEP is untouched, because the step
- *               is a measured perceptual quantum — it does not depend on which
- *               colour the ladder is. That is the whole point of building the
- *               ladder in OKLCH: hue moves, perception does not.
- *   density     the spacing and control scales multiply.
- *   motion      the durations multiply.
+ *   system (258.4)  #060709 #07090b #090b0d …   neutral
+ *   hue 145         #060806 #080907 #090b09 …   green
+ *   hue 300         #070609 #09080b …           purple
+ *   chroma 0.04     #000a01 #020c02 …           saturated green
+ *
+ * A ramp that can turn green is not an identity. And the theme carried a second
+ * defect on top of it: it regenerated the HALF-STEPS by its own method, so all
+ * eight differed from the engine's `HALF` — a second answer for the same value,
+ * the same defect class as the two surface resolvers. At hue 145 one of the
+ * eight left the perceptual band.
+ *
+ * So the ladder is FIXED. It is the identity, and an identity is not a setting.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT A THEME MAY CHANGE — two SCALES, and they move together.
+ *
+ *   density   spacing, control heights AND radii, multiplied as one set. Scaling
+ *             the padding without the radii breaks the concentric law
+ *             (`r_inner = max(4, r_outer − padding)`), which is what the old
+ *             theme did. And the touch floor is enforced, not warned about:
+ *             `density: 0.8` took CONTROL.md to 35.2px, below the 44px minimum.
+ *
+ *   motion    the durations, with a floor so nothing becomes instant.
  *
  *   NOT the semantic hues. Those are a convention — success is green because
  *   readers expect it to be — and a theme that turns success purple is not a
@@ -35,48 +55,49 @@ const MIN_STEP_Q = 1.0;
 const MAX_STEP_Q = 1.5;
 
 export interface LiminalThemeOptions {
-  /** The ladder's hue angle in OKLCH degrees. The default is the system's own. */
-  brandHue?: number;
-  /** The ladder's chroma. Higher is more saturated; the default is near-neutral. */
-  brandChroma?: number;
-  /** Multiplies the spacing and control scales. 1 is the designed density. */
+  /**
+   * Multiplies the geometric scales AS ONE SET — spacing, control heights and
+   * radii. 1 is the designed density.
+   *
+   * The lower bound is not a preference: `CONTROL.md` is 44px because that is
+   * the touch floor, and a density that takes it below is clamped and reported.
+   */
   density?: number;
-  /** Multiplies every duration. 1 is the designed motion. */
+  /** Multiplies every duration, with a floor so nothing becomes instant. */
   motion?: number;
   /** A name for the generated scope, for debugging. */
   name?: string;
 }
 
 export interface ThemeWarning {
-  /** The level whose step from the one below it is out of band. */
-  level: number;
-  /** The realised step, in quanta. */
-  q: number;
-  kind: 'below-quantum' | 'above-band';
+  /** Which scale was out of bounds. */
+  scale: 'density' | 'motion';
+  /** What was asked for. */
+  asked: number;
+  /** What the engine used instead. */
+  used: number;
+  why: string;
 }
 
 export interface LiminalTheme {
   name: string;
-  brandHue: number;
-  brandChroma: number;
   density: number;
   motion: number;
-  /** The nine surfaces, regenerated at this hue. */
+  /**
+   * The nine surfaces. The engine's own, always — the ladder is the identity.
+   * It is still emitted into the scope so a theme block is self-contained.
+   */
   ladder: string[];
+  /** The half-steps. The engine's own, for the same reason. */
+  halves: string[];
   /** The CSS that overrides the defaults. Drop it in a scope. */
   css: string;
   /**
-   * Steps this hue cannot hold.
+   * A scale that was clamped, and why.
    *
-   * 8-bit sRGB is not equally fine at every hue. Measured across five hues:
-   * LIMINAL 1.07q–1.21q, Plum 1.07q–1.39q, but Forest 0.85q–1.45q, Abyss
-   * 0.92q–1.45q and Ember 0.98q–1.33q. A step below the quantum is a pair of
-   * surfaces the eye cannot separate — which is the one thing the ladder exists
-   * to prevent.
-   *
-   * The search repairs what it can and this reports what it cannot. A designer
-   * choosing a hue should know before shipping it, and a theme that silently
-   * produced an unreadable ladder would be worse than one that refused.
+   * The old theme WARNED about a hue whose ladder could not hold its steps and
+   * shipped it anyway. A warning that does not change the outcome is a comment.
+   * These are clamps: the engine used a different number than the one asked for.
    */
   warnings: ThemeWarning[];
 }
@@ -152,53 +173,62 @@ export function halfStepsAtHue(hue: number, chroma = LADDER_CHROMA): string[] {
 }
 
 export function createLiminalTheme(options: LiminalThemeOptions = {}): LiminalTheme {
-  const {
-    brandHue = LADDER_HUE,
-    brandChroma = LADDER_CHROMA,
-    density = 1,
-    motion = 1,
-    name = 'liminal',
-  } = options;
+  const { density: askedDensity = 1, motion: askedMotion = 1, name = 'liminal' } = options;
 
-  const ladder = ladderAtHue(brandHue, brandChroma);
-  const halves = halfStepsAtHue(brandHue, brandChroma);
+  const warnings: ThemeWarning[] = [];
+
+  // ── density: the touch floor is a CLAMP, not a warning ────────────────────
+  // `CONTROL.md` is 44px because that is the floor a finger needs. A density of
+  // 0.8 asked for 35.2px; the old theme emitted it and mentioned it afterwards.
+  const minDensity = L.TARGET.min / L.CONTROL.md;
+  const density = Math.max(minDensity, askedDensity);
+  if (density !== askedDensity) {
+    warnings.push({
+      scale: 'density',
+      asked: askedDensity,
+      used: density,
+      why: `CONTROL.md would fall to ${(L.CONTROL.md * askedDensity).toFixed(1)}px, below the ${L.TARGET.min}px touch floor`,
+    });
+  }
+
+  // ── motion: a floor, so nothing becomes instant ───────────────────────────
+  const minMotion = 0.25;
+  const motion = Math.max(minMotion, askedMotion);
+  if (motion !== askedMotion) {
+    warnings.push({ scale: 'motion', asked: askedMotion, used: motion, why: 'below the floor where a transition reads as instant' });
+  }
 
   const lines: string[] = [];
   lines.push(`/* LIMINAL theme — ${name} */`);
-  lines.push(`/* brandHue ${brandHue} · chroma ${brandChroma} · density ${density} · motion ${motion} */`);
+  lines.push(`/* density ${density} · motion ${motion} — the ladder is the identity and is not a setting */`);
 
-  // The ladder. The step is NOT scaled: it is a perceptual quantum.
-  ladder.forEach((hex, i) => lines.push(`--liminal-s${i}: ${hex};`));
-  halves.forEach((hex, i) => lines.push(`--liminal-s${i}-5: ${hex};`));
+  // The ladder and its half-steps: the engine's own, always.
+  LADDER.forEach((hex, i) => lines.push(`--liminal-s${i}: ${hex};`));
+  (HALF as readonly string[]).forEach((hex, i) => lines.push(`--liminal-s${i}-5: ${hex};`));
 
-  // Density multiplies the geometric scales. A control height is one of them —
-  // a denser interface has smaller controls, which is the point of the scale.
   if (density !== 1) {
-    Object.entries(L.SPACING).forEach(([k, v]) => lines.push(`--liminal-space-${k}: ${Math.round(v * density * 100) / 100}px;`));
-    Object.entries(L.CONTROL).forEach(([k, v]) => lines.push(`--liminal-control-${k}: ${Math.round(v * density * 100) / 100}px;`));
+    const scale = (v: number) => `${Math.round(v * density * 100) / 100}px`;
+    Object.entries(L.SPACING).forEach(([k, v]) => lines.push(`--liminal-space-${k}: ${scale(v)};`));
+    Object.entries(L.CONTROL).forEach(([k, v]) => lines.push(`--liminal-control-${k}: ${scale(v)};`));
+    // THE RADII MOVE WITH THE PADDING. Scaling one and not the other breaks
+    // `r_inner = max(4, r_outer − padding)` — the concentric law — which is
+    // exactly what the old theme did. `full` is a sentinel, not a length.
+    Object.entries(L.RADIUS).forEach(([k, v]) => {
+      if (typeof v === 'number' && v < 100) lines.push(`--liminal-radius-${k}: ${scale(v)};`);
+    });
   }
 
-  // Motion multiplies the durations.
   if (motion !== 1) {
     Object.entries(M.DURATION).forEach(([k, v]) => lines.push(`--liminal-duration-${k}: ${Math.round(v * motion)}ms;`));
   }
 
-  const warnings: ThemeWarning[] = [];
-  for (let i = 1; i < ladder.length; i++) {
-    const dL = rgbToOklch(hexToRgb(ladder[i])).L - rgbToOklch(hexToRgb(ladder[i - 1])).L;
-    const q = dL / PERCEPTUAL_QUANTUM;
-    if (q < MIN_STEP_Q) warnings.push({ level: i, q, kind: 'below-quantum' });
-    else if (q > MAX_STEP_Q) warnings.push({ level: i, q, kind: 'above-band' });
-  }
-
   return {
     name,
-    brandHue,
-    brandChroma,
     density,
     motion,
-    ladder,
-    css: `[data-liminal-theme="${name}"] {\n  ${lines.join('\n  ')}\n}`,
+    ladder: [...LADDER],
+    halves: [...(HALF as readonly string[])],
+    css: `[data-liminal-theme="${name}"] {\n${lines.map((l) => '  ' + l).join('\n')}\n}`,
     warnings,
   };
 }

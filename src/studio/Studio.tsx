@@ -1,76 +1,110 @@
-import React, { useState, useMemo } from 'react';
-import { FIXTURES, coverage } from '../components/__matrix__/fixtures';
-import type { ComponentFixture } from '../components/__matrix__/fixtures';
-import { LADDER, getTextStyle } from '../engine/spec-engine';
-import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
-import { LiminalMotionEngine } from '../engine/liminal-motion-engine';
-import { useMediaQuery } from '../engine/liminal-hooks';
-
 /**
  * LIMINAL · STUDIO
- * «صفحه‌ای که ماتریس نمی‌تواند بسازد.»
  *
- * The matrix renders every state to static markup, which is enough to see a
- * component and not enough to TOUCH one. Hover and focus are CSS; a prop change
- * is a re-render; neither exists in a still frame. And this session found five
- * defects in exactly the places a still frame is blind to.
+ * The tool a component is reviewed with, and it is ORGANISED AS AN ACCORDION.
  *
- * So the studio is a live app, not a generated page: pick a component, change
- * its props, see the result, read the JSX that produced it. It is fed by the
- * SAME fixture table the matrix uses, so adding a component is still one row.
+ * It used to be a long page: every panel open, one under another, and a reviewer
+ * scrolled past four things to reach the fifth. The height was the problem — a
+ * page you scroll is a page whose parts you cannot compare, because the first is
+ * gone by the time you reach the last.
  *
- * It lives in the demo rather than in the library, because it is a tool for
- * reviewing the library and not a part of it.
+ * So: the component list is an accordion, and the panels are an accordion. The
+ * preview is always open, because it is what the page is for. Everything else is
+ * one click away and one click shut, and the whole tool fits a screen.
+ *
+ * IT IS BUILT FROM THE LIBRARY IT REVIEWS. `Accordion`, `Input`, `Button` — the
+ * same components a consumer gets. A tool that hand-rolled its own disclosure
+ * would be a tool that cannot notice when the disclosure breaks.
  */
+import React, { useEffect, useMemo, useState } from 'react';
+import { FIXTURES, coverage } from '../components/__matrix__/fixtures';
+import { LiminalLayoutEngine as L } from '../engine/liminal-layout-engine';
+import { LiminalMotionEngine as M } from '../engine/liminal-motion-engine';
+import { Accordion } from '../components/containers/Accordion/Accordion';
+import { Input } from '../components/inputs/Input/Input';
+import { Badge } from '../components/atoms/Badge/Badge';
+import { DeviceFrame, type DeviceWidth } from '../site/DeviceFrame';
+import { FORCE_CSS } from './panels';
+import {
+  CodePanel,
+  ContractChecks,
+  CoveragePanel,
+  EngineReadout,
+  readEngineSnapshot,
+  type EngineSnapshot,
+} from './panels';
+import { MONO, S, R, WELL, WORK, CHROME, Segmented } from '../site/ui';
+import { useTheme } from '../site/theme';
+import { LiminalColorEngine } from '../engine/liminal-color-engine';
 
-const TEXT = getTextStyle('primary', 2).color as string;
-const DIM = getTextStyle('secondary', 2).color as string;
-const FAINT = getTextStyle('tertiary', 2).color as string;
-const S = L.SPACING;
-const R = L.RADIUS;
+/** The semantic roles, from the engine — a colour a reader can name. */
+const SEMANTICS = LiminalColorEngine.SEMANTICS;
 
-/** The props a consumer can turn, and what turning them does. */
-interface Control {
-  name: string;
-  values: string[];
-}
+const FORCED = [
+  { id: 'none', label: 'free' },
+  { id: 'hover', label: 'hover' },
+  { id: 'focus', label: 'focus' },
+  { id: 'active', label: 'pressed' },
+  { id: 'disabled', label: 'disabled' },
+] as const;
+type ForcedId = (typeof FORCED)[number]['id'];
 
-/**
- * The controls, derived from what the fixture says the component HAS.
- *
- * Not hand-written per component: a component that gains a size gains a
- * control, and one that has none does not grow a dead one.
- */
-function controlsFor(f: ComponentFixture): Control[] {
-  const out: Control[] = [];
-  if (f.sizes.length) out.push({ name: 'size', values: f.sizes });
-  if (f.states.length) out.push({ name: 'state', values: f.states });
-  if (f.variants?.length) out.push({ name: 'variant', values: f.variants });
-  return out;
-}
-
+const DEVICES: DeviceWidth[] = ['phone', 'tablet', 'fluid'];
 const pct = (n: number) => Math.round(n * 100);
 
-export function Studio() {
+export function Studio({ initial, showList = true }: { initial?: string; showList?: boolean } = {}) {
   const groups = useMemo(() => [...new Set(FIXTURES.map((f) => f.group))], []);
-  const [selected, setSelected] = useState<string>(FIXTURES[0].name);
-  const [size, setSize] = useState<string | undefined>(undefined);
-  const [state, setState] = useState<string | undefined>(undefined);
-  const [variant, setVariant] = useState<string | undefined>(undefined);
-  const [showCode, setShowCode] = useState(true);
-  // Mobile-first: the sidebar is a column on a wide screen and a horizontal
-  // strip on a narrow one. A fixed 220px column is what breaks a phone layout,
-  // and this is the tool we audit the components with — so it has to survive
-  // the same widths they do.
-  const wide = useMediaQuery('(min-width: 860px)');
+  const [selected, setSelected] = useState<string>(initial ?? FIXTURES[0].name);
+  const [size, setSize] = useState<string | undefined>();
+  const [state, setState] = useState<string | undefined>();
+  const [variant, setVariant] = useState<string | undefined>();
+  const [forced, setForced] = useState<ForcedId>('none');
+  const [device, setDevice] = useState<DeviceWidth>('fluid');
+  const [q, setQ] = useState('');
+  const { theme } = useTheme();
 
   const fixture = FIXTURES.find((f) => f.name === selected) ?? FIXTURES[0];
-  const controls = controlsFor(fixture);
   const activeSize = size && fixture.sizes.includes(size) ? size : fixture.sizes[0];
   const activeState = state && fixture.states.includes(state) ? state : fixture.states[0];
   const activeVariant = variant && fixture.variants?.includes(variant) ? variant : fixture.variants?.[0];
-  const cov = coverage(fixture);
-  const missing = fixture.expected.filter((s) => !fixture.states.includes(s));
+  const rendered = fixture.render(activeState, activeSize, activeVariant);
+
+  /**
+   * The preview is STATE, not a ref.
+   *
+   * A ref is null on the first pass — the frame portals the preview into the
+   * iframe, and a portal mounts one render after the frame's own effect — so an
+   * effect that reads `previewRef.current` finds nothing, returns, and never
+   * runs again, because its dependencies did not change. The panels then said
+   * "no element with data-liminal-surface in the preview" for every component
+   * in the library, on every fresh load.
+   *
+   * A callback ref turns "the node exists" into a state change, and the effect
+   * that reads the engine runs when there is something to read.
+   */
+  const [preview, setPreview] = useState<HTMLDivElement | null>(null);
+  const [snapshot, setSnapshot] = useState<EngineSnapshot | null>(null);
+  useEffect(() => {
+    if (!preview) return;
+    const read = () => {
+      const el =
+        preview.querySelector<HTMLElement>('[data-liminal-surface]') ??
+        preview.querySelector<HTMLElement>('[data-liminal-focus-within]') ??
+        preview.querySelector<HTMLElement>('[data-liminal-focusable]');
+      setSnapshot(readEngineSnapshot(el, theme.ladder));
+    };
+    read();
+    /**
+     * And it is read again when the preview's CONTENT changes: switching the
+     * forced state or the fixture replaces the element the engine published, and
+     * the question is about the element that is there now. Attributes are NOT
+     * observed — a hover changes an inline style, and re-reading on every
+     * attribute change would be a render loop for a value that did not change.
+     */
+    const observer = new MutationObserver(read);
+    observer.observe(preview, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [preview, selected, activeState, activeSize, activeVariant, forced, theme.ladder]);
 
   const pick = (name: string) => {
     setSelected(name);
@@ -78,43 +112,29 @@ export function Studio() {
     setSize(f.sizes[0]);
     setState(f.states[0]);
     setVariant(f.variants?.[0]);
+    setForced('none');
   };
 
-  const rendered = fixture.render(activeState, activeSize, activeVariant);
+  const needle = q.trim().toLowerCase();
+  const matches = needle
+    ? FIXTURES.filter((f) => f.name.toLowerCase().includes(needle) || f.group.toLowerCase().includes(needle))
+    : FIXTURES;
 
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: wide ? 'row' : 'column',
-        gap: `${S[4]}px`,
-        alignItems: 'stretch',
-        width: '100%',
-      }}
-    >
-      {/* ── the sidebar ─────────────────────────────────────────────────── */}
-      <nav
-        aria-label="کامپوننت‌ها"
-        style={{
-          width: wide ? 220 : '100%',
-          flexShrink: 0,
-          border: `1px solid ${LADDER[3]}`,
-          borderRadius: `${R.card}px`,
-          padding: `${S[3]}px`,
-          background: LADDER[1],
-          maxHeight: wide ? '70vh' : '34vh',
-          overflowY: 'auto',
-          boxSizing: 'border-box',
-        }}
-      >
-        {groups.map((g) => (
-          <div key={g} style={{ marginBottom: `${S[3]}px` }}>
-            <div style={{ fontSize: 11, color: FAINT, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: `${S[1]}px` }}>
-              {g}
-            </div>
-            {FIXTURES.filter((f) => f.group === g).map((f) => {
+  // The component list, as an accordion. One group open at a time would hide the
+  // others; `multiple` lets a reviewer keep two open while comparing.
+  const listItems = groups
+    .map((g) => {
+      const rows = matches.filter((f) => f.group === g);
+      if (!rows.length) return null;
+      return {
+        id: g,
+        title: `${g} · ${rows.length}`,
+        content: (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {rows.map((f) => {
               const on = f.name === selected;
               const c = pct(coverage(f));
+              const missing = f.expected.filter((s) => !f.states.includes(s));
               return (
                 <button
                   key={f.name}
@@ -122,105 +142,160 @@ export function Studio() {
                   onClick={() => pick(f.name)}
                   aria-current={on ? 'true' : undefined}
                   style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: `${S[2]}px`,
-                    width: '100%', textAlign: 'start', border: '1px solid transparent',
-                    borderRadius: `${R.chip}px`, padding: `4px ${S[2]}px`, marginBottom: 2,
-                    background: on ? LADDER[3] : 'transparent', color: on ? TEXT : DIM,
-                    font: 'inherit', fontSize: 13, cursor: 'pointer',
+                    ...(on ? WORK.style : { background: 'transparent' }),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: `${S[2]}px`,
+                    width: '100%',
+                    font: 'inherit',
+                    fontSize: 12,
+                    textAlign: 'start',
+                    padding: `${S[1]}px ${S[2]}px`,
+                    borderRadius: `${R.chip}px`,
+                    border: 'none',
+                    cursor: 'pointer',
                   }}
                 >
-                  <span>{f.name}</span>
-                  <span style={{ fontFamily: 'ui-monospace,monospace', fontSize: 10.5, color: c === 100 ? '#7fd0a0' : '#e0b070' }}>{c}%</span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.name}</span>
+                  <code
+                    style={{
+                      fontFamily: MONO,
+                      fontSize: 10,
+                      flexShrink: 0,
+                      opacity: c === 100 ? 0.5 : 0.95,
+                      color: missing.length ? SEMANTICS.DANGER.text : undefined,
+                    }}
+                  >
+                    {c}%
+                  </code>
                 </button>
               );
             })}
           </div>
-        ))}
-      </nav>
+        ),
+      };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null);
 
-      {/* ── the component ───────────────────────────────────────────────── */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <header style={{ display: 'flex', alignItems: 'baseline', gap: `${S[3]}px`, flexWrap: 'wrap', marginBottom: `${S[3]}px` }}>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 650 }}>{fixture.name}</h2>
-          <span style={{ fontFamily: 'ui-monospace,monospace', fontSize: 12, color: FAINT }}>{fixture.group}</span>
-          {missing.length
-            ? <span style={{ fontSize: 11.5, color: '#e0b070', border: '1px solid #8a5a2a', background: '#1a1410', borderRadius: 999, padding: '2px 10px' }}>
-                غایب: {missing.join(' · ')}
-              </span>
-            : <span style={{ fontSize: 11.5, color: '#7fd0a0', border: '1px solid #2a5a3a', background: '#101a13', borderRadius: 999, padding: '2px 10px' }}>کامل</span>}
-        </header>
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: `${S[4]}px`, minWidth: 0 }}>
+      <style>{FORCE_CSS}</style>
 
-        {/* the controls */}
-        <div style={{ display: 'flex', gap: `${S[3]}px`, flexWrap: 'wrap', marginBottom: `${S[4]}px`, alignItems: 'flex-end' }}>
-          {controls.map((c) => (
-            <div key={c.name}>
-              <div style={{ fontSize: 11, color: FAINT, marginBottom: 4 }}>{c.name}</div>
-              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                {c.values.map((v) => {
-                  const current = c.name === 'size' ? activeSize : c.name === 'state' ? activeState : activeVariant;
-                  const on = current === v;
-                  return (
-                    <button
-                      key={v}
-                      type="button"
-                      onClick={() => (c.name === 'size' ? setSize(v) : c.name === 'state' ? setState(v) : setVariant(v))}
-                      aria-pressed={on}
-                      style={{
-                        border: `1px solid ${on ? LADDER[6] : LADDER[3]}`, borderRadius: `${R.chip}px`,
-                        padding: `3px ${S[2]}px`, background: on ? LADDER[4] : 'transparent',
-                        color: on ? TEXT : DIM, font: 'inherit', fontSize: 12, cursor: 'pointer',
-                      }}
-                    >
-                      {v}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-          <div style={{ marginInlineStart: 'auto' }}>
-            <div style={{ fontSize: 11, color: FAINT, marginBottom: 4 }}>&nbsp;</div>
-            <button
-              type="button"
-              onClick={() => setShowCode((v) => !v)}
-              aria-pressed={showCode}
-              style={{
-                border: `1px solid ${LADDER[3]}`, borderRadius: `${R.chip}px`, padding: `3px ${S[2]}px`,
-                background: 'transparent', color: DIM, font: 'inherit', fontSize: 12, cursor: 'pointer',
-              }}
-            >
-              {showCode ? 'پنهان‌کردن کد' : 'نمایش کد'}
-            </button>
+      {/* ── the controls, on one line ─────────────────────────────────────── */}
+      <div
+        style={{
+          ...CHROME.style,
+          display: 'flex',
+          alignItems: 'center',
+          gap: `${S[4]}px`,
+          flexWrap: 'wrap',
+          padding: `${S[3]}px`,
+          borderRadius: `${R.card}px`,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: `${S[2]}px` }}>
+          <span style={{ fontSize: 13, fontWeight: 600 }}>{fixture.name}</span>
+          <Badge>{`${pct(coverage(fixture))}%`}</Badge>
+        </div>
+        <Segmented label="device" value={device} options={DEVICES.map((d) => ({ id: d, label: d }))} onChange={setDevice} />
+        <Segmented label="force" value={forced} options={FORCED.map((f) => ({ id: f.id, label: f.label }))} onChange={setForced} />
+      </div>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[4]}px`, alignItems: 'flex-start', minWidth: 0 }}>
+        {/* ── the component list, as an accordion ───────────────────────── */}
+        {showList && (
+          <div style={{ flex: `1 1 ${L.SIDEBAR_W}px`, maxWidth: L.SIDEBAR_W + L.SPACING[6], minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[2]}px` }}>
+            <Input size="sm" placeholder="Filter…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter components" />
+            <Accordion items={listItems} type="multiple" headingLevel={3} defaultOpen={[fixture.group]} />
           </div>
-        </div>
-
-        {/* the live preview — hover and focus work here, which is the point */}
-        <div
-          style={{
-            border: `1px solid ${LADDER[3]}`, borderRadius: `${R.card}px`, padding: `${S[5]}px`,
-            background: LADDER[2], marginBottom: `${S[4]}px`, minHeight: 140,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >
-          {rendered}
-        </div>
-
-        {showCode && (
-          <pre
-            style={{
-              margin: 0, border: `1px solid ${LADDER[3]}`, borderRadius: `${R.card}px`,
-              padding: `${S[3]}px`, background: LADDER[1], overflowX: 'auto',
-              fontFamily: 'ui-monospace,monospace', fontSize: 12, color: DIM,
-              direction: 'ltr', textAlign: 'left',
-            }}
-          >
-{`<${fixture.name}${activeVariant ? ` variant="${activeVariant}"` : ''}${activeSize ? ` size="${activeSize}"` : ''}${activeState && activeState !== 'default' ? ` /* ${activeState} */` : ''} />`}
-          </pre>
         )}
 
-        <p style={{ color: FAINT, fontSize: 12, marginTop: `${S[3]}px` }}>
-          hover و focus روی پیش‌نمایش <b>واقعی</b> کار می‌کنند — همان چیزی که یک فریم ثابت نمی‌تواند نشان دهد.
-        </p>
+        {/* ── the work ───────────────────────────────────────────────────── */}
+        <div style={{ flex: `2 1 ${L.FIELD_MIN * 2}px`, minWidth: 0, display: 'flex', flexDirection: 'column', gap: `${S[4]}px` }}>
+          {/* The prop controls, derived from what the fixture says it HAS. */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: `${S[4]}px` }}>
+            {(
+              [
+                ['size', fixture.sizes, activeSize, setSize],
+                ['state', fixture.states, activeState, setState],
+                ['variant', fixture.variants ?? [], activeVariant, setVariant],
+              ] as const
+            )
+              .filter(([, values]) => values.length > 1)
+              .map(([name, values, active, set]) => (
+                <Segmented
+                  key={name}
+                  label={name}
+                  value={active ?? ''}
+                  options={values.map((v) => ({ id: v, label: v }))}
+                  onChange={set}
+                />
+              ))}
+          </div>
+
+          <DeviceFrame device={device} minHeight={device === 'phone' ? 340 : 200}>
+            <div
+              ref={setPreview}
+              data-liminal-force={forced === 'none' ? undefined : forced}
+              style={{
+                ...WELL.style,
+                borderRadius: `${R.card}px`,
+                padding: `${S[5]}px`,
+                minHeight: 132,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflowX: 'auto',
+                transition: M.getTransition('background', 'normal'),
+              }}
+            >
+              {rendered}
+            </div>
+          </DeviceFrame>
+
+          {/* ── the panels, as an accordion ─────────────────────────────── */}
+          <Accordion
+            type="multiple"
+            headingLevel={3}
+            items={[
+              { id: 'engine', title: 'Engine — what it published', content: <EngineReadout snapshot={snapshot} /> },
+              {
+                id: 'contract',
+                title: 'Contract — does the surface hold',
+                // THE COMPONENT'S OWN SURFACE, not the well it sits on.
+                //
+                // This was `snapshot?.level != null ? WELL.backgroundHex :
+                // WELL.backgroundHex` — a ternary whose two branches are the
+                // same expression. It read as a decision and was a constant, so
+                // the panel measured the text hierarchy against the preview
+                // well for every component in the library: the one number it
+                // reported was about a surface the component had not painted.
+                content: (
+                  <ContractChecks
+                    surfaceHex={snapshot?.surfaceHex ?? WELL.backgroundHex}
+                    level={snapshot?.level ?? null}
+                  />
+                ),
+              },
+              {
+                id: 'coverage',
+                title: `Coverage — ${pct(coverage(fixture))}%`,
+                content: (
+                  <CoveragePanel
+                    name={fixture.name}
+                    has={fixture.states}
+                    expected={fixture.expected}
+                    sizes={fixture.sizes}
+                    variants={fixture.variants ?? []}
+                    coveragePercent={pct(coverage(fixture))}
+                  />
+                ),
+              },
+              { id: 'code', title: 'Code — the element that rendered', content: <CodePanel element={rendered} /> },
+            ]}
+          />
+        </div>
       </div>
     </div>
   );

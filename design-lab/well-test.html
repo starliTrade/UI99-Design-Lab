@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LIMINAL — چاه، قبل و بعد از اینکه نام بگیرد</title>
+<style>
+:root {
+
+  /* ── 1. TONAL LADDER ─────────────────────────────────────────── */
+  --liminal-s0: #060709; /* canvas */
+  --liminal-s1: #07090b;
+  --liminal-s2: #090b0d;
+  --liminal-s3: #0b0d0f;
+  --liminal-s4: #0d0f12;
+  --liminal-s5: #0f1114;
+  --liminal-s6: #111316;
+  --liminal-s7: #131518;
+  --liminal-s8: #15171a;
+  --liminal-s0-5: #07080a;
+  --liminal-s1-5: #080a0c;
+  --liminal-s2-5: #0a0c0e;
+  --liminal-s3-5: #0c0e10;
+  --liminal-s4-5: #0e1013;
+  --liminal-s5-5: #101215;
+  --liminal-s6-5: #121417;
+  --liminal-s7-5: #141619;
+  --liminal-s-minus-1: #030406; /* penumbra */
+  --liminal-s-minus-2: #010203; /* contact umbra */
+
+  /* ── 2. RIM ──────────────────────────────────────────────────── */
+  --liminal-rim-1-top: #080a0c;
+  --liminal-rim-1-side: #080a0c;
+  --liminal-rim-1-bottom: #07090b;
+  --liminal-rim-2-top: #0b0d0f;
+  --liminal-rim-2-side: #0a0c0e;
+  --liminal-rim-2-bottom: #090b0d;
+  --liminal-rim-3-top: #0e1013;
+  --liminal-rim-3-side: #0d0f12;
+  --liminal-rim-3-bottom: #0c0e10;
+
+  /* ── 3. SHADOW ───────────────────────────────────────────────── */
+  --liminal-shadow-e1: 0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22);
+  --liminal-shadow-e2: 0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26);
+  --liminal-shadow-e3: 0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30);
+  --liminal-shadow-e4: 0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34);
+
+  /* ── 4. SURFACE TINT (fills — never for type) ────────────────── */
+  --liminal-tint-faint: rgba(255, 255, 255, 0.01);
+  --liminal-tint-subtle: rgba(255, 255, 255, 0.03);
+  --liminal-tint-medium: rgba(255, 255, 255, 0.06);
+  --liminal-tint-strong: rgba(255, 255, 255, 0.20);
+  --liminal-tint-solid: rgba(255, 255, 255, 0.40);
+
+  /* ── 5. VEIL ─────────────────────────────────────────────────── */
+  --liminal-veil-backdrop: rgba(3, 4, 6, 0.60);
+  --liminal-veil-canvas: rgba(6, 7, 9, 0.85);
+
+  /* ── 6. TEXT (never pure white) ──────────────────────────────── */
+  --liminal-text-primary: rgba(255, 255, 255, 0.89); /* S0 alpha — safe on every surface */
+  --liminal-text-secondary: rgba(255, 255, 255, 0.79); /* S0 alpha — safe on every surface */
+  --liminal-text-tertiary: rgba(255, 255, 255, 0.79); /* S0 floor; AA ≥4.5:1 */
+  --liminal-text-quaternary: rgba(255, 255, 255, 0.448); /* ≥3:1, non-text only */
+
+  /* ── 7. SEMANTICS ────────────────────────────────────────────── */
+  --liminal-success: #00875d;
+  --liminal-success-text: #54e5aa;
+  --liminal-success-subtle: rgba(0, 135, 93, 0.1);
+  --liminal-success-border: rgba(0, 135, 93, 0.22);
+  --liminal-success-on: #FFFFFF;
+  --liminal-warning: #946a00;
+  --liminal-warning-text: #ffc348;
+  --liminal-warning-subtle: rgba(148, 106, 0, 0.1);
+  --liminal-warning-border: rgba(148, 106, 0, 0.22);
+  --liminal-warning-on: #FFFFFF;
+  --liminal-danger: #ba4646;
+  --liminal-danger-text: #ffbdb6;
+  --liminal-danger-subtle: rgba(186, 70, 70, 0.1);
+  --liminal-danger-border: rgba(186, 70, 70, 0.22);
+  --liminal-danger-on: #FFFFFF;
+  --liminal-info: #3271c8;
+  --liminal-info-text: #a4d1ff;
+  --liminal-info-subtle: rgba(50, 113, 200, 0.1);
+  --liminal-info-border: rgba(50, 113, 200, 0.22);
+  --liminal-info-on: #FFFFFF;
+
+  /* ── 8. BRAND ────────────────────────────────────────────────── */
+  --liminal-brand: #E9ECF2;
+  --liminal-brand-on: #060709;
+  --liminal-brand-hover: #F5F7FA;
+  --liminal-brand-active: #DDE1E8;
+  --liminal-brand-subtle: rgba(233, 236, 242, 0.08);
+
+  /* ── 9. EXTENDED SPECTRUM (12 hues) ──────────────────────────── */
+  --liminal-hue-15: #E88A93; /* Ruby */
+  --liminal-hue-40: #E8A87C; /* Coral */
+  --liminal-hue-75: #D9BE6E; /* Amber */
+  --liminal-hue-110: #A8CC74; /* Lime */
+  --liminal-hue-145: #74CE8E; /* Emerald */
+  --liminal-hue-175: #5FCDBB; /* Teal */
+  --liminal-hue-200: #56C6E0; /* Cyan */
+  --liminal-hue-230: #6FA8EC; /* Sapphire */
+  --liminal-hue-260: #8B9CF0; /* Indigo */
+  --liminal-hue-290: #A98BEA; /* Violet */
+  --liminal-hue-320: #C983D6; /* Fuchsia */
+  --liminal-hue-350: #E083AE; /* Rose */
+
+  /* ── 10. SPACING (atom 4) ────────────────────────────────────── */
+  --liminal-space-0: 2px; /* sub-atom: optical only */
+  --liminal-space-1: 4px;
+  --liminal-space-2: 8px;
+  --liminal-space-3: 12px;
+  --liminal-space-4: 16px;
+  --liminal-space-5: 24px;
+  --liminal-space-6: 32px;
+  --liminal-space-7: 48px;
+  --liminal-space-8: 64px;
+  --liminal-space-9: 96px;
+  --liminal-control-sm: 32px;
+  --liminal-control-md: 44px;
+  --liminal-control-lg: 52px;
+  --liminal-target-min: 44px; /* WCAG 2.5.5 AAA */
+  --liminal-border-hairline: 1px;
+  --liminal-border-emphasis: 2px;
+
+  /* ── 11. RADIUS ──────────────────────────────────────────────── */
+  --liminal-radius-chip: 6px;
+  --liminal-radius-control: 10px;
+  --liminal-radius-card: 16px;
+  --liminal-radius-panel: 20px;
+  --liminal-radius-container: 24px;
+  --liminal-radius-full: 9999px;
+
+  /* ── 12. TYPE (modular 1.2, fluid base) ──────────────────────── */
+  --liminal-type-ratio: 1.2; /* fixed — this is the design */
+  --liminal-type-base: clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem); /* fluid 14→16.5px; rem-based for WCAG 1.4.4 */
+  --liminal-fs-1: calc(var(--liminal-type-base) * 0.694444);
+  --liminal-lh-1: 1.45; /* unitless multiplier */
+  --liminal-weight-1: 400;
+  --liminal-fs-2: calc(var(--liminal-type-base) * 0.833333);
+  --liminal-lh-2: 1.5; /* unitless multiplier */
+  --liminal-weight-2: 500;
+  --liminal-fs-3: var(--liminal-type-base);
+  --liminal-lh-3: 1.6; /* unitless multiplier */
+  --liminal-weight-3: 400;
+  --liminal-fs-4: calc(var(--liminal-type-base) * 1.200000);
+  --liminal-lh-4: 1.35; /* unitless multiplier */
+  --liminal-weight-4: 600;
+  --liminal-fs-5: calc(var(--liminal-type-base) * 1.440000);
+  --liminal-lh-5: 1.25; /* unitless multiplier */
+  --liminal-weight-5: 600;
+  --liminal-fs-6: calc(var(--liminal-type-base) * 1.728000);
+  --liminal-lh-6: 1.2; /* unitless multiplier */
+  --liminal-weight-6: 600;
+  --liminal-fs-7: calc(var(--liminal-type-base) * 2.073600);
+  --liminal-lh-7: 1.15; /* unitless multiplier */
+  --liminal-weight-7: 600;
+  --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
+  --liminal-lh-8: 1.1; /* unitless multiplier */
+  --liminal-weight-8: 700;
+
+  /* ── 12b. FONTS ──────────────────────────────────────────────── */
+  --liminal-font-en: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --liminal-font-fa: Vazirmatn, "Vazirmatn RD", "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif;
+  --liminal-line-height-fa-floor: 1.5625; /* from Vazirmatn metrics */
+
+  /* ── 13. MOTION ──────────────────────────────────────────────── */
+  --liminal-duration-instant: 100ms;
+  --liminal-duration-fast: 150ms;
+  --liminal-duration-normal: 200ms;
+  --liminal-duration-slow: 250ms;
+  --liminal-duration-slower: 350ms;
+  --liminal-duration-dramatic: 500ms;
+  --liminal-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --liminal-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --liminal-ease-inOut: cubic-bezier(0.65, 0, 0.35, 1);
+  --liminal-ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --liminal-ease-linear: linear;
+
+  /* ── 14. LAYER ───────────────────────────────────────────────── */
+  --liminal-z-dropdown: 1000;
+  --liminal-z-modal: 2000;
+  --liminal-z-tooltip: 3000;
+  --liminal-z-popover: 4000;
+  --liminal-z-floating: 9999;
+}
+/**
+ * LIMINAL · INTERACTION LAYER
+ * «حالت‌ها را مرورگر مدیریت می‌کند، نه جاوااسکریپت.»
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS FILE EXISTS
+ *
+ * Until now every interaction was a JS state machine: a hover set React state,
+ * which re-rendered the component and rebuilt its whole style object. Measured
+ * on a 50-button page (design-lab/state-benchmark.html):
+ *
+ *     JS state:  100 style rewrites, 4.0x slower
+ *     CSS state:   0 style rewrites
+ *
+ * And that was 50 buttons. A real page has hundreds.
+ *
+ * The fix is not a rewrite of every component — it is a CSS layer that reads the
+ * SAME custom properties the engine already publishes. A component sets its role
+ * once; the browser handles hover, press and focus from then on.
+ *
+ * The state values come from the decision engine (resolveSurface), so the
+ * hierarchy rules still hold — they are simply expressed as CSS variables
+ * instead of recomputed in JavaScript on every mouse move.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/* ── The interactive surface ───────────────────────────────────────────────
+ * A component marks itself with data-liminal-surface and sets three variables:
+ *   --liminal-surface-idle    the resting background
+ *   --liminal-surface-hover   one half-step above
+ *   --liminal-surface-active  one half-step below, pressed
+ * The decision engine computes those; this layer only applies them.
+ */
+[data-liminal-surface] {
+  background: var(--liminal-surface-idle);
+  /* Both halves of the border pattern live here. A component that hands
+   * `border-color` over has to have somewhere to hand it TO: without this the
+   * border falls back to `currentColor` — the text colour — and a 1px border
+   * becomes a bright line. Measured: an Input rendered with a near-white 1px
+   * border because nothing set the colour. */
+  border-color: var(--liminal-border-idle, transparent);
+  transition:
+    background var(--liminal-duration-fast, 150ms) var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    border-color var(--liminal-duration-fast, 150ms) var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    opacity var(--liminal-duration-fast, 150ms) var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+[data-liminal-surface]:hover:not([data-liminal-disabled]) {
+  background: var(--liminal-surface-hover);
+}
+
+/* Some components lift their TEXT on hover rather than their surface — a tab
+ * that brightens its label, for example. Opt in with data-liminal-hover-color
+ * so nothing changes colour by accident. */
+/* The idle half has to live here too. A component that opts in and then sets
+ * `color` inline cancels the hover rule — an inline style beats a CSS rule — so
+ * the pattern did nothing in all four components that used it. The layer owns
+ * `color` for anything that opts in. */
+[data-liminal-hover-color] {
+  color: var(--liminal-color-idle, currentColor);
+}
+
+[data-liminal-hover-color]:hover:not([data-liminal-disabled]) {
+  color: var(--liminal-hover-color);
+}
+
+/* ── Luminance response ───────────────────────────────────────────────────
+ * The Mist surface does not change colour on hover — it changes BRIGHTNESS.
+ * That is a different kind of feedback: the surface stays the same material and
+ * simply catches more light. Opted into with data-liminal-mist.
+ */
+[data-liminal-mist]:not([data-liminal-disabled]) {
+  transition: filter var(--liminal-duration-normal, 220ms)
+    var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+[data-liminal-mist]:hover:not([data-liminal-disabled]) {
+  filter: brightness(var(--liminal-mist-hover, 1.08));
+}
+
+[data-liminal-mist]:active:not([data-liminal-disabled]) {
+  filter: brightness(var(--liminal-mist-active, 0.92));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-liminal-mist] {
+    transition: none;
+  }
+}
+
+/* A child that only appears on hover — a sort affordance, a row action.
+ * The parent opts in; the child carries .liminal-reveal. */
+[data-liminal-hover-reveal] .liminal-reveal {
+  opacity: var(--liminal-reveal-idle, 0);
+  transition: opacity var(--liminal-duration-fast, 150ms)
+    var(--liminal-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+[data-liminal-hover-reveal]:hover .liminal-reveal,
+[data-liminal-hover-reveal]:focus-within .liminal-reveal {
+  opacity: var(--liminal-reveal-hover, 1);
+}
+
+[data-liminal-surface]:active:not([data-liminal-disabled]) {
+  background: var(--liminal-surface-active);
+  transform: translateY(0.5px);
+}
+
+/* ── Focus within ─────────────────────────────────────────────────────────
+ * An input's surface is a wrapper around the real <input>, so the wrapper has
+ * to react when the control inside it takes focus. :focus-within is the
+ * browser's answer, and it is what replaces the JS focus tracking in the
+ * input components.
+ */
+/* The base half. Every other opt-in pattern has one; this one did not, which is
+ * the same defect that already caused two bugs. And its variable had no
+ * fallback, so a component that opted in and forgot the var got
+ * `background: transparent` — a control that vanished on focus. */
+[data-liminal-focus-within] {
+  background: var(--liminal-surface-idle, transparent);
+}
+
+[data-liminal-focus-within]:focus-within {
+  background: var(--liminal-surface-focus, var(--liminal-surface-idle, transparent));
+  border-color: var(--liminal-border-focus, var(--liminal-brand, #E9ECF2));
+}
+
+[data-liminal-focus-within]:focus-within .liminal-focus-ring {
+  outline: 2px solid var(--liminal-brand, #E9ECF2);
+  outline-offset: 2px;
+}
+
+/* ── Focus ────────────────────────────────────────────────────────────────
+ * `:focus-visible` is the browser's own answer to "was this keyboard focus?".
+ * It replaces the hand-rolled Tab-key tracking, which could not see
+ * Shift+Tab, programmatic focus, or a screen reader moving the cursor.
+ */
+[data-liminal-surface]:focus-visible,
+[data-liminal-focusable]:focus-visible {
+  outline: 2px solid var(--liminal-brand, #E9ECF2);
+  outline-offset: 2px;
+}
+
+/* ── Disabled ─────────────────────────────────────────────────────────────
+ * Present but inert: no hover response, no pointer, reduced opacity.
+ */
+[data-liminal-disabled] {
+  opacity: 0.25;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────
+ * Honoured globally rather than per component, so nothing can forget.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [data-liminal-surface],
+  [data-liminal-surface]:active {
+    transition: none;
+    transform: none;
+  }
+}
+
+/**
+ * LIMINAL · MIST LAYER  (v5 — fog, not glow)
+ * «مه نوری است که سطح می‌گیرد، نه نوری که سطح می‌فرستد.»
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT CHANGED, AND WHY
+ *
+ * v2 diffused the page behind the surface (backdrop blur): 35.7x the cost, and
+ * invisible on the near-uniform dark backgrounds this system actually uses.
+ *
+ * v4 replaced it with symmetric `0 0 Npx` shadows — which read as a NEON GLOW,
+ * not as fog. The surface appeared to radiate. That is a different metaphor, and
+ * a worse one: it is loud where LIMINAL is calm. It also cost 58x.
+ *
+ * v5 builds the fog from what fog actually is:
+ *
+ *   FILL   a vertical gradient inside the surface — brighter at the top where
+ *          light lands, settling darker toward the bottom. The surface does not
+ *          emit; it is simply a mass that is lighter than the page.
+ *   LIGHT  a single inset hairline on the top edge. One line, not a halo.
+ *   SHADOW a dark shadow below, growing with height. The surface blocks light.
+ *   SEAM   a faint hairline where the fog meets the page. Never a bright ring.
+ *
+ * Every value derives from the role's ladder height. Nothing is hand-tuned.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+[data-liminal-mist] {
+  position: relative;
+  isolation: isolate;
+
+  /* The fog: light lands on top, settles at the bottom. */
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--liminal-mist-fill-top) calc(var(--liminal-mist-fill-top-alpha) * 100%), transparent) 0%,
+    color-mix(in oklab, var(--liminal-mist-fill-bottom) calc(var(--liminal-mist-fill-bottom-alpha) * 100%), transparent) 100%
+  );
+
+  /* The height: a dark shadow below, and one hairline of light on the top edge.
+   * No symmetric glow — nothing radiates outward. */
+  box-shadow:
+    0 var(--liminal-mist-shadow-near) var(--liminal-mist-shadow-far)
+      rgba(1, 2, 3, var(--liminal-mist-shadow-far-alpha)),
+    0 2px var(--liminal-mist-shadow-near) rgba(1, 2, 3, var(--liminal-mist-shadow-near-alpha)),
+    var(--liminal-mist-inner-light);
+
+  border: 1px solid var(--liminal-mist-seam);
+}
+
+/* OPT-IN: diffuse the backdrop. Worth it only over busy or colourful content —
+ * a modal over an image. Costs ~35x a plain surface. */
+[data-liminal-mist='diffuse'] {
+  -webkit-backdrop-filter: blur(var(--liminal-mist-blur));
+  backdrop-filter: blur(var(--liminal-mist-blur));
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  [data-liminal-mist='diffuse'] {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-liminal-mist='diffuse'] {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* ── A TOAST IS NOT A MENU ────────────────────────────────────────────────
+ * A toast is a notification. It must be legible first and must not demand
+ * attention. Its meaning is carried by a small accent mark, not by a coloured
+ * or glowing surface — a glowing toast is a toast that shouts.
+ */
+[data-liminal-mist='toast'] {
+  /* fill is near-solid (set by the engine); the seam is fainter */
+}
+
+.liminal-toast-mark {
+  width: 3px;
+  align-self: stretch;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/**
+ * LIMINAL · MOTION KEYFRAMES
+ *
+ * These used to live in `liminal-motion-engine.ts` as a string that the module
+ * injected into `document.head` at IMPORT TIME. That is a module-level side
+ * effect: a bundler cannot tree-shake a module that has an effect on import, and
+ * a server component importing the engine would try to touch a document that
+ * does not exist.
+ *
+ * They are a stylesheet, so they are a stylesheet. Nothing is injected at
+ * runtime and nothing has to be.
+ */
+
+  @keyframes enterFromTop {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes enterFromBottom {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes enterFromLeft {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes enterFromRight {
+    from { opacity: 0; transform: translateX(8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes exitToTop {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-8px); }
+  }
+  @keyframes exitToBottom {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(8px); }
+  }
+  @keyframes exitToLeft {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-8px); }
+  }
+  @keyframes exitToRight {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(8px); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes liminal-skeleton-pulse {
+    0%, 100% { background-color: var(--liminal-s2); }
+    50% { background-color: var(--liminal-s2-5); }
+  }
+  @keyframes liminal-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes liminal-mist-halo {
+    0%, 100% { opacity: 0.9; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.02); }
+  }
+
+/**
+ * LIMINAL · FORCED COLORS
+ *
+ * Windows High Contrast Mode — and Firefox's `prefers-contrast` — replace the
+ * page's colours with the user's own. The system had ZERO handling for it, so
+ * every surface, border and rim collapsed into the same two system colours and
+ * the whole perceptual ladder disappeared.
+ *
+ * That is not a cosmetic problem. The ladder IS the interface here: a raised
+ * control is raised because it is lighter, and a hairline seam is a seam because
+ * it is a half-step above its host. In forced colors all of that is one colour.
+ *
+ * The rule is: stop fighting. In forced colors the system's job is not to look
+ * like LIMINAL — it is to stay USABLE. So the surfaces give up their fills, the
+ * borders keep their meaning through `CanvasText` and `ButtonBorder`, and the
+ * focus ring uses `Highlight`, which the user chose.
+ *
+ * `forced-color-adjust: none` is deliberately NOT used. It would keep the
+ * system's palette and ignore the user's, which is the opposite of the point.
+ */
+
+@media (forced-colors: active) {
+  /* Surfaces stop being surfaces. The system's ladder cannot survive here, and
+   * pretending otherwise produces a screen where nothing is distinguishable. */
+  [data-liminal-surface] {
+    background: Canvas;
+    forced-color-adjust: auto;
+  }
+
+  /* A border becomes the system's own border colour, which is guaranteed to
+   * contrast with Canvas in the user's theme. */
+  [data-liminal-surface],
+  [data-liminal-focus-within] {
+    border-color: ButtonBorder;
+  }
+
+  /* The focus ring uses the user's highlight. The system's brand colour is not
+   * visible in forced colors, and a ring nobody can see is not a ring. */
+  [data-liminal-surface]:focus-visible,
+  [data-liminal-focusable]:focus-visible,
+  [data-liminal-focus-within]:focus-within {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  /* Disabled is a system state, not a colour. */
+  [data-liminal-disabled] {
+    color: GrayText;
+    opacity: 1;
+  }
+
+  /* The mist's light layers are invisible here, so the surface keeps a border
+   * instead — otherwise a floating element reads as flat against the page. */
+  [data-liminal-mist] {
+    border: 1px solid ButtonBorder;
+    box-shadow: none;
+  }
+
+  /* Shadows cannot be drawn. Elevation has to come from the border. */
+  [data-liminal-elevation] {
+    box-shadow: none;
+    border: 1px solid ButtonBorder;
+  }
+}
+
+@media (prefers-contrast: more) {
+  /* Not forced colors — the page keeps its palette, but the user has asked for
+   * more separation. The hairlines become real edges. */
+  [data-liminal-surface] {
+    --liminal-surface-idle: Canvas;
+  }
+}
+
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#060709; color:rgba(255, 255, 255, 0.89);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; padding: 40px 32px 80px; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 600; margin: 0 0 6px; }
+  .sub { color:rgba(255, 255, 255, 0.79); font-size: 13px; line-height: 1.9; max-width: 76ch; }
+  .sub b { color:rgba(255, 255, 255, 0.89); font-weight: 600; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; margin-top: 26px; }
+  .col { border: 1px solid #090b0d; border-radius: 14px; overflow: hidden; min-width: 0; }
+  .head { display:flex; align-items:baseline; gap:10px; padding: 12px 16px; border-bottom: 1px solid #090b0d; background:#07090b; }
+  .head b { font-size: 13px; font-weight: 600; }
+  .head .use { color:rgba(255, 255, 255, 0.79); font-size: 11px; }
+  .case { display:flex; align-items:center; gap:14px; padding: 14px 16px; border-bottom: 1px solid #07090b; min-width: 0; }
+  .case:last-child { border-bottom: none; }
+  .lbl { color:rgba(255, 255, 255, 0.79); width: 96px; flex: none; }
+  .stage { flex: 1; min-width: 0; display:flex; align-items:center; }
+  .hint { margin-top: 22px; color:rgba(255, 255, 255, 0.79); font-size: 12px; line-height: 2; }
+  .hint code { color:rgba(255, 255, 255, 0.79); }
+  @media (max-width: 900px) {
+    body { padding: 20px 12px 56px; }
+    h1 { font-size: 19px; }
+    .sub { font-size: 12px; }
+    .cols { grid-template-columns: 1fr; gap: 14px; }
+    .case { flex-direction: column; align-items: stretch; gap: 8px; padding: 12px; }
+    .lbl { width: auto; }
+    .stage { overflow-x: auto; }
+    .hint { font-size: 11px; line-height: 1.9; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>چاه، قبل و بعد از اینکه نام بگیرد</h1>
+  <div class="sub">
+    نوزده سایت یک جفتِ <b>دستی</b> <span class="mono">(سطح، ریم)</span> می‌دادند. بیشترشان دقیقاً
+    روی یک نقش نشستند و <b>بایت‌به‌بایت</b> همان می‌مانند. سه‌تا ننشستند و این صفحه برای همان سه‌تاست.
+    هر کامپوننت یک بار رندر شده؛ ستون «قبل» همان markup است با گرادیانِ ریم که به جفتِ قدیمی بازنویسی شده.
+  </div>
+
+  <div class="cols">
+    
+  <div class="col">
+    <div class="head"><b>قبل</b><span class="use">جفتِ دستی</span></div>
+    
+      <div class="case">
+        <div class="lbl mono">Card.Well</div>
+        <div class="stage"><div class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s0-5) 0%, var(--liminal-s1) 55%, var(--liminal-s1-5) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;border-radius:16px;padding:24px;color:rgba(255, 255, 255, 0.79);display:flex;flex-direction:column;overflow:hidden"><div style="flex:1;color:rgba(255, 255, 255, 0.79)"><div class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s0-5) 0%, var(--liminal-s1) 55%, var(--liminal-s1-5) 100%) border-box;border:1px solid transparent;border-radius:4px;padding:12px;box-sizing:border-box;display:flex;flex-direction:column;gap:8px">چاهِ کارت</div></div></div></div>
+      </div>
+      <div class="case">
+        <div class="lbl mono">EmptyState</div>
+        <div class="stage"><div class="liminal-empty-state " style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:48px 24px;gap:16px;box-sizing:border-box;width:100%;box-shadow:none"><div style="width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:linear-gradient(var(--liminal-s1-5), var(--liminal-s1-5)) padding-box, linear-gradient(180deg, var(--liminal-s1) 0%, var(--liminal-s1-5) 55%, var(--liminal-s2) 100%) border-box;color:rgba(255, 255, 255, 0.79);box-shadow:none;flex-shrink:0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true" class=""><path d="M208,34H48A14,14,0,0,0,34,48V208a14,14,0,0,0,14,14H208a14,14,0,0,0,14-14V48A14,14,0,0,0,208,34ZM48,46H208a2,2,0,0,1,2,2V154H179.31a13.94,13.94,0,0,0-9.9,4.1L150.1,177.41a2,2,0,0,1-1.41.59H107.31a2,2,0,0,1-1.41-.58L86.59,158.1a13.94,13.94,0,0,0-9.9-4.1H46V48A2,2,0,0,1,48,46ZM208,210H48a2,2,0,0,1-2-2V166H76.69a2,2,0,0,1,1.41.58L97.41,185.9a13.94,13.94,0,0,0,9.9,4.1h41.38a13.94,13.94,0,0,0,9.9-4.1l19.31-19.31a2,2,0,0,1,1.41-.59H210v42A2,2,0,0,1,208,210Z"></path></svg></div><div style="display:flex;flex-direction:column;gap:8px;align-items:center"><h3 style="font-size:calc(var(--liminal-type-base) * 1.440000);line-height:1.25;font-weight:600;color:rgba(255, 255, 255, 0.89);margin:0">چیزی نیست</h3><p style="font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.7;color:rgba(255, 255, 255, 0.79);max-width:360px;margin:0">هنوز موردی اضافه نشده</p></div></div></div>
+      </div>
+      <div class="case">
+        <div class="lbl mono">Input (error)</div>
+        <div class="stage"><div class="" style="display:flex;flex-direction:column;width:100%;box-sizing:border-box"><label for="_R_0_" style="font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;letter-spacing:+0.01em;font-weight:500;color:rgba(255, 255, 255, 0.79);margin-bottom:4px;user-select:none">نام کاربری</label><div data-liminal-surface="" data-liminal-focus-within="" style="--liminal-surface-idle:linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-hover:linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-active:linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-focus:linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-danger, #ba4646);display:flex;align-items:center;gap:8px;padding-block:calc((44px - 1lh - 2px) / 2);padding-inline:12px;min-height:44px;border-radius:10px;box-sizing:border-box;width:100%;transition:color, background-color, border-color, box-shadow, opacity, transform 250ms cubic-bezier(0.16, 1, 0.3, 1);border-width:1px;border-style:solid;opacity:1;cursor:text"><input type="text" id="_R_0_" aria-describedby="_R_0_-helper" style="flex:1;background:transparent;border:none;outline:none;color:rgba(255, 255, 255, 0.89);font-size:var(--liminal-type-base);line-height:1.6;font-family:inherit;width:100%;padding:0;cursor:text"/></div><div style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:4px;gap:8px"><span id="_R_0_-helper" style="font-size:calc(var(--liminal-type-base) * 0.694444);line-height:1.45;letter-spacing:+0.04em;color:#ffbdb6">این نام قبلاً گرفته شده</span></div></div></div>
+      </div>
+  </div>
+    
+  <div class="col">
+    <div class="head"><b>حالا</b><span class="use">قاعدهٔ نام‌دار موتور</span></div>
+    
+      <div class="case">
+        <div class="lbl mono">Card.Well</div>
+        <div class="stage"><div class="" style="background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s1-5) 0%, var(--liminal-s1-5) 55%, var(--liminal-s1) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;border-radius:16px;padding:24px;color:rgba(255, 255, 255, 0.79);display:flex;flex-direction:column;overflow:hidden"><div style="flex:1;color:rgba(255, 255, 255, 0.79)"><div class="" style="background:linear-gradient(var(--liminal-s0), var(--liminal-s0)) padding-box, linear-gradient(180deg, var(--liminal-s0) 0%, var(--liminal-s0) 55%, var(--liminal-s0-5) 100%) border-box;border:1px solid transparent;border-radius:4px;padding:12px;box-sizing:border-box;display:flex;flex-direction:column;gap:8px">چاهِ کارت</div></div></div></div>
+      </div>
+      <div class="case">
+        <div class="lbl mono">EmptyState</div>
+        <div class="stage"><div class="liminal-empty-state " style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:48px 24px;gap:16px;box-sizing:border-box;width:100%;box-shadow:none"><div style="width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid transparent;background:linear-gradient(var(--liminal-s1), var(--liminal-s1)) padding-box, linear-gradient(180deg, var(--liminal-s0-5) 0%, var(--liminal-s1) 55%, var(--liminal-s1-5) 100%) border-box;color:rgba(255, 255, 255, 0.79);box-shadow:none;flex-shrink:0"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true" class=""><path d="M208,34H48A14,14,0,0,0,34,48V208a14,14,0,0,0,14,14H208a14,14,0,0,0,14-14V48A14,14,0,0,0,208,34ZM48,46H208a2,2,0,0,1,2,2V154H179.31a13.94,13.94,0,0,0-9.9,4.1L150.1,177.41a2,2,0,0,1-1.41.59H107.31a2,2,0,0,1-1.41-.58L86.59,158.1a13.94,13.94,0,0,0-9.9-4.1H46V48A2,2,0,0,1,48,46ZM208,210H48a2,2,0,0,1-2-2V166H76.69a2,2,0,0,1,1.41.58L97.41,185.9a13.94,13.94,0,0,0,9.9,4.1h41.38a13.94,13.94,0,0,0,9.9-4.1l19.31-19.31a2,2,0,0,1,1.41-.59H210v42A2,2,0,0,1,208,210Z"></path></svg></div><div style="display:flex;flex-direction:column;gap:8px;align-items:center"><h3 style="font-size:calc(var(--liminal-type-base) * 1.440000);line-height:1.25;font-weight:600;color:rgba(255, 255, 255, 0.89);margin:0">چیزی نیست</h3><p style="font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.7;color:rgba(255, 255, 255, 0.79);max-width:360px;margin:0">هنوز موردی اضافه نشده</p></div></div></div>
+      </div>
+      <div class="case">
+        <div class="lbl mono">Input (error)</div>
+        <div class="stage"><div class="" style="display:flex;flex-direction:column;width:100%;box-sizing:border-box"><label for="_R_0_" style="font-size:calc(var(--liminal-type-base) * 0.833333);line-height:1.5;letter-spacing:+0.01em;font-weight:500;color:rgba(255, 255, 255, 0.79);margin-bottom:4px;user-select:none">نام کاربری</label><div data-liminal-surface="" data-liminal-focus-within="" style="--liminal-surface-idle:linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-hover:linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-active:linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-surface-focus:linear-gradient(rgba(229, 99, 122, 0.08), rgba(229, 99, 122, 0.08)), linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, var(--liminal-s4) 0%, var(--liminal-s3-5) 55%, var(--liminal-s3) 100%) border-box;--liminal-border-idle:var(--liminal-s4);--liminal-border-focus:var(--liminal-danger, #ba4646);display:flex;align-items:center;gap:8px;padding-block:calc((44px - 1lh - 2px) / 2);padding-inline:12px;min-height:44px;border-radius:10px;box-sizing:border-box;width:100%;transition:color, background-color, border-color, box-shadow, opacity, transform 250ms cubic-bezier(0.16, 1, 0.3, 1);border-width:1px;border-style:solid;opacity:1;cursor:text"><input type="text" id="_R_0_" aria-describedby="_R_0_-helper" style="flex:1;background:transparent;border:none;outline:none;color:rgba(255, 255, 255, 0.89);font-size:var(--liminal-type-base);line-height:1.6;font-family:inherit;width:100%;padding:0;cursor:text"/></div><div style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:4px;gap:8px"><span id="_R_0_-helper" style="font-size:calc(var(--liminal-type-base) * 0.694444);line-height:1.45;letter-spacing:+0.04em;color:#ffbdb6">این نام قبلاً گرفته شده</span></div></div></div>
+      </div>
+  </div>
+  </div>
+
+  <div class="hint">
+    <code>well</code> نقشِ تازه‌ای است: سطحِ کار، با لبهٔ تعریف‌شده — پرشدگیِ کنترلی که خاموش است.
+    هفت سایت دستی می‌ساختندش چون موتور اسمی برایش نداشت.
+    و <code>inset: true</code> همان قاعده‌ای است که <code>resolveInset</code> از قبل می‌گفت:
+    یک‌ونیم پله <b>پایین‌تر</b> از نقشی که در آن کنده می‌شود.
+  </div>
+</div>
+</body>
+</html>

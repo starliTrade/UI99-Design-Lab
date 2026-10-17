@@ -1,26 +1,20 @@
 import React, { useId,
   createContext,
   useContext,
-  useState,
   useRef,
   useEffect,
   useMemo,
   useCallback,
 } from 'react';
 import type { CSSProperties, ReactNode, KeyboardEvent } from 'react';
-import {
-  getLiminalStyle,
-  getDirectionalRim,
-  getLadderColor,
-  getTextStyle,
-  getFocusRing,
-  SHADOWS,
-} from '../../../engine/spec-engine';
+import {getTextStyle,
+  getFocusRing} from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { useRovingTabIndex } from '../../../engine/liminal-hooks';
-import { resolveSurface } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
+import { REST_SHADOW } from '../../../engine/liminal-mist';
 
 /** The gap between tabs: off the spacing scale, so it is named. */
 const TAB_GAP = 6;
@@ -30,8 +24,6 @@ interface TabsContextType {
   onChange: (val: string) => void;
   registerTabRef: (val: string, ref: HTMLButtonElement | null) => void;
   tabValues: string[];
-  keyboardMode: boolean;
-  setKeyboardMode: (val: boolean) => void;
   idPrefix: string;
   getItemProps: (index: number) => {
     tabIndex: number;
@@ -80,8 +72,6 @@ export function Tab({
   const {
     activeValue,
     onChange,
-    keyboardMode,
-    setKeyboardMode,
     tabValues,
     getItemProps,
     registerTabRef,
@@ -92,7 +82,7 @@ export function Tab({
   const rovingProps = getItemProps(tabIndexInList >= 0 ? tabIndexInList : 0);
 
   // Active state: Surface 3 with Rim 2 and micro E1 shadow
-  const activeRim = getDirectionalRim(3, 2, false);
+  const activeRim = resolveSurface({ role: 'panel' }).rimColors;
 
   let bg = 'transparent';
   let color = getTextStyle('tertiary', 1).color;
@@ -101,7 +91,7 @@ export function Tab({
   if (isActive) {
     bg = activeRim ? activeRim.cssBackground : resolveSurface({ role: 'control', state: 'active', on: host }).background;
     color = getTextStyle('primary', 1).color;
-    shadow = SHADOWS[1]; // Micro E1 elevation, from the engine
+    shadow = REST_SHADOW; // an active tab is an object ON its surface, not a floating one
   }
 
   const SPACING = LiminalLayoutEngine.SPACING;
@@ -114,11 +104,15 @@ export function Tab({
     // The surface half of the opt-in. Without these the layer's base rule
     // resolved to nothing and the inline `background` below was the only
     // background — which also cancelled the hover.
-    '--liminal-surface-idle': bg,
-    '--liminal-surface-hover': isActive
-      ? bg
-      : resolveSurface({ role: 'control', state: 'hover', on: host }).background,
-    '--liminal-surface-active': bg,
+    //
+    // An active tab keeps its raised surface in EVERY state; an inactive one
+    // lies flat on the bar, lifts on hover, and sinks below the bar on press.
+    ...resolveInteractionVars({
+      role: 'control',
+      on: host,
+      idle: bg,
+      frozen: isActive ? bg : undefined,
+    }),
     padding: `${SPACING[2]}px ${SPACING[4]}px`,
     borderRadius: `${RADIUS[8]}px`, // 8px
     fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
@@ -217,7 +211,6 @@ export function Tabs({
   // A tab and its panel have to name each other. `useId` gives the pair a
   // prefix that is stable per instance and unique per page.
   const idPrefix = useId();
-  const [keyboardMode, setKeyboardMode] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
@@ -250,7 +243,6 @@ export function Tabs({
       onSelect: (nextIndex) => {
         const nextVal = tabValues[nextIndex];
         if (nextVal) {
-          setKeyboardMode(true);
           onChange(nextVal);
           const el = tabRefs.current.get(nextVal);
           if (el) {
@@ -266,12 +258,9 @@ export function Tabs({
   );
 
   // Container: Surface 1 with Rim 1, flat zero shadow
-  const limStyle = getLiminalStyle({
-    surfaceLevel: 1,
-    isContainer: true,
-    interactive: false,
-    state: 'idle',
-  });
+  // A structural surface: the level of the frame around the work, with a quiet
+  // edge, and it does not answer the pointer.
+  const limStyle = resolveSurface({ role: 'chrome', interactive: false });
 
   const containerStyle: CSSProperties = {
     ...limStyle.style,
@@ -300,8 +289,6 @@ export function Tabs({
         onChange,
         registerTabRef,
         tabValues,
-        keyboardMode,
-        setKeyboardMode,
         idPrefix: idPrefix,
         getItemProps,
       }}

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>6/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -140,11 +140,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -157,7 +155,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -180,27 +180,27 @@ export interface TableCellProps {
   onClick?: (e?: any) =&gt; void;
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >TableCell({</span>
+export function TableCell({
   children,
-  isPrimary = <span class="branch-0 cbranch-no" title="branch not covered" >false,</span>
-  align = <span class="branch-0 cbranch-no" title="branch not covered" >'right',</span>
-  className = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span>
-  style: customStyle = <span class="branch-0 cbranch-no" title="branch not covered" >{},</span>
+  isPrimary = false,
+  align = 'right',
+  className = '',
+  style: customStyle = {},
   onClick,
 }: TableCellProps) {
   const SPACING = LiminalLayoutEngine.SPACING;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
   // A row separator: a seam inside the work surface.
-  const rimSideColor = <span class="cstat-no" title="statement not covered" >resolveBorder({ role: 'work', kind: 'hairline' });</span>
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
 &nbsp;
-  const tdStyle: CSSProperties = <span class="cstat-no" title="statement not covered" >{</span>
+  const tdStyle: CSSProperties = {
     padding: `${SPACING[3]}px ${SPACING[4]}px`,
-    fontSize: `${TYPOGRAPHY[2].fs}px`, // 13px
+    fontSize: LiminalLayoutEngine.getTypeSizeCss(2), // 13px
     lineHeight: TYPOGRAPHY[2].lh,
     color: isPrimary
-      ? getTextStyle('primary', 1).color
+      ? <span class="branch-0 cbranch-no" title="branch not covered" >getTextStyle('primary', 1).color</span>
       : getTextStyle('secondary', 1).color,
-    fontWeight: isPrimary ? 500 : 400,
+    fontWeight: isPrimary ? <span class="branch-0 cbranch-no" title="branch not covered" >500 : 4</span>00,
     borderBottom: `1px solid ${rimSideColor}`,
     textAlign: align,
     whiteSpace: 'nowrap',
@@ -208,7 +208,7 @@ export function <span class="fstat-no" title="function not covered" >TableCell({
     ...customStyle,
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;td role="cell" className={className} style={tdStyle} onClick={onClick}&gt;
       {children}
     &lt;/td&gt;
@@ -223,7 +223,7 @@ export default TableCell;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-12T16:51:02.542Z
+                at 2026-10-13T20:49:08.265Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

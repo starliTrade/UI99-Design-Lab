@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
-import { getDirectionalRim, getTextStyle, SHADOWS, LADDER, SURFACE_TINT, VEIL } from '../../../engine/spec-engine';
+import {getLadderVar, getTextStyle, SURFACE_TINT, VEIL} from '../../../engine/spec-engine';
+import { resolveSurface, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import {
   useScrollLock,
@@ -14,6 +15,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { Divider } from '../Divider';
 import { X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
+import { floatingShadow } from '../../../engine/liminal-surface';
 
 /** A layout decision this component owns, not a system token. */
 const DRAG_HANDLE_WIDTH = 36;
@@ -89,8 +91,8 @@ export function Sheet({
     full: '100vw',
   };
 
-  // Surface 2 with Rim 2 and Sub-Canvas Penumbra SHADOWS[3]
-  const rim = getDirectionalRim(2, 2, false);
+  // A sheet is cut into the page: the well's fill and edge, with its own shadow.
+  const rim = resolveSurface({ role: 'well' }).rimColors;
 
   const backdropStyle: CSSProperties = {
     position: 'fixed',
@@ -100,16 +102,16 @@ export function Sheet({
     WebkitBackdropFilter: 'blur(3px)',
     zIndex: 100,
     boxSizing: 'border-box',
-    animation: reduced ? 'none' : `liminalFadeIn 0.2s ${LiminalMotionEngine.EASING.out}`,
+    animation: reduced ? 'none' : `liminalFadeIn ${LiminalMotionEngine.floatEnter('modal')}`,
   };
 
   const isBottom = position === 'bottom';
 
   const sheetContainerStyle: CSSProperties = {
     position: 'fixed',
-    background: rim ? rim.cssBackground : LADDER[2],
+    background: rim ? rim.cssBackground : getLadderVar(ROLE_LEVEL.well),
     border: rim ? '1px solid transparent' : 'none',
-    boxShadow: SHADOWS[3],
+    boxShadow: floatingShadow('modal'),
     boxSizing: 'border-box',
     outline: 'none',
     overflowY: 'auto',
@@ -124,7 +126,7 @@ export function Sheet({
           maxHeight: '80vh',
           borderRadius: `${RADIUS.panel}px ${RADIUS.panel}px 0 0`,
           padding: `${SPACING[5]}px`,
-          animation: reduced ? 'none' : `liminalSheetSlideBottom 0.25s ${LiminalMotionEngine.EASING.out}`,
+          animation: reduced ? 'none' : `liminalSheetSlideBottom ${LiminalMotionEngine.floatEnter('modal')}`,
         }
       : {
           top: 0,
@@ -135,7 +137,7 @@ export function Sheet({
           maxHeight: '100vh',
           borderRadius: `${RADIUS.panel}px 0 0 ${RADIUS.panel}px`,
           padding: `${SPACING[5]}px`,
-          animation: reduced ? 'none' : `liminalSheetSlideRight 0.25s ${LiminalMotionEngine.EASING.out}`,
+          animation: reduced ? 'none' : `liminalSheetSlideRight ${LiminalMotionEngine.floatEnter('modal')}`,
         }),
     ...customStyle,
   };

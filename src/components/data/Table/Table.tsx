@@ -2,8 +2,6 @@ import { TableRow } from './TableRow';
 import React from 'react';
 import type { CSSProperties, ReactNode, MouseEvent } from 'react';
 import {
-  getLiminalStyle,
-  getLadderColor,
   getTextStyle,
 } from '../../../engine/spec-engine';
 import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
@@ -50,14 +48,11 @@ export function Table({
   style: customStyle = {},
 }: TableProps) {
 
-  const surfaceLevel = 2;
-  const limStyle = getLiminalStyle({
-    surfaceLevel,
-    isContainer: true,
-  });
+  // A structural surface at the level of the work plane, with a quiet edge.
+  const limStyle = resolveSurface({ role: 'work', interactive: false });
 
   // A row separator: a seam inside the work surface.
-  const rimSideColor = resolveBorder({ role: 'work', kind: 'hairline' });
+  const rimSideColor = resolveBorder({ role: 'work', kind: 'separator' });
 
   const containerStyle: CSSProperties = {
     width: '100%',

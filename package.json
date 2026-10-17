@@ -1,5 +1,5 @@
 {
-  "name": "ui99-design-lab",
+  "name": "liminal",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -15,9 +15,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "verify": "bun run typecheck && bun run lint && bun run test && bun run build",
+    "verify": "bun run typecheck && bun run lint && bun run test && bun run build && bun run build:lib && bun run verify:package",
     "audit:tokens": "node scripts/token-audit.mjs",
-    "gen:css": "bun scripts/gen-css-vars.ts"
+    "gen:css": "bun scripts/gen-css-vars.ts",
+    "build:lib": "vite build --config vite.lib.config.ts && tsc -p tsconfig.lib.json",
+    "verify:package": "node scripts/verify-package.mjs",
+    "gen:api": "bun scripts/gen-api.ts",
+    "gen:policy": "bun scripts/gen-policy-md.ts"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -51,5 +55,36 @@
     "typescript6": "npm:typescript@^6",
     "vite": "^8.3.2",
     "vitest": "^5.0.3"
-  }
+  },
+  "exports": {
+    ".": {
+      "types": "./dist-lib/index.d.ts",
+      "import": "./dist-lib/liminal.js",
+      "require": "./dist-lib/liminal.cjs"
+    },
+    "./styles.css": "./dist-lib/liminal.css",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist-lib/index.d.ts",
+  "files": [
+    "dist-lib"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "description": "A dark UI engine: every surface, edge, colour and space comes from a rule, and the rule is written as a test.",
+  "license": "MIT",
+  "keywords": [
+    "design-system",
+    "react",
+    "oklch",
+    "dark-ui",
+    "rtl",
+    "accessibility",
+    "design-tokens"
+  ]
 }

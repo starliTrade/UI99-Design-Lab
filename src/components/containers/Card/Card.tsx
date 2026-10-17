@@ -1,8 +1,9 @@
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { getLiminalStyle, getDirectionalRim, getLadderColor, getTextStyle, SURFACE_TINT } from '../../../engine/spec-engine';
+import { getTextStyle, SURFACE_TINT } from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
-import { resolveSurface } from '../../../engine/liminal-surface';
+import { resolveSurface, ROLE_LEVEL, type SurfaceRole } from '../../../engine/liminal-surface';
+import { SurfaceProvider, useHostSurface } from '../../../engine/liminal-surface-context';
 import { resolveBorder } from '../../../engine/liminal-surface';
 import { Divider } from '../Divider';
 
@@ -15,7 +16,15 @@ export interface CardProps {
   footer?: ReactNode;
   elevation?: 1 | 2 | 3 | 4;
   isFeatured?: boolean;
-  surfaceLevel?: 1 | 2 | 3 | 4;
+  /**
+   * What this card IS in the hierarchy, not which ladder step it wants.
+   *
+   * It used to be `surfaceLevel?: 1 | 2 | 3 | 4` — a raw depth, and a raw depth
+   * cannot be checked: at level 3 the old resolver still drew a rim of 1, which
+   * the contract says belongs to chrome and work, not to a surface three steps
+   * up. `chrome` is the level the card has always sat at.
+   */
+  surface?: Extract<SurfaceRole, 'chrome' | 'work' | 'panel'>;
   radius?: number;
   className?: string;
   style?: CSSProperties;
@@ -34,7 +43,7 @@ export interface InsetWellProps {
  * Uses Inverted Directional Rim (Concave: top darker shadow, bottom specular reflection)
  */
 /** A divider inside a card is a hairline on the panel role. */
-const dividerRim = resolveBorder({ role: 'panel', kind: 'hairline' });
+const dividerRim = resolveBorder({ role: 'panel', kind: 'separator' });
 
 export function InsetWell({
   children,
@@ -49,8 +58,12 @@ export function InsetWell({
   const paddingVal = padding === 'sm' ? SPACING[3] : SPACING[4]; // 12px or 16px
   const innerRadius = LiminalLayoutEngine.getConcentricRadius(RADIUS.card, paddingVal);
 
-  // Inverted Concave Rim (S1 concave)
-  const concaveRim = getDirectionalRim(1, 2, true);
+  // A well is CUT INTO its host — one and a half steps below the card's own
+  // role, with a defined edge and a concave rim. The engine states the rule;
+  // this used to be a hand-picked `(1, 2, true)`. The host comes from context,
+  // because an InsetWell does not know which card it was cut into.
+  const host = useHostSurface();
+  const concaveRim = resolveSurface({ role: host, inset: true }).rimColors;
 
   const wellStyle: CSSProperties = {
     background: concaveRim ? concaveRim.cssBackground : resolveSurface({ role: 'work', state: 'active' }).background,
@@ -80,7 +93,7 @@ export function Card({
   footer,
   elevation,
   isFeatured = false,
-  surfaceLevel = 1,
+  surface = 'chrome',
   radius,
   className = '',
   style: customStyle = {},
@@ -89,15 +102,16 @@ export function Card({
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const TYPOGRAPHY = LiminalLayoutEngine.TYPOGRAPHY;
 
-  const limStyle = getLiminalStyle({
-    surfaceLevel,
-    isContainer: true,
+  // A structural surface: it does not answer the pointer. It floats only when
+  // it is given an elevation, or when it is featured — and an explicit
+  // elevation wins over `isFeatured`, which is the order the old resolver used.
+  const limStyle = resolveSurface({
+    role: surface,
     interactive: false,
-    isFeatured,
-    isFloating: Boolean(elevation),
-    elevation,
-    state: 'idle',
+    elevation: elevation ?? (isFeatured ? 2 : undefined),
   });
+  // The text sits on the card's own level.
+  const textLevel = ROLE_LEVEL[surface];
 
   const paddingValues: Record<string, number> = {
     sm: SPACING[4], // 16px
@@ -116,7 +130,7 @@ export function Card({
     boxShadow: elevation ? limStyle.style.boxShadow : 'none',
     borderRadius: `${finalRadius}px`,
     padding: (title || subtitle || action || footer) ? 0 : pad,
-    color: getTextStyle('secondary', surfaceLevel).color,
+    color: getTextStyle('secondary', textLevel).color,
     boxSizing: 'border-box',
     display: 'flex',
     flexDirection: 'column',
@@ -129,11 +143,12 @@ export function Card({
     lineHeight: TYPOGRAPHY[4].lh,
     letterSpacing: TYPOGRAPHY[4].ls,
     fontWeight: 600,
-    color: getTextStyle('primary', surfaceLevel).color,
+    color: getTextStyle('primary', textLevel).color,
     margin: 0,
   };
 
   return (
+    <SurfaceProvider role={surface}>
     <div className={className} style={cardStyle}>
       {(title || subtitle || action) && (
         <div
@@ -156,7 +171,7 @@ export function Card({
             {subtitle && (
               <div
                 style={{
-                  ...getTextStyle('tertiary', surfaceLevel),
+                  ...getTextStyle('tertiary', textLevel),
                   fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
                   marginTop: `${SPACING[0]}px`,
                 }}
@@ -173,7 +188,7 @@ export function Card({
         style={{
           flex: 1,
           padding: (title || subtitle || action || footer) ? pad : undefined,
-          color: getTextStyle('secondary', surfaceLevel).color,
+          color: getTextStyle('secondary', textLevel).color,
         }}
       >
         {children}
@@ -195,6 +210,7 @@ export function Card({
         </div>
       )}
     </div>
+    </SurfaceProvider>
   );
 }
 

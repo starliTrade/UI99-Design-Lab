@@ -23,9 +23,24 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import { LADDER, PERCEPTUAL_QUANTUM } from './liminal-ladder';
-import { ROLE_LEVEL } from './liminal-surface';
+import { LADDER, PERCEPTUAL_QUANTUM, getLadderVar } from './liminal-ladder';
+import { ROLE_LEVEL, resolveBorder } from './liminal-surface';
 import type { SurfaceRole } from './liminal-surface';
+import { shadowModel } from './liminal-shadow';
+import { oklchToRgb } from './liminal-color-math';
+import { CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from './liminal-ladder';
+
+/**
+ * What a mist surface falls on, as sRGB.
+ *
+ * The shadow's alpha is solved per host, so the mist needs to name one. It is the
+ * work plane: a menu, a popover, a modal and a toast all float over the surface the
+ * work is done on, not over the canvas.
+ */
+const WORK_PLANE = (() => {
+  const { r, g, b } = oklchToRgb({ L: CANVAS_L + 2 * LADDER_STEP, C: LADDER_CHROMA, h: LADDER_HUE });
+  return [r, g, b];
+})();
 
 /** The roles that float above the page, and therefore catch mist. */
 export const FLOATING_MIST_ROLES: SurfaceRole[] = ['menu', 'popover', 'modal', 'toast'];
@@ -72,9 +87,12 @@ export function mistBlur(role: SurfaceRole): number {
 export function mistFillStops(role: SurfaceRole): { top: string; bottom: string; topAlpha: number; bottomAlpha: number } {
   const level = Math.min(LADDER.length - 1, ROLE_LEVEL[role]);
   const lower = Math.max(0, level - 2);
+  // A VARIABLE, not the hex. The mist is a surface, and a surface has to follow
+  // a theme like every other one — this was the last place in the engine that
+  // baked a ladder colour into a rendered style.
   return {
-    top: LADDER[level],
-    bottom: LADDER[lower],
+    top: getLadderVar(level),
+    bottom: getLadderVar(lower),
     topAlpha: 0.80 + floatHeight(role) * 0.008,
     bottomAlpha: 0.70 + floatHeight(role) * 0.008,
   };
@@ -171,20 +189,26 @@ export function mistHaloRadius(role: SurfaceRole): number {
  * a menu — which is what the eye expects and what an absolute constant could
  * not express.
  */
+/**
+ * THE SHADOW MODEL LIVES IN ITS OWN MODULE, because three things need it and one
+ * of them is the mist's own dependency. See `liminal-shadow.ts`.
+ */
+export { shadowModel, floatShadow, REST_SHADOW } from './liminal-shadow';
+
 export function mistShadowNearRadius(role: SurfaceRole): number {
-  return 4 + floatHeight(role) * 0.5;
+  return shadowModel(floatHeight(role), WORK_PLANE).near;
 }
 
 export function mistShadowFarRadius(role: SurfaceRole): number {
-  return 40 + floatHeight(role) * 3.2;
+  return shadowModel(floatHeight(role), WORK_PLANE).far;
 }
 
 export function mistShadowNearAlpha(role: SurfaceRole): number {
-  return 0.30 + floatHeight(role) * 0.005;
+  return shadowModel(floatHeight(role), WORK_PLANE).nearAlpha;
 }
 
 export function mistShadowFarAlpha(role: SurfaceRole): number {
-  return 0.42 + floatHeight(role) * 0.010;
+  return shadowModel(floatHeight(role), WORK_PLANE).farAlpha;
 }
 
 /**
@@ -197,7 +221,7 @@ export function mistShadowFarAlpha(role: SurfaceRole): number {
  */
 export function mistFill(role: SurfaceRole): { color: string; alpha: number } {
   const level = Math.min(LADDER.length - 1, ROLE_LEVEL[role]);
-  return { color: LADDER[level], alpha: 0.64 + floatHeight(role) * 0.015 };
+  return { color: getLadderVar(level), alpha: 0.64 + floatHeight(role) * 0.015 };
 }
 
 /**
@@ -216,6 +240,29 @@ export function mistRingAlpha(role: SurfaceRole): number {
 export interface MistOptions {
   /** Re-enable the backdrop blur. Only worth it over busy or colourful content. */
   diffuse?: boolean;
+  /**
+   * HOW MUCH OF THE SURFACE'S OWN FILL TO KEEP, 0–1. Default 1.
+   *
+   * A FOG IS A MASS; A GLASS IS A WINDOW, and they are the same surface with
+   * different amounts of the page let through.
+   *
+   * The fog keeps its fill: it is a body lighter than the page, and you read it
+   * as an object sitting in front of the content. Measured, that fill is ~84%
+   * opaque — which is right for a menu, a popover or a modal, because those
+   * carry text that has to stay legible over whatever is behind them.
+   *
+   * A glass keeps almost none of it. Measured on a product page in the wild, its
+   * floating nav is `rgba(255,255,255,0.03)` with `blur(12px)` — three percent
+   * of its own fill, and everything you see through it is the page, diffused.
+   * That is not a better fog; it is a different object.
+   *
+   * AND A GLASS NEEDS LIGHT BEHIND IT. Over the near-uniform dark this system
+   * actually uses, a blur has nothing to show — the engine's own note on v2 says
+   * so, and it is why the fill was raised in the first place. So `fill` is only
+   * worth lowering where something bright passes under the surface: a hero
+   * image, a photograph, a page with a light source at its top.
+   */
+  fill?: number;
 }
 
 export interface MistSpec {
@@ -244,6 +291,8 @@ export interface MistSpec {
   edgeStops: Array<{ pos: number; alpha: number }>;
   /** Whether the expensive backdrop diffusion is on. */
   diffuse: boolean;
+  /** The fraction of the role's own fill that is kept. 1 is a fog, ~0.2 a glass. */
+  fillScale: number;
 }
 
 export function resolveMist(role: SurfaceRole, options: MistOptions = {}): MistSpec {
@@ -270,6 +319,7 @@ export function resolveMist(role: SurfaceRole, options: MistOptions = {}): MistS
     edgeGlow: mistEdgeGlow(role),
     edgeStops: mistEdgeStops(role),
     diffuse: options.diffuse === true,
+    fillScale: options.fill ?? 1,
   };
 }
 
@@ -297,8 +347,10 @@ export function mistCssVars(role: SurfaceRole, options: MistOptions = {}): Recor
     // The fog: a vertical gradient INSIDE the surface. Nothing radiates.
     '--liminal-mist-fill-top': stops.top,
     '--liminal-mist-fill-bottom': stops.bottom,
-    '--liminal-mist-fill-top-alpha': String(isToast ? 0.94 : stops.topAlpha),
-    '--liminal-mist-fill-bottom-alpha': String(isToast ? 0.94 : stops.bottomAlpha),
+    // The fill, scaled by how much of the page is allowed through. A toast is
+    // never scaled: it is a notification and has to be legible first.
+    '--liminal-mist-fill-top-alpha': String(isToast ? 0.94 : stops.topAlpha * (options.fill ?? 1)),
+    '--liminal-mist-fill-bottom-alpha': String(isToast ? 0.94 : stops.bottomAlpha * (options.fill ?? 1)),
     // The light that lands on the top edge - one hairline, never a halo.
     '--liminal-mist-inner-light': isToast
       ? 'inset 0 0 0 rgba(0, 0, 0, 0)'
@@ -308,8 +360,23 @@ export function mistCssVars(role: SurfaceRole, options: MistOptions = {}): Recor
     '--liminal-mist-shadow-far': `${mistShadowFarRadius(role).toFixed(0)}px`,
     '--liminal-mist-shadow-near-alpha': String(mistShadowNearAlpha(role)),
     '--liminal-mist-shadow-far-alpha': String(mistShadowFarAlpha(role)),
-    // The seam: a faint hairline where the fog meets the page.
-    '--liminal-mist-seam': `rgba(${r}, ${g}, ${b}, ${(isToast ? 0.075 : 0.07 + h * 0.004).toFixed(4)})`,
+    // THE SEAM IS THE ENGINE'S OWN EDGE, and it used to be a hand-tuned alpha
+    // that broke the system's first rule.
+    //
+    // It was `rgba(233,236,242, 0.07 + h * 0.004)`. Composited over the canvas
+    // that lands on #161719 at h=0 and #1a1c1e at h=5 — and the ladder's ceiling
+    // is #15171a. The seam was ABOVE THE CEILING AT EVERY HEIGHT, on every mist
+    // surface in the system: menus, popovers, modals, toasts. A 1px line
+    // brighter than the brightest allowed surface, drawn around a surface that
+    // is supposed to sit at the threshold of perception.
+    //
+    // `resolveBorder` already answers this question for every other edge in the
+    // system: an edge is a LADDER LEVEL half a step above the surface it belongs
+    // to, and at the ceiling it inverts rather than exceeding. The mist uses the
+    // same resolver now, so its seam cannot drift from the rest of the system —
+    // and the `fill` option scales it, because a window's frame is fainter than
+    // a mass's edge.
+    '--liminal-mist-seam': `color-mix(in oklab, ${resolveBorder({ role, kind: 'separator' })} ${Math.round((options.fill ?? 1) * 100)}%, transparent)`,
     // Opt-in diffusion only.
     '--liminal-mist-blur': `${m.blur}px`,
   };

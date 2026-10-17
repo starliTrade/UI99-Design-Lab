@@ -105,6 +105,44 @@ export class LiminalMotionEngine {
     return `scaleIn ${this.DURATION.slower}ms ${this.EASING.out}`;
   }
 
+  /**
+   * THE DURATION OF A FLOATING SURFACE, FROM ITS OWN HEIGHT.
+   *
+   * The engine already said this and did not do it: `slower` is commented
+   * "container enter/exit (modal, sheet, dropdown)" — and the Modal enters in a
+   * hand-written `0.25s`, which is `slow`. The intent was written down and never
+   * applied, and the components wrote raw seconds instead, which meant the
+   * theme's motion slider could not reach them at all.
+   *
+   * WHY HEIGHT AND NOT A PER-COMPONENT CHOICE. A surface that floats higher
+   * travels further to arrive — a modal crosses the whole screen, a tooltip
+   * crosses a few pixels — and a longer journey takes longer. The height is the
+   * one quantity in this system that is already measured for every layer, so the
+   * duration follows it rather than being picked again per component.
+   *
+   *   a menu over the plane      normal   200ms
+   *   a popover                  slow     250ms
+   *   a modal, a toast           slower   350ms
+   *
+   * The two highest share a duration on purpose: past a certain distance the eye
+   * stops reading the journey as longer and starts reading it as slow.
+   */
+  static floatDuration(role: 'menu' | 'popover' | 'modal' | 'toast'): MotionDurationKey {
+    switch (role) {
+      case 'menu':
+        return 'normal';
+      case 'popover':
+        return 'slow';
+      default:
+        return 'slower';
+    }
+  }
+
+  /** The enter transition for a floating surface, from its own height. */
+  static floatEnter(role: 'menu' | 'popover' | 'modal' | 'toast'): string {
+    return `${this.DURATION[this.floatDuration(role)]}ms ${this.EASING.out}`;
+  }
+
   // ===== MOTION TOKENS BY PROPERTY =====
   static getTransition(
     property: string = 'all',

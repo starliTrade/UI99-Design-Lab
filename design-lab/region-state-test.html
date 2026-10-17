@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060709" />
+<title>LIMINAL — حالت یک ناحیه: مشتق یا جدول نقش‌ها</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.9);
+    font:15px/1.8 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:26px 16px 64px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:20px;font-weight:700;margin:0 0 8px;letter-spacing:-.02em;text-align:center}
+  .sub{color:rgba(255,255,255,.58);font-size:13px;max-width:84ch;text-align:center;margin-bottom:24px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+  .q{width:100%;max-width:680px;border-radius:16px;padding:20px;margin-bottom:16px;
+     background:var(--liminal-s3);border:1px solid var(--liminal-role-panel-border)}
+  .q h2{font-size:14.5px;margin:0 0 4px;font-weight:600}
+  .q .why{color:rgba(255,255,255,.45);font-size:12px;margin-bottom:18px;line-height:2}
+  .band{padding:26px 0;display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;gap:10px;align-items:center}
+  .card{width:180px;height:112px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+        font-size:12px;color:rgba(255,255,255,.4)}
+  .cap{font-size:10.5px;color:rgba(255,255,255,.45);text-align:center;line-height:1.8}
+  .cap b{color:rgba(255,255,255,.78);font-size:11.5px}
+  .opt{font:inherit;font-size:12.5px;padding:9px 15px;border-radius:10px;cursor:pointer;
+       background:transparent;color:rgba(255,255,255,.7);border:1px solid var(--liminal-role-panel-border)}
+  .opt[aria-pressed="true"]{background:var(--liminal-s8);color:var(--liminal-s0);font-weight:700}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .note{max-width:680px;margin-top:20px;color:rgba(255,255,255,.5);font-size:13px;line-height:2;text-align:center}
+</style>
+</head>
+<body>
+  <h1>حالت یک ناحیه — مشتق یا جدول نقش‌ها</h1>
+  <p class="sub">
+    یک <b>Card</b>، یک <b>Panel</b>، یک <b>Alert</b> — این‌ها «یک ناحیه داخل یک ناحیه»اند،
+    پس مشتق می‌گوید <b>ساده</b>. ولی امروز <b>ریم</b> دارند. کدام درست است؟
+  </p>
+
+  <div class="q">
+    <h2>روی سطح کار — یک ناحیه</h2>
+    <div class="why">میزبان: <code>S2</code> · ناحیه: <code>S3</code></div>
+    <div class="band" id="bandA" style="background:var(--liminal-s2)"></div>
+  </div>
+
+  <div class="q">
+    <h2>روی بوم — یک ناحیه</h2>
+    <div class="why">میزبان: <code>S0</code> · ناحیه: <code>S1</code> — اینجا مشتق هم <b>مرز</b> می‌دهد</div>
+    <div class="band" id="bandB" style="background:var(--liminal-s0)"></div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال — یک ناحیه روی یک سطح، چه بگیرد؟</h2>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="plain">ساده — مشتق درست است</button>
+      <button class="opt" data-q="1" data-v="rim">ریم — جدول نقش‌ها درست است</button>
+      <button class="opt" data-q="1" data-v="border">مرز — نه ریم</button>
+      <button class="opt" data-q="1" data-v="both">مرز + ریم</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>و سؤال دوم — آیا مشتق یک ردیف کم دارد؟</h2>
+    <div class="why">
+      جدول مشتق پنج ردیف دارد: گذرا · کنترل · ناحیه روی بوم · ناحیه داخل ناحیه · خالی.
+      ولی یک <b>Card</b> فقط «ناحیه داخل ناحیه» نیست — یک <b>شیء متمایز روی یک سطح</b> است.
+    </div>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="add">بله — یک ردیف «شیء متمایز روی سطح» اضافه شود</button>
+      <button class="opt" data-q="2" data-v="no">نه — همان پنج ردیف کافی است</button>
+    </div>
+  </div>
+
+  <p class="note" id="note"></p>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const CANVAS_L = num('--liminal-canvas-l'), STEP = num('--liminal-step');
+  const C = num('--liminal-chroma'), H = num('--liminal-hue'), Q = num('--liminal-q');
+  const at = (level) => `oklch(${(CANVAS_L + level * STEP).toFixed(7)} ${C} ${H})`;
+  const MAX = 8;
+
+  /** The four states a region can take, at its own level. */
+  const states = (n) => ({
+    plain:  `background:${S(n)}`,
+    border: `background:${S(n)};border:1px solid ${at(n + 1)}`,
+    rim:    `background:linear-gradient(${S(n)},${S(n)}) padding-box,linear-gradient(180deg,${at(n + 1.5)} 0%,${at(n + 1)} 55%,${at(n + 0.5)} 100%) border-box;border:1px solid transparent`,
+    both:   `background:linear-gradient(${S(n)},${S(n)}) padding-box,linear-gradient(180deg,${at(n + 1.5)} 0%,${at(n + 1)} 55%,${at(n + 0.5)} 100%) border-box;border:1px solid ${at(n + 2)}`,
+  });
+  const LABEL = { plain: 'ساده', border: 'مرز', rim: 'ریم', both: 'مرز + ریم' };
+
+  function fill(bandId, host, level) {
+    const band = document.getElementById(bandId);
+    const st = states(level);
+    for (const key of ['plain', 'border', 'rim', 'both']) {
+      const el = document.createElement('div'); el.className = 'cell';
+      el.innerHTML = `<div class="card" style="${st[key]}">Card</div>
+        <div class="cap"><b>${LABEL[key]}</b></div>`;
+      band.appendChild(el);
+    }
+  }
+  fill('bandA', 2, 3);
+  fill('bandB', 0, 1);
+
+  document.getElementById('note').innerHTML =
+    `و یک نکته: روی <b>بوم</b>، مشتق خودش <b>مرز</b> می‌دهد (چون اختلاف سطح تنها روی آستانه است).
+     تفاوت فقط در <b>سطح کار</b> است — جایی که مشتق می‌گوید میزبان خودش یک سطح است و کافی است.`;
+
+  const answers = {};
+  for (const b of document.querySelectorAll('.opt')) b.addEventListener('click', () => {
+    const q = b.dataset.q;
+    for (const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed','true'); answers[q] = b.dataset.v;
+  });
+</script>
+</body>
+</html>

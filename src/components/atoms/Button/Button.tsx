@@ -22,7 +22,7 @@ import {
   type VariantProps,
 } from '../../../engine/liminal-variants';
 import { Slot } from '../../../engine/liminal-slot';
-import { resolveSurface, resolveBorder } from '../../../engine/liminal-surface';
+import { resolveSurface, resolveBorder, resolveInteractionVars } from '../../../engine/liminal-surface';
 import { useHostSurface } from '../../../engine/liminal-surface-context';
 
 // Module-level: the variant table below is module-level too.
@@ -100,7 +100,7 @@ export const buttonVariants = createVariants({
         padding: `${LiminalLayoutEngine.SPACING[3]}px ${LiminalLayoutEngine.SPACING[5]}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(3),
         minHeight: CONTROL.lg,
-        borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
+        borderRadius: `${LiminalLayoutEngine.CONTROL_RADIUS.lg}px`,
         lineHeight: 1.5,
       },
       icon: {
@@ -121,22 +121,53 @@ export const buttonVariants = createVariants({
 export interface ButtonProps
   extends Omit<LiminalComponentProps<'button'>, 'onClick'>,
     VariantProps<typeof buttonVariants> {
+  /** Render the child element instead of a `<button>`, keeping its styles. */
   asChild?: boolean;
+  /**
+   * The name of a decision, not a colour. `danger` is a role; `red` would be a
+   * value pretending to be a choice, and it breaks the moment the theme moves.
+   */
   variant?: ButtonVariant;
+  /**
+   * The control height, from `CONTROL`. `md` is the default AND the accessible
+   * minimum — `CONTROL.md` and `TARGET.min` are the same number, so the default
+   * is not a compromise.
+   */
   size?: ButtonSize;
+  /** Inert: not focusable, not pressable, and it says so to a screen reader. */
   disabled?: boolean;
+  /**
+   * Force a state for a screenshot or a test.
+   *
+   * The interaction is CSS, so a still frame cannot show hover or press. This
+   * applies the layer's own declarations through a class — a harness for
+   * looking, not a second implementation of the state.
+   */
   forcedState?: LiminalState;
+  /** A glyph before the label. */
   icon?: ReactNode;
+  /** A glyph after the label. */
   iconRight?: ReactNode;
+  /** Fill the container. For a form's primary action, not for a toolbar. */
   fullWidth?: boolean;
   children?: ReactNode;
   onClick?: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void;
+  /** Defaults to `button`, because a button inside a form that submits by
+   *  accident is a bug the platform will happily commit for you. */
   type?: 'button' | 'submit' | 'reset';
+  /** Busy. The label stays, so the button does not change width mid-press. */
   loading?: boolean;
+  /** No visible label. Requires `ariaLabel` — an icon-only button with no name
+   *  is a button a screen reader cannot describe. */
   iconOnly?: boolean;
+  /** The accessible name when there is no visible one. */
   ariaLabel?: string;
+  /** Renders an `<a>` instead of a `<button>`. A link that navigates is a link,
+   *  and a screen reader announces it differently. */
   href?: string;
   target?: '_blank' | '_self' | '_parent' | '_top';
+  /** Required with `target="_blank"`: without it the new tab can reach back
+   *  through `window.opener`. */
   rel?: string;
 }
 
@@ -190,14 +221,14 @@ export const Button = createLiminalComponent<ButtonProps>(
       className = '',
       style: customStyle = {},
       ref,
-      onMouseEnter,
-      onMouseLeave,
-      onMouseDown,
-      onMouseUp,
-      onFocus,
-      onBlur,
-      onKeyDown,
-      onKeyUp,
+      // NOT destructured, on purpose.
+      //
+      // These eight were pulled out of props and then never used — the
+      // component's interaction is CSS, so there was nothing to protect them
+      // from. The effect was that a consumer's `onFocus` was silently dropped,
+      // which is how a HoverCard built on top of a Button could not open on
+      // focus. An event handler a component does not use is an event handler it
+      // must forward.
       ...restProps
     } = props;
 
@@ -233,12 +264,15 @@ export const Button = createLiminalComponent<ButtonProps>(
         padding: `${CONTROL_PADDING.sm.y}px ${CONTROL_PADDING.sm.x}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(1),
         minHeight: CONTROL.sm,
+        // The corner follows the HEIGHT, so a small button is tighter than a large one.
+        borderRadius: `${LiminalLayoutEngine.CONTROL_RADIUS.sm}px`,
         lineHeight: 1.4,
       },
       md: {
         padding: `${CONTROL_PADDING.md.y}px ${CONTROL_PADDING.md.x}px`,
         fontSize: LiminalLayoutEngine.getTypeSizeCss(2),
         minHeight: CONTROL.md, // mobile touch target compliant
+        borderRadius: `${LiminalLayoutEngine.CONTROL_RADIUS.md}px`,
         lineHeight: 1.5,
       },
       lg: {
@@ -349,9 +383,17 @@ export const Button = createLiminalComponent<ButtonProps>(
       ...variantBase,
       ...staticStyle,
       // The interaction layer reads these; React never recomputes them on hover.
-      '--liminal-surface-idle': idleBg,
-      '--liminal-surface-hover': hoverBg,
-      '--liminal-surface-active': activeBg,
+      //
+      // Every variant resolves its own three fills — a brand's own hover, a
+      // semantic surface, a tint — so all three are explicit here. The producer
+      // still owns the border pair and guarantees none of the six is missing.
+      ...resolveInteractionVars({
+        role: 'control',
+        on: host,
+        idle: idleBg,
+        hover: hoverBg,
+        active: activeBg,
+      }),
       display: fullWidth ? 'flex' : (isIconOnly ? 'inline-flex' : variantBase.display),
       width: isIconOnly
         ? `${iconOnlyDimensions[size]}px`
@@ -368,6 +410,8 @@ export const Button = createLiminalComponent<ButtonProps>(
         ? LiminalMotionEngine.getTransition('opacity', 'fast')
         : LiminalMotionEngine.TRANSITION.normal,
       padding: isIconOnly ? 0 : (variantBase.padding || sizeStyles[size].padding),
+      // The SIZE's radius, not the variant's — a corner is a function of the control's height.
+      borderRadius: sizeStyles[size].borderRadius ?? variantBase.borderRadius,
       ...customStyle,
     } as CSSProperties;
 

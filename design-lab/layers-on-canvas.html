@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#060709" />
+<title>LIMINAL — لایه‌ها روی بوم، در چهار حالت</title>
+<link rel="stylesheet" href="./liminal.css" />
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--liminal-s0);color:rgba(255,255,255,.9);
+    font:15px/1.8 system-ui,-apple-system,"Segoe UI",sans-serif;
+    padding:22px 12px 64px;display:flex;flex-direction:column;align-items:center}
+  h1{font-size:19px;font-weight:700;margin:0 0 8px;text-align:center;letter-spacing:-.02em}
+  .sub{color:rgba(255,255,255,.58);font-size:12.5px;max-width:80ch;text-align:center;margin-bottom:20px;line-height:2}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+
+  /* the canvas, with the whole grid on it */
+  .canvas{width:100%;max-width:680px;background:var(--liminal-s0);border-radius:16px;
+          padding:16px 12px 18px;border:1px solid var(--liminal-role-panel-border)}
+  .head{display:grid;grid-template-columns:56px repeat(4,1fr);gap:10px;margin-bottom:12px}
+  .head span{font-size:10px;font-family:ui-monospace,Menlo,monospace;
+             color:rgba(255,255,255,.4);text-align:center}
+  .head span:first-child{text-align:start}
+  .grid{display:flex;flex-direction:column;gap:10px}
+  .row{display:grid;grid-template-columns:56px repeat(4,1fr);gap:10px;align-items:center}
+  .lv{font-size:10.5px;font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.45)}
+  .lv b{display:block;color:rgba(255,255,255,.7);font-size:11.5px}
+  .cell{height:76px;border-radius:12px;border:1px solid transparent;display:block}
+  .cap{font-size:10.5px;color:rgba(255,255,255,.4);text-align:center;margin-top:14px;line-height:2}
+  .legend{display:grid;grid-template-columns:52px repeat(4,1fr);gap:8px;margin-top:4px}
+  .legend span{font-size:9.5px;font-family:ui-monospace,Menlo,monospace;
+               color:rgba(255,255,255,.32);text-align:center}
+  .legend span:first-child{text-align:start}
+  .note{max-width:640px;margin-top:20px;color:rgba(255,255,255,.5);font-size:12.5px;line-height:2;text-align:center}
+</style>
+</head>
+<body>
+  <h1>لایه‌ها روی بوم — چهار حالت</h1>
+  <p class="sub">
+    بوم پایه است، و رویش هر لایه در چهار حالت: <b>ساده · ریم‌دار · مرزدار · سایه‌دار</b>.
+    هر درمان نسبت به <b>خودِ لایه</b> ساخته می‌شود — پس هر سطر، یک لایه است و رابطه‌اش با بوم.
+  </p>
+
+  <div class="canvas">
+    <div class="head">
+      <span>لایه</span><span>ساده</span><span>ریم‌دار</span><span>مرزدار</span><span>سایه‌دار</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <p class="note" id="note"></p>
+
+<script>
+  const css = getComputedStyle(document.documentElement);
+  const num = (n) => parseFloat(css.getPropertyValue(n));
+  const S = (n) => css.getPropertyValue(`--liminal-s${n}`).trim();
+  const CANVAS_L = num('--liminal-canvas-l'), STEP = num('--liminal-step');
+  const C = num('--liminal-chroma'), H = num('--liminal-hue'), Q = num('--liminal-q');
+  const at = (level) => `oklch(${(CANVAS_L + level * STEP).toFixed(7)} ${C} ${H})`;
+  const MAX = 8;
+
+  const ROLE = ['', 'chrome', 'work', 'panel', 'control', 'menu', 'popover', 'modal', 'toast'];
+
+  /** The four states, each built from the layer's own level. */
+  const states = (n) => ({
+    plain:  `background:${S(n)}`,
+    rim:    `background:linear-gradient(${S(n)},${S(n)}) padding-box,linear-gradient(180deg,${at(Math.min(MAX, n + 1.5))} 0%,${at(Math.min(MAX, n + 1))} 55%,${at(Math.min(MAX, n + 0.5))} 100%) border-box`,
+    border: `background:${S(n)};border-color:${at(Math.min(MAX, n + 1))}`,
+    shadow: `background:${S(n)};box-shadow:0 3.5px 10px rgba(1,2,3,.1326), 0 2px 3.5px rgba(1,2,3,.1326)`,
+  });
+
+  const grid = document.getElementById('grid');
+  for (let n = 1; n <= 8; n++) {
+    const st = states(n);
+    const row = document.createElement('div'); row.className = 'row';
+    row.innerHTML = `<span class="lv"><b>S${n}</b>${ROLE[n]}</span>` +
+      ['plain', 'rim', 'border', 'shadow'].map((k) => `<span class="cell" style="${st[k]}"></span>`).join('');
+    grid.appendChild(row);
+  }
+
+  document.getElementById('note').innerHTML =
+    `و هر ستون یک درمان است، با <b>یک عدد ثابت</b>:<br>
+     <b>ریم</b> <code>+۱.۵ / ۱ / ۰.۵</code> پله · <b>مرز</b> <code>+۱</code> پله · <b>سایه</b> <code>۱</code> کوانتوم<br><br>
+     و روی <b>S8</b> سقف می‌گیرد: ریم <b>معکوس</b> می‌شود و مرز <b>به نیم‌پله</b> برمی‌گردد —
+     چون بالای سقف جایی نیست. <b>تنزل، نه گسترش.</b>`;
+</script>
+</body>
+</html>

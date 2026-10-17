@@ -22,7 +22,7 @@ import {
   Tabs,
   Breadcrumb,
 } from './index';
-import { getLiminalStyle, LiminalState, getTextStyle } from '../engine/spec-engine';
+import { LiminalState, getTextStyle } from '../engine/spec-engine';
 import { LiminalColorEngine } from '../engine/liminal-color-engine';
 import { LiminalLayoutEngine } from '../engine/liminal-layout-engine';
 import {
@@ -38,6 +38,7 @@ import {
   Sliders,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../engine/liminal-icon-engine';
+import { resolveSurface } from '../engine/liminal-surface';
 
 export function KitShowcase() {
   // State controls for interactive testing
@@ -72,7 +73,7 @@ export function KitShowcase() {
       <div
         className="p-5 sm:p-6 space-y-3"
         style={{
-          ...getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style,
+          ...resolveSurface({ role: 'chrome', interactive: false }).style,
           borderRadius: `${LiminalLayoutEngine.RADIUS.container}px`,
         }}
       >
@@ -81,7 +82,7 @@ export function KitShowcase() {
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
               style={{
-                ...getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style,
+                ...resolveSurface({ role: 'work', interactive: false }).style,
                 borderRadius: `${LiminalLayoutEngine.RADIUS.control}px`,
               }}
             >
@@ -113,7 +114,7 @@ export function KitShowcase() {
                 style={{
                   ...(activeSubTab === tab
                     ? {
-                        ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                        ...resolveSurface({ role: 'panel', interactive: true }).style,
                         color: getTextStyle('primary', 3).color,
                         fontWeight: 600,
                       }
@@ -141,7 +142,7 @@ export function KitShowcase() {
                 style={{
                   ...(buttonState === st
                     ? {
-                        ...getLiminalStyle({ surfaceLevel: 3, interactive: true }).style,
+                        ...resolveSurface({ role: 'panel', interactive: true }).style,
                         color: getTextStyle('primary', 3).color,
                         fontWeight: 600,
                       }
@@ -340,7 +341,7 @@ export function KitShowcase() {
           action={<Badge semantic="info">Spatial Hierarchy</Badge>}
         >
           <div className="space-y-4">
-            <Panel parentRadius={24} padding={16} surfaceLevel={2}>
+            <Panel parentRadius={24} padding={16} surface="work">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <div className="text-xs font-bold" style={{ color: getTextStyle('primary', 2).color }}>
@@ -366,7 +367,7 @@ export function KitShowcase() {
               <div
                 className="p-4 space-y-2"
                 style={{
-                  ...getLiminalStyle({ surfaceLevel: 4, isFeatured: true }).style,
+                  ...resolveSurface({ role: 'control', elevation: 2 }).style,
                   borderRadius: `${LiminalLayoutEngine.RADIUS.card}px`,
                 }}
               >
@@ -385,7 +386,7 @@ export function KitShowcase() {
               <div
                 className="p-4 space-y-2"
                 style={{
-                  ...getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style,
+                  ...resolveSurface({ role: 'work', interactive: false }).style,
                   borderRadius: `${LiminalLayoutEngine.RADIUS.card}px`,
                 }}
               >
@@ -488,7 +489,7 @@ export function KitShowcase() {
             </div>
 
             {/* Progress Bar with Live Slider */}
-            <div className="p-3.5 space-y-2 rounded-xl" style={getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style}>
+            <div className="p-3.5 space-y-2 rounded-xl" style={resolveSurface({ role: 'work', interactive: false }).style}>
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold" style={{ color: getTextStyle('primary', 2).color }}>
                   System Capacity Slider
@@ -610,7 +611,7 @@ export function KitShowcase() {
           <p>
             Designed for 100% responsive fluid mobile interaction. The drag handle at top provides tactile guidance without breaking the clean aesthetic.
           </p>
-          <div className="p-3 rounded-lg text-[11px]" style={getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style}>
+          <div className="p-3 rounded-lg text-[11px]" style={resolveSurface({ role: 'work', interactive: false }).style}>
             Sub-Canvas E3 Anchor: 0 8px 28px rgba(3,4,6,0.44), 0 3px 8px rgba(1,2,3,0.30)
           </div>
         </div>

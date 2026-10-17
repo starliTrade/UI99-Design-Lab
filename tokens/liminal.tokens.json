@@ -100,78 +100,44 @@
       }
     },
     "rim": {
-      "rim1": {
-        "top": {
-          "$value": "#080a0c",
-          "$type": "color",
-          "$description": "100% — the light comes from above"
-        },
-        "side": {
-          "$value": "#080a0c",
-          "$type": "color",
-          "$description": "55%"
-        },
-        "bottom": {
-          "$value": "#07090b",
-          "$type": "color",
-          "$description": "the host surface itself"
-        }
-      },
-      "rim2": {
-        "top": {
-          "$value": "#0b0d0f",
-          "$type": "color",
-          "$description": "100% — the light comes from above"
-        },
-        "side": {
-          "$value": "#0a0c0e",
-          "$type": "color",
-          "$description": "55%"
-        },
-        "bottom": {
-          "$value": "#090b0d",
-          "$type": "color",
-          "$description": "the host surface itself"
-        }
-      },
-      "rim3": {
+      "rim": {
         "top": {
           "$value": "#0e1013",
           "$type": "color",
-          "$description": "100% — the light comes from above"
+          "$description": "100% — +1.5 steps, the light comes from above"
         },
         "side": {
           "$value": "#0d0f12",
           "$type": "color",
-          "$description": "55%"
+          "$description": "55% — +1.0 steps"
         },
         "bottom": {
           "$value": "#0c0e10",
           "$type": "color",
-          "$description": "the host surface itself"
+          "$description": "100% — +0.5 steps"
         }
       }
     },
     "shadow": {
-      "e1": {
-        "$value": "0 2px 6px rgba(3,4,6,.30), 0 1px 2px rgba(1,2,3,.22)",
+      "menu": {
+        "$value": "0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991)",
         "$type": "boxShadow",
-        "$description": "dropdown, header"
+        "$description": "the menu — a floating surface at its own height"
       },
-      "e2": {
-        "$value": "0 4px 12px rgba(3,4,6,.36), 0 2px 4px rgba(1,2,3,.26)",
+      "popover": {
+        "$value": "0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991)",
         "$type": "boxShadow",
-        "$description": "featured card, popover"
+        "$description": "the popover — a floating surface at its own height"
       },
-      "e3": {
-        "$value": "0 8px 28px rgba(3,4,6,.44), 0 3px 8px rgba(1,2,3,.30)",
+      "modal": {
+        "$value": "0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991)",
         "$type": "boxShadow",
-        "$description": "modal, drawer sheet"
+        "$description": "the modal — a floating surface at its own height"
       },
-      "e4": {
-        "$value": "0 14px 44px rgba(3,4,6,.50), 0 5px 12px rgba(1,2,3,.34)",
+      "toast": {
+        "$value": "0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991)",
         "$type": "boxShadow",
-        "$description": "toast, max floating anchor"
+        "$description": "the toast — a floating surface at its own height"
       }
     },
     "tint": {
@@ -680,7 +646,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.45,
+        "$value": 1.4167,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -705,7 +671,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.5,
+        "$value": 1.3472,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -730,7 +696,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.6,
+        "$value": 1.2894,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -755,7 +721,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.35,
+        "$value": 1.2411,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -780,7 +746,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.25,
+        "$value": 1.2009,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -805,7 +771,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.2,
+        "$value": 1.1674,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -830,7 +796,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.15,
+        "$value": 1.1395,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -855,7 +821,7 @@
         "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
       },
       "lineHeight": {
-        "$value": 1.1,
+        "$value": 1.1163,
         "$type": "number",
         "$description": "a unitless multiplier, not a length"
       },
@@ -870,6 +836,56 @@
       },
       "role": {
         "$value": "display",
+        "$type": "string"
+      }
+    },
+    "9": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 2.985984)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.0969,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "-0.028em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 700,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "display-lg",
+        "$type": "string"
+      }
+    },
+    "10": {
+      "fontSize": {
+        "$value": "calc(var(--liminal-type-base) * 3.583181)",
+        "$type": "dimension",
+        "$description": "fluid; base clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem)"
+      },
+      "lineHeight": {
+        "$value": 1.0808,
+        "$type": "number",
+        "$description": "a unitless multiplier, not a length"
+      },
+      "letterSpacing": {
+        "$value": "-0.03em",
+        "$type": "dimension"
+      },
+      "fontWeight": {
+        "$value": 700,
+        "$type": "number",
+        "$description": "fontWeight"
+      },
+      "role": {
+        "$value": "display-xl",
         "$type": "string"
       }
     }

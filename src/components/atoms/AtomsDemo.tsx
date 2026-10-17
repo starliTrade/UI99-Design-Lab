@@ -13,9 +13,10 @@ import { Badge } from './Badge';
 import { Tag } from './Tag';
 import { Toggle } from './Toggle';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
-import { getLiminalStyle, getTextStyle } from '../../engine/spec-engine';
+import { getTextStyle } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
+import { resolveSurface } from '../../engine/liminal-surface';
 
 export function AtomsDemo() {
   const [toggle1, setToggle1] = useState<boolean>(true);
@@ -30,8 +31,8 @@ export function AtomsDemo() {
     }, 2000);
   };
 
-  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
-  const panelStyle = getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style;
+  const containerStyle = resolveSurface({ role: 'chrome', interactive: false }).style;
+  const panelStyle = resolveSurface({ role: 'work', interactive: false }).style;
 
   const RADIUS = LiminalLayoutEngine.RADIUS;
   const SPACING = LiminalLayoutEngine.SPACING;

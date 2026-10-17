@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL — ریم: چقدر؟</title>
+<style>
+  :root{
+    --s0:#060709;--s0-5:#07080a;--s1:#07090b;--s1-5:#080a0c;--s2:#090b0d;--s2-5:#0a0c0e;
+    --s3:#0b0d0f;--s3-5:#0c0e10;--s4:#0d0f12;--s4-5:#0e1013;--s5:#0f1114;--s5-5:#101215;
+    --text:rgba(255,255,255,.89);--dim:rgba(255,255,255,.6);--faint:rgba(255,255,255,.34);
+    --well:#030406;--hair:rgba(233,236,242,.03);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--s0);color:var(--text);
+    font:14px/1.85 system-ui,-apple-system,"Segoe UI",sans-serif;padding:26px 0 60px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  h1{font-size:20px;font-weight:700;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:22px}
+  /* THE HOST IS A FULL-BLEED BAND, not a rounded box.
+   * The first version drew the host as a rounded rectangle, so the host itself
+   * read as an object with an edge — and the reader said "I see a shadow, I see
+   * no border". A surface you are judging a border ON must not look like a thing. */
+  .band{padding:34px 0;display:flex;gap:34px;justify-content:center;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;gap:10px;align-items:center}
+  .panel{width:190px;height:120px;border-radius:12px}
+  .cap{font-size:11px;color:var(--faint);text-align:center;line-height:1.7}
+  .cap b{color:var(--dim)}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:10px}
+  .q{background:var(--well);border:1px solid var(--hair);border-radius:14px;padding:18px 20px;margin:18px 0}
+  .q h2{font-size:14px;margin:0 0 4px;font-weight:600}
+  .q .why{color:var(--faint);font-size:12px;margin-bottom:14px}
+  .opt{font:inherit;font-size:12px;padding:8px 14px;border-radius:10px;cursor:pointer;
+    background:transparent;color:var(--dim);border:1px solid var(--hair)}
+  .opt[aria-pressed="true"]{background:#e9ecf2;color:#06070a;border-color:#e9ecf2;font-weight:700}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  button.primary{font:inherit;font-size:13px;font-weight:600;color:#06070a;background:#e9ecf2;
+    border:none;border-radius:10px;padding:11px 22px;cursor:pointer;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ریم — چقدر؟</h1>
+  <p class="sub">
+    در اپ، لبه‌ی یک سطح یک <b>خط تخت</b> نیست: یک <b>ریم گرادیانی</b> است
+    (<code>180deg · بالا ۱۰۰٪ · پهلو ۵۵٪ · پایین</code>). سه شدت را کنار هم می‌بینی،
+    روی دو میزبان: نزدیک و دور. کدام «حس می‌شود و دیده نمی‌شود»؟
+  </p>
+</div>
+
+<div class="band" id="bandA" style="background:var(--s2)"></div>
+<div class="wrap"><p class="cap" style="text-align:center">میزبان: <b>سطح کار S2</b> — پنل S3، یک پله بالاتر</p></div>
+
+<div class="band" id="bandB" style="background:var(--s0)">
+</div>
+<div class="wrap"><p class="cap" style="text-align:center">میزبان: <b>بوم S0</b> — همان پنل S3، سه پله بالاتر</p></div>
+
+<div class="wrap">
+  <div class="q">
+    <h2>سؤال ۱ — در هر میزبان، کدام شدت روی آستانه است؟</h2>
+    <div class="why">«روی آستانه» یعنی: لبه را حس می‌کنی، ولی خط نمی‌بینی.</div>
+    <div class="opts" id="q1">
+      <button class="opt" data-q="1" data-v="A-strong">سطح کار: R2 (فعلی)</button>
+      <button class="opt" data-q="1" data-v="A-mid">سطح کار: R1 (نصف)</button>
+      <button class="opt" data-q="1" data-v="A-none">سطح کار: بدون ریم</button>
+    </div>
+    <div class="opts" id="q1b" style="margin-top:8px">
+      <button class="opt" data-q="1b" data-v="B-strong">بوم: R2 (فعلی)</button>
+      <button class="opt" data-q="1b" data-v="B-mid">بوم: R1 (نصف)</button>
+      <button class="opt" data-q="1b" data-v="B-none">بوم: بدون ریم</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>سؤال ۲ — ریم باید نسبت به کدام طرف باشد؟</h2>
+    <div class="why">R2 یعنی «بالا یک پله بالای سطح خودش». روی بوم، همان ریم دو پله بالای میزبان است.</div>
+    <div class="opts" id="q2">
+      <button class="opt" data-q="2" data-v="own">نسبت به <b>سطح خودش</b> — ریم یک نور روی لبه است</button>
+      <button class="opt" data-q="2" data-v="neighbour">نسبت به <b>همسایه</b> — ریم یک جداکننده است</button>
+      <button class="opt" data-q="2" data-v="distance">به <b>فاصله از همسایه</b> — نزدیک ریم بگیرد، دور نه</button>
+    </div>
+  </div>
+
+  <button class="primary" onclick="copyAnswers()">کپی جواب‌ها</button>
+</div>
+
+<script>
+  const S={0:'#060709',1:'#07090b',2:'#090b0d',3:'#0b0d0f',4:'#0d0f12',5:'#0f1114',6:'#111316',7:'#131518',8:'#15171a'};
+  const H=['#07080a','#080a0c','#0a0c0e','#0c0e10','#0e1013','#101215','#121417','#141619'];
+  const at=(n)=>Number.isInteger(n)?S[n]:H[Math.floor(n)];
+  /** The engine's rim tiers, in ladder steps. */
+  const RIM={0:{t:0,s:0,b:0},1:{t:0.5,s:0.25,b:0},2:{t:1,s:0.5,b:0},3:{t:1.5,s:1,b:0.5}};
+  /** The real rim: a 180deg gradient on the border-box, the surface on the padding-box. */
+  const rimBg=(level,tier)=>{
+    const o=RIM[tier];
+    const up=(d)=> (level+d>8 ? at(8-d) : at(level+d));
+    return `linear-gradient(${S[level]}, ${S[level]}) padding-box, linear-gradient(180deg, ${up(o.t)} 0%, ${up(o.s)} 55%, ${up(o.b)} 100%) border-box`;
+  };
+  function cell(host,level,tier,cap){
+    const el=document.createElement('div'); el.className='cell';
+    el.innerHTML=`<div class="panel" style="background:${rimBg(level,tier)};border:1px solid transparent"></div>
+      <div class="cap">${cap}</div>`;
+    return el;
+  }
+  const A=document.getElementById('bandA'), B=document.getElementById('bandB');
+  A.appendChild(cell(2,3,2,`<b>R2 — فعلی</b><br>بالا یک پله بالای پنل = ۱.۱۴q<br>و <b>۲.۲۸q</b> بالای میزبان`));
+  A.appendChild(cell(2,3,1,`<b>R1 — نصف</b><br>بالا نیم‌پله = ۰.۵۷q<br>و ۱.۷۱q بالای میزبان`));
+  A.appendChild(cell(2,3,0,`<b>بدون ریم</b><br>فقط اختلاف سطح (۱.۱۴q)`));
+  B.appendChild(cell(0,3,2,`<b>R2 — فعلی</b><br>بالا یک پله بالای پنل = ۱.۱۴q<br>و <b>۳.۴۱q</b> بالای بوم`));
+  B.appendChild(cell(0,3,1,`<b>R1 — نصف</b><br>بالا نیم‌پله = ۰.۵۷q<br>و ۲.۸۵q بالای بوم`));
+  B.appendChild(cell(0,3,0,`<b>بدون ریم</b><br>فقط اختلاف سطح (۳.۴۱q)`));
+
+  const answers={};
+  for(const b of document.querySelectorAll('.opt')) b.addEventListener('click',()=>{
+    const q=b.dataset.q;
+    for(const s of document.querySelectorAll(`.opt[data-q="${q}"]`)) s.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-pressed','true'); answers[q]=b.dataset.v;
+  });
+  function copyAnswers(){
+    const out={at:new Date().toISOString(),kind:'rim-2q',answers};
+    navigator.clipboard?.writeText(JSON.stringify(out,null,2));
+    alert('کپی شد:\n'+JSON.stringify(answers));
+  }
+</script>
+</body>
+</html>

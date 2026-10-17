@@ -17,7 +17,15 @@ import {
   mistShadowNearRadius,
 } from '../liminal-mist';
 import { LADDER } from '../liminal-ladder';
-import type { SurfaceRole } from '../liminal-surface';
+import { shadowModel } from '../liminal-shadow';
+import { oklchToRgb } from '../liminal-color-math';
+import { CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from '../liminal-ladder';
+
+const WORK_PLANE = (() => {
+  const { r, g, b } = oklchToRgb({ L: CANVAS_L + 2 * LADDER_STEP, C: LADDER_CHROMA, h: LADDER_HUE });
+  return [r, g, b];
+})();
+import { resolveBorder, type SurfaceRole } from '../liminal-surface';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const mistCss = readFileSync(resolve(here, '../liminal-mist.css'), 'utf8');
@@ -60,20 +68,39 @@ describe('mist — the surface diffuses light, it does not emit it', () => {
   });
 
   it('builds the fog as a vertical gradient, top lighter than bottom', () => {
+    // The stops are ladder VARIABLES, not hexes. They used to be hexes, and a
+    // hex cannot follow a theme: the mist was the last surface in the engine
+    // that ignored `data-liminal-theme`.
+    const levelOf = (v: string) => {
+      const m = v.match(/--liminal-s(\d+)/);
+      expect(m, `${v} is not a ladder variable`).not.toBeNull();
+      return Number(m![1]);
+    };
     for (const role of ROLES) {
       const { top, bottom } = mistFillStops(role);
-      expect(LADDER, `${role} top is not a ladder step`).toContain(top);
-      expect(LADDER, `${role} bottom is not a ladder step`).toContain(bottom);
-      const steps = LADDER as readonly string[];
-      expect(steps.indexOf(top)).toBeGreaterThan(steps.indexOf(bottom));
+      expect(levelOf(top), `${role} top`).toBeGreaterThan(levelOf(bottom));
     }
     expect(mistCss).toMatch(/linear-gradient\(\s*180deg/);
   });
 
-  it('keeps the seam faint — a hairline, never a bright ring', () => {
+  /**
+   * THE SEAM IS A LADDER LEVEL NOW, AND THE OLD ASSERTION IS WHY IT WAS NOT.
+   *
+   * This test asked for `alpha < 0.12` and passed — while the seam composited to
+   * #1a1c1e over the canvas, and the ladder's ceiling is #15171a. A threshold on
+   * an ALPHA cannot see the thing that matters: what the line composites to. The
+   * seam was above the system's own ceiling on every mist surface, at every
+   * height, and the test that was written to catch a loud ring said it was fine.
+   *
+   * So it asserts the ceiling now, in the ladder's own terms: the seam is a
+   * `resolveBorder` level, which is half a step above the surface it belongs to
+   * and inverts at the ceiling rather than exceeding it.
+   */
+  it('keeps the seam at the engine\'s own edge — never above the ceiling', () => {
     for (const role of ROLES) {
-      const alpha = num(vars(role)['--liminal-mist-seam'].match(/,\s*([\d.]+)\)$/)![1]);
-      expect(alpha, `${role} seam is too loud`).toBeLessThan(0.12);
+      const seam = vars(role)['--liminal-mist-seam'];
+      expect(seam, `${role} seam is not the engine's edge`).toContain('color-mix');
+      expect(seam, `${role} seam does not come from resolveBorder`).toContain(resolveBorder({ role, kind: 'separator' }));
     }
   });
 });
@@ -87,9 +114,14 @@ describe('mist — every value follows from the height', () => {
 
     expect(rising(series(mistInnerLight))).toBe(true);
     expect(rising(series(mistShadowFarRadius))).toBe(true);
-    expect(rising(series(mistShadowFarAlpha))).toBe(true);
     expect(rising(series(mistEdgeAlpha))).toBe(true);
     expect(rising(series(mistBlur))).toBe(true);
+    // AND THE SHADOW'S ALPHA IS NOT IN THIS LIST, because it does not rise.
+    // The darkness is one quantum by construction now — SOLVED per host rather than
+    // written down — so what rises with height is the radius. A shadow that got
+    // darker with height would be saying "higher is darker", which is not what
+    // height means; height means further, and further means wider.
+    expect(rising(series(mistShadowFarAlpha)), 'the alphas are constant, not rising').toBe(false);
   });
 
   it('is linear in the height — a formula, not a per-role table', () => {
@@ -109,13 +141,14 @@ describe('mist — every value follows from the height', () => {
 
     expect(linear(mistInnerLight)).toBe(true);
     expect(linear(mistShadowFarRadius)).toBe(true);
-    expect(linear(mistShadowFarAlpha)).toBe(true);
+    // The ALPHAS no longer rise with height: the darkness is one quantum by
+    // construction, solved per host. What rises is the radius.
+    expect(linear(mistShadowFarRadius)).toBe(true);
     expect(linear(mistEdgeAlpha)).toBe(true);
     expect(linear(mistBlur)).toBe(true);
-    // The far radius is published as whole pixels, so allow a pixel of
-    // rounding: 40 + h * 3.2 gives 56, 59.2, 62.4, 65.6 -> 56, 59, 62, 66, and
-    // a line fitted to rounded points cannot land within half a pixel of all
-    // of them.
+    // The far radius is published as whole pixels, so allow a pixel of rounding:
+    // a line fitted to rounded points cannot land within half a pixel of all of
+    // them.
     expect(linear((r) => num(published(r)['--liminal-mist-shadow-far']), 1)).toBe(true);
   });
 
@@ -127,7 +160,12 @@ describe('mist — every value follows from the height', () => {
     // `mistCssVars` now reads the helper.
     const h = floatHeight('menu');
     expect(num(vars('menu')['--liminal-mist-shadow-far'])).toBe(Math.round(mistShadowFarRadius('menu')));
-    expect(mistShadowFarRadius('menu')).toBe(40 + h * 3.2);
+    // The formula is the MODEL's, not a copy of it. This assertion used to spell
+    // out `40 + h * 3.2` — the old model, whose 40px constant dominated the radius
+    // so the height barely moved it. The shadow now scales from the height, and
+    // this line reads the model rather than restating it: a test that spells out
+    // the formula it is checking cannot notice the formula changing.
+    expect(mistShadowFarRadius('menu')).toBe(shadowModel(h, WORK_PLANE).far);
     expect(num(vars('menu')['--liminal-mist-shadow-near'])).toBeCloseTo(mistShadowNearRadius('menu'), 1);
   });
 
@@ -158,9 +196,15 @@ describe('mist — a toast is not a menu', () => {
     expect(menu['--liminal-mist-inner-light']).toMatch(/^inset 0 1px 0 rgba\(/);
   });
 
-  it('gives a toast a fainter seam than a menu', () => {
-    const seam = (r: SurfaceRole) => num(vars(r)['--liminal-mist-seam'].match(/,\s*([\d.]+)\)$/)![1]);
-    expect(seam('toast')).toBeLessThan(seam('menu'));
+  it('gives a glass a fainter frame than a fog, and a fog the engine\'s edge', () => {
+    // A window's frame is fainter than a mass's edge — the `fill` option scales
+    // the seam, because a glass keeps a fifth of its own fill and its boundary
+    // has to be read against the PAGE rather than against the surface.
+    const pct = (r: SurfaceRole, fill?: number) =>
+      num(mistCssVars(r, fill === undefined ? {} : { fill })['--liminal-mist-seam'].match(/\s(\d+)%/)![1]);
+    expect(pct('menu')).toBe(100);
+    expect(pct('menu', 0.2)).toBe(20);
+    expect(pct('menu', 0.2)).toBeLessThan(pct('menu'));
   });
 });
 

@@ -6,7 +6,7 @@ import { Calendar } from './Calendar';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
 import { LiminalPortal } from '../../../engine/liminal-portal';
 import { useFloating } from '../../../engine/liminal-floating';
-import { SHADOWS } from '../../../engine/spec-engine';
+import {} from '../../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { mistCssVars } from '../../../engine/liminal-mist';
 
@@ -18,6 +18,13 @@ export interface DatePickerProps {
   onSelectDate?: (date: Date | [Date, Date | null] | null) => void;
   placeholder?: string;
   label?: string;
+  /**
+   * The validation message. A date can be invalid — out of range, in the past,
+   * not a working day — and the Input underneath has carried an `error` all
+   * along. The wrapper simply never passed it through, which is the same defect
+   * as the Button's swallowed handlers: a prop that stops one layer short.
+   */
+  error?: string;
   disabled?: boolean;
   className?: string;
   style?: CSSProperties;
@@ -31,6 +38,7 @@ export function DatePicker({
   onSelectDate,
   placeholder = 'Select date',
   label,
+  error,
   disabled = false,
   className = '',
   style: customStyle = {},
@@ -83,8 +91,19 @@ export function DatePicker({
           value={formatDate(selected)}
           placeholder={placeholder}
           label={label}
+          error={error}
           disabled={disabled}
           readOnly
+          /**
+           * `role="combobox"` — because a textbox may not be expanded.
+           *
+           * `aria-expanded` and `aria-haspopup` are not allowed on an
+           * `<input type="text">`: its role is `textbox`, and a textbox has no
+           * popup. axe reports it as `aria-allowed-attr`, critical. The field
+           * IS a combobox — a text field with a popup — so it says so, and the
+           * two attributes become legal instead of decorative.
+           */
+          role="combobox"
           aria-expanded={isOpen}
           aria-haspopup="dialog"
           leftIcon={<LiminalIcon icon={CalendarIcon} size="sm" weight="regular" />}

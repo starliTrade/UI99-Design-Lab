@@ -23,7 +23,8 @@ import { fileURLToPath } from 'node:url';
 import { LiminalLayoutEngine as L } from '../src/engine/liminal-layout-engine';
 import { LiminalMotionEngine as M } from '../src/engine/liminal-motion-engine';
 import { LiminalColorEngine as C } from '../src/engine/liminal-color-engine';
-import { LADDER, HALF, SHADOWS, SURFACE_TINT, VEIL, getDirectionalRim } from '../src/engine/spec-engine';
+import { LADDER, HALF, SURFACE_TINT, VEIL, getDirectionalRim } from '../src/engine/spec-engine';
+import { FLOAT_SHADOWS } from '../src/engine/liminal-surface';
 import { LADDER_STEP, LADDER_CHROMA, LADDER_HUE, CANVAS_L, PERCEPTUAL_QUANTUM, RELIABLE_BOUNDARY, WELLS } from '../src/engine/liminal-ladder';
 import { hexToRgb, rgbToOklch } from '../src/engine/liminal-color-math';
 
@@ -60,14 +61,15 @@ const BLOCKS: Record<string, () => string> = {
     `- **S-1 (Penumbra Ambient):** \`${WELLS.penumbra}\` ($L \\approx ${Lof(WELLS.penumbra)}$)\n` +
     `- **S-2 (Contact Umbra):** \`${WELLS.umbra}\` ($L \\approx ${Lof(WELLS.umbra)}$)`,
 
-  'rim': () =>
-    [1, 2, 3].map((tier) => {
-      const r = getDirectionalRim(tier as 1, tier as 1, false);
-      return `- **Rim ${tier}${tier === 1 ? ' (Chrome / S1)' : tier === 2 ? ' (Work Surface / S2)' : ' (Raised / S3+)'}:** Top \`${r.top}\` | Side \`${r.side}\` | Bottom \`${r.bot}\``;
-    }).join('\n'),
+  'rim': () => {
+    // ONE rim. It was three tiers; measured by eye at three boundaries the answer was
+    // the same at all of them, so the table was a choice that was not there.
+    const r = getDirectionalRim(3, true, false)!;
+    return `- **Rim (one strength):** Top \`${r.top}\` (+1.5 steps) | Side \`${r.side}\` (+1.0) | Bottom \`${r.bot}\` (+0.5)`;
+  },
 
   'shadows': () =>
-    Object.entries(SHADOWS)
+    Object.entries(FLOAT_SHADOWS)
       .map(([e, v]) => `- **E${e}:**\n  \`${(v as string).replace(/, /g, ', ')}\``)
       .join('\n'),
 
@@ -90,7 +92,7 @@ const BLOCKS: Record<string, () => string> = {
     `**پایه‌ی شناور:** \`${L.TYPE_BASE_CSS}\`\n\n` +
     `| سطح | نقش | ضریب | اندازه در پایه‌ی مرجع (${L.TYPE_BASE_REF}px) | line-height | letter-spacing | وزن |\n` +
     `|---|---|---|---|---|---|---|\n` +
-    [1, 2, 3, 4, 5, 6, 7, 8].map((lvl) => {
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((lvl) => {
       const t = L.TYPOGRAPHY[lvl];
       return `| ${lvl} | ${t.role} | ${L.typeScale(lvl).toFixed(6)} | ${t.fs}px | ${t.lh} | ${t.ls} | ${t.weight} |`;
     }).join('\n'),

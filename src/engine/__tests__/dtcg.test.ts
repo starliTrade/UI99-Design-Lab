@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { LADDER, HALF, SHADOWS, getDirectionalRim, getTextStyle } from '../spec-engine';
+import {LADDER, HALF, getDirectionalRim, getTextStyle} from '../spec-engine';
+import { FLOAT_SHADOWS } from '../liminal-surface';
 import { WELLS, LADDER_STEP, PERCEPTUAL_QUANTUM } from '../liminal-ladder';
 import { LiminalLayoutEngine as L } from '../liminal-layout-engine';
 import { LiminalMotionEngine as M } from '../liminal-motion-engine';
@@ -40,19 +41,19 @@ describe('DTCG — the file is the engine, in the format other tools read', () =
     expect(doc.color.ladder.umbra.$value).toBe(WELLS.umbra);
   });
 
-  it('carries the rim tiers as their own group', () => {
-    for (const t of [1, 2, 3]) {
-      const r = getDirectionalRim(t as 1, t as 1, false)!;
-      expect(doc.color.rim[`rim${t}`].top.$value).toBe(r.top);
-      expect(doc.color.rim[`rim${t}`].side.$value).toBe(r.side);
-      expect(doc.color.rim[`rim${t}`].bottom.$value).toBe(r.bot);
+  it('carries the rim as its own group — one strength, not three tiers', () => {
+    {
+      const r = getDirectionalRim(3, true, false)!;
+      expect(doc.color.rim.rim.top.$value).toBe(r.top);
+      expect(doc.color.rim.rim.side.$value).toBe(r.side);
+      expect(doc.color.rim.rim.bottom.$value).toBe(r.bot);
     }
   });
 
   it('carries the shadows as boxShadow strings', () => {
-    Object.entries(SHADOWS).forEach(([e, v]) => {
-      expect(doc.color.shadow[`e${e}`].$value).toBe(v);
-      expect(doc.color.shadow[`e${e}`].$type).toBe('boxShadow');
+    Object.entries(FLOAT_SHADOWS).forEach(([e, v]) => {
+      expect(doc.color.shadow[e].$value).toBe(v);
+      expect(doc.color.shadow[e].$type).toBe('boxShadow');
     });
   });
 

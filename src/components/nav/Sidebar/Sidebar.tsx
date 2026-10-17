@@ -1,6 +1,8 @@
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { getLiminalStyle, getTextStyle } from '../../../engine/spec-engine';
+import { getTextStyle } from '../../../engine/spec-engine';
+import { SurfaceProvider } from '../../../engine/liminal-surface-context';
+import { resolveSurface } from '../../../engine/liminal-surface';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import { NavItem, NavItemProps } from '../NavItem';
 
@@ -69,12 +71,9 @@ export function Sidebar({
   const RADIUS = LiminalLayoutEngine.RADIUS;
 
   // S1 + Rim 1 (flat zero-shadow container)
-  const limStyle = getLiminalStyle({
-    surfaceLevel: 1,
-    isContainer: true,
-    interactive: false,
-    state: 'idle',
-  });
+  // A structural surface: the level of the frame around the work, with a quiet
+  // edge, and it does not answer the pointer.
+  const limStyle = resolveSurface({ role: 'chrome', interactive: false });
 
   const sidebarStyle: CSSProperties = {
     ...limStyle.style,
@@ -98,6 +97,14 @@ export function Sidebar({
   };
 
   return (
+    // A SIDEBAR DECLARES ITSELF, so the controls inside it know what hosts them.
+    //
+    // Without this they read the default host — `work` — and an Input in the
+    // sidebar landed at S3 on a chrome surface: two steps above the thing it
+    // sits on. The engine's rule is that a control is defined by its
+    // RELATIONSHIP to its host, and a host that does not say what it is leaves
+    // every control inside it guessing.
+    <SurfaceProvider role="chrome">
     <aside className={`liminal-sidebar ${className}`} style={sidebarStyle}>
       {children}
       <style>{`
@@ -112,6 +119,7 @@ export function Sidebar({
         }
       `}</style>
     </aside>
+    </SurfaceProvider>
   );
 }
 

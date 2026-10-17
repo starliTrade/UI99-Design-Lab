@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createLiminalTheme, ladderAtHue, halfStepsAtHue, inGamut, allHueScales, HUE_STEP_NAMES } from '../liminal-theme';
-import { LADDER, LADDER_HUE, LADDER_CHROMA, LADDER_STEP, PERCEPTUAL_QUANTUM } from '../liminal-ladder';
+import { LADDER, HALF, LADDER_HUE, LADDER_CHROMA, LADDER_STEP, PERCEPTUAL_QUANTUM } from '../liminal-ladder';
 import { hexToRgb, rgbToOklch, oklchToRgb, rgbToHex } from '../liminal-color-math';
 import { LiminalLayoutEngine as L } from '../liminal-layout-engine';
 
@@ -116,10 +116,20 @@ describe('theme — the half-steps sit between the steps', () => {
 });
 
 describe('theme — density and motion scale, and the step does not', () => {
-  it('scales the spacing and control scales', () => {
+  it('scales the spacing, control and radius scales together', () => {
+    // Together, because scaling the padding without the radii breaks the
+    // concentric law `r_inner = max(4, r_outer − padding)`.
+    const roomy = createLiminalTheme({ density: 1.25 });
+    expect(roomy.css).toContain(`--liminal-space-3: ${L.SPACING[3] * 1.25}px`);
+    expect(roomy.css).toContain(`--liminal-control-md: ${L.CONTROL.md * 1.25}px`);
+    expect(roomy.css).toContain(`--liminal-radius-card: ${L.RADIUS.card * 1.25}px`);
+  });
+
+  it('a density below 1 is refused, because it would break the touch floor', () => {
+    // `CONTROL.md` is 44px because that is the floor a finger needs.
     const compact = createLiminalTheme({ density: 0.875 });
-    expect(compact.css).toContain(`--liminal-space-3: ${L.SPACING[3] * 0.875}px`);
-    expect(compact.css).toContain(`--liminal-control-md: ${L.CONTROL.md * 0.875}px`);
+    expect(compact.density).toBe(1);
+    expect(compact.css).not.toContain('--liminal-control-md');
   });
 
   it('scales the durations', () => {
@@ -143,14 +153,14 @@ describe('theme — density and motion scale, and the step does not', () => {
 
 describe('theme — the CSS is a scope, not a second system', () => {
   it('writes a scoped block, so two themes can coexist', () => {
-    const css = createLiminalTheme({ brandHue: 145, name: 'forest' }).css;
+    const css = createLiminalTheme({ name: 'forest' }).css;
     expect(css).toContain('[data-liminal-theme="forest"]');
     expect(css).toContain('--liminal-s0:');
     expect(css).toContain('--liminal-s8:');
   });
 
   it('declares no variable twice', () => {
-    const css = createLiminalTheme({ brandHue: 145, density: 0.9, motion: 1.2 }).css;
+    const css = createLiminalTheme({ density: 0.9, motion: 1.2 }).css;
     const names = [...css.matchAll(/--liminal-([a-z0-9-]+):/g)].map((m) => m[1]);
     expect(new Set(names).size).toBe(names.length);
   });
@@ -162,32 +172,52 @@ describe('theme — it reports the steps a hue cannot hold', () => {
   // which is the one thing the ladder exists to prevent. The search repairs
   // what it can; this is what it cannot, and a designer choosing a hue should
   // know before shipping it.
-  it('the system’s own hue is clean', () => {
-    expect(createLiminalTheme().warnings).toEqual([]);
+  it('carries the engine’s ladder, byte for byte', () => {
+    // The ladder is the identity. It used to regenerate at a hue, which turned
+    // a neutral luminance ramp green, purple or red — measured — while the code
+    // says the identity is monochrome and LOCKED.
+    expect(createLiminalTheme({ name: 'x' }).ladder).toEqual([...LADDER]);
   });
 
-  it('names the level and the realised step, not just that something is wrong', () => {
-    const forest = createLiminalTheme({ brandHue: 145, name: 'forest' });
-    expect(forest.warnings.length).toBeGreaterThan(0);
-    for (const w of forest.warnings) {
-      expect(w.kind).toBe('below-quantum');
-      expect(w.level).toBeGreaterThanOrEqual(1);
-      expect(w.q).toBeLessThan(1.0);
-    }
+  it('carries the engine’s half-steps, byte for byte', () => {
+    // It used to regenerate these too, by its own method: all eight differed
+    // from `HALF`, and at hue 145 one left the perceptual band. A second answer
+    // for the same value is the defect class this project keeps meeting.
+    expect(createLiminalTheme({ name: 'x' }).halves).toEqual([...(HALF as readonly string[])]);
   });
 
-  it('a clean hue reports nothing', () => {
-    expect(createLiminalTheme({ brandHue: 320, name: 'plum' }).warnings).toEqual([]);
+  it('clamps a density that would break the touch floor, and reports the clamp', () => {
+    const t = createLiminalTheme({ density: 0.8, name: 'x' });
+    expect(t.density).toBeGreaterThan(0.8);
+    expect(t.warnings).toHaveLength(1);
+    expect(t.warnings[0].scale).toBe('density');
+    expect(t.warnings[0].used).toBe(t.density);
   });
 
-  it('every warning is a step that really is out of band', () => {
-    for (const hue of [0, 35, 90, 145, 200, 215, 258.4, 320]) {
-      const t = createLiminalTheme({ brandHue: hue });
-      for (const w of t.warnings) {
-        const dL = rgbToOklch(hexToRgb(t.ladder[w.level])).L - rgbToOklch(hexToRgb(t.ladder[w.level - 1])).L;
-        expect(dL / PERCEPTUAL_QUANTUM, `hue ${hue} S${w.level}`).toBeCloseTo(w.q, 6);
-      }
-    }
+  it('a density inside the bounds is used as asked, with no warning', () => {
+    const t = createLiminalTheme({ density: 1.2, name: 'x' });
+    expect(t.density).toBe(1.2);
+    expect(t.warnings).toEqual([]);
+  });
+
+  it('scales the radii WITH the padding, so the concentric law survives', () => {
+    // Scaling one and not the other breaks r_inner = max(4, r_outer − padding).
+    // That is exactly what the old theme did.
+    const t = createLiminalTheme({ density: 1.2, name: 'x' });
+    expect(t.css).toContain('--liminal-radius-');
+    expect(t.css).toContain('--liminal-space-');
+    expect(t.css).toContain('--liminal-control-');
+  });
+
+  it('never scales the radius sentinel', () => {
+    const t = createLiminalTheme({ density: 1.2, name: 'x' });
+    expect(t.css).not.toContain('--liminal-radius-full');
+  });
+
+  it('floors the motion, so nothing becomes instant', () => {
+    const t = createLiminalTheme({ motion: 0, name: 'x' });
+    expect(t.motion).toBeGreaterThan(0);
+    expect(t.warnings.some((w) => w.scale === 'motion')).toBe(true);
   });
 });
 

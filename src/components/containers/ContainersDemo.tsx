@@ -8,11 +8,9 @@ import { Divider } from './Divider';
 import { Button } from '../atoms/Button';
 import { Badge } from '../atoms/Badge';
 import {
-  getDirectionalRim,
   getTextStyle,
   getLadderColor,
-  getLiminalStyle,
-} from '../../engine/spec-engine';
+  } from '../../engine/spec-engine';
 import { LiminalLayoutEngine } from '../../engine/liminal-layout-engine';
 import { LiminalColorEngine } from '../../engine/liminal-color-engine';
 import {
@@ -25,6 +23,7 @@ import {
   Terminal,
 } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../engine/liminal-icon-engine';
+import { resolveSurface } from '../../engine/liminal-surface';
 
 export function ContainersDemo() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -44,7 +43,7 @@ export function ContainersDemo() {
   const calculatedInnerRadius = LiminalLayoutEngine.getConcentricRadius(RADIUS.card, concavePadding); // max(4, 16 - 16) -> 4px (or 8px with 8px pad)
 
   // Inset Well: Surface 1 concave rim (top is darker, bottom has specular reflection)
-  const concaveRim = getDirectionalRim(1, 2, true);
+  const concaveRim = resolveSurface({ role: 'work', inset: true }).rimColors;
 
   const insetWellStyle: CSSProperties = {
     background: concaveRim ? concaveRim.cssBackground : getLadderColor(0.5),
@@ -57,7 +56,7 @@ export function ContainersDemo() {
     gap: `${SPACING[2]}px`,
   };
 
-  const containerStyle = getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style;
+  const containerStyle = resolveSurface({ role: 'chrome', interactive: false }).style;
 
   return (
     <div
@@ -304,7 +303,7 @@ export function ContainersDemo() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div
               style={{
-                ...getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style,
+                ...resolveSurface({ role: 'chrome', interactive: false }).style,
                 borderRadius: `${RADIUS.card}px`,
                 padding: `${SPACING[4]}px`,
                 boxShadow: 'none',
@@ -343,7 +342,7 @@ export function ContainersDemo() {
 
             <div
               style={{
-                ...getLiminalStyle({ surfaceLevel: 1, isContainer: true }).style,
+                ...resolveSurface({ role: 'chrome', interactive: false }).style,
                 borderRadius: `${RADIUS.card}px`,
                 padding: `${SPACING[4]}px`,
                 boxShadow: 'none',
@@ -401,7 +400,7 @@ export function ContainersDemo() {
 
         <div
           style={{
-            ...getLiminalStyle({ surfaceLevel: 2, isContainer: true }).style,
+            ...resolveSurface({ role: 'work', interactive: false }).style,
             borderRadius: `${RADIUS.card}px`,
             padding: `${SPACING[4]}px`,
             boxShadow: 'none',

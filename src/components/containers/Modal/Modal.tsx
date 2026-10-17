@@ -1,7 +1,8 @@
 import React, { useRef, useId, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { CSSProperties, ReactNode } from 'react';
-import { getDirectionalRim, getTextStyle, SHADOWS, LADDER, VEIL } from '../../../engine/spec-engine';
+import {getLadderVar, getTextStyle, VEIL} from '../../../engine/spec-engine';
+import { resolveSurface, ROLE_LEVEL } from '../../../engine/liminal-surface';
 import { LiminalLayoutEngine } from '../../../engine/liminal-layout-engine';
 import {
   useScrollLock,
@@ -14,6 +15,7 @@ import { LiminalMotionEngine } from '../../../engine/liminal-motion-engine';
 import { Divider } from '../Divider';
 import { X } from '@phosphor-icons/react';
 import { LiminalIcon } from '../../../engine/liminal-icon-engine';
+import { floatingShadow } from '../../../engine/liminal-surface';
 
 export interface ModalProps {
   open?: boolean;
@@ -104,7 +106,7 @@ export function Modal({
   };
 
   // Surface 3 with Rim 2 and Sub-Canvas Penumbra SHADOWS[3]
-  const rim = getDirectionalRim(3, 2, false);
+  const rim = resolveSurface({ role: 'panel' }).rimColors;
 
   const backdropStyle: CSSProperties = {
     position: 'fixed',
@@ -118,7 +120,7 @@ export function Modal({
     justifyContent: 'center',
     padding: `${SPACING[4]}px`,
     boxSizing: 'border-box',
-    animation: reduced ? 'none' : `liminalFadeIn 0.2s ${LiminalMotionEngine.EASING.out}`,
+    animation: reduced ? 'none' : `liminalFadeIn ${LiminalMotionEngine.floatEnter('modal')}`,
   };
 
   const modalContainerStyle: CSSProperties = {
@@ -126,17 +128,17 @@ export function Modal({
     width: `${sizeWidths[size]}px`,
     maxWidth: maxWidth ?? 'calc(100vw - 32px)',
     maxHeight: 'calc(100vh - 64px)',
-    background: rim ? rim.cssBackground : LADDER[3],
+    background: rim ? rim.cssBackground : getLadderVar(ROLE_LEVEL.panel),
     border: rim ? '1px solid transparent' : 'none',
     borderRadius: `${RADIUS.panel}px`, // 20px
-    boxShadow: SHADOWS[3], // Authentic dual-layer penumbra
+    boxShadow: floatingShadow('modal'), // Authentic dual-layer penumbra
     padding: `${SPACING[5]}px`, // 24px
     display: 'flex',
     flexDirection: 'column',
     boxSizing: 'border-box',
     outline: 'none',
     overflowY: 'auto',
-    animation: reduced ? 'none' : `liminalModalSlide 0.25s ${LiminalMotionEngine.EASING.out}`,
+    animation: reduced ? 'none' : `liminalModalSlide ${LiminalMotionEngine.floatEnter('modal')}`,
     ...customStyle,
   };
 
