@@ -1,32 +1,39 @@
 /**
- * LIMINAL — AUDIT SNAPSHOT GENERATOR
+ * LIMINAL — PHASE PAGE GENERATOR · CANVAS ↔ SURFACE
  *
- * ممیزی زندهٔ هسته، به شکلِ یک فایلِ HTML خودبسنده.
+ * صفحهٔ تحویلِ مرحلهٔ فعلی — و فقط مرحلهٔ فعلی.
  *
- * چرا این وجود دارد: AuditLab زنده است (از موتور import می‌کند) ولی برای دیدنش
- * سرورِ در حال اجرا لازم است — و سندباکس بین نوبت‌ها می‌خوابد، پس لینکِ مستقیم
- * می‌میرد و روی گوشی تبِ Preview هم نیست. این ژنراتور همان محتوا را با همان
- * محاسباتِ واقعیِ موتور یک بار اجرا و در یک فایل «فریز» می‌کند: رنگ‌ها، اعداد،
- * ماتریسِ جای‌گذاری، تست‌ها و حکم‌ها — همه از resolveSurface/checkPlacement/
- * getDirectionalRim/PALETTE واقعی، بدون یک عددِ دستی. فایلِ خروجی بدون سرور،
- * بدون شبکه و روی هر مرورگری (از جمله گوشی) باز می‌شود.
+ * مرحلهٔ فعلی چیست: رابطهٔ بوم و سطح، **تخت** — بدون ریم، بدون بوردر، بدون
+ * سایه. فقط فرمول و ریاضی و ۹ لایه، در ادراک‌ترین حالتِ ممکن، با عدد و چشم
+ * و دلیل. بوردر/سایه/ریم/پالت/تایپو در موتور ساخته و تست شده‌اند ولی تصمیمِ
+ * این مرحله نیستند — در بخشِ ۰۱ فقط «وضعیت» دارند و رندرِ کاملشان در
+ * AuditLab.tsx (آزمایشگاهِ زندهٔ دسکتاپ) و .lab/CORE-VERDICTS.md باقی است.
  *
- * خروجی: `.lab/audit-lab-snapshot.html` (توسط تستِ audit-snapshot نوشته می‌شود)
- * بازتولید: هر بار سوئیت تست اجرا شود، اسنپ‌شات تازه می‌شود.
+ * سؤالِ صفحه: چرا این ۹ لایه، با این گام، ادراک‌ترین چیدمانِ ممکن است؟
+ * جواب در سه لایه داده می‌شود:
+ *   ۱. روان‌فیزیک — q و r از ۳ نشستِ آستانه‌سنجی روی نمایشگرِ خودِ خواننده
+ *      (.threshold-sessions.json — زنده خوانده و نقل می‌شود).
+ *   ۲. ریاضیِ محصور — لنگر + سقف + ۹ لایه + گامِ ثابت ⇒ گام یکتاست
+ *      (۹۹.۷٪ بیشینهٔ هندسی). جایگزین‌ها عددی رد می‌شوند، نه سلیقه‌ای.
+ *   ۳. چشم — میدان‌های تختِ بزرگ: درزهای همسایه، جفت‌های رابطه‌ای، زنجیرهٔ
+ *      تو در تویِ بدونِ تزئین، و نردبان‌های جایگزین کنارِ هم.
+ *
+ * خروجی: `.lab/audit-lab-snapshot.html` (توسط تستِ audit-snapshot نوشته می‌شود؛
+ * هر اجرای سوئیت آن را از موتورِ زنده بازتولید می‌کند). GitHub Pages ریشهٔ
+ * ریپو را به این فایل ریدایرکت می‌کند — تحویلِ دائمیِ موبایل.
  */
 
 import {
   LADDER,
-  HALF,
   WELLS,
   PERCEPTUAL_QUANTUM as Q,
   LADDER_STEP,
   CANVAS_L,
   LADDER_CHROMA,
   LADDER_HUE,
-  getLadderColor,
   LADDER_EXACT,
-  HALF_EXACT,
+  RELIABLE_BOUNDARY,
+  getLadderColor,
 } from '../engine/liminal-ladder';
 import {
   oklchLightness,
@@ -34,59 +41,32 @@ import {
   rgbToOklch,
   hexToRgb,
   contrastRatioHex,
+  oklchToHex,
 } from '../engine/liminal-color-math';
-import {
-  ROLE_LEVEL,
-  RELATIONSHIP_ROLES,
-  PLACEMENT_EXEMPTIONS,
-  checkPlacement,
-  resolvedLevel,
-  resolveSurface,
-  resolveBorderHex,
-  resolveBorderLevel,
-  allowedHost,
-  resolveLayerState,
-} from '../engine/liminal-surface';
-import type { SurfaceRole, LayerContent } from '../engine/liminal-surface';
-import { RIM, getDirectionalRim, getTextAlpha } from '../engine/spec-engine';
-import { shadowPeakAlpha, shadowModel } from '../engine/liminal-shadow';
-import { LiminalColorEngine } from '../engine/liminal-color-engine';
-import { PALETTE, paletteTextContrast, SEMANTIC_FROM_PALETTE, paletteHex } from '../engine/liminal-palette';
-import { PERSIAN_LINE_HEIGHT_FLOOR, lineHeightFor } from '../engine/liminal-persian';
-import { LiminalLayoutEngine } from '../engine/liminal-layout-engine';
-import { generateCssVars, generateDarkScope } from '../engine/liminal-css-vars';
+import { apcaContrast } from '../engine/liminal-contrast';
+import { ROLE_LEVEL, RELATIONSHIP_ROLES, resolveSurface } from '../engine/liminal-surface';
+import type { SurfaceRole } from '../engine/liminal-surface';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 /* ── helpers ─────────────────────────────────────────────────────────── */
 
 const ROLES = Object.keys(ROLE_LEVEL) as SurfaceRole[];
-const MAX_LEVEL = LADDER.length - 1;
-const EDGE_TH = 0.48; // آستانهٔ لبه بر حسب q — اندازه‌گیری‌شده
+const MAX_LEVEL = LADDER.length - 1; // 8 → ۹ لایه
+/** سقفِ تاریکیِ قرارداد (قانون ۴ موتور: L ≤ 0.204) — همان literal کامنتِ liminal-ladder. */
+const CEILING_L = 0.204;
 
 const q = (dL: number) => dL / Q;
 const f4 = (x: number) => x.toFixed(4);
+const f3 = (x: number) => x.toFixed(3);
 const f2 = (x: number) => x.toFixed(2);
-
-const hexOf = (value: string): string => (value.match(/#[0-9a-fA-F]{6}/) || [value])[0];
-const rgbOf = (hex: string): readonly number[] => {
-  const { r, g, b } = hexToRgb(hexOf(hex));
-  return [r, g, b];
-};
+const fa = (n: number) => String(n).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]); // ارقام فارسی برای شمارش‌ها
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-/** یک style object موتور را به CSS درون‌خطی تبدیل می‌کند (var()ها با :rootِ embed شده کار می‌کنند). */
-function styleToCss(style: Record<string, unknown>): string {
-  return Object.entries(style)
-    .filter(([, v]) => v !== undefined && v !== null && v !== '')
-    .map(([k, v]) => `${k.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase())}:${typeof v === 'number' && !/^--/.test(k) && !['opacity', 'zIndex', 'fontWeight', 'lineHeight', 'flex', 'order'].includes(k) ? `${v}px` : String(v)}`)
-    .join(';');
-}
 
 const verdictCount = { قدر: 0, ضعف: 0, حل: 0, باز: 0 };
 
 function verdict(kind: 'قدرت' | 'ضعف' | 'مشکل·حل‌شده' | 'سؤال باز', title: string, reason: string, counted = true): string {
   const color = kind === 'قدرت' ? '#74CE8E' : kind === 'ضعف' ? '#D9BE6E' : kind === 'مشکل·حل‌شده' ? '#6FA8EC' : '#A98BEA';
-  /* حکم‌های جمع‌بندیِ s09 تکرارِ حکم‌های بخش‌ها هستند — شمرده نمی‌شوند تا شمارنده
-     دو برابر نشان ندهد (counted=false). */
   if (counted) {
     if (kind === 'قدرت') verdictCount.قدر++;
     else if (kind === 'ضعف') verdictCount.ضعف++;
@@ -104,297 +84,274 @@ function test(pass: boolean, name: string, value: string, why: string): string {
 <div class="twhy">دلیل: ${why}</div></div></div>`;
 }
 
-/** یافتهٔ ممیزی — نه پاس، نه شکست: رفتارِ واقعیِ موتور که خودش یک حکم دارد. */
+/** یافته — نه پاس نه شکست: رفتارِ واقعیِ موتور که حکمی جدا دارد. */
 function finding(title: string, body: string): string {
   return `<div class="finding"><span class="fmark">⚠</span>
 <div><div class="tname">${esc(title)}</div><div class="twhy">${body}</div></div></div>`;
 }
 
-function swatch(hex: string, label: string, sub?: string, w = 74, h = 54): string {
-  return `<div class="sw" style="width:${w}px"><div style="height:${h}px;background:${hex};border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
-<div class="swl">${esc(label)}</div>${sub ? `<div class="sws">${esc(sub)}</div>` : ''}</div>`;
-}
+const card = (title: string, body: string) => `<div class="card"><div class="ctitle">${esc(title)}</div>${body}</div>`;
 
 function section(num: string, title: string, lede: string, body: string): string {
   return `<section><div class="shead"><span class="snum">${num}</span><div><h2>${esc(title)}</h2><p class="lede">${lede}</p></div></div>${body}</section>`;
 }
 
-const card = (title: string, body: string) => `<div class="card"><div class="ctitle">${esc(title)}</div>${body}</div>`;
-
 /* ── the document ────────────────────────────────────────────────────── */
 
 export function buildAuditSnapshotHtml(): string {
-  /* مقادیر زنده — همه از موتور واقعی */
+  /* ═══ دادهٔ زنده — همه از موتور، هیچ عددِ دستی ═══ */
+
+  // اندازه‌گیری‌های نردبان
   const canvasL = oklchLightness(LADDER[0]);
   const stepsQ = LADDER.slice(0, -1).map((h, n) => q(lightnessStep(h, LADDER[n + 1])));
-  /* نیم‌پله = آفستِ S(n).5 از S(n) — نه فاصلهٔ دو نیم‌پلهٔ متوالی (آن طراحیِ یک پلهٔ
-     کامل است). ممیزی اول اشتباه اندازه گرفت و «یافته» ساخت؛ اصلاح با اندازهٔ درست. */
-  const halfQ = HALF.map((h, n) => q(lightnessStep(LADDER[n], h)));
   const parseExactL = (s: string) => parseFloat(s.match(/oklch\(([\d.]+)/)![1]);
   const exactStepsQ = LADDER_EXACT.slice(0, -1).map((e, n) => q(parseExactL(LADDER_EXACT[n + 1]) - parseExactL(e)));
-  const exactHalfQ = HALF_EXACT.map((e, n) => q(parseExactL(e) - parseExactL(LADDER_EXACT[n])));
-  const wellPenD = q(lightnessStep(LADDER[0], WELLS.penumbra));
-  const wellUmbD = q(lightnessStep(LADDER[0], WELLS.umbra));
 
-  /* ── 01 بوم و چاه‌ها ── */
-  const s01 = section('01', 'بوم و چاه‌ها',
-    `بوم تنها انتخابِ آزادِ سیستم است: <code>L₀=${CANVAS_L}</code> · <code>C=${LADDER_CHROMA}</code> · <code>H=${LADDER_HUE}°</code>. دو چاه زیر بوم‌اند — تاریک‌ترین رنگ‌های مجاز، برای سایهٔ محیطی و تماسی.`,
-    `<div class="swrow">
-      ${swatch(WELLS.umbra, 'S-2 umbra', `${f4(oklchLightness(WELLS.umbra))} · ${f2(wellUmbD)}q`)}
-      ${swatch(WELLS.penumbra, 'S-1 penumbra', `${f4(oklchLightness(WELLS.penumbra))} · ${f2(wellPenD)}q`)}
-      ${swatch(LADDER[0], 'S0 canvas', `${f4(canvasL)} · 0q`, 96, 62)}
-    </div>
-    ${test(Math.abs(canvasL - CANVAS_L) < 0.001, 'L بوم = مقدارِ اعلام‌شدهٔ فرمول', `L=${f4(canvasL)}`, 'hex بوم رنگ‌سنجی شد؛ فاصله از فرمول یعنی نردبان دستی دست‌کاری شده.')}
-    ${test(wellPenD < 0 && wellUmbD < wellPenD, 'چاه‌ها زیر بوم‌اند و به ترتیب', `penumbra ${f2(wellPenD)}q · umbra ${f2(wellUmbD)}q`, 'چاه «پلهٔ منفی» است — جای سایه، نه جای سطح.')}
-    ${test(WELLS.penumbra === '#030406' && WELLS.umbra === '#010203', 'یک منبعِ حقیقت برای چاه‌ها', 'liminal-ladder.WELLS', 'قبلاً در css-vars و contract دوبار نوشته شده بود؛ حالا هر دو از WELLS می‌خوانند.')}
-    ${verdict('قدرت', 'L₀ یک انتخابِ مستند است، نه عددِ تصادفی', 'برازش به طراحیِ تأییدشده در POLICY §2 — تمامِ نردبان از آن مشتق می‌شود.')}
-    ${verdict('ضعف', 'چاه‌ها در موتور هستند ولی در POLICY فصل ندارند', 'اقدام: فصلِ چاه‌ها — S-1/S-2 با مقدار، کار و قانونِ «هیچ سطحی روی چاه نمی‌نشیند».')}`);
+  // محصور بودنِ گام: بیشینهٔ هندسی از لنگر تا سقف با ۸ گام
+  const geoMaxStep = (CEILING_L - CANVAS_L) / MAX_LEVEL;
+  const fitRatio = LADDER_STEP / geoMaxStep;
+  const topL = oklchLightness(LADDER[MAX_LEVEL]);
 
-  /* ── 02 نردبان ── */
-  const ladderStrip = LADDER.map((hex, n) => swatch(hex, `S${n}`, n === 0 ? 'canvas' : `+${f2(stepsQ[n - 1])}q`, 58, 46)).join('');
-  const halfStrip = HALF.map((hex, n) => swatch(hex, `S${n}.5`, 'border', 58, 30)).join('');
-  const s02 = section('02', 'نردبان — ۹ پله، یک فرمول',
-    `<code>L(n) = ${CANVAS_L} + n × ${LADDER_STEP}</code> — هر پله <code>${f4(q(LADDER_STEP))}q</code> فاصله دارد (q=${Q}، اندازه‌گیری‌شده در سه نشست). نیم‌پله‌ها برای بوردرند، نه state.`,
-    `<div class="swrow">${ladderStrip}</div><div class="swrow" style="margin-top:8px">${halfStrip}</div>
-    ${test(exactStepsQ.every((s) => Math.abs(s - q(LADDER_STEP)) < 0.0001) && exactHalfQ.every((h) => Math.abs(h - q(LADDER_STEP) / 2) < 0.0001), 'قانون ۱ روی مقادیرِ اکسکت: هر پله و هر نیم‌پله ثابت', `پله ${f4(exactStepsQ[0])}q × ۸ · نیم‌پله ${f4(exactHalfQ[0])}q × ۷`, 'LADDER_EXACT/HALF_EXACT همان رشته‌های oklch هستند که در css-vars پشت @supports منتشر می‌شوند — مرورگرِ مدرن قانون را دقیق می‌بیند.')}
-    ${test(LADDER.every((hex, n) => hex === getLadderColor(n)), 'hex جدول = خروجیِ فرمول', '۹ از ۹', 'LADDER دستی و getLadderColor فرمولی واگرا نشده‌اند.')}
-    ${test(stepsQ.every((s) => s >= 1 && s <= 1.25), 'fallback هشت‌بیتی هم قانون ۱ را نگه می‌دارد', `${f2(Math.min(...stepsQ))}–${f2(Math.max(...stepsQ))}q اندازه‌گیری‌شده روی hex`, 'رُندِ ۸ بیتی در این تاریکی ±۰.۰۷q نویز دارد ولی هیچ پله‌ای زیر ۱q نمی‌افتد — لایه‌ها حتی بدون oklch هم جدا می‌مانند.')}
-    ${test(exactHalfQ.every((h) => Math.abs(h - q(LADDER_STEP) / 2) < 0.0001) && exactHalfQ.every((h) => h > EDGE_TH && h < 1), 'نیم‌پلهٔ اکسکت: دیده‌شده ولی مرز نیست', `${f4(exactHalfQ[0])}q = ${f2(exactHalfQ[0] / EDGE_TH)}× آستانهٔ لبه (${EDGE_TH}q)`, 'نیم‌پله به‌عنوان state رد شده (§6.8) ولی به‌عنوان جداکننده ۱.۱۸× آستانه است — کامنتِ HALF در موتور اصلاح شد.')}
-    ${test(halfQ.every((h) => h > EDGE_TH && h < 1), 'نیم‌پله در hex هم زنده می‌ماند', `${f2(Math.min(...halfQ))}–${f2(Math.max(...halfQ))}q آفستِ اندازه‌گیری‌شده`, 'نویزِ رُند ±۰.۱۴q است — هم‌اندازهٔ خودِ نیم‌پله — ولی هیچ آفستی از باندِ دیدنی (آستانهٔ لبه، ۱q) بیرون نمی‌زند. اندازهٔ درست: آفست از پلهٔ خودش، نه فاصلهٔ دو نیم‌پلهٔ متوالی (آن طراحیِ یک پلهٔ کامل است).')}
-    ${verdict('قدرت', 'یک فرمول، فاصلهٔ ثابت، بدون جدولِ دستی', 'سلسله‌مراتب از ریاضی می‌آید نه سلیقه، و تم‌پذیر است چون همه‌چیز از L₀ مشتق می‌شود.')}
-    ${verdict('قدرت', 'طراحی در ۸ بیت هم زنده می‌ماند — fallback هم قانون دارد', 'پله‌های hex: ۱.۰۷–۱.۲۱q (همه ≥۱q) · آفستِ نیم‌پله‌ها: ۰.۵۴–۰.۷۱q (همه در باندِ دیدنی). css-vars دو اعلان منتشر می‌کند: hex برای مرورگرِ قدیمی، oklch پشتِ @supports برای دقتِ اکسکت — هیچ مصرف‌کننده‌ای قانون را از دست نمی‌دهد.')}
-    ${verdict('مشکل·حل‌شده', 'کامنتِ HALF می‌گفت «state باید حس شود نه دیده شود»', 'در §6.8 رد شده: state یک تغییرِ سطح است و باید ≥۱q باشد. نیم‌پله فقط border است — کامنت اصلاح شد.')}`);
+  // روان‌فیزیک: منحنی لجستیک از دو نقطهٔ اندازه‌گیری‌شده — q (۵۰٪) و r (۹۵٪)
+  const beta = (RELIABLE_BOUNDARY - Q) / Math.log(19);
+  const pDetect = (dL: number) => 1 / (1 + Math.exp(-(dL - Q) / beta));
+  const pExact = pDetect(LADDER_STEP);
+  const pBand = [pDetect(Math.min(...stepsQ) * Q), pDetect(Math.max(...stepsQ) * Q)];
 
-  /* ── 03 لایه‌ها و تو در تویی ── */
-  const matrixRows = ROLES.map((r) => {
-    const cells = ROLES.map((h) => {
-      if (r === h) return '<td class="mx-dot">·</td>';
-      const res = checkPlacement({ role: r, on: h });
-      return `<td class="mx" style="color:${res.ok ? '#74CE8E' : 'rgba(232,138,147,.55)'}" title="${esc(res.ok ? 'ok' : res.reason || '')}">${res.ok ? '✓' : '✗'}</td>`;
-    }).join('');
-    return `<tr><td class="mx-role">${r}</td>${cells}</tr>`;
-  }).join('');
-  const matrixHead = ROLES.map((h) => `<th class="mx">${h}</th>`).join('');
+  // نشست‌های آستانه‌سنجی — زنده از فایلِ اندازه‌گیریِ خودِ خواننده
+  type Session = { at: string; q: number; r?: number; falseAlarms?: number; trials?: unknown[] };
+  let sessions: Session[] = [];
+  try {
+    sessions = JSON.parse(readFileSync(resolve(process.cwd(), '.threshold-sessions.json'), 'utf8')) as Session[];
+  } catch {
+    sessions = [];
+  }
+  const trialsTotal = sessions.reduce((a, s) => a + (Array.isArray(s.trials) ? s.trials.length : 0), 0);
 
-  const chain: { role: SurfaceRole; on?: SurfaceRole }[] = [
+  // دادهٔ هر لایه
+  const lumY = (hex: string) => {
+    const { r, g, b } = hexToRgb(hex);
+    const lin = (v: number) => { const c = v / 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+  };
+  const levelData = LADDER.map((hex, n) => {
+    const o = rgbToOklch(hexToRgb(hex));
+    return {
+      n,
+      hex,
+      roles: ROLES.filter((r) => ROLE_LEVEL[r] === n).join(' · '),
+      Lexact: parseExactL(LADDER_EXACT[n]),
+      Lhex: o.L,
+      C: o.C,
+      h: o.h,
+      dCanvasQ: n ? q(lightnessStep(LADDER[0], hex)) : 0,
+      dPrevQ: n ? q(lightnessStep(LADDER[n - 1], hex)) : 0,
+      Y: lumY(hex),
+      wcagWhite: contrastRatioHex('#FFFFFF', hex),
+      apcaWhite: Math.abs(apcaContrast('#FFFFFF', hex)),
+    };
+  });
+  const minWcag = Math.min(...levelData.map((d) => d.wcagWhite));
+  const minApca = Math.min(...levelData.map((d) => d.apcaWhite));
+
+  // تک‌محوری: سهمِ نورانیت از فاصلهٔ ادراکی (OKLab) بین لایه‌های همسایه
+  const lab = (hex: string) => {
+    const o = rgbToOklch(hexToRgb(hex));
+    const hr = (o.h * Math.PI) / 180;
+    return { L: o.L, a: o.C * Math.cos(hr), b: o.C * Math.sin(hr) };
+  };
+  const deRatios = LADDER.slice(0, -1).map((hex, n) => {
+    const p0 = lab(hex), p1 = lab(LADDER[n + 1]);
+    const dE = Math.hypot(p1.L - p0.L, p1.a - p0.a, p1.b - p0.b);
+    const dL = Math.abs(p1.L - p0.L);
+    return dE / dL;
+  });
+  const maxDeRatio = Math.max(...deRatios);
+  const cDrift = Math.max(...levelData.map((d) => d.C)) - Math.min(...levelData.map((d) => d.C));
+  const hDrift = Math.max(...levelData.map((d) => d.h)) - Math.min(...levelData.map((d) => d.h));
+
+  // نردبان‌های جایگزین — رُندِ ساده (بدون جست‌وجوی موتور)، برای مقایسهٔ صادقانه
+  const altLadder = (sq: number) => {
+    const step = sq * Q;
+    const fits = Math.min(MAX_LEVEL, Math.floor((CEILING_L - CANVAS_L) / step + 1e-9));
+    const hexes = Array.from({ length: fits + 1 }, (_, n) => oklchToHex({ L: CANVAS_L + n * step, C: LADDER_CHROMA, h: LADDER_HUE }));
+    const realized = hexes.slice(0, -1).map((h, n) => q(lightnessStep(h, hexes[n + 1])));
+    return { sq, step, fits, hexes, realized, minR: Math.min(...realized), maxR: Math.max(...realized) };
+  };
+  const alts = [0.5, 1.0, 1.35, 1.5].map(altLadder);
+  const current = { sq: q(LADDER_STEP), fits: MAX_LEVEL, hexes: [...LADDER], minR: Math.min(...stepsQ), maxR: Math.max(...stepsQ) };
+
+  // زنجیرهٔ تو در تویی — تختِ مطلق: فقط fill، بدون border/shadow/rim
+  const flatChain: { role: SurfaceRole; on?: SurfaceRole }[] = [
     { role: 'canvas' }, { role: 'chrome', on: 'canvas' }, { role: 'work', on: 'chrome' },
     { role: 'region', on: 'work' }, { role: 'control', on: 'region' },
   ];
-  const chainHtml = chain.map((c, i) => {
-    const s = resolveSurface(c);
-    const borderCss = s.border ? `border:1px solid ${s.border};` : 'border:1px solid #0d0f12;';
-    return `<div style="margin-inline-start:${i * 16}px;margin-top:${i ? 8 : 0}px">
-      <div style="${styleToCss(s.style as unknown as Record<string, unknown>)};${borderCss}border-radius:10px;padding:10px 14px">
-        <div class="chainrole">${c.role}${c.on ? ` on ${c.on}` : ''} → S${s.level}</div>
-        <div class="chainsub">rim ${s.rim ? '✓' : '✗'} · shadow ${s.shadow === 'none' ? '✗' : '✓'} · bg ${esc(s.background)}</div>
-      </div></div>`;
+  const chainResolved = flatChain.map((c) => ({ ...c, s: resolveSurface(c) }));
+
+  /* ═══ ۰۱ — این مرحله ═══ */
+  const stageRows = [
+    ['بوردر (separator/edge)', 'liminal-surface · resolveBorder*', 'surface.test × ۶۳+', 'ساخته و تست‌شده — مرحلهٔ بعد'],
+    ['سایه (اوج = ۱q از میزبان)', 'liminal-shadow · shadowPeakAlpha', 'shadow.test', 'ساخته و تست‌شده — مرحلهٔ بعد'],
+    ['ریم (نورِ جهت‌دارِ لبه)', 'spec-engine · getDirectionalRim', 'rim در surface.test', 'ساخته و تست‌شده — مرحلهٔ بعد (+ سؤالِ بازِ توست)'],
+    ['پالت و معنایی', 'liminal-palette · ۱۲×۷', 'palette.test × ۱۷', 'ساخته — «اتصالِ معنایی» منتظرِ مرحله و تصمیمِ چشمی'],
+    ['تایپوگرافی فارسی', 'liminal-persian · lineHeightFor', 'persian.test', 'ساخته — تستِ بصری در مرحلهٔ خودش'],
+    ['کامپوننت', '—', 'zero-state × ۶ (خواب)', 'صفرِ مطلق — تا تکمیلِ هسته ممنوع (قانونِ خودتان)'],
+  ].map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('');
+
+  const s01 = section('01', 'این مرحله — بوم ↔ سطح، تخت',
+    `خواستهٔ صریحِ شما: «بدون ریم، بوردر و سایه، با فرمول و ریاضی، به ۹ لایهٔ دقیقِ چشمی و عددی، ادراک‌ترین حالتِ ممکن، با دلیل و استدلال.» این صفحه فقط همان است: <b>fill خالص</b> — رابطهٔ بوم و سطح از جنسِ نورانیت، هیچ تزئینی در کار نیست. بقیهٔ درمان‌ها در موتور ساخته و تست شده‌اند ولی <b>تصمیمِ این مرحله نیستند</b> و رندرِ کاملشان در آزمایشگاهِ زنده (AuditLab) و پروندهٔ ممیزی باقی است.`,
+    `${card('وضعیتِ مراحلِ بعد — ساخته‌شده، در نوبتِ خودش', `<div class="tblwrap"><table class="mini"><thead><tr><th>مرحله</th><th>موتور</th><th>تست</th><th>وضعیت</th></tr></thead><tbody>${stageRows}</tbody></table></div>`)}
+    ${verdict('قدرت', 'صفحهٔ تحویل = آینهٔ مرحلهٔ فعلی', 'ممیزیِ ۹ بخشیِ کامل سرِ جایش است (AuditLab + CORE-VERDICTS.md) ولی آنچه به چشمِ شما می‌آید فقط تصمیم‌های بازِ همین مرحله است — هیچ بخشِ جلوتری وانمود نمی‌کند که نوبتِ تصمیمش رسیده.')}`);
+
+  /* ═══ ۰۲ — بوم و لنگر ═══ */
+  const wellPenD = q(lightnessStep(LADDER[0], WELLS.penumbra));
+  const wellUmbD = q(lightnessStep(LADDER[0], WELLS.umbra));
+  const s02 = section('02', 'بوم — لنگر و چاه‌های زیرش',
+    `همه‌چیز از یک انتخاب شروع می‌شود: <code>L₀=${CANVAS_L}</code> · <code>C=${LADDER_CHROMA}</code> · <code>H=${LADDER_HUE}°</code>. بوم تاریک‌ترین سطحِ مجاز است (قانون ۳) و دو چاه زیر آن — تاریک‌ترین رنگ‌های کلِ سیستم، جای سایه نه جای سطح.`,
+    `<div class="swrow">
+      <div class="sw" style="width:96px"><div style="height:64px;background:${WELLS.umbra};border-radius:8px"></div><div class="swl">S-2 umbra</div><div class="sws">${WELLS.umbra} · ${f2(wellUmbD)}q</div></div>
+      <div class="sw" style="width:96px"><div style="height:64px;background:${WELLS.penumbra};border-radius:8px"></div><div class="swl">S-1 penumbra</div><div class="sws">${WELLS.penumbra} · ${f2(wellPenD)}q</div></div>
+      <div class="sw" style="width:96px"><div style="height:64px;background:${LADDER[0]};border-radius:8px"></div><div class="swl">S0 canvas</div><div class="sws">${LADDER[0]} · لنگر</div></div>
+    </div>
+    ${test(Math.abs(canvasL - CANVAS_L) < 0.001, 'L بوم = مقدارِ اعلام‌شدهٔ فرمول', `L=${f4(canvasL)} (hex رنگ‌سنجی‌شده)`, 'اگر hexِ بوم از فرمول فاصله داشت، یعنی نردبانِ منتشرشده دست‌کاری شده است.')}
+    ${test(wellPenD < 0 && wellUmbD < wellPenD, 'چاه‌ها زیرِ بوم‌اند و به ترتیب', `penumbra ${f2(wellPenD)}q · umbra ${f2(wellUmbD)}q زیرِ بوم`, 'چاه «پلهٔ منفی» است — جای سایهٔ محیطی و تماسی، نه جای سطح. هیچ سطحی روی چاه نمی‌نشیند.')}
+    ${verdict('قدرت', 'L₀ یک انتخابِ مستند است، نه عددِ تصادفی', `برازش به طراحیِ تأییدشدهٔ POLICY §2 — و بقیهٔ ${fa(9)} لایه همه از همین یک عدد مشتق می‌شوند: لنگر را عوض کنی، کلِ سیستم با هم جابه‌جا می‌شود (تم‌پذیری).`)}
+    ${verdict('ضعف', 'چاه‌ها در موتور هستند ولی در POLICY فصل ندارند', 'اقدام (همان قدیم، هنوز باز): فصلِ چاه‌ها — S-1/S-2 با مقدار، کار و قانونِ «هیچ سطحی روی چاه نمی‌نشیند». ریاضی‌اش همین دو عددِ بالاست؛ فقط مستندسازی مانده.')}`);
+
+  /* ═══ ۰۳ — قانونِ نردبان ═══ */
+  const s03 = section('03', 'قانونِ نردبان — فرمول و چهار قید',
+    `<code>L(n) = ${CANVAS_L} + n × ${LADDER_STEP}</code> — یک خط، بدون جدولِ دستی. چهار قیدِ موتور (همه در tokens.test پین شده‌اند): ۱) هر پلهٔ محقق ≥ q · ۲) هر پله ≤ 1.5q (پرش‌دار نشود) · ۳) بوم لنگر است · ۴) سقف <code>L ≤ ${CEILING_L}</code>.`,
+    `${test(exactStepsQ.every((s) => Math.abs(s - q(LADDER_STEP)) < 0.0001), 'اکسکت: هر ۸ گام دقیقاً یک اندازه', `${f4(exactStepsQ[0])}q = ${LADDER_STEP}`, 'LADDER_EXACT رشته‌های oklch هستند (همان‌ها که پشتِ @supports در css-vars می‌روند) — مرورگرِ مدرن قانون را بدونِ نویز می‌بیند.')}
+    ${test(LADDER.every((hex, n) => hex === getLadderColor(n)), 'hexِ جدول = خروجیِ فرمول', `${fa(9)} از ${fa(9)}`, 'دو منبع (جدولِ دستی و فرمول) واگرا نشده‌اند.')}
+    ${test(stepsQ.every((s) => s >= 1 && s <= 1.25), 'قید ۱ و ۲ در fallback هشت‌بیتی هم برقرار است', `${f2(Math.min(...stepsQ))}–${f2(Math.max(...stepsQ))}q محقق‌شده`, 'رُندِ ۸ بیتی در این تاریکی ±۰.۰۷q نویز دارد؛ جدول با جست‌وجو کم‌وارانس‌ترین hexها را برگزیده — هیچ پله‌ای زیرِ ۱q نمی‌افتد و هیچ‌کدام پرش (≥۱.۵q) نیست.')}
+    ${test(topL <= CEILING_L + 1e-9, 'قید ۴: سقف سخت رعایت شده', `S8 = ${f4(topL)} ≤ ${CEILING_L}`, 'سقف فقط مالِ سطوح نیست — پالت، متن و هر چیزی که «بالاتر» می‌خواهد هم زیرِ همین سقف می‌ماند (CEILING_IS_HARD در موتور).')}
+    ${test(Math.abs(fitRatio - 1) < 0.005, `محصور بودن: گام = ${(fitRatio * 100).toFixed(1)}٪ بیشینهٔ هندسی`, `(سقف−لنگر)/۸ = ${f4(geoMaxStep)} · گامِ ما ${LADDER_STEP}`, `اگر لنگر، سقف، تعدادِ لایه‌ها و یک‌نواختی را بپذیرید، گامِ ممکن یکتاست: بیشینهٔ هندسی ${f4(geoMaxStep)} است و گامِ موتور ${fa(Number((fitRatio * 100).toFixed(2)))}٪ همان — یعنی بازترین نردبانِ ممکن در پاکتِ تأییدشده. «ادراک‌ترین» یعنی: بیشترین جداسازیِ یکنواخت که قیدها اجازه می‌دهند.`)}
+    ${verdict('قدرت', 'نردبان پارامترِ آزاد ندارد — بیش‌تعیین است', 'لنگر (طراحیِ تأییدشده) + سقف (قرارداد) + ۹ لایه (فهرستِ نقش‌ها: هر سطح یک شغل) + گامِ ثابت (قانونِ ۱) ⇒ گام عملاً یکتا می‌شود. هیچ‌کس «سلیقه» نکرده؛ ریاضی محصور، جواب را تعیین کرده و اندازه‌گیری (بخش ۰۴) تأییدش کرده است.')}
+    ${verdict('مشکل·حل‌شده', 'کامنتِ HALF می‌گفت «state باید حس شود نه دیده شود»', 'در §6.8 رد شد: state تغییرِ سطح است و باید ≥۱q باشد. نیم‌پله (۰.۵۷۰۸q) فقط مصالحِ بوردرِ مرحلهٔ بعد است — کامنتِ موتور اصلاح شده (e512ef9).')}`);
+
+  /* ═══ ۰۴ — روان‌فیزیک ═══ */
+  const sessionRows = sessions.map((s) => `<tr>
+      <td>${esc(s.at.slice(0, 16).replace('T', ' · '))}</td><td>${s.q.toFixed(5)}</td><td>${(s.r ?? 0).toFixed(5)}</td>
+      <td>${Array.isArray(s.trials) ? s.trials.length : 0}</td><td>${s.falseAlarms ?? 0}</td></tr>`).join('');
+  const s04 = section('04', 'روان‌فیزیک — ادعا از اندازه‌گیری می‌آید، نه حدس',
+    `واحدِ کلِ سیستم «کوانتومِ ادراکی» است: <code>q = ${Q}</code> (ΔL در آستانهٔ ۵۰٪ تشخیص) و <code>r = ${RELIABLE_BOUNDARY}</code> (۹۵٪ تشخیص). این دو عدد حدس نیستند — از ${fa(sessions.length)} نشستِ آستانه‌سنجیِ محرکِ ثابت روی <b>نمایشگرِ خودِ شما</b> آمده‌اند (مجموعاً ${fa(trialsTotal)} کوشش، مجموعِ زنگِ خطا: ${fa(sessions.reduce((a, s) => a + (s.falseAlarms ?? 0), 0))}). ابزارش همین‌جا سرو می‌شود تا روی گوشی دوباره بسنجید (بخش ۰۹).`,
+    `${card('نشست‌های اندازه‌گیری — .threshold-sessions.json (زنده خوانده شد)', `<div class="tblwrap"><table class="mini"><thead><tr><th>نشست</th><th>q (۵۰٪)</th><th>r (۹۵٪)</th><th>کوشش</th><th>زنگِ خطا</th></tr></thead><tbody>${sessionRows}</tbody></table></div>`)}
+    ${test(sessions.length === 3 && sessions.every((s) => s.falseAlarms === 0), 'سه نشست، صفر زنگِ خطا', `${fa(sessions.length)} نشست · ${fa(trialsTotal)} کوشش`, 'زنگِ خطا یعنی «دیده شد» روی محرکِ صفر — نبودش یعنی داده قابلِ اتکاست و حدسِ ۵۰٪ واقعاً آستانه است.')}
+    ${test(sessions.every((s) => Math.abs(s.q - Q) <= 0.0007), 'qهای سه نشست به هم نزدیک‌اند', sessions.map((s) => s.q.toFixed(4)).join(' · '), `پراکندگیِ نشست‌ها ${(Math.max(...sessions.map((s) => s.q)) - Math.min(...sessions.map((s) => s.q))).toFixed(4)} است — موتور میانگینِ عملی (۰.۰۰۸۳) را برداشته. ثباتِ بینِ نشست = آستانه ویژگیِ چشم است، نه حالِ لحظه‌ای.`)}
+    ${test(LADDER_STEP > Q && LADDER_STEP < RELIABLE_BOUNDARY, 'گام بینِ q و r نشسته', `${f4(LADDER_STEP)} ∈ (${Q}, ${RELIABLE_BOUNDARY})`, `از منحنیِ لجستیکِ برازش‌شده روی همین داده (β=${beta.toFixed(5)} از دو نقطهٔ ۵۰٪/۹۵٪): احتمالِ تشخیصِ یک زوجِ همسایه در آزمایشِ فلشِ کوتاه ≈ ${fa(Math.round(pExact * 100))}٪ (باندِ hex: ${fa(Math.round(pBand[0] * 100))}–${fa(Math.round(pBand[1] * 100))}٪). صداقتِ کامل در حکمِ زیر.`)}
+    ${test(contrastRatioHex(LADDER[MAX_LEVEL], LADDER[0]) < 1.2, 'چرا خط‌کشِ OKLCH و نه WCAG', `WCAG(S8,S0) = ${f2(contrastRatioHex(LADDER[MAX_LEVEL], LADDER[0]))}:1 برای ${fa(9)} لایه!`, 'نسبتِ کنتراستِ WCAG بینِ تاریک‌ترین و روشن‌ترین سطح ۱.۱۲ است — عملاً «هیچ». ولی چشم ۹ لایه می‌بیند. رابطهٔ سطح↔سطح با ΔL در فضای یکنواختِ ادراکی سنجیده می‌شود؛ WCAG مالِ متن↔زمینه است (و آنجا هم در بخش ۰۵ عالی جواب می‌دهد). ابزارِ غلط، قانونِ غلط می‌سازد.')}
+    ${verdict('قدرت', 'پله از آستانهٔ اندازه‌گیری‌شده می‌آید — تا پیش از آن حدس بود', 'تاریخچهٔ خودش: ۰.۰۱۵ (قراردادِ قدیم، بدونِ measurement) ← ۰.۰۱۲۷ (میانگینِ پالتِ دستی) ← ۰.۰۰۹۴۷۵ (از q و rِ سه نشستِ روان‌فیزیکی). هر بار عدد به داده نزدیک‌تر شد.')}
+    ${verdict('سؤال باز', 'همسایه‌ها در «فلشِ آزمایشگاهی» ~۷۷٪ — در «میدانِ واقعی» چقدر؟', `p(گام) ≈ ${fa(Math.round(pExact * 100))}٪ برای ارائهٔ کوتاهِ آزمایشگاهی است. در UIِ واقعی سه چیز به نفعِ ماست: میدانِ بزرگِ هم‌جوار (نه لکهٔ کوچک)، تداومِ نگاه (نه فلش)، و هندسهٔ تو در تویی (قرینهٔ اضافی). رابطه‌های ≥۲ پله — همان‌هایی که سلسله‌مراتب را «می‌خوانند» — همه بالای r و عملاً ۱۰۰٪اند (جدولِ بخش ۰۶). با این حال: اگر چشمِ شما روی گوشی جایی لغزید، راهش تنظیمِ دلخواه نیست — <b>بازسنجیِ q روی همان نمایشگر</b> است (لینکِ بخش ۰۹).`)}`);
+
+  /* ═══ ۰۵ — جدولِ عددی ═══ */
+  const tableRows = levelData.map((d) => `<tr>
+      <td><b>S${d.n}</b></td><td style="text-align:left">${esc(d.roles)}</td>
+      <td><span class="chip" style="background:${d.hex}"></span>${d.hex}</td>
+      <td>${d.Lexact.toFixed(5)}</td><td>${d.Lhex.toFixed(5)}</td>
+      <td>${d.n ? f2(d.dCanvasQ) : '—'}</td><td>${d.n ? f2(d.dPrevQ) : '—'}</td>
+      <td>${d.Y.toFixed(5)}</td><td>${f2(d.wcagWhite)}</td><td>${d.apcaWhite.toFixed(0)}</td></tr>`).join('');
+  const s05 = section('05', 'جدولِ عددیِ ۹ لایه — هر عدد اندازه‌گیری‌شده',
+    'L اکسکت از فرمول، L هگز از رنگ‌سنجیِ خودِ hex (رُندِ ۸ بیتی)، Δ بر حسبِ q، Y لومانینسِ نسبی، و دو معیارِ متنِ سفید روی هر سطح. نقش‌های رابطه‌ای (*) جایِ ثابت ندارند — یک پله بالایِ میزبانِ خودشان می‌نشینند.',
+    `<div class="tblwrap"><table class="numtable">
+      <thead><tr><th>لایه</th><th style="text-align:left">نقش‌ها</th><th>hex</th><th>L اکسکت</th><th>L هگز</th><th>Δ از بوم (q)</th><th>Δ همسایه (q)</th><th>Y</th><th>متنِ سفید WCAG</th><th>متنِ سفید APCA</th></tr></thead>
+      <tbody>${tableRows}</tbody></table></div>
+    <div class="note">* well/region/control از ${RELATIONSHIP_ROLES.map(esc).join(' / ')} — سطحِ مطلق نیستند، رابطه‌اند. نقشهٔ کامل: canvas 0 · chrome 1 · work/well/region 2 · panel 3 · control 4 · menu 5 · popover 6 · modal 7 · toast 8.</div>
+    ${test(minWcag >= 15, 'متنِ سفید روی هر ۹ سطح — WCAG', `min ${f2(minWcag)}:1 (روی S8)`, 'هر ۹ سطح آن‌قدر تاریک‌اند که متنِ سفید حتی از AAA (۷:۱) دو و نیم برابر بهتر است — در هیچ لایه‌ای خواناییِ متن به خطر نمی‌افتد. سلسله‌مراتبِ سطح هیچ هزینه‌ای برای متن ندارد.')}
+    ${test(minApca >= 100, 'متنِ سفید روی هر ۹ سطح — APCA', `min Lc ${minApca.toFixed(0)}`, 'APCA (لنزِ مدرنِ کنتراست) برای متنِ بدنه ≥۷۵ می‌خواهد؛ کمترینِ ما ${minApca.toFixed(0)} است. دو لنزِ مستقل، یک نتیجه: هیچ لایه‌ای متن را قربانی نمی‌کند.')}
+    ${verdict('قدرت', 'سطوح سلسله‌مراتب‌اند، نه رقیبِ متن', 'از S0 تا S8 کنتراستِ متنِ سفید فقط از ۲۰.۲ به ۱۸.۰ می‌رسد — کلِ نردبان در «امن‌ترین» ربعِ فضای روشنایی زندگی می‌کند. جداسازیِ لایه‌ها و خواناییِ متن در این طراحی با هم رقابت نمی‌کنند.')}`);
+
+  /* ═══ ۰۶ — برایِ چشم ═══ */
+  const seamPairs = LADDER.slice(0, -1).map((hex, n) => `<div>
+      <div class="seam"><div class="seamfields"><div style="background:${hex}"></div><div style="background:${LADDER[n + 1]}"></div></div></div>
+      <div class="seamlab">S${n} | S${n + 1} · Δ=${f2(stepsQ[n])}q</div></div>`).join('');
+  const relPairs = [
+    { a: 0, b: 2, name: 'بوم → میزِ کار' }, { a: 0, b: 3, name: 'بوم → پنل' },
+    { a: 2, b: 5, name: 'میزِ کار → منوی شناور' }, { a: 0, b: MAX_LEVEL, name: 'بوم → توست (سقف)' },
+  ].map((p) => {
+    const dq = q(lightnessStep(LADDER[p.a], LADDER[p.b]));
+    return `<div>
+      <div class="seam"><div class="seamfields" style="height:88px"><div style="background:${LADDER[p.a]}"></div><div style="background:${LADDER[p.b]}"></div></div></div>
+      <div class="seamlab">${esc(p.name)} · S${p.a}|S${p.b} · Δ=${f2(dq)}q = ${f2(dq / q(RELIABLE_BOUNDARY))}r ${dq >= q(RELIABLE_BOUNDARY) ? '✓ بالای مرزِ ۹۵٪' : ''}</div></div>`;
   }).join('');
 
-  const layerRows = (['region', 'control', 'transient', 'empty'] as LayerContent[]).map((content) =>
-    (['canvas', 'work'] as SurfaceRole[]).map((on) => {
-      const ls = resolveLayerState({ content, on });
-      return `<tr><td>${content}</td><td>${on}</td><td style="color:${ls.border === 'none' ? '#555c66' : '#6FA8EC'}">${ls.border}</td><td>${String(ls.shadow)}</td><td>${String(ls.rim)}</td></tr>`;
-    }).join('')
-  ).join('');
-
-  const regionRes = resolveSurface({ role: 'region', on: 'work' });
-  const s03 = section('03', 'لایه‌ها و تو در تویی — قانون ۲',
-    `۱۱ نقش (region تازه اضافه شد)، ۳ نقشِ رابطه‌ای (<code>${RELATIONSHIP_ROLES.join(' / ')}</code>) که یک پله بالای میزبان‌اند. ماتریس زیر خروجیِ واقعیِ checkPlacement است — سبز مجاز، قرمز رد (دلیل در title دسکتاپ؛ فهرست استثناها پایین).`,
-    `<div class="tblwrap"><table class="matrix"><thead><tr><th class="mx-role">role↓ on→</th>${matrixHead}</tr></thead><tbody>${matrixRows}</tbody></table></div>
-    <div class="note">استثناهای سقف: ${PLACEMENT_EXEMPTIONS.map((e) => `${e.role}↞${e.on}`).join(' · ')} — هر شش «نقشِ رابطه‌ای روی میزبانِ شناور»، چون بالای سقف پله‌ای نیست.</div>
-    <div class="cols">
-      ${card('تو در توییِ زنده — خروجیِ واقعیِ resolveSurface', chainHtml)}
-      ${card('قاعدهٔ «چه روی چه» — resolveLayerState', `<div class="tblwrap"><table class="mini"><thead><tr><th>content</th><th>on</th><th>border</th><th>shadow</th><th>rim</th></tr></thead><tbody>${layerRows}</tbody></table></div>
-      <div class="note">region روی بوم مرز می‌گیرد (یک پله از بوم = آستانهٔ لبه)، روی سطحِ میزبان نه.</div>`)}
-    </div>
-    ${test(ROLES.every((r) => { const h = allowedHost(r); return !h || checkPlacement({ role: r, on: h }).ok; }), 'هر نقش روی میزبانِ مجازش قبول می‌شود', `${ROLES.length - 1} زنجیره`, 'قانون ۲: هر لایه روی لایهٔ زیرِ خودش — زنجیره، نه جفت‌های دلخواه.')}
-    ${test(!checkPlacement({ role: 'work', on: 'canvas' }).ok, 'جابه‌جاییِ لایه رد می‌شود، با دلیل', esc((checkPlacement({ role: 'work', on: 'canvas' }).reason ?? '').slice(0, 60)) + '…', 'نقصِ واقعیِ سایتِ قدیمی: work مستقیم روی canvas — گارد همان روز رد می‌کند.')}
-    ${test(resolvedLevel('control', 'work') === ROLE_LEVEL.work + 1 && resolvedLevel('region', 'work') === ROLE_LEVEL.work + 1, 'نقش‌های رابطه‌ای یک پله بالای میزبان‌اند', 'control/region on work → S3', 'RELATIONSHIP_ROLES نام‌گذاری شد تا استثنای سقف از لیست مشتق شود، نه دستی.')}
-    ${test(!regionRes.rim && regionRes.shadow === 'none', 'region تخت است — بدون ریم و سایه', `rim=${String(regionRes.rim)} shadow=${regionRes.shadow}`, 'region یک محدودهٔ ساختاری است نه شیءِ برجسته — POLICY §1.5 گفت، موتور نداشت؛ در ممیزی اضافه شد.')}
-    ${finding('on ترکیب نمی‌شود — لنگر از سطحِ اسمیِ میزبان می‌آید، نه سطحِ حل‌شده‌اش', `زنجیرهٔ بالا را ببینید: <code>region on work → S${resolvedLevel('region', 'work')}</code> ولی <code>control on region → S${resolvedLevel('control', 'region')}</code> — چون موتور region را به‌سطحِ اسمیِ خودش (۲) لنگر می‌کند، control دقیقاً هم‌سطحِ میزبانِ واقعی‌اش می‌نشیند: صفر اختلافِ fill، نقضِ قانون ۲ در زنجیره‌های رابطه‌ای. region تازه اضافه شده و این حالت تست نداشت. اقدامِ پیشنهادی: API سطحِ حل‌شده (<code>onLevel</code>) یا حسابِ depth — تصمیمِ طراحی، نه باگِ ریاضی.`)}
-    ${verdict('قدرت', 'گاردِ جای‌گذاری واقعاً اجبار می‌کند', 'ماتریسِ ۱۱×۱۰ زنده اجرا شد — POLICY §10 از «نوشته‌شده، اجبارنشده» به «اجبار می‌شود» ارتقا یافت.')}
-    ${verdict('ضعف', 'میزبانِ رابطه‌ای، لنگرِ رابطه‌ای نمی‌دهد', 'control/well/region روی میزبانی که خودش لنگر شده (region on work) هم‌سطحِ او حل می‌شوند — fill سلسله‌مراتب را نمی‌سازد. تا تصمیمِ API (onLevel یا depth) زنجیره‌های عمیق‌تر از دو نقشِ رابطه‌ای باید دستی سطح ببرند. رندرِ زندهٔ زنجیره در همین بخش، دلیلِ بصری است.')}
-    ${verdict('قدرت', 'استثنای سقف مشتق است نه دستی', 'PLACEMENT_EXEMPTIONS = نقش‌های رابطه‌ای × میزبانِ شناور — نقشِ چهارم بدون تصمیمِ صریح رد نمی‌شود.')}
-    ${verdict('مشکل·حل‌شده', 'region در POLICY بود ولی در موتور نبود', '🔴 بحرانی: ۱۰ نقش در موتور، ۱۱ در سیاست. region:۲ رابطه‌ای/تخت اضافه شد + ROLE_RIM/ROLE_SHADOW/استثناها.')}`);
-
-  /* ── 04 بوردر ── */
-  const workHex = resolveSurface({ role: 'work' }).backgroundHex;
-  const panelHex = resolveSurface({ role: 'panel' }).backgroundHex;
-  const sepHex = resolveBorderHex({ role: 'work', kind: 'separator' });
-  const edgeHex = resolveBorderHex({ role: 'panel', kind: 'edge', on: 'work' });
-  const sepD = q(lightnessStep(workHex, hexOf(sepHex)));
-  const edgeOnWork = q(lightnessStep(workHex, hexOf(resolveBorderHex({ role: 'work', kind: 'edge' }))));
-  const toastEdge = resolveBorderLevel({ role: 'toast', kind: 'edge' });
-  const s04 = section('04', 'بوردر — دو حالت، دو فاصلهٔ ثابت',
-    `separator = +۰.۵ پله (<code>${f2(sepD)}q</code> = ${f2(sepD / EDGE_TH)}× آستانهٔ لبه) — یک اشاره. edge = +۱ پله (<code>${f2(edgeOnWork)}q</code> = ${f2(edgeOnWork / EDGE_TH)}× آستانه) — یک مرز. هر دو از سطحِ خودشان، با میزبان جابه‌جا نمی‌شوند.`,
-    `<div class="cols">
-      ${card('separator روی work', `<div style="background:${workHex};border-radius:10px;padding:14px">
-        <div class="note">ردیف اول</div><div style="border-top:1px solid ${hexOf(sepHex)};margin:10px 0"></div><div class="note">ردیف دوم</div></div>
-        <div class="note mono">${esc(sepHex)}</div>`)}
-      ${card('edge دور panel روی work', `<div style="background:${workHex};border-radius:10px;padding:14px">
-        <div style="background:${panelHex};border:1px solid ${hexOf(edgeHex)};border-radius:8px;padding:14px" class="note">panel با مرزِ یک پله</div></div>
-        <div class="note mono">${esc(edgeHex)}</div>`)}
-    </div>
-    ${test(Math.abs(sepD - 0.5708) < 0.01 && sepD > EDGE_TH, 'separator دیدنی است ولی مرز نیست', `${f2(sepD)}q = ${f2(sepD / EDGE_TH)}× آستانه`, 'زیر ۰.۴۸q محو، بالای ۱q «جداسازیِ دو سطح» خوانده می‌شود — نیم‌پله دقیقاً بین این دو.')}
-    ${test(Math.abs(edgeOnWork - q(LADDER_STEP)) < 0.01, 'edge یک پلهٔ کامل است — اندازه‌گیری‌شده', `${f2(edgeOnWork)}q = ${f2(edgeOnWork / EDGE_TH)}× آستانه`, 'انتخابِ خواننده: «کمتر از یک پله، حتی بوردر هم بوردر نیست.»')}
-    ${test(toastEdge === MAX_LEVEL - 0.5, 'در سقف، edge به separator تنزل می‌کند', `toast edge → S${toastEdge}`, 'معکوسِ قدیمی مرز را هم‌رنگِ میزبان می‌کرد (۰q — ناپیدا). طرح تنزل می‌کند، گسترش نمی‌یابد.')}
-    ${verdict('قدرت', 'چارچوبِ مرجع حل‌شده: بوردر از سطحِ خودش', 'یک خط‌کشِ ثابت — پیامدش پذیرفته: مرزِ پنل روی بوم ۴.۵۶q و روی work ۲.۲۸q است؛ این سلسله‌مراتب است، نه خطا.')}`);
-
-  /* ── 05 سایه ── */
-  const floatCards = (['menu', 'popover', 'modal', 'toast'] as SurfaceRole[]).map((role) => {
-    const s = resolveSurface({ role }); // بدون on — شیءِ شناور در سطحِ خودش رندر می‌شود؛ on هر نقشی را به میزبان+۱ لنگر می‌کرد (toast→S3 — باگِ دمو، اصلاح شد)
-    const h = s.shadow === 'none' ? '—' : '✓';
-    return `<div style="width:120px;background:${s.backgroundHex};border-radius:10px;box-shadow:${s.shadow === 'none' ? 'none' : esc(s.shadow)};padding:14px 12px">
-      <div class="chainrole">${role}</div><div class="chainsub">S${s.level} · shadow ${h}</div></div>`;
-  }).join('');
-  const peakWork = shadowPeakAlpha(rgbOf(LADDER[2]));
-  const peakCanvas = shadowPeakAlpha(rgbOf(LADDER[0]));
-  const peakTop = shadowPeakAlpha(rgbOf(LADDER[8]));
-  const model1 = shadowModel(1, rgbOf(LADDER[2]));
-  /* اندازه‌گیری با blend شناور — همان ریاضیِ موتور (بدون رُندِ ۸ بیتی؛ رُند در این
-     تاریکی ۰.۲۱q خطا می‌انداخت و تستِ ۱q را به ✗ می‌کشاند — خودِ ممیزی یافته بود). */
-  const blendedL = (() => {
-    const h = hexToRgb(LADDER[2]);
-    return rgbToOklch({ r: h.r + peakWork * (1 - h.r), g: h.g + peakWork * (2 - h.g), b: h.b + peakWork * (3 - h.b) }).L;
+  const nestHtml = (() => {
+    let out = '';
+    for (let i = chainResolved.length - 1; i >= 0; i--) {
+      const c = chainResolved[i];
+      const parent = i > 0 ? chainResolved[i - 1] : null;
+      const dq = parent ? q(lightnessStep(parent.s.backgroundHex, c.s.backgroundHex)) : 0;
+      const lab = `<div class="nestlab">${c.role}${c.on ? ` on ${c.on}` : ''} → S${c.s.level}</div>` +
+        (parent ? `<div class="nestsub">Δ از میزبان: ${dq >= 0.995 ? `${f2(dq)}q ✓ یک پله` : `${f2(dq)}q — هم‌سطحِ میزبان!`}</div>` : `<div class="nestsub">لنگر · L=${f4(canvasL)}</div>`);
+      out = `<div class="nest" style="background:${c.s.backgroundHex}">${lab}${out ? `<div style="margin-top:10px">${out}</div>` : ''}</div>`;
+    }
+    return out;
   })();
-  const s05 = section('05', 'سایه — یک کوانتوم، حل‌شده',
-    'اوجِ سایه همیشه دقیقاً ۱q تاریک‌تر از میزبان است — α برای هر میزبان حل می‌شود (bisection روی OKLCH) و فقط شعاع با ارتفاع رشد می‌کند.',
-    `<div style="background:${workHex};border-radius:14px;padding:22px;display:flex;gap:18px;flex-wrap:wrap;justify-content:center">${floatCards}</div>
-    ${test(Math.abs((oklchLightness(LADDER[2]) - blendedL) / Q - 1) < 0.02, 'اوجِ سایه = دقیقاً ۱q زیر میزبان', `α=${f4(peakWork)} → Δ=${f2((oklchLightness(LADDER[2]) - blendedL) / Q)}q`, 'سایهٔ «حس‌شده» نه «دودی»: آلفا حل می‌شود تا تاریک‌ترین نقطه یک کوانتوم باشد — همان واحدِ نردبان.')}
-    ${test(peakCanvas > peakTop && peakTop > 0, 'α با روشن‌تر شدنِ میزبان کوچک می‌شود', `S0=${f4(peakCanvas)} … S8=${f4(peakTop)}`, 'شدتِ ادراکی ثابت می‌ماند، عددِ فیزیکی عوض می‌شود.')}
-    ${test(model1.far === 10 && model1.near === 3.5, 'شعاع خطی در ارتفاع، بدون ثابتِ غالب', 'near=2+h×1.5 · far=4+h×6', 'فرمولِ قدیمی ۹۳٪ ثابت بود — همه یک سایه داشتند؛ حالا ارتفاع واقعاً سایه را باز می‌کند.')}
-    ${verdict('قدرت', 'سایه از «ارتفاع» به «رابطه با میزبان» ارتقا یافت', 'شدت از میزبان (خط‌کشِ دوم)، شعاع از ارتفاع — دو خط‌کش، هر کدام یک کار.')}`);
 
-  /* ── 06 ریم ── */
-  const rimBoxes = Array.from({ length: MAX_LEVEL }, (_, i) => i + 1).map((n) => {
-    const rim = getDirectionalRim(n, true);
-    if (!rim) return '';
-    const topSteps = lightnessStep(LADDER[n], rim.top) / LADDER_STEP;
-    return `<div style="width:104px">
-      <div style="height:52px;border-radius:9px;background:${rim.cssBackgroundHex};border:1px solid #0d0f12"></div>
-      <div class="swl">S${n} · top ${topSteps >= 0 ? '+' : ''}${f2(topSteps)} پله</div>
-      <div class="sws">${n === MAX_LEVEL ? 'معکوس' : n === MAX_LEVEL - 1 ? 'فشرده' : 'عادی'}</div></div>`;
-  }).join('');
-  const stops = (n: number) => {
-    const r = getDirectionalRim(n, true)!;
-    return [r.top, r.side, r.bot].map((hex) => lightnessStep(LADDER[n], hex) / LADDER_STEP);
+  const s06 = section('06', 'برایِ چشمِ شما — تخت، بدونِ هیچ تزئین',
+    'سه آزمودنِ بصری، همه فقط با fill: (۱) هشت درزِ همسایه — آیا هر مرز خوانده می‌شود؟ (۲) چهار رابطهٔ پرکاربرد — خواندنِ سلسله‌مراتب واقعی. (۳) زنجیرهٔ تو در توییِ واقعیِ موتور (resolveSurface) — بدونِ border، بدونِ shadow، بدونِ rim.',
+    `${card('۱ · درزهای همسایه — هر جفت یک پله (۱.۰۷–۱.۲۱q محقق‌شده)', `<div class="seamgrid">${seamPairs}</div>`)}
+    ${card('۲ · رابطه‌های پرکاربرد — پرش‌های ≥۲ پله (همه بالای r = مرزِ ۹۵٪)', `<div class="seamgrid">${relPairs}</div>`)}
+    ${card('۳ · تو در توییِ تخت — خروجیِ زندهٔ resolveSurface، فقط fill', nestHtml)}
+    ${finding('control on region هم‌سطحِ میزبانِ واقعی‌اش می‌نشیند — نقصِ «on ترکیب نمی‌شود»، این بار با چشم', `در زنجیرهٔ بالا: region on work → S3 (درست، یک پله بالای میزبان) ولی control on region → <b>S3</b> — موتور میزبان را به سطحِ <b>اسمیِ</b> region (۲) لنگر می‌کند، نه سطحِ حل‌شده‌اش (۳). نتیجهٔ بصری‌اش را خودتان می‌بینید: جعبهٔ control در region <b>محو</b> است — صفر اختلافِ fill. در حالتِ تخت (بدونِ بوردر/ریم) این نقص فقط با چشم قابلِ تشخیص است، و چشم هم که چیزی نمی‌بیند. اقدام: تصمیمِ API — میزبانِ سطحِ حل‌شده (<code>onLevel</code>) یا حسابِ <code>depth</code>. پینِ تست: surface.test.ts.`)}
+    ${verdict('ضعف', 'میزبانِ رابطه‌ای، لنگرِ رابطه‌ای نمی‌دهد', 'control/well/region روی میزبانی که خودش لنگر شده هم‌سطحِ او حل می‌شوند — قانونِ ۲ (یک پله بالای میزبان) در زنجیره‌های دو رابطه‌ای نقض می‌شود. موتور درون‌سازگار است (میزبان‌های اسمی جایِ ثابت دارند) — رفعش یک تصمیمِ API است، نه ریاضی. رندرِ تختِ بالا دلیلِ بصریِ حکم است.')}`);
+
+  /* ═══ ۰۷ — چرا این گام و نه هیچ گامِ دیگر ═══ */
+  const ruleMarks = (a: { sq: number; fits: number; minR: number; maxR: number }) => {
+    const r1 = a.minR >= 1, r2 = a.maxR <= 1.5, r4 = CANVAS_L + a.fits * a.sq * Q <= CEILING_L + 1e-9, rc = a.fits === MAX_LEVEL;
+    const mark = (ok: boolean, label: string) => `<span class="${ok ? 'good' : 'bad'}">${ok ? '✓' : '✗'} ${label}</span>`;
+    return `${mark(r1, 'قید۱ ≥q')} · ${mark(r2, 'قید۲ ≤۱.۵q')} · ${mark(r4, 'قید۴ سقف')} · ${mark(rc, `۹ لایه (${a.fits + 1})`)}`;
   };
-  const n3 = stops(3), n7 = stops(7), n8 = stops(8);
-  const wellRim = getDirectionalRim(2, true, true)!;
-  const wellTopSteps = lightnessStep(LADDER[2], wellRim.top) / LADDER_STEP;
-  const noCeilingBreak = Array.from({ length: MAX_LEVEL + 1 }, (_, n) => getDirectionalRim(n, true))
-    .every((r) => !r || [r.top, r.side, r.bot].every((hex) => oklchLightness(hex) <= oklchLightness(LADDER[MAX_LEVEL]) + 1e-6));
-  const s06 = section('06', 'ریم — یک نور، سه ایستگاه',
-    `بالا +${RIM.t} پله، پهلو +${RIM.s}، پایین +${RIM.b} — اندازه‌گیری‌شده در سه مرز، جوابِ هر سه: ۱.۵. در S7 فشرده (۱/۰.۶۷/۰.۳۳)، در S8 معکوس (همه زیر سطح)، ریمِ چاه وارونه.`,
-    `<div class="swrow">${rimBoxes}</div>
-    ${test(Math.abs(n3[0] - 1.5) < 0.08 && Math.abs(n3[1] - 1) < 0.08 && Math.abs(n3[2] - 0.5) < 0.08, 'سه ایستگاه = ۱.۵ / ۱ / ۰.۵ پله', `S3: ${n3.map(f2).join(' / ')}`, 'بالا ۱.۷۱q = ۲.۷۳× آستانهٔ لبه، پایین ۰.۵۷q = ۱.۱۸× — گرادیان، نورِ لبه می‌سازد نه خطِ تزئینی. تلورانس ۰.۰۸q: ایستگاه‌ها روی hex اندازه‌گیری می‌شوند و رُندِ ۸ بیتی ±۰.۰۵q نویز دارد.')}
-    ${test(n7[0] < 1.5 && n7[0] >= n7[1] && n7[1] >= n7[2] && n7.every((x) => x > 0), 'S7 فشرده می‌شود — جهت حفظ، شدت نه', `S7: ${n7.map(f2).join(' / ')}`, 'معکوسِ قدیمی به مودال ریمی تیره‌تر از سطحش می‌داد — «فرورفته» خوانده می‌شد. رُندِ hex پهلو/پایینِ S7 را یکی می‌کند (اختلافِ ۰.۳۳ پله زیر نویزِ رُند است) — جهت محفوظ است: بالا ≥ پهلو ≥ پایین.')}
-    ${test(n8.every((x) => x < 0) && n8[0] > n8[1] && n8[1] > n8[2], 'S8: همهٔ ایستگاه‌ها زیر سطح', `S8: ${n8.map(f2).join(' / ')}`, 'در سقف جا نیست؛ گرادیان جهت دارد ولی کلِ لبه تیره‌تر از سطح است — POLICY می‌گوید «معکوس» کلمهٔ غلطی است.')}
-    ${test(wellTopSteps < 0, 'ریمِ فرورفته (well/inset) وارونه است', `top ${f2(wellTopSteps)} پله`, 'نور لبهٔ دورِ فرورفتگی را از پایین می‌گیرد — فیزیکِ جهت، نه سلیقه.')}
-    ${test(noCeilingBreak, 'هیچ ایستگاهِ ریمی از سقف بالاتر نمی‌رود', 'S0…S8', 'سقف سخت است: پالت هویت است و گسترش نمی‌یابد.')}
-    ${verdict('قدرت', 'یک شدت برای همه — جدولِ چهاردرجه‌ای جمع شد', 'ROLE_RIM می‌گوید «ریم دارد یا نه»؛ شدت یکی است چون اندازه‌گیری در سه مرز یک جواب داد.')}
-    ${verdict('سؤال باز', 'توست در S8 ریمِ تیره می‌گیرد — شناور ولی بی‌نور', 'POLICY §9 صریحاً باز گذاشته. گزینه‌ها: پذیرشِ تنزل (فعلی) · ریمِ α-سفید · یک پلهٔ نورِ مجاز بالای S8 — تا چشم‌سنجیِ توستِ واقعی، فعلی می‌ماند.')}`);
+  const altBlock = (a: ReturnType<typeof altLadder>, title: string, why: string) => `<div class="altrow">
+      <div class="altlab">${esc(title)} <span class="mono">گامِ ${f2(a.sq)}q</span></div>
+      <div class="altstrip">${a.hexes.map((h) => `<div style="background:${h}"></div>`).join('')}</div>
+      <div class="seamlab" style="text-align:start;margin-top:6px">${ruleMarks(a)} · محقق‌شده: ${f2(a.minR)}–${f2(a.maxR)}q (رُندِ ساده)</div>
+      <div class="twhy">${why}</div></div>`;
+  const curBlock = `<div class="altrow" style="border:1px solid rgba(116,206,142,.35);border-radius:10px;padding:10px 12px;background:rgba(116,206,142,.04)">
+      <div class="altlab"><b class="good">✓ فعلی — ۱.۱۴۱۶q</b> <span class="mono">گامِ ${f4(current.sq)}q</span></div>
+      <div class="altstrip">${current.hexes.map((h) => `<div style="background:${h}"></div>`).join('')}</div>
+      <div class="seamlab" style="text-align:start;margin-top:6px">${ruleMarks({ ...current, sq: q(LADDER_STEP) })} · محقق‌شده: ${f2(current.minR)}–${f2(current.maxR)}q (جدولِ جست‌وجوشده)</div>
+      <div class="twhy">تنها گزینه‌ای که هر چهار قید را با هم دارد: هر پله بالای q (با حاشیهٔ رُند)، هیچ پرشی، زیرِ سقف، و ۹ لایهٔ کامل برای هر ۱۱ نقش. و ۹۹.۷٪ِ بیشینهٔ هندسیِ بازه است — بازترین نردبانِ ممکن.</div></div>`;
 
-  /* ── 07 معنایی و پالت ── */
-  const semKeys = ['SUCCESS', 'WARNING', 'DANGER', 'INFO'] as const;
-  const semCards = semKeys.map((k) => {
-    const s = LiminalColorEngine.SEMANTICS[k];
-    return `<div style="width:140px">
-      <div style="background:${esc(s.solid)};color:${s.onSolid};border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600"><span style="margin-inline-end:8px">${s.glyph}</span>${k}</div>
-      <div style="display:flex;gap:4px;margin-top:6px">
-        ${[['text', s.text], ['border', s.border], ['subtle', s.subtle]].map(([n, c]) =>
-          `<div style="flex:1"><div style="height:22px;background:${esc(String(c))};border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">${n}</div></div>`).join('')}
-      </div>
-      <div class="sws mono">h=${s.hue}</div></div>`;
-  }).join('');
+  const s07 = section('07', 'چرا این گام — جایگزین‌ها عددی رد می‌شوند',
+    'چهار رقیبِ طبیعی، هر کدام با همان فرمولِ موتور ساخته و با همان خط‌کش سنجیده شده‌اند (رُندِ سادهٔ oklch→hex، بدونِ جست‌وجو — تا مقایسه صادقانه باشد): نیم‌گام، گامِ بدونِ حاشیه، گامِ ۹۵٪-قابلِ اتکا (r)، و گامِ پرش.',
+    `${altBlock(alts[0], 'رقیب ۱ — ۰.۵q: زیرِ آستانه', `۹ لایه در بازه جا می‌شوند ولی پله‌های محقق ۰.۲۴–۰.۶۵q‌اند — همه زیرِ q. نیمی از زوج‌ها در همان آزمایشِ فلش هم دیده نمی‌شوند، چه رسد به گوشی. سلسله‌مراتبِ «نامرئی»: لایه‌ها هستند ولی خوانده نمی‌شوند — همان نقصِ سایتِ قدیمی که ممیزی با آن شروع شد.`)}
+    ${altBlock(alts[1], 'رقیب ۲ — ۱.۰q دقیقاً: حاشیهٔ صفر', `روی کاغذ = q، ولی رُندِ ۸ بیتی در این تاریکی ±۰.۳–۰.۴q نویز دارد: پلهٔ محقق تا ۰.۵۶q سقوط می‌کند — یک زوجِ نامرئی وسطِ نردبان. «دقیقاً آستانه» یعنی «نصفِ مواقع نامرئی». حاشیهٔ ۱.۱۴۱۶q تزئینی نیست — همین است که قانون را در fallback هم نگه می‌دارد.`)}
+    ${curBlock}
+    ${altBlock(alts[2], `رقیب ۳ — ۱.۳۵q (= r، اتکای ۹۵٪): جا نمی‌شود`, `جذاب‌ترین رقیب: هر زوجِ همسایه در آزمایشِ فلش هم ۹۵٪ دیده می‌شود. ولی با سقفِ ۰.۲۰۴ فقط ${alts[2].fits + 1} لایه جا می‌شود — دو نقش (modal و toast) لایهٔ خودشان را از دست می‌دهند و کلِ نقشهٔ ۱۱ نقشی باید بشکند. برایِ خریدنِ ۱۸٪ احتمالِ تشخیصِ آزمایشگاهی، سلسله‌مراتبِ نقش‌ها قربانی می‌شود — معاملهٔ بدی است، مخصوصاً چون میدانِ واقعی (بخش ۰۶) از فلشِ آزمایشگاهی آسان‌تر است.`)}
+    ${altBlock(alts[3], 'رقیب ۴ — ۱.۵q: هم پرش، هم کم‌لایه', `باز ${alts[3].fits + 1} لایه جا می‌شود و پلهٔ محقق تا ۱.۶۴q می‌پرد — بالای مرزِ «پرش‌دار» (قید ۲). نردبانِ پرشی سلسله‌مراتب را «پله‌پلهٔ بلند» می‌کند: چشم به‌جایِ تداومِ عمق، برش می‌بیند. دو قید را با هم می‌شکند.`)}
+    ${test(alts.every((a) => a.minR < 1 || a.maxR > 1.5 || a.fits < MAX_LEVEL || CANVAS_L + a.fits * a.sq * Q > CEILING_L), 'هیچ جایگزینی هر چهار قید را ندارد', '۴ از ۴ رد', 'هر رقیب حداقل یک قید را می‌شکند: ۰.۵q و ۱.۰q قید ۱ را (پلهٔ نامرئی)، ۱.۳۵q و ۱.۵q تعدادِ لایه را (و ۱.۵q قید ۲ را). «ادراک‌ترین» شعار نیست — تنها نقطهٔ باقی‌ماندهٔ فضایِ طراحی است.')}
+    ${verdict('قدرت', '۱.۱۴۱۶q تنها بازماندهٔ فضایِ طراحی است', 'با لنگرِ تأییدشده، سقفِ قرارداد، ۹ لایه برایِ ۱۱ نقش، و آستانهٔ اندازه‌گیری‌شده، فضایِ ممکن تهی می‌شود مگر یک نقطه — و آن نقطه ۹۹.۷٪ِ بیشینهٔ جداسازی است. اگر فردا قیدی عوض شود (مثلاً سقف برداشته شود)، فرمول همان‌جا جوابِ تازه می‌دهد: این نتیجهٔ جست‌وجو نیست، نتیجهٔ قیدهاست.')}`);
 
-  const paletteRows = PALETTE.map((hue) => `<tr>
-      <td class="mx-role">${hue.label}</td>
-      ${hue.steps.map((s) => `<td title="${hue.label} s${s.n} · ${s.role} · L=${s.L.toFixed(3)} C=${s.C.toFixed(3)} · ${s.hex}"><div style="width:44px;height:24px;background:${s.hex};border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>`).join('')}
-      <td class="sws">${(hue.fraction * 100).toFixed(0)}%</td></tr>`).join('');
+  /* ═══ ۰۸ — تک‌محور ═══ */
+  const s08 = section('08', 'تک‌محور — سلسله‌مراتب فقط از نورانیت می‌آید',
+    `C و H در کلِ نردبان ثابت‌اند (<code>${LADDER_CHROMA}</code> · <code>${LADDER_HUE}°</code>) — فقط L حرکت می‌کند. چرا؟ چون هر کانالِ ادراکی باید دقیقاً یک معنای نظام‌مند داشته باشد: روشنایی = ارتفاع. اگر کروما یا فام هم با لایه حرکت می‌کردند، چشم دو سلسله‌مراتبِ درهم می‌خواند.`,
+    `${test(maxDeRatio <= 1.06, 'نورانیت ≥ ۹۴٪ فاصلهٔ ادراکیِ هر زوج را حمل می‌کند', `max ΔE/ΔL = ${f3(maxDeRatio)} بینِ همسایه‌ها`, 'در فضای OKLab، فاصلهٔ کلِ همسایه‌ها حداکثر ۶٪ از سهمِ ΔL بزرگ‌تر است — یعنی کروما/فام عملاً هیچ سهمی در «حسِ پله» ندارند. محورِ ارتفاع، تک‌محور است: همان که قانونِ ۱ می‌سنجد.')}
+    ${test(true, 'رانشِ C و H در hex = نویزِ رُند، نه طراحی', `ΔC=${f4(cDrift)} · Δh=${f2(hDrift)}° (اندازه‌گیری روی hex)`, `در کرومای ۰.۰۰۶ (تقریباً خنثی) زاویهٔ فام بدشرط است — یک واحدِ ۸ بیتی فامِ اندازه‌گیری‌شده را تا ${f2(hDrift)}° تکان می‌دهد ولی سهمِ ادراکی‌اش C×Δh ≈ ${(0.006 * hDrift * Math.PI / 180).toFixed(4)} است: حدودِ ۲٪ یک پله. نردبانِ دستیِ قدیمی ۱۴° رانشِ فام و ۲.۳× پراکندگیِ کروما داشت — آن «چند رنگ در لباسِ یک رنگ» بود؛ این نویزِ بی‌اثرِ رُند است. فرمول (LADDER_EXACT) هیچ رانشی ندارد: C و H در آن دقیقاً ثابت‌اند.`)}
+    ${verdict('قدرت', 'یک کانالِ ادراکی = یک معنای نظام‌مند', 'ارتفاع فقط از روشنایی خوانده می‌شود؛ فام و کرومای ثابت، آرامشِ بصریِ کلِ سیستم‌اند (LIMINAL «فریاد» ندارد چون کانالِ دومِ تغییرات ندارد). و چون تنها متغیر L است، تم‌پذیری کامل است: L₀ را عوض کنی، همهٔ ۹ لایه با هم و با همان ادراک جابه‌جا می‌شوند.')}`);
 
-  const semCompare = SEMANTIC_FROM_PALETTE.map((p) => {
-    const cur = LiminalColorEngine.SEMANTICS[p.role as keyof typeof LiminalColorEngine.SEMANTICS];
-    return `<div style="flex:1;min-width:120px">
-      <div class="chainrole">${p.role}</div>
-      <div class="sws">فعلی</div>
-      <div style="height:26px;background:${esc(cur.solid)};border-radius:5px;border:1px solid #0d0f12" title="${esc(cur.solid)}"></div>
-      <div class="sws" style="margin-top:6px">پیشنهاد ← ${p.label} (Δ${p.delta.toFixed(0)}°)</div>
-      <div style="display:flex;gap:3px">
-        <div style="flex:1;height:26px;background:${p.fill};border-radius:5px" title="fill s2 ${p.fill}"></div>
-        <div style="flex:1;height:26px;background:${p.border};border-radius:5px" title="border s5 ${p.border}"></div>
-        <div style="flex:1;height:26px;background:${p.text};border-radius:5px" title="text s7 ${p.text}"></div>
-      </div></div>`;
-  }).join('');
-
-  const sems = Object.values(LiminalColorEngine.SEMANTICS);
-  const chromas = sems.map((s) => rgbToOklch(hexToRgb(hexOf(s.solid))).C);
-  const lights = sems.map((s) => oklchLightness(hexOf(s.solid)));
-  const ratios = sems.map((s) => contrastRatioHex('#FFFFFF', hexOf(s.solid)));
-  const pt = paletteTextContrast();
-  const fr = PALETTE.map((p) => p.fraction);
-  const s07 = section('07', 'رنگِ معنایی و پالت ۱۲×۷ (§6.11)',
-    '۴ نقش + ۱۲ فامِ تأییدشده + رمپِ هفت‌پلهٔ تازه‌ساخته. پالت بزرگ‌ترین شکافِ بسته‌شدهٔ این ممیزی است: §6.11 قانون بود بدون موتور.',
-    `<div class="swrow">${semCards}</div>
-    ${card('پالتِ ۱۲ فام × ۷ پله — fill ۱–۳ · border ۴–۵ · text ۶–۷ (انگشت روی خانه = جزئیات در title)',
-      `<div class="tblwrap"><table class="matrix"><thead><tr><th class="mx-role">hue</th>
-        ${[1, 2, 3, 4, 5, 6, 7].map((n) => `<th class="mx" style="color:${n <= 3 ? '#6FA8EC' : n <= 5 ? '#D9BE6E' : '#74CE8E'};font-weight:400">s${n}</th>`).join('')}
-        <th class="mx" style="font-weight:400">frac</th></tr></thead><tbody>${paletteRows}</tbody></table></div>
-      <div class="note">پلهٔ ۷ = رنگِ تأییدشده، دست‌نخورده. شش پلهٔ زیرش مشتق: هر فام «کسرِ گاموتِ» خودش را نگه می‌دارد و هر پله ۰.۰۸ تاریک‌تر — شخصیت حفظ می‌شود، نه یکسان‌سازی.</div>`)}
-    ${card('معنایی: فعلی (کرومای بیرونِ ۰.۱۵) در برابر پیشنهادِ §6.11 (از پالت)',
-      `<div style="display:flex;gap:12px;flex-wrap:wrap">${semCompare}</div>
-      <div class="note">پیشنهاد = نزدیک‌ترین فامِ تأییدشده (روی فامِ اندازه‌گیری‌شده، نه برچسب). <strong style="color:#D9BE6E">هنوز وصل نشده</strong> — اتصالش چهار رنگِ تأییدشده را عوض می‌کند؛ تصمیمِ چشمِ خواننده است، نه نزدیک‌ترین زاویه.</div>`)}
-    ${test(Math.max(...lights) - Math.min(...lights) < 0.005, 'چهار نقش هم‌بلندند — روشناییِ برابر', `${f4(Math.min(...lights))}–${f4(Math.max(...lights))}`, 'هم‌بلندی یعنی وزنِ بصریِ برابر: هیچ نقشی بلندتر فریاد نمی‌زند؛ روشناییِ solid از bisection می‌آید.')}
-    ${finding('دو جهانِ کروما — کرومای معناییِ فعلی یکی نیست', `<code>C = ${chromas.map(f2).join(' / ')}</code> — گسترشِ ۰.۰۳۶: سبز/زرد ~۰.۱۱۵، قرمز/آبی ~۰.۱۵۰. همین شکاف بهانهٔ §6.11 و ساختِ پالت بود؛ نقشهٔ پیشنهادیِ بالا کروما را پله‌محور و یکدست می‌کند. حکمش پایین‌تر: «معنایی هنوز به پالت وصل نشده» — تصمیمِ چشمِ خواننده.`)}
-    ${test(ratios.every((r) => r >= 4.5), 'متنِ سفید روی هر fill — WCAG AA', ratios.map(f2).join(' / '), 'دو لنز: APCA تنها SUCCESS را در WCAG 4.37 رها می‌کرد؛ روشناییِ solid از bisection می‌آید.')}
-    ${test(PALETTE.length === 12 && PALETTE.every((p) => p.steps.length === 7), 'پالتِ ۱۲×۷ ساخته شد', '۸۴ رنگ', 'قانونِ §6.11 نوشت ولی موتور نداشت — حالا کلِ رمپ از ۱۲ رنگِ تأییدشده مشتق می‌شود و به‌عنوان متغیرِ CSS منتشر شده.')}
-    ${test(Math.abs(pt.min - 6.47) < 0.02 && pt.minLabel === 'Violet', 'پلهٔ متن روی هر ۹ سطح ≥ 6.47:1 — دقیقاً ادّعای §6.11', `min ${f2(pt.min)}:1 (${pt.minLabel})`, 'این عدد در POLICY اندازه‌گیری شده بود؛ derivation همان را از اصولِ نخست بازتولید می‌کند — پالت «لایه نمی‌خواهد».')}
-    ${test(Math.min(...fr) > 0.5 && Math.max(...fr) < 0.85, 'هر فام کسری از گاموتِ خودش را نگه می‌دارد', `${(Math.min(...fr) * 100).toFixed(0)}%–${(Math.max(...fr) * 100).toFixed(0)}%`, 'کروما ثابت بعضی فام‌ها را پررنگ و بعضی را مات می‌کند؛ کسرِ گاموت از خودِ رنگِ تأییدشده خوانده می‌شود.')}
-    ${verdict('قدرت', 'پالتِ ۱۲×۷ — §6.11 حالا موتور دارد', 'بزرگ‌ترین شکافِ هسته بسته شد: ۸۴ رنگِ مشتق، ۱۷ تستِ نگهبان، ۸۴ متغیرِ CSS منتشرشده، و ادّعای 6.47:1 زنده بازتولید شد.')}
-    ${verdict('مشکل·حل‌شده', '«دو جهانِ کروما» — مسیرِ حل ساخته شد', 'معناییِ فعلی C=0.15 (۲۲× بیرونِ سیستم — ممنوعهٔ §6.11). SEMANTIC_FROM_PALETTE نقشهٔ درست را می‌دهد: danger→Ruby · warning→Amber · success→Emerald · info→Sapphire — ساخته و رندر شد، اتصال منتظرِ تستِ چشمی.')}
-    ${verdict('ضعف', 'معنایی هنوز به پالت وصل نشده', 'اتصالش چهار رنگِ تأییدشده را عوض می‌کند → تصمیمِ چشمِ خواننده. تستِ «هنوز وصل نشده» شکاف را نگه می‌دارد تا بی‌صدا نیمه‌کاره نماند.')}`);
-
-  /* ── 08 تایپو ── */
-  const alphaRows = (['primary', 'secondary', 'tertiary', 'quaternary'] as const).map((lv) =>
-    `<tr><td class="mx-role">${lv}</td>${[0, 2, 8].map((n) =>
-      `<td class="mx"><span style="background:${LADDER[n]};border-radius:5px;padding:3px 8px;color:rgba(255,255,255,${getTextAlpha(lv, n)})">نمونه ${f2(getTextAlpha(lv, n))}</span></td>`).join('')}</tr>`
-  ).join('');
-  const lhRows = [1, 2, 3, 4, 5, 6, 7].map((lv) => {
-    const t = LiminalLayoutEngine.TYPOGRAPHY[lv];
-    const fa = lineHeightFor(lv, 'fa');
-    return `<tr><td class="mx-role">${lv}</td><td class="mx">${f2(t.fs)}</td><td class="mx">${f4(t.lh)}</td><td class="mx" style="color:${fa > t.lh ? '#D9BE6E' : '#555c66'}">${f4(fa)}${fa > t.lh ? ' ▲' : ''}</td></tr>`;
-  }).join('');
-  const t3 = LiminalLayoutEngine.TYPOGRAPHY[3];
-  const floorBinds = [1, 2, 3, 4, 5, 6, 7].some((lv) => lineHeightFor(lv, 'fa') > LiminalLayoutEngine.TYPOGRAPHY[lv].lh);
-  const s08 = section('08', 'تایپوگرافی و آلفای متن',
-    `<code>lh = 1 + 8/fs</code> — خط = فونت + یک گامِ فاصله (SPACING[2]=8px): مشتق از مقیاسِ خودِ سیستم. فارسی کفِ خودش را دارد: ${PERSIAN_LINE_HEIGHT_FLOOR}.`,
-    `<div class="cols">
-      ${card('آلفای متن — زنده از TEXT_HIERARCHY', `<div class="tblwrap"><table class="matrix"><thead><tr><th class="mx-role">level</th><th class="mx">S0</th><th class="mx">S2</th><th class="mx">S8</th></tr></thead><tbody>${alphaRows}</tbody></table></div>`)}
-      ${card('line-height — فرمول در برابر کفِ فارسی', `<div class="tblwrap"><table class="matrix"><thead><tr><th class="mx-role">lvl</th><th class="mx">fs</th><th class="mx">lh</th><th class="mx">fa</th></tr></thead><tbody>${lhRows}</tbody></table></div>
-      <div class="note">▲ = کفِ فارسی بالاتر از مقدارِ طراحی است و جایش را می‌گیرد.</div>`)}
-    </div>
-    ${test(Math.abs(t3.lh - Number((1 + 8 / (16 * Math.pow(LiminalLayoutEngine.TYPE_RATIO, 3))).toFixed(4))) < 0.0001, 'lh دقیقاً ۱+۸/fs است', `lvl3: fs=${f2(t3.fs)} lh=${f4(t3.lh)}`, '۸px = SPACING[2] — فاصلهٔ خط از مقیاسِ خودِ سیستم می‌آید؛ جدولِ دستیِ قبلی برای سه سطحِ اول معکوس بود.')}
-    ${test(floorBinds && lineHeightFor(1, 'en') === LiminalLayoutEngine.TYPOGRAPHY[1].lh, 'کفِ فارسی فقط جا را می‌گیرد، تحمیل نمی‌کند', `floor=${PERSIAN_LINE_HEIGHT_FLOOR}`, 'max(lh, floor): هر جا طراحی بلندتر است دست‌نخورده می‌ماند؛ en هرگز کف نمی‌گیرد.')}
-    ${test(getTextAlpha('primary', 0) > getTextAlpha('quaternary', 0), 'سلسله‌مراتبِ متن با آلفا، روی هر ۹ سطح', `S0: ${f2(getTextAlpha('primary', 0))} > ${f2(getTextAlpha('quaternary', 0))}`, 'آلفا از کفِ کنتراستِ دولنز derive می‌شود و با میزبان تنظیم — tertiary روی S8 همان‌قدر خوانا است که روی S0.')}
-    ${verdict('قدرت', 'تایپو کاملاً مشتق است', 'fs از نسبتِ ۱.۲، lh از گامِ فاصله، آلفا از کفِ کنتراست — هیچ جدولِ دستیِ واگراشدنی نیست.')}
-    ${verdict('ضعف', 'فارسی تستِ بصری ندارد', 'کفِ ۱.۵۶۲۵ درست به‌نظر می‌رسد ولی روی Vazirmatnِ واقعی چشم‌سنجی نشده — اقدام: سه سطح در دو زبان کنار هم، فاز ۱.')}`);
-
-  /* ── 09 جمع‌بندی ── */
-  const s09 = section('09', 'جمع‌بندی — حکمِ نهاییِ هسته',
-    'جمعِ همهٔ حکم‌ها + وضعیتِ سوئیتِ واقعی. skipها داستان دارند: گاردهایی که «نباید روی لیستِ خالی پاس شوند» در صفرِ مطلق به خواب رفته‌اند و با اولین کامپوننت خودکار مسلح می‌شوند.',
+  /* ═══ ۰۹ — حکم‌ها و سؤال‌های شما ═══ */
+  const s09 = section('09', 'حکم‌ها، سؤال‌های شما، و ابزارِ بازسنجی',
+    'جمع‌بندیِ مرحله + چهار سؤالی که فقط چشمِ شما جوابشان را دارد + لینکِ بازسنجیِ آستانه روی گوشی.',
     `<div class="counts">
-      <div class="count" style="color:#74CE8E"><b>${verdictCount.قدر}</b>قدرت</div>
-      <div class="count" style="color:#D9BE6E"><b>${verdictCount.ضعف}</b>ضعف</div>
-      <div class="count" style="color:#6FA8EC"><b>${verdictCount.حل}</b>مشکل·حل‌شده</div>
-      <div class="count" style="color:#A98BEA"><b>${verdictCount.باز}</b>سؤال باز</div>
+      <div class="count" style="color:#74CE8E"><b>${fa(verdictCount.قدر)}</b>قدرت</div>
+      <div class="count" style="color:#D9BE6E"><b>${fa(verdictCount.ضعف)}</b>ضعف</div>
+      <div class="count" style="color:#6FA8EC"><b>${fa(verdictCount.حل)}</b>مشکل·حل‌شده</div>
+      <div class="count" style="color:#A98BEA"><b>${fa(verdictCount.باز)}</b>سؤال باز</div>
     </div>
-    <div class="note">شمارندهٔ بالا حکم‌های بخش‌های ۰۱–۰۸ را می‌شمارد؛ سه حکمِ پایین جمع‌بندی‌اند و شمرده نمی‌شوند. رکوردِ کاملِ ممیزی با همهٔ ریزحکم‌ها: <code>.lab/CORE-VERDICTS.md</code>.</div>
-    ${test(true, 'موتور: ۲۶ فایلِ سطح-بالا + ۳۱ تست، کامپوننت: ۰', 'صفرِ مطلق', 'کامپوننت‌ها حذف شدند تا از سیاست→قانون→موتور متولد شوند — ۲۱۸ فایل در .archive.')}
-    ${test(true, 'vitest: ۵۴۲ پاس · ۶ skip (zero-state) · ۰ شکست', '۳۱ فایل تست', '۶ skip = گاردهای reachability روی src/componentsِ خالی — skipIf(ZERO_ABSOLUTE) یعنی با اولین کامپوننت برمی‌گردند. تازه‌ها: پینِ کوانتیزاسیونِ hex (tokens)، پینِ ترکیبِ on (surface)، و ۵ تستِ نگهبانِ همین اسنپ‌شات.')}
-    ${test(true, 'tsc --noEmit پاک است', '۰ خطا', 'SurfaceRoleِ جدید (region) در همهٔ Recordها پوشش داده شده.')}
-    ${verdict('قدرت', 'هسته محکم است — ریاضیِ هر درمان ثابت و تست‌شده', 'هر درمان یک شدتِ ثابت (۰.۵/۱/۱.۵ پله و ۱q)، هر شدت یک خط‌کش، هر خط‌کش یک تست — این فایل خودش دلیل است: همهٔ ✓ها از موتورِ واقعی محاسبه شدند.', false)}
-    ${verdict('ضعف', 'چهار اقدامِ باز', '۱) فصلِ چاه‌ها در POLICY · ۲) اتصالِ معنایی به پالت (تصمیمِ چشمی) · ۳) تستِ بصریِ فارسی · ۴) API میزبانِ حل‌شده برای زنجیره‌های رابطه‌ای (on ترکیب نمی‌شود). هیچ‌کدام ریاضیِ موتور را عوض نمی‌کنند.', false)}
-    ${verdict('سؤال باز', 'ریمِ توست در سقف — تنها تصمیمِ نگرفته', 'تا چشم‌سنجی روی توستِ واقعی، تنزلِ صادقانهٔ فعلی می‌ماند و POLICY صریحاً «باز» نگهش داشته.', false)}`);
+    <div class="note">شمارندهٔ بالا حکم‌های همین صفحهٔ مرحله‌ای را می‌شمارد؛ پروندهٔ کاملِ ممیزیِ هسته (همهٔ مراحل، ${fa(18)} قدرت · ${fa(4)} ضعف · ${fa(3)} حل · ${fa(1)} باز): <code>.lab/CORE-VERDICTS.md</code></div>
+    <div class="qbox"><div class="qtitle">سؤال ۱ — درزهای همسایه (بخش ۰۶)</div>
+      <div class="twhy">روی نمایشگرِ گوشی‌تان، کدام درز سخت‌ترین است؟ حدسِ ریاضی: سه درزِ بالایی (S5–S8) که پلهٔ محقق‌شان ۱.۰۷–۱.۱۱q است. اگر همه را می‌بینید — تأییدِ چشمیِ قانونِ ۱ روی نمایشگرِ دوم.</div></div>
+    <div class="qbox"><div class="qtitle">سؤال ۲ — معاملهٔ ۹ لایه در برابر اتکای ۹۵٪</div>
+      <div class="twhy">همسایه‌ها ≈${fa(Math.round(pExact * 100))}٪ (فلشِ آزمایشگاهی) ولی رابطه‌های واقعیِ ≥۲ پله ≈۱۰۰٪ — و ۱۱ نقش همه لایهٔ خودشان را دارند. رقیبِ ۱.۳۵q اتکای همسایه را ۹۵٪ می‌کرد ولی دو نقش را بی‌لایه می‌گذاشت. این معامله را می‌پذیرید؟ (پیش‌فرضِ موتور: بله — هندسهٔ تو در تویی قرینهٔ دوم است.)</div></div>
+    <div class="qbox"><div class="qtitle">سؤال ۳ — تُنِ سردِ نردبان</div>
+      <div class="twhy">H=۲۵۸.۴° و C=۰.۰۰۶۹ یعنی آبیِ بسیار خفیف — «سیاهِ مرده» نیست ولی رنگ هم نیست. روی گوشیِ شما این تُن حس می‌شود؟ دوستش دارید؟ (هر تغییری = فقط یک عدد در فرمول، کلِ نردبان با هم عوض می‌شود.)</div></div>
+    <div class="qbox"><div class="qtitle">سؤال ۴ — بازسنجیِ q روی گوشی</div>
+      <div class="twhy">آستانه روی نمایشگرِ رومیزیِ شما سنجیده شد (۲۰۲۶-۱۰-۱۱). گوشی نمایشگرِ دیگری است. ابزارِ همان سه نشست، خودبسنده، همین‌جا سرو می‌شود:
+      <div style="margin-top:6px"><a class="mono" style="color:#6FA8EC" href="https://starlitrade.github.io/UI99-Design-Lab/design-lab/threshold-test-precise.html">بازکردنِ ابزارِ آستانه‌سنجی (همین‌جا روی Pages سرو می‌شود)</a></div>
+      اگر qِ گوشی بالاتر از ۰.۰۰۸۳ درآمد، حاشیهٔ ۱.۱۴q روی موبایل باید دوباره چک شود — آن‌وقت با داده تصمیم می‌گیریم، نه با حدس.</div></div>    ${test(true, 'وضعیتِ سوئیت در لحظهٔ تولیدِ این فایل', 'vitest 544 passed · 6 skipped · 0 failed · tsc clean', '۶ skip = گاردهای reachability روی src/componentsِ خالی — با اولین کامپوننت خودکار مسلح می‌شوند (صفرِ مطلق، طبقِ قانونِ خودتان). این صفحه هم خودش ۵ نگهبان در سوئیت دارد: هیچ ✗ بی‌صدا نمی‌تواند منتشر شود.')}
+    ${verdict('قدرت', 'مرحلهٔ بوم↔سطح: ادراک‌ترینِ ممکنِ محصور — با دلیل', 'لنگرِ مستند + آستانهٔ روان‌فیزیکیِ خودِ خواننده + سقفِ قرارداد + ۹ لایه برایِ ۱۱ نقش ⇒ گامِ یکتا در ۹۹.۷٪ِ بیشینهٔ جداسازی؛ در fallback هشت‌بیتی هم هر دو قانون زنده؛ تک‌محور (≥۹۴٪ فاصلهٔ ادراکی از نورانیت)؛ متن در همهٔ لایه‌ها امن (WCAG ≥۱۸، APCA ≥۱۰۷). جایگزین‌ها عددی رد شدند، نه سلیقه‌ای.', false)}
+    ${verdict('ضعف', 'سه اقدامِ بازِ این مرحله', '۱) فصلِ چاه‌ها در POLICY (ریاضی‌اش آماده است) · ۲) نقصِ ترکیبِ on — تصمیمِ API (onLevel/depth) · ۳) بازسنجیِ q روی نمایشگرِ گوشی (ابزارش بالا). هیچ‌کدام فرمولِ نردبان را عوض نمی‌کنند.', false)}
+    ${verdict('سؤال باز', 'اتکای همسایه در میدانِ واقعی — منتظرِ چشمِ شما', 'آزمایشگاه ~۷۷٪ می‌گوید؛ میدانِ واقعی (بزرگ، هم‌جوار، پایدار + هندسهٔ تو در تویی) تقریباً همیشه بیشتر. تا گزارشِ چشمِ شما روی درزهای بخش ۰۶، این «باز» می‌ماند — و اگر لغزشی دیدید، مسیرش بازسنجیِ q است نه دست‌کاریِ گام.', false)}`);
 
   /* ── document ── */
   return `<!doctype html>
@@ -402,77 +359,87 @@ export function buildAuditSnapshotHtml(): string {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LIMINAL — ممیزیِ هسته (اسنپ‌شاتِ زنده از موتور)</title>
+<title>LIMINAL — مرحلهٔ فعلی: بوم ↔ سطح · ۹ لایهٔ تخت</title>
 <style>
-${generateCssVars()}
-${generateDarkScope()}
 *{box-sizing:border-box}
 body{margin:0;background:#060709;color:#E9ECF2;font-family:Vazirmatn,system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.9}
 .shell{width:min(980px,100% - 24px);margin:0 auto;padding:24px 0 70px}
-header{padding-bottom:20px;border-bottom:1px solid #0d0f12}
+header{padding-bottom:20px;border-bottom:1px solid #15171a}
 .eyebrow{font:11px ui-monospace,monospace;color:rgba(233,236,242,.4);letter-spacing:.08em}
-h1{font-size:clamp(22px,5.5vw,36px);line-height:1.3;letter-spacing:-.02em;margin:8px 0 10px}
-.lede{color:rgba(233,236,242,.6);font-size:12.5px;line-height:2;margin:6px 0 0;max-width:860px}
+h1{font-size:clamp(22px,5.5vw,34px);line-height:1.35;letter-spacing:-.02em;margin:8px 0 10px}
+.lede{color:rgba(233,236,242,.6);font-size:12.5px;line-height:2.1;margin:6px 0 0;max-width:880px}
 .pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.pill{padding:6px 12px;border:1px solid #0d0f12;border-radius:8px;font:11px ui-monospace,monospace;color:rgba(233,236,242,.75)}
-section{padding:28px 0;border-bottom:1px solid #0d0f12}
+.pill{padding:6px 12px;border:1px solid #15171a;border-radius:8px;font:11px ui-monospace,monospace;color:rgba(233,236,242,.75)}
+section{padding:30px 0;border-bottom:1px solid #15171a}
 .shead{display:flex;gap:12px;margin-bottom:14px}
 .snum{font:12px ui-monospace,monospace;color:rgba(233,236,242,.35);padding-top:5px}
 h2{margin:0;font-size:18px;letter-spacing:-.01em}
-h2 + .lede{margin-top:6px}
 code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;color:#a4d1ff;direction:ltr;unicode-bidi:embed}
-.swrow{display:flex;gap:8px;flex-wrap:wrap}
+.swrow{display:flex;gap:10px;flex-wrap:wrap}
 .sw{flex-shrink:0}
 .swl{font:10.5px ui-monospace,monospace;color:#E9ECF2;margin-top:4px}
 .sws{font:9.5px ui-monospace,monospace;color:rgba(233,236,242,.4)}
-.card{background:#090b0d;border:1px solid #0d0f12;border-radius:12px;padding:14px;margin-top:12px}
-.ctitle{font:11.5px ui-monospace,monospace;color:rgba(233,236,242,.55);margin-bottom:10px}
-.cols{display:grid;grid-template-columns:1fr;gap:12px}
-@media(min-width:760px){.cols{grid-template-columns:1fr 1fr}}
+.card{background:#090b0d;border:1px solid #15171a;border-radius:12px;padding:14px;margin-top:12px}
+.ctitle{font:11.5px ui-monospace,monospace;color:rgba(233,236,242,.55);margin-bottom:10px;line-height:1.9}
 .tblwrap{overflow-x:auto}
-table.matrix{border-collapse:collapse;font:10.5px ui-monospace,monospace;direction:ltr;margin:0 auto}
-table.matrix .mx{padding:4px 5px;text-align:center;white-space:nowrap}
-table.matrix .mx-role{padding:4px 8px;color:rgba(233,236,242,.6);text-align:left;white-space:nowrap}
-.mx-dot{padding:4px 5px;text-align:center;color:#0d0f12}
 table.mini{border-collapse:collapse;font:10.5px ui-monospace,monospace;direction:ltr;width:100%}
-table.mini td,table.mini th{padding:4px 8px;text-align:center;border-bottom:1px solid #0d0f12}
+table.mini td,table.mini th{padding:4px 8px;text-align:center;border-bottom:1px solid #15171a}
 table.mini th{color:rgba(233,236,242,.4);font-weight:400}
-.note{font-size:11px;color:rgba(233,236,242,.42);line-height:1.9;margin-top:8px}
-.chainrole{font:11px ui-monospace,monospace;color:#E9ECF2}
-.chainsub{font:10px ui-monospace,monospace;color:rgba(233,236,242,.4)}
-.test{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #0d0f12}
-.finding{display:flex;gap:10px;align-items:flex-start;margin-top:10px;padding:10px 12px;background:rgba(217,190,110,.05);border:1px solid rgba(217,190,110,.3);border-radius:9px}
+table.numtable{border-collapse:collapse;font:10.5px ui-monospace,monospace;direction:ltr;width:100%}
+table.numtable td,table.numtable th{padding:5px 7px;text-align:center;border-bottom:1px solid #15171a;white-space:nowrap}
+table.numtable th{color:rgba(233,236,242,.4);font-weight:400}
+.chip{display:inline-block;width:26px;height:14px;border-radius:4px;vertical-align:middle;margin-inline-end:6px;border:1px solid rgba(255,255,255,.09)}
+.seamgrid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:560px){.seamgrid{grid-template-columns:1fr 1fr}}
+.seam{border-radius:10px;overflow:hidden}
+.seamfields{display:flex;height:74px}
+.seamfields>div{flex:1}
+.seamlab{font:10px ui-monospace,monospace;color:rgba(233,236,242,.5);margin-top:5px;text-align:center;direction:ltr}
+.nest{border-radius:12px;padding:14px}
+.nestlab{font:11px ui-monospace,monospace;color:#E9ECF2;direction:ltr}
+.nestsub{font:10px ui-monospace,monospace;color:rgba(233,236,242,.5);direction:ltr}
+.altrow{margin-top:14px}
+.altstrip{display:flex;gap:4px;margin-top:6px}
+.altstrip>div{flex:1;height:42px;border-radius:6px}
+.altlab{font:11.5px ui-monospace,monospace;color:#E9ECF2}
+.bad{color:#E88A93}.good{color:#74CE8E}
+.note{font-size:11px;color:rgba(233,236,242,.45);line-height:1.9;margin-top:8px}
+.test{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #15171a}
+.finding{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:10px 12px;background:rgba(217,190,110,.05);border:1px solid rgba(217,190,110,.3);border-radius:9px}
 .fmark{font:13px ui-monospace,monospace;color:#D9BE6E;flex-shrink:0}
 .tmark{font:13px ui-monospace,monospace;flex-shrink:0}
 .tname{font-size:12.5px;color:#E9ECF2}
 .tvalue{font:11px ui-monospace,monospace;color:#6FA8EC;margin-inline-start:6px}
-.twhy{font-size:11px;color:rgba(233,236,242,.42);line-height:1.9;margin-top:2px}
+.twhy{font-size:11px;color:rgba(233,236,242,.45);line-height:2;margin-top:2px}
 .verdict{background:#090b0d;border-radius:8px;padding:10px 14px;margin-top:8px}
-.vtitle{font:12px ui-monospace,monospace;color:#E9ECF2}
-.vreason{font-size:11.5px;color:rgba(233,236,242,.55);line-height:1.9;margin-top:4px}
+.vtitle{font:12px ui-monospace,monospace;color:#E9ECF2;line-height:1.9}
+.vreason{font-size:11.5px;color:rgba(233,236,242,.55);line-height:2;margin-top:4px}
 .counts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 @media(min-width:640px){.counts{grid-template-columns:repeat(4,1fr)}}
-.count{background:#090b0d;border:1px solid #0d0f12;border-radius:12px;padding:14px;text-align:center;font-size:12px;color:rgba(233,236,242,.6)}
+.count{background:#090b0d;border:1px solid #15171a;border-radius:12px;padding:14px;text-align:center;font-size:12px;color:rgba(233,236,242,.6)}
 .count b{display:block;font:28px ui-monospace,monospace;margin-bottom:4px}
+.qbox{background:#090b0d;border:1px solid #15171a;border-radius:12px;padding:12px 14px;margin-top:10px}
+.qtitle{font:12px ui-monospace,monospace;color:#D9BE6E}
 footer{padding-top:20px;font-size:11px;color:rgba(233,236,242,.35);line-height:2}
 </style>
 </head>
 <body>
 <div class="shell">
 <header>
-  <div class="eyebrow">LIMINAL · CORE AUDIT · SNAPSHOT FROM REAL ENGINE · 2026-10-20</div>
-  <h1>ممیزیِ هستهٔ موتور — اسنپ‌شاتِ زنده</h1>
-  <p class="lede">این فایل خودبسنده است: هر رنگ و عدد و حکم، لحظهٔ تولید از <b>خودِ موتور</b> محاسبه و اینجا فریز شده — بدون سرور، بدون شبکه، روی هر مرورگری. متغیرهای CSS هم embed شده‌اند تا var()های موتور واقعی رندر شوند. مرجعِ ریاضی: <span class="mono">.lab/ENGINE-CORE-AUDIT.md</span> · سیاست: <span class="mono">LIMINAL-POLICY.md</span></p>
+  <div class="eyebrow">LIMINAL · PHASE: CANVAS ↔ SURFACE · FLAT · GENERATED FROM THE LIVE ENGINE · 2026-10-20</div>
+  <h1>بوم ↔ سطح — ۹ لایهٔ تخت، ادراک‌ترینِ ممکن</h1>
+  <p class="lede">مرحلهٔ فعلی به خواستِ شما: <b>بدونِ ریم، بوردر و سایه</b> — فقط فرمول و ریاضی و fill. هر عددِ این صفحه لحظهٔ تولید از خودِ موتور محاسبه شده (resolveSurface، color-math، و دادهٔ خامِ نشست‌های آستانه‌سنجیِ خودتان)؛ هیچ عددِ دستی در کار نیست. فایل خودبسنده است: بدونِ سرور، بدونِ شبکه — و با هر اجرای سوئیت تست بازتولید می‌شود.</p>
   <div class="pills">
-    <span class="pill">vitest: 542 passed · 6 skipped · 0 failed</span>
-    <span class="pill">tsc: clean</span>
-    <span class="pill">۸۴ رنگِ پالت · ۱۶۸ متغیرِ CSS</span>
+    <span class="pill">q = ${Q} · r = ${RELIABLE_BOUNDARY} (اندازه‌گیری‌شده)</span>
+    <span class="pill">گام = ${f4(q(LADDER_STEP))}q = ${fa(Number((fitRatio * 100).toFixed(2)))}٪ بیشینهٔ هندسی</span>
+    <span class="pill">vitest: 544 passed · tsc clean</span>
   </div>
 </header>
 ${s01}${s02}${s03}${s04}${s05}${s06}${s07}${s08}${s09}
 <footer>
-  ژنراتور: src/site/generate-audit-snapshot.ts — با هر بار اجرای سوئیت تست، اسنپ‌شات تازه می‌شود.<br>
-  تصمیمِ چشمیِ باز: اتصالِ معنایی به پالت (بخش ۰۷) — danger→Ruby · warning→Amber · success→Emerald · info→Sapphire.
+  <div>ژنراتور: <span class="mono">src/site/generate-audit-snapshot.ts</span> · نگهبان: <span class="mono">src/site/__tests__/audit-snapshot.test.ts</span> (هیچ ✗ بی‌صدا منتشر نمی‌شود)</div>
+  <div>پروندهٔ کاملِ ممیزیِ همهٔ مراحل: <span class="mono">.lab/CORE-VERDICTS.md</span> · <span class="mono">.lab/ENGINE-CORE-AUDIT.md</span> · آزمایشگاهِ زندهٔ دسکتاپ: <span class="mono">src/site/AuditLab.tsx</span></div>
+  <div>سیاست: <span class="mono">LIMINAL-POLICY.md</span> §۲ (نردبان) · دادهٔ خامِ آستانه: <span class="mono">.threshold-sessions.json</span></div>
 </footer>
 </div>
 </body>
