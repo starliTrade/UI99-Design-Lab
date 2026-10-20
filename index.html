@@ -17,6 +17,18 @@
       a system whose first rule is that raw values are forbidden. Both live in
       `src/index.css` now, as `var(--liminal-…)`.
     -->
+    <script>
+      /* GITHUB PAGES REDIRECT — AND NOTHING ELSE.
+
+         This file is Vite's dev shell: its module is raw TSX, which a browser on
+         Pages cannot run, so the site renders blank white at the root. When served
+         from *.github.io, go straight to the audit snapshot — static,
+         self-contained HTML that needs no build. On localhost (dev) this is a
+         no-op; Vite keeps owning this file. */
+      if (location.hostname.endsWith('.github.io')) {
+        location.replace('/UI99-Design-Lab/.lab/audit-lab-snapshot.html');
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
