@@ -147,6 +147,29 @@ describe('LIMINAL contract — surface ladder', () => {
     expect(oklchLightness(LADDER[LADDER.length - 1])).toBeLessThanOrEqual(0.204);
   });
 
+  it('the hex column is a faithful 8-bit rendering of the exact formula (ΔE ≤ 0.0025)', () => {
+    // Round-7 addendum. The LAW is uniform: every exact step = LADDER_STEP
+    // (1.1416q). Hex is its 8-bit rendering, and at this darkness one RGB
+    // unit ≈ 0.1q, so realised steps carry a ±0.07q quantisation residual —
+    // the reader asked whether they should all equal the S0→S1 distance; they
+    // can't: 8 × 1.20q overshoots the hard ceiling (L≈0.208 > 0.204).
+    // A constrained DP search verified this rounding is the floor: within the
+    // ladder's own neutral-cool discipline no representable ladder sits closer
+    // to the formula. This pin locks that fidelity (measured max ΔE = 0.00226)
+    // so a future re-rounding cannot silently degrade it.
+    const lab = (L: number, C: number, h: number) => {
+      const t = (h * Math.PI) / 180;
+      return { L, a: C * Math.cos(t), b: C * Math.sin(t) };
+    };
+    LADDER.forEach((hex, n) => {
+      const target = lab(CANVAS_L + n * LADDER_STEP, LADDER_CHROMA, LADDER_HUE);
+      const o = rgbToOklch(hexToRgb(hex));
+      const got = lab(o.L, o.C, o.h);
+      const d = Math.hypot(got.L - target.L, got.a - target.a, got.b - target.b);
+      expect(d, `${hex} drifts ΔE ${d.toFixed(5)} from its exact oklch target`).toBeLessThanOrEqual(0.0025);
+    });
+  });
+
   it('places the work surface two steps above the canvas', () => {
     // The user chose this depth by eye: 2.10q measured, 2.48q realised
     // (8-bit hex cannot place it closer — see design-lab/ladder-from-threshold.html).

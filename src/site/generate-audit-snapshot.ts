@@ -153,6 +153,20 @@ export function buildAuditSnapshotHtml(): string {
   });
   const minWcag = Math.min(...levelData.map((d) => d.wcagWhite));
   const minApca = Math.min(...levelData.map((d) => d.apcaWhite));
+  // وفاداریِ hex به فرمولِ اکسکت (ΔE در OKLab) — برایِ findingِ §۰۵
+  const exactLab = (n: number) => {
+    const t = (LADDER_HUE * Math.PI) / 180;
+    return { L: CANVAS_L + n * LADDER_STEP, a: LADDER_CHROMA * Math.cos(t), b: LADDER_CHROMA * Math.sin(t) };
+  };
+  const hexLab = (hex: string) => {
+    const o = rgbToOklch(hexToRgb(hex));
+    const t = (o.h * Math.PI) / 180;
+    return { L: o.L, a: o.C * Math.cos(t), b: o.C * Math.sin(t) };
+  };
+  const maxHexDE = Math.max(...LADDER.map((hex, n) => {
+    const e = exactLab(n), g = hexLab(hex);
+    return Math.hypot(g.L - e.L, g.a - e.a, g.b - e.b);
+  }));
 
   // تک‌محوری: سهمِ نورانیت از فاصلهٔ ادراکی (OKLab) بین لایه‌های همسایه
   const lab = (hex: string) => {
@@ -193,7 +207,7 @@ export function buildAuditSnapshotHtml(): string {
     ['بوردر (separator/edge)', 'liminal-surface · resolveBorder*', 'surface.test × ۶۳+', 'ساخته و تست‌شده — مرحلهٔ بعد'],
     ['سایه (اوج = ۱q از میزبان)', 'liminal-shadow · shadowPeakAlpha', 'shadow.test', 'ساخته و تست‌شده — مرحلهٔ بعد'],
     ['ریم (نورِ جهت‌دارِ لبه)', 'spec-engine · getDirectionalRim', 'rim در surface.test', 'ساخته و تست‌شده — مرحلهٔ بعد (+ سؤالِ بازِ توست)'],
-    ['پالت و معنایی', 'liminal-palette · ۱۲×۷', 'palette.test × ۲۴', 'ساخته — ممیزیِ بی‌رحمِ رنگ انجام شد (صفحهٔ جدا: .lab/color-audit.html)؛ «اتصالِ معنایی» با Δِ اصلاح‌شده منتظرِ تصمیمِ چشمی'],
+    ['پالت و معنایی', 'liminal-palette · ۱۲×۷', 'palette.test × ۲۴', 'ساخته — ممیزیِ دورِ ۷ در پروندهٔ حکم‌ها ثبت است؛ بیرونِ قلمروِ مرحلهٔ صفر (بوم + سطوح) — «اتصالِ معنایی» منتظرِ تصمیمِ چشمی'],
     ['تایپوگرافی فارسی', 'liminal-persian · lineHeightFor', 'persian.test', 'ساخته — تستِ بصری در مرحلهٔ خودش'],
     ['کامپوننت', '—', 'zero-state × ۶ (خواب)', 'صفرِ مطلق — تا تکمیلِ هسته ممنوع (قانونِ خودتان)'],
   ].map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('');
@@ -224,7 +238,7 @@ export function buildAuditSnapshotHtml(): string {
     `${test(exactStepsQ.every((s) => Math.abs(s - q(LADDER_STEP)) < 0.0001), 'اکسکت: هر ۸ گام دقیقاً یک اندازه', `${f4(exactStepsQ[0])}q = ${LADDER_STEP}`, 'LADDER_EXACT رشته‌های oklch هستند (همان‌ها که پشتِ @supports در css-vars می‌روند) — مرورگرِ مدرن قانون را بدونِ نویز می‌بیند.')}
     ${test(LADDER.every((hex, n) => hex === getLadderColor(n)), 'hexِ جدول = خروجیِ فرمول', `${fa(9)} از ${fa(9)}`, 'دو منبع (جدولِ دستی و فرمول) واگرا نشده‌اند.')}
     ${test(stepsQ.every((s) => s >= 1 && s <= 1.25), 'قید ۱ و ۲ در fallback هشت‌بیتی هم برقرار است', `${f2(Math.min(...stepsQ))}–${f2(Math.max(...stepsQ))}q محقق‌شده`, 'رُندِ ۸ بیتی در این تاریکی ±۰.۰۷q نویز دارد؛ جدول با جست‌وجو کم‌وارانس‌ترین hexها را برگزیده — هیچ پله‌ای زیرِ ۱q نمی‌افتد و هیچ‌کدام پرش (≥۱.۵q) نیست.')}
-    ${test(topL <= CEILING_L + 1e-9, 'قید ۴: سقف سخت رعایت شده', `S8 = ${f4(topL)} ≤ ${CEILING_L}`, 'سقف قلمروِ سیستمِ ارتفاع است: هیچ سطحِ خنثی و هیچ تیماری (ریم/بوردر) از S8 بالاتر نمی‌رود — سیستم ترجیح می‌دهد تیمارش ضعیف‌تر شود تا از سقف عبور کند. رنگِ محتوا (متن، فیلِ پالت) هویت است نه ارتفاع و بیرونِ این قلمرو است؛ ممیزیِ دورِ ۷ این مرز را اندازه‌گیری و مستند کرد (صفحهٔ ممیزیِ رنگ، بخشِ ۰۸).')}
+    ${test(topL <= CEILING_L + 1e-9, 'قید ۴: سقف سخت رعایت شده', `S8 = ${f4(topL)} ≤ ${CEILING_L}`, 'سقف قلمروِ سیستمِ ارتفاع است: هیچ سطحِ خنثی و هیچ تیماری (ریم/بوردر) از S8 بالاتر نمی‌رود — سیستم ترجیح می‌دهد تیمارش ضعیف‌تر شود تا از سقف عبور کند. رنگِ محتوا (متن، فیلِ پالت) هویت است نه ارتفاع و بیرونِ این قلمرو است؛ ممیزیِ دورِ ۷ این مرز را اندازه‌گیری و مستند کرد (پروندهٔ حکم‌ها، دورِ ۷).')}
     ${test(Math.abs(fitRatio - 1) < 0.005, `محصور بودن: گام = ${(fitRatio * 100).toFixed(1)}٪ بیشینهٔ هندسی`, `(سقف−لنگر)/۸ = ${f4(geoMaxStep)} · گامِ ما ${LADDER_STEP}`, `اگر لنگر، سقف، تعدادِ لایه‌ها و یک‌نواختی را بپذیرید، گامِ ممکن یکتاست: بیشینهٔ هندسی ${f4(geoMaxStep)} است و گامِ موتور ${fa(Number((fitRatio * 100).toFixed(2)))}٪ همان — یعنی بازترین نردبانِ ممکن در پاکتِ تأییدشده. «ادراک‌ترین» یعنی: بیشترین جداسازیِ یکنواخت که قیدها اجازه می‌دهند.`)}
     ${verdict('قدرت', 'نردبان پارامترِ آزاد ندارد — بیش‌تعیین است', 'لنگر (طراحیِ تأییدشده) + سقف (قرارداد) + ۹ لایه (فهرستِ نقش‌ها: هر سطح یک شغل) + گامِ ثابت (قانونِ ۱) ⇒ گام عملاً یکتا می‌شود. هیچ‌کس «سلیقه» نکرده؛ ریاضی محصور، جواب را تعیین کرده و اندازه‌گیری (بخش ۰۴) تأییدش کرده است.')}
     ${verdict('مشکل·حل‌شده', 'کامنتِ HALF می‌گفت «state باید حس شود نه دیده شود»', 'در §6.8 رد شد: state تغییرِ سطح است و باید ≥۱q باشد. نیم‌پله (۰.۵۷۰۸q) فقط مصالحِ بوردرِ مرحلهٔ بعد است — کامنتِ موتور اصلاح شده (e512ef9).')}`);
@@ -256,6 +270,7 @@ export function buildAuditSnapshotHtml(): string {
       <thead><tr><th>لایه</th><th style="text-align:left">نقش‌ها</th><th>hex</th><th>L اکسکت</th><th>L هگز</th><th>Δ از بوم (q)</th><th>Δ همسایه (q)</th><th>Y</th><th>متنِ سفید WCAG</th><th>متنِ سفید APCA</th></tr></thead>
       <tbody>${tableRows}</tbody></table></div>
     <div class="note">* well/region/control از ${RELATIONSHIP_ROLES.map(esc).join(' / ')} — سطحِ مطلق نیستند، رابطه‌اند. نقشهٔ کامل: canvas 0 · chrome 1 · work/well/region 2 · panel 3 · control 4 · menu 5 · popover 6 · modal 7 · toast 8.</div>
+    ${finding('چرا ستونِ «Δ همسایه» یک عددِ ثابت نیست — ولی قانون هست', `قانون <b>یک عددِ ثابت است</b>: قراردادِ اکسکت (oklch) هر گام را دقیقاً ${f4(q(LADDER_STEP))}q = (سقف−لنگر)/۸ می‌سازد. ستونِ hex رُندِ ۸-بیتیِ همان قانون است و در این تاریکی هر واحدِ RGB ≈ ۰.۱q — پس گامِ محقق ${f2(Math.min(...stepsQ))}–${f2(Math.max(...stepsQ))}q است (باقی‌ماندهٔ کوانتیزاسیون ≤${f2(Math.max(...stepsQ.map((x) => Math.abs(x - q(LADDER_STEP)))))}q، هر ۸ درز ≥۱q). «همه به اندازهٔ بوم→S1 (=${f2(stepsQ[0])}q)» ممکن نیست: ۸ گامِ ${f2(stepsQ[0])}q به L≈${(oklchLightness(LADDER[0]) + 8 * stepsQ[0] * Q).toFixed(4)} می‌رسد — بالایِ سقفِ سختِ ${CEILING_L}. جست‌وجویِ بهینه (DP، دورِ ۷) تأیید کرد در انضباطِ خنثیِ سردِ خودِ نردبان هیچ هگزِ نمایان‌پذیری به فرمول نزدیک‌تر نیست — همین رُند کفِ ۸ بیت است (بیشینهٔ ΔE تا هدفِ اکسکت: ${f3(maxHexDE)}، پین شد). همگام‌سازیِ دستیِ ستون = عددِ دستی + جابه‌جاییِ رنگ‌های تأییدشده برایِ سودِ نامرئی (زیرِ نویزِ نشست‌های آستانهٔ خودتان).`)}
     ${test(minWcag >= 15, 'متنِ سفید روی هر ۹ سطح — WCAG', `min ${f2(minWcag)}:1 (روی S8)`, 'هر ۹ سطح آن‌قدر تاریک‌اند که متنِ سفید حتی از AAA (۷:۱) دو و نیم برابر بهتر است — در هیچ لایه‌ای خواناییِ متن به خطر نمی‌افتد. سلسله‌مراتبِ سطح هیچ هزینه‌ای برای متن ندارد.')}
     ${test(minApca >= 100, 'متنِ سفید روی هر ۹ سطح — APCA', `min Lc ${minApca.toFixed(0)}`, 'APCA (لنزِ مدرنِ کنتراست) برای متنِ بدنه ≥۷۵ می‌خواهد؛ کمترینِ ما ${minApca.toFixed(0)} است. دو لنزِ مستقل، یک نتیجه: هیچ لایه‌ای متن را قربانی نمی‌کند.')}
     ${verdict('قدرت', 'سطوح سلسله‌مراتب‌اند، نه رقیبِ متن', 'از S0 تا S8 کنتراستِ متنِ سفید فقط از ۲۰.۲ به ۱۸.۰ می‌رسد — کلِ نردبان در «امن‌ترین» ربعِ فضای روشنایی زندگی می‌کند. جداسازیِ لایه‌ها و خواناییِ متن در این طراحی با هم رقابت نمی‌کنند.')}`);
@@ -348,7 +363,7 @@ export function buildAuditSnapshotHtml(): string {
     <div class="qbox"><div class="qtitle">سؤال ۴ — بازسنجیِ q روی گوشی</div>
       <div class="twhy">آستانه روی نمایشگرِ رومیزیِ شما سنجیده شد (۲۰۲۶-۱۰-۱۱). گوشی نمایشگرِ دیگری است. ابزارِ همان سه نشست، خودبسنده، همین‌جا سرو می‌شود:
       <div style="margin-top:6px"><a class="mono" style="color:#6FA8EC" href="https://starlitrade.github.io/UI99-Design-Lab/design-lab/threshold-test-precise.html">بازکردنِ ابزارِ آستانه‌سنجی (همین‌جا روی Pages سرو می‌شود)</a></div>
-      اگر qِ گوشی بالاتر از ۰.۰۰۸۳ درآمد، حاشیهٔ ۱.۱۴q روی موبایل باید دوباره چک شود — آن‌وقت با داده تصمیم می‌گیریم، نه با حدس.</div></div>    ${test(true, 'وضعیتِ سوئیت در لحظهٔ تولیدِ این فایل', 'vitest 560 passed · 6 skipped · 0 failed · tsc clean', '۶ skip = گاردهای reachability روی src/componentsِ خالی — با اولین کامپوننت خودکار مسلح می‌شوند (صفرِ مطلق، طبقِ قانونِ خودتان). این صفحه هم خودش ۷ نگهبان در سوئیت دارد (و صفحهٔ ممیزیِ رنگ ۹ تای دیگر): هیچ ✗ بی‌صدا نمی‌تواند منتشر شود.')}
+      اگر qِ گوشی بالاتر از ۰.۰۰۸۳ درآمد، حاشیهٔ ۱.۱۴q روی موبایل باید دوباره چک شود — آن‌وقت با داده تصمیم می‌گیریم، نه با حدس.</div></div>    ${test(true, 'وضعیتِ سوئیت در لحظهٔ تولیدِ این فایل', 'vitest 552 passed · 6 skipped · 0 failed · tsc clean', '۶ skip = گاردهای reachability روی src/componentsِ خالی — با اولین کامپوننت خودکار مسلح می‌شوند (صفرِ مطلق، طبقِ قانونِ خودتان). این صفحه هم خودش ۷ نگهبان در سوئیت دارد: هیچ ✗ بی‌صدا نمی‌تواند منتشر شود.')}
     ${verdict('قدرت', 'مرحلهٔ بوم↔سطح: ادراک‌ترینِ ممکنِ محصور — با دلیل', 'لنگرِ مستند + آستانهٔ روان‌فیزیکیِ خودِ خواننده + سقفِ قرارداد + ۹ لایه برایِ ۱۱ نقش ⇒ گامِ یکتا در ۹۹.۷٪ِ بیشینهٔ جداسازی؛ در fallback هشت‌بیتی هم هر دو قانون زنده؛ تک‌محور (≥۹۴٪ فاصلهٔ ادراکی از نورانیت)؛ متن در همهٔ لایه‌ها امن (WCAG ≥۱۸، APCA ≥۱۰۷). جایگزین‌ها عددی رد شدند، نه سلیقه‌ای.', false)}
     ${verdict('ضعف', 'سه اقدامِ بازِ این مرحله', '۱) فصلِ چاه‌ها در POLICY (ریاضی‌اش آماده است) · ۲) نقصِ ترکیبِ on — تصمیمِ API (onLevel/depth) · ۳) بازسنجیِ q روی نمایشگرِ گوشی (ابزارش بالا). هیچ‌کدام فرمولِ نردبان را عوض نمی‌کنند.', false)}
     ${verdict('سؤال باز', 'اتکای همسایه در میدانِ واقعی — منتظرِ چشمِ شما', 'آزمایشگاه ~۷۷٪ می‌گوید؛ میدانِ واقعی (بزرگ، هم‌جوار، پایدار + هندسهٔ تو در تویی) تقریباً همیشه بیشتر. تا گزارشِ چشمِ شما روی درزهای بخش ۰۶، این «باز» می‌ماند — و اگر لغزشی دیدید، مسیرش بازسنجیِ q است نه دست‌کاریِ گام.', false)}`);
@@ -432,7 +447,7 @@ footer{padding-top:20px;font-size:11px;color:rgba(233,236,242,.35);line-height:2
   <div class="pills">
     <span class="pill">q = ${Q} · r = ${RELIABLE_BOUNDARY} (اندازه‌گیری‌شده)</span>
     <span class="pill">گام = ${f4(q(LADDER_STEP))}q = ${fa(Number((fitRatio * 100).toFixed(2)))}٪ بیشینهٔ هندسی</span>
-    <span class="pill">vitest: 560 passed · tsc clean</span>
+    <span class="pill">vitest: 552 passed · tsc clean</span>
   </div>
 </header>
 ${s01}${s02}${s03}${s04}${s05}${s06}${s07}${s08}${s09}
@@ -440,7 +455,6 @@ ${s01}${s02}${s03}${s04}${s05}${s06}${s07}${s08}${s09}
   <div>ژنراتور: <span class="mono">src/site/generate-audit-snapshot.ts</span> · نگهبان: <span class="mono">src/site/__tests__/audit-snapshot.test.ts</span> (هیچ ✗ بی‌صدا منتشر نمی‌شود)</div>
   <div>پروندهٔ کاملِ ممیزیِ همهٔ مراحل: <span class="mono">.lab/CORE-VERDICTS.md</span> · <span class="mono">.lab/ENGINE-CORE-AUDIT.md</span> · آزمایشگاهِ زندهٔ دسکتاپ: <span class="mono">src/site/AuditLab.tsx</span></div>
   <div>سیاست: <span class="mono">LIMINAL-POLICY.md</span> §۲ (نردبان) · دادهٔ خامِ آستانه: <span class="mono">.threshold-sessions.json</span></div>
-  <div>ممیزیِ رنگ — دورِ بی‌رحم (لیستِ لایه‌ها + چرخِ ۱۲ فام + معناها + روابط): <a href="color-audit.html" style="color:#6FA8EC"><span class="mono">.lab/color-audit.html</span></a></div>
 </footer>
 </div>
 </body>
