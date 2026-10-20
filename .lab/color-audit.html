@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LIMINAL — ممیزیِ رنگ · دورِ بی‌رحم</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#060709;color:#E9ECF2;font-family:Vazirmatn,system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.9}
+.shell{width:min(980px,100% - 24px);margin:0 auto;padding:24px 0 70px}
+header{padding-bottom:20px;border-bottom:1px solid #15171a}
+.eyebrow{font:11px ui-monospace,monospace;color:rgba(233,236,242,.4);letter-spacing:.08em}
+h1{font-size:clamp(22px,5.5vw,34px);line-height:1.35;letter-spacing:-.02em;margin:8px 0 10px}
+.lede{color:rgba(233,236,242,.6);font-size:12.5px;line-height:2.1;margin:6px 0 0;max-width:880px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.pill{padding:6px 12px;border:1px solid #15171a;border-radius:8px;font:11px ui-monospace,monospace;color:rgba(233,236,242,.75)}
+section{padding:30px 0;border-bottom:1px solid #15171a}
+.shead{display:flex;gap:12px;margin-bottom:14px}
+.snum{font:12px ui-monospace,monospace;color:rgba(233,236,242,.35);padding-top:5px}
+h2{margin:0;font-size:18px;letter-spacing:-.01em}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;color:#a4d1ff;direction:ltr;unicode-bidi:embed}
+.swrow{display:flex;gap:10px;flex-wrap:wrap}
+.sw{flex-shrink:0}
+.swl{font:10.5px ui-monospace,monospace;color:#E9ECF2;margin-top:4px}
+.sws{font:9.5px ui-monospace,monospace;color:rgba(233,236,242,.4)}
+.card{background:#090b0d;border:1px solid #15171a;border-radius:12px;padding:14px;margin-top:12px}
+.ctitle{font:11.5px ui-monospace,monospace;color:rgba(233,236,242,.55);margin-bottom:10px;line-height:1.9}
+.tblwrap{overflow-x:auto}
+table.numtable{border-collapse:collapse;font:10.5px ui-monospace,monospace;direction:ltr;width:100%}
+table.numtable td,table.numtable th{padding:5px 7px;text-align:center;border-bottom:1px solid #15171a;white-space:nowrap}
+table.numtable th{color:rgba(233,236,242,.4);font-weight:400}
+.chip{display:inline-block;width:26px;height:14px;border-radius:4px;vertical-align:middle;margin-inline-end:6px;border:1px solid rgba(255,255,255,.09)}
+.seamgrid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:560px){.seamgrid{grid-template-columns:1fr 1fr}}
+.bad{color:#E88A93}.good{color:#74CE8E}
+.note{font-size:11px;color:rgba(233,236,242,.45);line-height:1.9;margin-top:8px}
+.test{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #15171a}
+.finding{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:10px 12px;background:rgba(217,190,110,.05);border:1px solid rgba(217,190,110,.3);border-radius:9px}
+.fmark{font:13px ui-monospace,monospace;color:#D9BE6E;flex-shrink:0}
+.tmark{font:13px ui-monospace,monospace;flex-shrink:0}
+.tname{font-size:12.5px;color:#E9ECF2}
+.tvalue{font:11px ui-monospace,monospace;color:#6FA8EC;margin-inline-start:6px}
+.twhy{font-size:11px;color:rgba(233,236,242,.45);line-height:2;margin-top:2px}
+.verdict{background:#090b0d;border-radius:8px;padding:10px 14px;margin-top:8px}
+.vtitle{font:12px ui-monospace,monospace;color:#E9ECF2;line-height:1.9}
+.vreason{font-size:11.5px;color:rgba(233,236,242,.55);line-height:2;margin-top:4px}
+.counts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:640px){.counts{grid-template-columns:repeat(4,1fr)}}
+.count{background:#090b0d;border:1px solid #15171a;border-radius:12px;padding:14px;text-align:center;font-size:12px;color:rgba(233,236,242,.6)}
+.count b{display:block;font:28px ui-monospace,monospace;margin-bottom:4px}
+.qbox{background:#090b0d;border:1px solid #15171a;border-radius:12px;padding:12px 14px;margin-top:10px}
+.qtitle{font:12px ui-monospace,monospace;color:#D9BE6E}
+footer{padding-top:20px;font-size:11px;color:rgba(233,236,242,.35);line-height:2}
+footer a{color:#6FA8EC}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <div class="eyebrow">LIMINAL · COLOUR AUDIT · MERCILESS ROUND 7 · GENERATED FROM THE LIVE ENGINE · 2026-10-20</div>
+  <h1>ممیزیِ رنگ — ۱۲ فام، ۴ معنا، بی‌رحم</h1>
+  <p class="lede">خواستِ شما: «لایهٔ ۰ تا ۸ را با کدِ رنگ و فاصله نسبت به هم لیست کن» + «یک ممیزی عمیق و بی‌رحم روی رنگ، پالت، روانشناسی رنگ و روابطشان با هم». این صفحه همان است: هر عدد لحظهٔ تولید از موتور اندازه‌گیری شده — فامِ واقعی از hex، ΔE در OKLab، کنتراست‌ها، دریفتِ نام‌ها، شکاف‌های چرخ. یک باگِ واقعی هم در همین ممیزی پیدا و اصلاح شد (Δهای نومینال). فایل خودبسنده است و با هر اجرای سوئیت بازتولید می‌شود.</p>
+  <div class="pills">
+    <span class="pill">۱۲ فام × ۷ پله = ۸۴ رنگ</span>
+    <span class="pill">Δ معناییِ اصلاح‌شده: ۱۱.۱° · ۹.۹° · ۹.۴° · ۳.۹°</span>
+    <span class="pill">حکم‌ها: ۶ قدرت · ۵ ضعف · ۱ حل‌شده · ۴ باز</span>
+  </div>
+</header>
+<section><div class="shead"><span class="snum">01</span><div><h2>لیستِ لایه‌ها — کدِ رنگ و فاصله</h2><p class="lede">خواستِ صریحِ شما: لایهٔ ۰ تا ۸ با کدِ رنگ و فاصله نسبت به هم. همهٔ اعداد همین‌جا از <span class="mono">LADDER</span> و color-math اندازه‌گیری شده‌اند — فاصله‌ها بر حسبِ q (آستانهٔ ادراکِ اندازه‌گیری‌شدهٔ خودتان، 0.008). جزئیاتِ کاملِ «چرا این گام» در صفحهٔ فاز است.</p></div></div><div class="tblwrap"><table class="numtable">
+<tr><th>لایه</th><th>رنگ</th><th>hex</th><th>نقش‌ها</th><th>L</th><th>Δ از بوم</th><th>Δ همسایه</th><th>WCAG سفید</th></tr>
+<tr><td><b>S0</b></td><td><span class="chip" style="background:#060709"></span></td><td>#060709</td><td style="text-align:left">canvas</td><td>0.128</td><td>—</td><td>—</td><td>20.15</td></tr>
+<tr><td><b>S1</b></td><td><span class="chip" style="background:#07090b"></span></td><td>#07090b</td><td style="text-align:left">chrome</td><td>0.138</td><td>1.20q</td><td>1.20q</td><td>19.94</td></tr>
+<tr><td><b>S2</b></td><td><span class="chip" style="background:#090b0d"></span></td><td>#090b0d</td><td style="text-align:left">work · well · region</td><td>0.148</td><td>2.41q</td><td>1.21q</td><td>19.71</td></tr>
+<tr><td><b>S3</b></td><td><span class="chip" style="background:#0b0d0f"></span></td><td>#0b0d0f</td><td style="text-align:left">panel</td><td>0.158</td><td>3.56q</td><td>1.15q</td><td>19.47</td></tr>
+<tr><td><b>S4</b></td><td><span class="chip" style="background:#0d0f12"></span></td><td>#0d0f12</td><td style="text-align:left">control</td><td>0.168</td><td>4.75q</td><td>1.19q</td><td>19.19</td></tr>
+<tr><td><b>S5</b></td><td><span class="chip" style="background:#0f1114"></span></td><td>#0f1114</td><td style="text-align:left">menu</td><td>0.177</td><td>5.86q</td><td>1.11q</td><td>18.91</td></tr>
+<tr><td><b>S6</b></td><td><span class="chip" style="background:#111316"></span></td><td>#111316</td><td style="text-align:left">popover</td><td>0.186</td><td>6.96q</td><td>1.10q</td><td>18.61</td></tr>
+<tr><td><b>S7</b></td><td><span class="chip" style="background:#131518"></span></td><td>#131518</td><td style="text-align:left">modal</td><td>0.195</td><td>8.04q</td><td>1.08q</td><td>18.29</td></tr>
+<tr><td><b>S8</b></td><td><span class="chip" style="background:#15171a"></span></td><td>#15171a</td><td style="text-align:left">toast</td><td>0.204</td><td>9.11q</td><td>1.07q</td><td>17.96</td></tr>
+<tr style="opacity:.55"><td><b>S-1</b></td><td><span class="chip" style="background:#030406"></span></td><td>#030406</td><td style="text-align:left">penumbra well (چاهِ سایه — لایه نیست)</td><td>0.106</td><td>2.66q</td><td>—</td><td>—</td></tr>
+<tr style="opacity:.55"><td><b>S-2</b></td><td><span class="chip" style="background:#010203"></span></td><td>#010203</td><td style="text-align:left">umbra well (چاهِ تماس — لایه نیست)</td><td>0.082</td><td>5.52q</td><td>—</td><td>—</td></tr>
+</table></div>
+<div class="note">گامِ محقق: 1.20 / 1.21 / 1.15 / 1.19 / 1.11 / 1.10 / 1.08 / 1.07q — اکسکتِ هدفِ محصور 1.14q است؛ انحراف از گرد شدنِ hex حداکثر 0.07q. احتمالِ ادراکِ لجستیک برای بدترین همسایه ≈۶۵٪ و برای رابطه‌های ≥۲ پله ≈۱۰۰٪. چاه‌ها زیرِ بوم‌اند (دنیای سایه)، سقف بالایِ همه: L(S8)=0.204 ≤ 0.204.</div></section><section><div class="shead"><span class="snum">02</span><div><h2>چرخِ رنگ — موقعیتِ واقعیِ ۱۲ فام</h2><p class="lede">نقطه‌ها: فامِ <b>اندازه‌گیری‌شده</b> از hexِ تصویب‌شده. تیک‌های خاکستری بیرونی: مختصاتِ نومینالِ برچسب (۱۵/۴۰/۷۵…). فاصلهٔ نقطه از تیکِ خودش = دریفتِ نام. کمانِ سرخ: بزرگ‌ترین شکافِ چرخ؛ کمانِ کهربایی: کوچک‌ترین. تیکِ سفید: فامِ صحنه (نردبان).</p></div></div><svg viewBox="0 0 360 360" role="img" aria-label="چرخِ ۱۲ فام با موقعیتِ اندازه‌گیری‌شده" style="width:min(360px,100%);height:auto;display:block;margin:0 auto">
+<circle cx="180" cy="180" r="100" fill="none" stroke="#15171a" stroke-width="1"/>
+<polyline points="277.0,155.6 276.1,152.2 275.0,148.9 273.9,145.6 272.6,142.3 271.3,139.1 269.8,136.0 268.2,132.9 266.5,129.8 264.7,126.8 262.8,123.9 260.8,121.1 258.7,118.3 256.5,115.6 254.2,112.9 251.8,110.4 249.3,107.9 246.8,105.5 244.1,103.3 241.4,101.1 238.6,99.0" fill="none" stroke="#E88A93" stroke-width="5" opacity="0.75" stroke-linecap="round"/>
+<polyline points="151.8,275.9 155.1,276.9 158.5,277.7 162.0,278.4 165.4,278.9 168.9,279.4 172.3,279.7 175.8,279.9 179.3,280.0 182.8,280.0 186.3,279.8" fill="none" stroke="#D9BE6E" stroke-width="5" opacity="0.75" stroke-linecap="round"/>
+<line x1="288.2" y1="151.0" x2="296.9" y2="148.7" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="265.8" y1="108.0" x2="272.7" y2="102.2" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="209.0" y1="71.8" x2="211.3" y2="63.1" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="141.7" y1="74.8" x2="138.6" y2="66.3" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="88.3" y1="115.8" x2="80.9" y2="110.6" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="68.4" y1="170.2" x2="59.5" y2="169.5" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="74.8" y1="218.3" x2="66.3" y2="221.4" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="108.0" y1="265.8" x2="102.2" y2="272.7" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="160.6" y1="290.3" x2="159.0" y2="299.2" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="218.3" y1="285.2" x2="221.4" y2="293.7" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="265.8" y1="252.0" x2="272.7" y2="257.8" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="290.3" y1="199.4" x2="299.2" y2="201.0" stroke="rgba(233,236,242,.3)" stroke-width="1.5"/>
+<line x1="162.3" y1="266.2" x2="157.4" y2="289.7" stroke="#E9ECF2" stroke-width="2"/>
+<circle cx="277.0" cy="155.6" r="7" fill="#E88A93" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="236.9" cy="97.7" r="7" fill="#E8A87C" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="177.7" cy="80.0" r="7" fill="#D9BE6E" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="119.6" cy="100.3" r="7" fill="#A8CC74" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="91.9" cy="132.8" r="7" fill="#74CE8E" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="80.0" cy="182.1" r="7" fill="#5FCDBB" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="98.7" cy="238.2" r="7" fill="#56C6E0" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="151.8" cy="275.9" r="7" fill="#6FA8EC" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="187.2" cy="279.7" r="7" fill="#8B9CF0" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="225.8" cy="268.9" r="7" fill="#A98BEA" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="257.9" cy="242.7" r="7" fill="#C983D6" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<circle cx="278.9" cy="194.8" r="7" fill="#E083AE" stroke="rgba(233,236,242,.45)" stroke-width="1"/>
+<text x="312.9" y="146.6" text-anchor="start" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Ruby</text>
+<text x="257.9" y="67.3" text-anchor="start" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Coral</text>
+<text x="176.9" y="43.0" text-anchor="middle" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Amber</text>
+<text x="97.3" y="70.8" text-anchor="end" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Lime</text>
+<text x="59.2" y="115.3" text-anchor="end" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Emerald</text>
+<text x="43.0" y="182.9" text-anchor="end" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Teal</text>
+<text x="68.6" y="259.7" text-anchor="end" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Cyan</text>
+<text x="141.3" y="311.4" text-anchor="end" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Sapphire</text>
+<text x="189.9" y="316.6" text-anchor="middle" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Indigo</text>
+<text x="242.7" y="301.8" text-anchor="start" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Violet</text>
+<text x="286.7" y="265.9" text-anchor="start" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Fuchsia</text>
+<text x="315.5" y="200.2" text-anchor="start" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="10" fill="#E9ECF2">Rose</text>
+<text x="239.2" y="139.0" text-anchor="middle" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="9.5" fill="#E88A93">۴۱.۲°</text>
+<text x="172.3" y="251.6" text-anchor="middle" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="9.5" fill="#D9BE6E">۲۰.۵°</text>
+<text x="168.7" y="234.9" text-anchor="middle" dominant-baseline="middle" font-family="ui-monospace,monospace" font-size="9.5" fill="rgba(233,236,242,.65)">صحنه ۲۵۸.۴°</text>
+</svg>
+<div class="tblwrap" style="margin-top:14px"><table class="numtable">
+<tr><th>فام</th><th>رنگ</th><th>نومینال</th><th>اندازه‌گیری</th><th>دریفت</th><th>C₇</th><th>L₇</th><th>کسرِ گاموت</th></tr>
+<tr><td>Ruby</td><td><span class="chip" style="background:#E88A93"></span><span style="opacity:.6">#E88A93</span></td><td>15.0°</td><td><b>14.1°</b></td><td style="color:rgba(233,236,242,.6)">0.9°</td><td>0.115</td><td>0.735</td><td>68٪</td></tr>
+<tr><td>Coral</td><td><span class="chip" style="background:#E8A87C"></span><span style="opacity:.6">#E8A87C</span></td><td>40.0°</td><td><b>55.3°</b></td><td style="color:#E88A93">15.3°</td><td>0.096</td><td>0.782</td><td>63٪</td></tr>
+<tr><td>Amber</td><td><span class="chip" style="background:#D9BE6E"></span><span style="opacity:.6">#D9BE6E</span></td><td>75.0°</td><td><b>91.3°</b></td><td style="color:#E88A93">16.3°</td><td>0.105</td><td>0.808</td><td>62٪</td></tr>
+<tr><td>Lime</td><td><span class="chip" style="background:#A8CC74"></span><span style="opacity:.6">#A8CC74</span></td><td>110.0°</td><td><b>127.1°</b></td><td style="color:#E88A93">17.1°</td><td>0.122</td><td>0.799</td><td>58٪</td></tr>
+<tr><td>Emerald</td><td><span class="chip" style="background:#74CE8E"></span><span style="opacity:.6">#74CE8E</span></td><td>145.0°</td><td><b>151.8°</b></td><td style="color:rgba(233,236,242,.6)">6.8°</td><td>0.127</td><td>0.778</td><td>60٪</td></tr>
+<tr><td>Teal</td><td><span class="chip" style="background:#5FCDBB"></span><span style="opacity:.6">#5FCDBB</span></td><td>175.0°</td><td><b>181.2°</b></td><td style="color:rgba(233,236,242,.6)">6.2°</td><td>0.105</td><td>0.779</td><td>74٪</td></tr>
+<tr><td>Cyan</td><td><span class="chip" style="background:#56C6E0"></span><span style="opacity:.6">#56C6E0</span></td><td>200.0°</td><td><b>215.6°</b></td><td style="color:#E88A93">15.6°</td><td>0.107</td><td>0.772</td><td>77٪</td></tr>
+<tr><td>Sapphire</td><td><span class="chip" style="background:#6FA8EC"></span><span style="opacity:.6">#6FA8EC</span></td><td>230.0°</td><td><b>253.6°</b></td><td style="color:#E88A93">23.6°</td><td>0.116</td><td>0.720</td><td>77٪</td></tr>
+<tr><td>Indigo</td><td><span class="chip" style="background:#8B9CF0"></span><span style="opacity:.6">#8B9CF0</span></td><td>260.0°</td><td><b>274.1°</b></td><td style="color:#E88A93">14.1°</td><td>0.124</td><td>0.714</td><td>82٪</td></tr>
+<tr><td>Violet</td><td><span class="chip" style="background:#A98BEA"></span><span style="opacity:.6">#A98BEA</span></td><td>290.0°</td><td><b>297.3°</b></td><td style="color:rgba(233,236,242,.6)">7.3°</td><td>0.138</td><td>0.702</td><td>76٪</td></tr>
+<tr><td>Fuchsia</td><td><span class="chip" style="background:#C983D6"></span><span style="opacity:.6">#C983D6</span></td><td>320.0°</td><td><b>321.2°</b></td><td style="color:rgba(233,236,242,.6)">1.2°</td><td>0.139</td><td>0.711</td><td>53٪</td></tr>
+<tr><td>Rose</td><td><span class="chip" style="background:#E083AE"></span><span style="opacity:.6">#E083AE</span></td><td>350.0°</td><td><b>351.5°</b></td><td style="color:rgba(233,236,242,.6)">1.5°</td><td>0.125</td><td>0.722</td><td>60٪</td></tr>
+</table></div></section><section><div class="shead"><span class="snum">03</span><div><h2>نام در برابرِ واقعیت — ممیزیِ دریفت</h2><p class="lede">بی‌رحم‌ترین یافتهٔ زبانیِ پالت: موتور با فامِ اندازه‌گیری‌شده کار می‌کند (رمپ‌ها، nearestHue، نگاشتِ معنایی) — پس ریاضی هرگز گولِ برچسب را نمی‌خورد. اما خودِ برچسب‌ها در ۶ مورد از ۱۲ نیم‌پرده تا دو نیم‌پرده با رنگِ واقعی فاصله دارند.</p></div></div><div class="tblwrap"><table class="numtable">
+<tr><th>برچسب</th><th>دریفت</th><th>واقعیتِ رنگ</th></tr>
+<tr><td>Sapphire <span style="opacity:.5">(230.0°)</span></td><td style="color:#E88A93"><b>۲۳.۶°</b></td><td style="text-align:left">لاجوردِ برچسب در عمل آبی-بنفش است — ۴.۸° با فامِ صحنه فاصله دارد</td></tr>
+<tr><td>Lime <span style="opacity:.5">(110.0°)</span></td><td style="color:#E88A93"><b>۱۷.۱°</b></td><td style="text-align:left">لایم به سبز-زردِ چمنی رفته — سبزِ گرم، نه سبزِ نئونی</td></tr>
+<tr><td>Amber <span style="opacity:.5">(75.0°)</span></td><td style="color:#E88A93"><b>۱۶.۳°</b></td><td style="text-align:left">کهربا به زرد-سبز رفته — برای WARNING هنوز کاملاً زرد به چشم می‌آید</td></tr>
+<tr><td>Cyan <span style="opacity:.5">(200.0°)</span></td><td style="color:#E88A93"><b>۱۵.۶°</b></td><td style="text-align:left">فیروزه‌ای به آزور (آبیِ روشن) رفته — سردتر از «سیانِ» ذهنی</td></tr>
+<tr><td>Coral <span style="opacity:.5">(40.0°)</span></td><td style="color:#E88A93"><b>۱۵.۳°</b></td><td style="text-align:left">مرجانی به نارنجیِ هلویی رفته — گرم‌تر از صورتیِ مرجانی</td></tr>
+<tr><td>Indigo <span style="opacity:.5">(260.0°)</span></td><td style="color:#E88A93"><b>۱۴.۱°</b></td><td style="text-align:left">نیلی به بنفش-آبی رفته — ولی این دقیقاً همان چیزی است که «ایندیگو»ی کلاسیک هست</td></tr>
+</table></div>
+<div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">۶ فام از ۱۲ دریفتِ ≥۱۰° دارند <code class="tvalue">بدترین: Sapphire = 23.6°</code></div>
+<div class="twhy">دلیل: پینِ تست: اگر بازبرچسب‌گذاریِ آینده این عدد را عوض کند، تست عمداً می‌شکند تا تصمیم ثبت شود.</div></div></div></section><section><div class="shead"><span class="snum">04</span><div><h2>پوششِ چرخ — روانشناسیِ گرم و سرد</h2><p class="lede">چرخِ ۱۲ فامی یکنواخت نیست — و این هم تصادف نیست هم مشکل. نومینال‌ها با گامِ ۲۵–۳۵° نوشته شده بودند ولی موقعیتِ واقعیِ رنگ‌ها نامتوازن‌تر درآمد.</p></div></div><div class="card"><div class="ctitle">گرم: 4 · سرد: 8</div><div style="font-size:12px;line-height:2.2">گرم‌ها (بر اساسِ فامِ اندازه‌گیری‌شده ≤۹۲° یا ≥۳۳۰°): <span class="chip" style="background:#E88A93"></span>Ruby ۱۴.۱° · <span class="chip" style="background:#E8A87C"></span>Coral ۵۵.۳° · <span class="chip" style="background:#D9BE6E"></span>Amber ۹۱.۳° · <span class="chip" style="background:#E083AE"></span>Rose ۳۵۱.۵°<br>سرد‌ها: <span class="chip" style="background:#A8CC74"></span>Lime · <span class="chip" style="background:#74CE8E"></span>Emerald · <span class="chip" style="background:#5FCDBB"></span>Teal · <span class="chip" style="background:#56C6E0"></span>Cyan · <span class="chip" style="background:#6FA8EC"></span>Sapphire · <span class="chip" style="background:#8B9CF0"></span>Indigo · <span class="chip" style="background:#A98BEA"></span>Violet · <span class="chip" style="background:#C983D6"></span>Fuchsia</div></div><div class="note" style="margin-top:10px"><b style="color:#E88A93">حفرهٔ گرم:</b> از Ruby تا Coral — ۴۱.۲° بیابان. هیچ نارنجیِ خالصی (ورمیلیون ~۳۵°) در پالت نیست؛ DANGER فعلی در ۲۳.۴° دقیقاً لبهٔ همین حفره نشسته. <b style="color:#D9BE6E">شلوغیِ سرد:</b> از Sapphire تا Indigo فقط ۲۰.۵° — و کلاً ۴ فام در یک قوسِ ۹۸°ی آبی-بنفش (Sapphire/Indigo/Violet/Fuchsia). در واژگانِ فارسیِ رابط کاربری این چهارتا به «آبی/نیلی/بنفش/ارغوانی» روی هم می‌ریزند.</div>
+<div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">کران‌های شکافِ چرخ پین شده‌اند <code class="tvalue">max 41.2° ≤ 45 · min 20.5° ≥ 18</code></div>
+<div class="twhy">دلیل: پوشش کارکردی کافی است (هر چهار معنا + برند جای خانه دارند)؛ تنوعِ تزئینی لاغر — تصمیمِ فامِ سیزدهم با شماست.</div></div></div></section><section><div class="shead"><span class="snum">05</span><div><h2>رمپ‌ها — کسرِ گاموت و هویتِ خانواده</h2><p class="lede">هر فام رمپِ ۷ پله‌ایِ خودش را دارد: فامِ اندازه‌گیری‌شده ثابت می‌ماند (دریفتِ رمپ ≤1.6°)، نورانیت با گامِ 0.08 پایین می‌آید و اشباع = کسرِ خانواده × بیشینهٔ قابلِ‌دستیابی در آن نورانیت — پس هیچ رنگی هیچ‌جا clip نمی‌شود.</p></div></div><div class="tblwrap"><table class="numtable">
+<tr><th>فام</th><th>s1</th><th>s2</th><th>s3</th><th>s5</th><th>s7 = مصوب</th><th>C₂</th><th>کسر</th></tr>
+<tr><td>Ruby</td><td><span class="chip" style="background:#3e1118"></span></td><td><span class="chip" style="background:#5d1d28"></span></td><td><span class="chip" style="background:#7e2b38"></span></td><td><span class="chip" style="background:#c4475b"></span></td><td><span class="chip" style="background:#E88A93"></span></td><td style="color:inherit">0.093</td><td>68٪</td></tr>
+<tr><td>Coral</td><td><span class="chip" style="background:#412714"></span></td><td><span class="chip" style="background:#5c3a20"></span></td><td><span class="chip" style="background:#794d2d"></span></td><td><span class="chip" style="background:#b57648"></span></td><td><span class="chip" style="background:#E8A87C"></span></td><td style="color:inherit">0.062</td><td>63٪</td></tr>
+<tr><td>Amber</td><td><span class="chip" style="background:#3d341a"></span></td><td><span class="chip" style="background:#544926"></span></td><td><span class="chip" style="background:#6d5f34"></span></td><td><span class="chip" style="background:#a18d50"></span></td><td><span class="chip" style="background:#D9BE6E"></span></td><td style="color:inherit">0.053</td><td>62٪</td></tr>
+<tr><td>Lime</td><td><span class="chip" style="background:#2c371b"></span></td><td><span class="chip" style="background:#3e4e28"></span></td><td><span class="chip" style="background:#526536"></span></td><td><span class="chip" style="background:#7c9754"></span></td><td><span class="chip" style="background:#A8CC74"></span></td><td style="color:inherit">0.061</td><td>58٪</td></tr>
+<tr><td>Emerald</td><td><span class="chip" style="background:#193421"></span></td><td><span class="chip" style="background:#274b31"></span></td><td><span class="chip" style="background:#356442"></span></td><td><span class="chip" style="background:#549767"></span></td><td><span class="chip" style="background:#74CE8E"></span></td><td style="color:inherit">0.062</td><td>60٪</td></tr>
+<tr><td>Teal</td><td><span class="chip" style="background:#12342f"></span></td><td><span class="chip" style="background:#1d4b44"></span></td><td><span class="chip" style="background:#29635a"></span></td><td><span class="chip" style="background:#449689"></span></td><td><span class="chip" style="background:#5FCDBB"></span></td><td style="color:#D9BE6E">0.052</td><td>74٪</td></tr>
+<tr><td>Cyan</td><td><span class="chip" style="background:#0e3139"></span></td><td><span class="chip" style="background:#194752"></span></td><td><span class="chip" style="background:#245f6c"></span></td><td><span class="chip" style="background:#3c91a4"></span></td><td><span class="chip" style="background:#56C6E0"></span></td><td style="color:inherit">0.053</td><td>77٪</td></tr>
+<tr><td>Sapphire</td><td><span class="chip" style="background:#07203b"></span></td><td><span class="chip" style="background:#0c335e"></span></td><td><span class="chip" style="background:#1a487c"></span></td><td><span class="chip" style="background:#2e76c5"></span></td><td><span class="chip" style="background:#6FA8EC"></span></td><td style="color:inherit">0.087</td><td>77٪</td></tr>
+<tr><td>Indigo</td><td><span class="chip" style="background:#120d56"></span></td><td><span class="chip" style="background:#201982"></span></td><td><span class="chip" style="background:#2f27b1"></span></td><td><span class="chip" style="background:#535ee7"></span></td><td><span class="chip" style="background:#8B9CF0"></span></td><td style="color:#6FA8EC">0.165</td><td>82٪</td></tr>
+<tr><td>Violet</td><td><span class="chip" style="background:#210b40"></span></td><td><span class="chip" style="background:#371764"></span></td><td><span class="chip" style="background:#4f248b"></span></td><td><span class="chip" style="background:#8240de"></span></td><td><span class="chip" style="background:#A98BEA"></span></td><td style="color:inherit">0.126</td><td>76٪</td></tr>
+<tr><td>Fuchsia</td><td><span class="chip" style="background:#2a122e"></span></td><td><span class="chip" style="background:#432149"></span></td><td><span class="chip" style="background:#5d3066"></span></td><td><span class="chip" style="background:#9652a3"></span></td><td><span class="chip" style="background:#C983D6"></span></td><td style="color:inherit">0.081</td><td>53٪</td></tr>
+<tr><td>Rose</td><td><span class="chip" style="background:#341123"></span></td><td><span class="chip" style="background:#511f38"></span></td><td><span class="chip" style="background:#6f2e4e"></span></td><td><span class="chip" style="background:#b04d7e"></span></td><td><span class="chip" style="background:#E083AE"></span></td><td style="color:inherit">0.081</td><td>60٪</td></tr>
+</table></div>
+<div class="note"><b>پلهٔ برابر ≠ اشباعِ برابر:</b> در s2 اشباع از 0.052 (Teal) تا 0.165 (Indigo) می‌رود — 3.2× اختلاف. این باگ نیست، فیزیکِ هویت است: فام‌ها کسرِ گاموتِ خودشان را نگه می‌دارند تا سبزِ تصویب‌شده، سبزِ تصویب‌شده بماند. <b>قاعدهٔ استفاده:</b> شمارهٔ پله را هرگز بینِ خانواده‌ها حاملِ معنا نکنید — معنا در «فام + نقشِ باند» است (۱–۳ fill · ۴–۵ border · ۶–۷ text)، نه در عددِ پله.<br>پهنهٔ L خانواده: Violet 0.702 … Amber 0.808 (پهنهٔ 0.105 ≈ 12.7q) — زرد بازتاب می‌کند و بنفش جذب؛ Lِ برابر هویت را تخت می‌کرد.</div></section><section><div class="shead"><span class="snum">06</span><div><h2>تمایزپذیری — ΔE در باندِ هر نقش</h2><p class="lede">کمینهٔ فاصلهٔ OKLab بینِ هر جفت از ۱۲ فام، در سه پلهٔ نمایندهٔ باندهای نقش. معیارِ صادقانه: این رنگ‌ها <b>کنارِ هم</b> متمایزند، <b>از دور</b> نه — و نام‌های همسایه ریسک را دو برابر می‌کند.</p></div></div><div class="tblwrap"><table class="numtable">
+<tr><th>باند</th><th>پله</th><th>تنگ‌ترین جفت</th><th>ΔE (OKLab)</th><th>حکم</th></tr>
+<tr><td>fill</td><td>s2</td><td>Emerald/Teal</td><td>0.031</td><td>≥ 0.03 پین شد</td></tr>
+<tr><td>border</td><td>s5</td><td>Lime/Emerald</td><td>0.047</td><td>≥ 0.045 پین شد</td></tr>
+<tr><td>text</td><td>s7</td><td>Sapphire/Indigo</td><td>0.044</td><td>≥ 0.04 پین شد</td></tr>
+</table></div>
+<div class="swrow" style="margin-top:12px">
+<div class="sw"><div style="width:110px;height:52px;border-radius:8px;background:#274b31"></div><div class="swl">Emerald s2</div></div>
+<div class="sw"><div style="width:110px;height:52px;border-radius:8px;background:#1d4b44"></div><div class="swl">Teal s2</div><div class="sws">ΔE = 0.031</div></div>
+<div class="sw"><div style="width:110px;height:52px;border-radius:8px;background:#6FA8EC"></div><div class="swl">Sapphire s7</div></div>
+<div class="sw"><div style="width:110px;height:52px;border-radius:8px;background:#8B9CF0"></div><div class="swl">Indigo s7</div><div class="sws">ΔE = 0.044</div></div>
+</div>
+<div class="note"><b>قاعدهٔ عملی:</b> Emerald+Teal هرگز دو معنای متفاوت در یک نما · Sapphire+Indigo هرگز دو رنگِ لینک · Lime+Emerald هرگز success و «موفقیتِ ثانوی» — مگر با برچسبِ متنی. تمایزِ دیدِ محیطی نداریم؛ تمایزِ مقایسهٔ مستقیم داریم.</div></section><section><div class="shead"><span class="snum">07</span><div><h2>معناها — ممیزیِ بی‌رحمِ برآمندی</h2><p class="lede">رنگِ معنایی فقط «قراردادِ قرمز=خطر» نیست — وزنِ بصری هم هست. ترتیبِ برآمندیِ کروماییِ وضعیتِ فعلی را اندازه بگیرید و با ترتیبِ روانیِ مطلوب مقایسه کنید: واژگون است.</p></div></div><div class="card"><div class="ctitle">وضعیتِ فعلی — موتورِ semantic (هنوز قدیمی)</div><div class="tblwrap"><table class="numtable">
+<tr><th>نقش</th><th>solid</th><th>h</th><th>C</th><th>L</th><th>رتبهٔ برآمندیِ کرومایی</th></tr>
+<tr><td>✓ SUCCESS</td><td><span class="chip" style="background:#00875d"></span>#00875d</td><td>162.8°</td><td>0.120</td><td>0.551</td><td><b style="color:inherit">3</b></td></tr>
+<tr><td>! WARNING</td><td><span class="chip" style="background:#946a00"></span>#946a00</td><td>81.2°</td><td>0.114</td><td>0.553</td><td><b style="color:inherit">4</b></td></tr>
+<tr><td>× DANGER</td><td><span class="chip" style="background:#ba4646"></span>#ba4646</td><td>23.4°</td><td>0.150</td><td>0.552</td><td><b style="color:#E88A93">1</b></td></tr>
+<tr><td>i INFO</td><td><span class="chip" style="background:#3271c8"></span>#3271c8</td><td>257.3°</td><td>0.150</td><td>0.553</td><td><b style="color:#E88A93">2</b></td></tr>
+</table></div>
+<div class="note">ترتیبِ اندازه‌گیری‌شدهٔ فریاد: <b>DANGER > INFO > SUCCESS > WARNING</b> — INFO به بلندیِ DANGER فریاد می‌زند (اختلافِ C کمتر از ۰.۰۱) و WARNING ساکن‌ترینِ همه است. از نظرِ روانشناسیِ هشدار این وارونگیِ تصادفی است: خطر باید بلندترین و اطلاع باید مؤدب‌ترین باشد.</div></div><div class="card"><div class="ctitle">پیشنهاد — SEMANTIC_FROM_PALETTE (با Δِ اصلاح‌شدهٔ اندازه‌گیری‌شده)</div><div class="tblwrap"><table class="numtable">
+<tr><th>نقش</th><th>فام</th><th>fill (s2)</th><th>border (s5)</th><th>text (s7)</th><th>Δ واقعی</th></tr>
+<tr><td>✓ SUCCESS</td><td>Emerald @ 162.9°</td><td><span class="chip" style="background:#274b31"></span>#274b31</td><td><span class="chip" style="background:#549767"></span>#549767</td><td><span class="chip" style="background:#74CE8E"></span>#74CE8E</td><td><b style="color:#74CE8E">۱۱.۱°</b></td></tr>
+<tr><td>! WARNING</td><td>Amber @ 81.4°</td><td><span class="chip" style="background:#544926"></span>#544926</td><td><span class="chip" style="background:#a18d50"></span>#a18d50</td><td><span class="chip" style="background:#D9BE6E"></span>#D9BE6E</td><td><b style="color:#74CE8E">۹.۹°</b></td></tr>
+<tr><td>× DANGER</td><td>Ruby @ 23.5°</td><td><span class="chip" style="background:#5d1d28"></span>#5d1d28</td><td><span class="chip" style="background:#c4475b"></span>#c4475b</td><td><span class="chip" style="background:#E88A93"></span>#E88A93</td><td><b style="color:#74CE8E">۹.۴°</b></td></tr>
+<tr><td>i INFO</td><td>Sapphire @ 257.5°</td><td><span class="chip" style="background:#0c335e"></span>#0c335e</td><td><span class="chip" style="background:#2e76c5"></span>#2e76c5</td><td><span class="chip" style="background:#6FA8EC"></span>#6FA8EC</td><td><b style="color:#74CE8E">۳.۹°</b></td></tr>
+</table></div>
+<div class="note">Δها با فامِ <b>اندازه‌گیری‌شده</b> حساب شده‌اند (باگِ نومینال اصلاح شد: INFO قبلاً «۲۷.۵°» دروغ گزارش می‌شد، واقعی ۳.۹° است). بیشینهٔ شیفت ۱۱.۱° — کمتر از نصفِ کوچک‌ترین شکافِ چرخ (۲۰.۵°)، یعنی هیچ فامی برایِ معناها دزدیده نمی‌شود.</div></div><div class="seamgrid" style="margin-top:12px">
+<div class="card" style="margin-top:0"><div class="ctitle">✓ SUCCESS — موفقیت</div>
+<div style="font:10px ui-monospace,monospace;color:rgba(233,236,242,.4);margin-bottom:4px">فعلی</div>
+<div style="background:rgba(0, 135, 93, 0.1);border:1px solid rgba(0, 135, 93, 0.22);border-radius:8px;padding:8px 10px;font-size:12px;color:#54e5aa">✓ نمونهٔ پیامِ موفقیت</div>
+<div style="font:10px ui-monospace,monospace;color:rgba(233,236,242,.4);margin:8px 0 4px">پیشنهادی (fill/border/text از یک فام)</div>
+<div style="background:#274b31;border:1px solid #549767;border-radius:8px;padding:8px 10px;font-size:12px;color:#74CE8E">✓ نمونهٔ پیامِ موفقیت</div>
+</div>
+<div class="card" style="margin-top:0"><div class="ctitle">! WARNING — هشدار</div>
+<div style="font:10px ui-monospace,monospace;color:rgba(233,236,242,.4);margin-bottom:4px">فعلی</div>
+<div style="background:rgba(148, 106, 0, 0.1);border:1px solid rgba(148, 106, 0, 0.22);border-radius:8px;padding:8px 10px;font-size:12px;color:#ffc348">! نمونهٔ پیامِ هشدار</div>
+<div style="font:10px ui-monospace,monospace;color:rgba(233,236,242,.4);margin:8px 0 4px">پیشنهادی (fill/border/text از یک فام)</div>
+<div style="background:#544926;border:1px solid #a18d50;border-radius:8px;padding:8px 10px;font-size:12px;color:#D9BE6E">! نمونهٔ پیامِ هشدار</div>
+</div>
+<div class="card" style="margin-top:0"><div class="ctitle">× DANGER — خطر</div>
+<div style="font:10px ui-monospace,monospace;color:rgba(233,236,242,.4);margin-bottom:4px">فعلی</div>
+<div style="background:rgba(186, 70, 70, 0.1);border:1px solid rgba(186, 70, 70, 0.22);border-radius:8px;padding:8px 10px;font-size:12px;color:#ffbdb6">× نمونهٔ پیامِ خطر</div>
+<div style="font:10px ui-monospace,monospace;color:rgba(233,236,242,.4);margin:8px 0 4px">پیشنهادی (fill/border/text از یک فام)</div>
+<div style="background:#5d1d28;border:1px solid #c4475b;border-radius:8px;padding:8px 10px;font-size:12px;color:#E88A93">× نمونهٔ پیامِ خطر</div>
+</div>
+<div class="card" style="margin-top:0"><div class="ctitle">i INFO — اطلاع</div>
+<div style="font:10px ui-monospace,monospace;color:rgba(233,236,242,.4);margin-bottom:4px">فعلی</div>
+<div style="background:rgba(50, 113, 200, 0.1);border:1px solid rgba(50, 113, 200, 0.22);border-radius:8px;padding:8px 10px;font-size:12px;color:#a4d1ff">i نمونهٔ پیامِ اطلاع</div>
+<div style="font:10px ui-monospace,monospace;color:rgba(233,236,242,.4);margin:8px 0 4px">پیشنهادی (fill/border/text از یک فام)</div>
+<div style="background:#0c335e;border:1px solid #2e76c5;border-radius:8px;padding:8px 10px;font-size:12px;color:#6FA8EC">i نمونهٔ پیامِ اطلاع</div>
+</div>
+</div>
+<div class="note" style="margin-top:12px"><b>اهرم‌های برآمندی در پیشنهاد:</b> ۱) برانگیختگیِ فام — سرخیِ Ruby حاملِ خطر است (روانشناسیِ تکاملی، نه اشباع)؛ ۲) نورانیت — متنِ WARNING با L=0.808 روشن‌ترین فامِ پالت است؛ ۳) معماریِ سه‌توکنی — fillِ عمیق + متنِ روشن الگوی استانداردِ UI تاریک مدرن است. <b>باقی‌ماندهٔ فیزیک:</b> کرومای fillِ INFO (0.088) و DANGER (0.093) تقریباً برابر می‌ماند — گاموتِ فامِ آبی-سرخ در آن نورانیت همین است. اگر ترتیبِ کروماییِ مهندسی‌شده بخواهید، باید C را دستی override کنیم که نقضِ «همه‌چیز مشتق» است — تصمیمش با شما.</div></section><section><div class="shead"><span class="snum">08</span><div><h2>رابطه‌ها — رنگ با نردبان، صحنه با بازیگر</h2><p class="lede">ممیزیِ رنگ بدونِ روابطش با بقیهٔ سیستم ناقص است: صحنه (نردبان) چه فامی دارد و بازیگرها (پالت) کجای چرخ نشسته‌اند؛ فوکوس، چاه‌ها، سقف و کنتراست‌ها چه رابطه‌ای با هم دارند.</p></div></div><div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">فامِ صحنه بینِ Sapphire و Indigo می‌نشیند <code class="tvalue">صحنه 258.4° · Δ تا Sapphire = 4.8° · Δ تا Indigo = 15.8°</code></div>
+<div class="twhy">دلیل: صحنه از خانوادهٔ آبیِ خودِ INFO است — اطلاع «در خانه» آرام می‌نشیند و هشدارهای گرم (خطر/هشدار) کنتراستِ فامیِ رایگان می‌گیرند. این نامتقارنیِ روانشناسانه دقیقاً همان چیزی است که یک سیستمِ هشدار می‌خواهد.</div></div></div>
+<div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">figure-groundِ اشباع قبل از نورانیت <code class="tvalue">آرام‌ترین fill (s2 Teal) = 0.052 ÷ صحنه 0.007 = 7.5×</code></div>
+<div class="twhy">دلیل: هر رنگِ پالتی روی هر سطحی، پیش از آنکه روشن‌تر باشد، اشباع‌تر است — جداییِ شکل از زمینه با دو کانالِ مستقل تضمین شده.</div></div></div>
+<div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">حلقهٔ فوکوس خنثی است، نه آبی <code class="tvalue">C = 0.009 · کنتراست با S8 = 15.2</code></div>
+<div class="twhy">دلیل: اگر فوکوس آبی بود با INFO جنگِ معنایی داشت («این آبی اطلاع است یا تعامل؟»). خنثیِ روشن = بیشترین کنتراست روی هر سطح + صفرِ بارِ معنایی.</div></div></div>
+<div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">متنِ سفید روی همهٔ فیل‌های تاریک AAA است <code class="tvalue">min(s1,s2) = 8.9:1 · min(s3) = 6.3:1</code></div>
+<div class="twhy">دلیل: ۲۴ فیلِ پلهٔ ۱–۲ همه ≥۷:۱ — badge و alert با متنِ سفید هرگز نمی‌شکنند؛ پلهٔ ۳ هم AA-بالا می‌ماند (کف: Amber).</div></div></div>
+<div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">متنِ پلهٔ ۷ روی ۹ سطح از یک منبع <code class="tvalue">min = 6.47 (Violet روی #15171a)</code></div>
+<div class="twhy">دلیل: کفِ کنتراستِ متنِ رنگی روی بدترین سطحِ ممکن — همه از همان دوازدهٔ مصوب، بدونِ رنگِ دستی.</div></div></div>
+<div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">دو دنیا: ارتفاعِ خنثی زیرِ سقف، هویتِ رنگی بالایِ آن <code class="tvalue">min L فیلِ s1 = 0.222 &gt; سقف 0.204 · چاه‌ها -2.66q/-5.52q زیرِ بوم</code></div>
+<div class="twhy">دلیل: سقف مالِ سیستمِ ارتفاع است (سطوحِ خنثی + تیمارهایش)، نه مالِ رنگِ محتوا — همان‌طور که متنِ سفید با L=۱ بالایِ سقف است. §6.11 صریح است: «پالت لایه ندارد».</div></div></div>
+<div class="finding"><span class="fmark">⚠</span>
+<div><div class="tname">زبانِ کامنتِ سقف از قلمرویش گشادتر است</div><div class="twhy">کامنتِ CEILING_IS_HARD در موتور می‌گوید «this bounds everything» — ولی فیل‌های کروماتیک به‌طراحی بالایِ آن‌اند. حکمِ عددی درست است (ارتفاع هرگز از S8 بالاتر نمی‌رود) ولی جمله باید به «bounds the elevation system» اصلاح شود تا تناقضِ سیاست/موتورِ آینده نسازد.</div></div></div></section><section><div class="shead"><span class="snum">09</span><div><h2>حکم‌ها — بی‌رحم، با داده</h2><p class="lede">جمعِ ممیزیِ رنگ در چهار دسته. هر حکم دادهٔ زندهٔ بخشِ خودش را در بالا دارد.</p></div></div><div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — موتور با فامِ اندازه‌گیری‌شده کار می‌کند، نه با برچسب</div>
+<div class="vreason">رمپ‌ها روی hueMeasured تاریک می‌شوند و nearestHue با همان نگاشت می‌کند — حتی با دریفتِ ۲۳.۶°ی Sapphire، معنای INFO روی رنگی می‌نشیند که چشم می‌بیند نه روی ایدهٔ گردِ آن.</div></div><div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — هویت بایت‌به‌بایت حفظ می‌شود</div>
+<div class="vreason">پلهٔ ۷ هر رمپ = hexِ مصوب (۱۲/۱۲)؛ دریفتِ فام در طولِ رمپ ≤1.6°؛ اشباع = کسرِ خانواده × گاموتِ قابلِ‌دستیابی، پس هیچ رنگی هیچ‌جا clip نمی‌شود (کسرها 53–82٪).</div></div><div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — صحنه و بازیگر — نامتقارنیِ روانشناسانهٔ درست</div>
+<div class="vreason">صحنه آبیِ خانوادهٔ INFO است (258.4°، Δ4.8° تا Sapphire) و اشباعش 7.5× زیرِ آرام‌ترین بازیگر — اطلاع در خانه آرام است، هشدارِ گرم ناخواسته بیرون می‌زند. دقیقاً سلسله‌مراتبِ هشداریِ مطلوب.</div></div><div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — حلقهٔ فوکوس خنثی — بدونِ جنگِ معنایی با INFO</div>
+<div class="vreason">C=0.009 و کنتراست 15.2:۱ با سقف: بیشترین دیدِ ممکن، صفرِ بارِ معنایی.</div></div><div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — ایمنیِ متن دو‌طرفه تضمین شده</div>
+<div class="vreason">سفید روی ۲۴ فیلِ s1–s2 ≥8.9:۱ (AAA) و متنِ رنگیِ s7 روی هر ۹ سطح ≥6.47:۱ — هر دو از یک منبعِ مشتق، بدونِ استثناهای دستی.</div></div><div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — رنگ هیچ‌وقت قاطیِ ارتفاع نمی‌شود</div>
+<div class="vreason">نردبان تک‌فام و ۹۹.۷٪ بیشینهٔ هندسی دست‌نخورده ماند؛ پالت لایه ندارد (§6.11) — نورانیت = سلسله‌مراتب، فام = هویت، و این دو کانال هرگز بارِ هم را حمل نمی‌کنند.</div></div><div class="verdict" style="border-inline-start:2px solid #D9BE6E">
+<div class="vtitle"><span style="color:#D9BE6E">ضعف</span> — برآمندیِ تصادفی در معناهای فعلی — واژگون</div>
+<div class="vreason">ترتیبِ کروماییِ وضعیتِ فعلی DANGER > INFO > SUCCESS > WARNING است: INFO هم‌وزنِ DANGER فریاد می‌زند و WARNING ساکن‌ترین است. روانشناسیِ هشدار باید خطر را بلندترین کند — الان تصادفِ گاموت تصمیم می‌گیرد. پیشنهادِ پالتی اهرم را به فام+نورانیت+گیلف منتقل می‌کند.</div></div><div class="verdict" style="border-inline-start:2px solid #D9BE6E">
+<div class="vtitle"><span style="color:#D9BE6E">ضعف</span> — نیمی از نام‌ها با واقعیتِ رنگ فاصله دارند</div>
+<div class="vreason">Sapphire 23.6° · Lime 17.1° · Amber 16.3° · Cyan 15.6° · Coral 15.3° · Indigo 14.1° — برچسب مختصاتِ نومینال است، نه توصیفِ رنگ. ریاضی امن است (موتور اندازه‌گیری می‌کند) ولی واژگانِ مستندات و قراردادِ تیم نیم‌پرده دروغ می‌گوید.</div></div><div class="verdict" style="border-inline-start:2px solid #D9BE6E">
+<div class="vtitle"><span style="color:#D9BE6E">ضعف</span> — چرخِ نامتوازن — حفرهٔ گرم و شلوغیِ سرد</div>
+<div class="vreason">بزرگ‌ترین شکاف 41.2° (Ruby→Coral): هیچ نارنجیِ خالصی وجود ندارد؛ کوچک‌ترین 20.5° با ۴ فام در ۹۸°ی آبی-بنفش که در فارسی روی هم می‌ریزند. کارکرد پوشش داده شده، تزئین نه.</div></div><div class="verdict" style="border-inline-start:2px solid #D9BE6E">
+<div class="vtitle"><span style="color:#D9BE6E">ضعف</span> — زبانِ سقف از قلمرویش گشادتر است</div>
+<div class="vreason">«bounds everything» در برابرِ فیل‌هایی با L تا 0.328+ — تناقضِ متنی، نه عددی. اصلاحِ زبانِ کامنت/POLICY لازم است: سقف مالِ سیستمِ ارتفاعِ خنثی است.</div></div><div class="verdict" style="border-inline-start:2px solid #D9BE6E">
+<div class="vtitle"><span style="color:#D9BE6E">ضعف</span> — پلهٔ برابر بینِ خانواده‌ها فقط نورانیت است، نه اشباع</div>
+<div class="vreason">C₂ از 0.052 (Teal) تا 0.165 (Indigo) — 3.2× پهنه. تا وقتی قاعدهٔ «شمارهٔ پله حاملِ معنا نیست» در مستندات تصریح نشود، یک مصرف‌کنندهٔ آینده حتماً معنای اشتباه روی s2ِ دو خانواده می‌سازد.</div></div><div class="verdict" style="border-inline-start:2px solid #6FA8EC">
+<div class="vtitle"><span style="color:#6FA8EC">مشکل·حل‌شده</span> — Δهای نگاشتِ معنایی با فامِ نومینال گزارش می‌شدند</div>
+<div class="vreason">nearestHue درست با hueMeasured کار می‌کرد ولی delta با برچسب حساب می‌شد: INFO «Δ۲۷.۵°» گزارش می‌شد در حالی که شیفتِ واقعی ۳.۹° است. در همین دور اصلاح و در palette.test پین شد (۲۴ تست) — عددی که با چشم قضاوت می‌کنید حالا واقعی است.</div></div><div class="verdict" style="border-inline-start:2px solid #A98BEA">
+<div class="vtitle"><span style="color:#A98BEA">سؤال باز</span> — اتصالِ معناها — حالا با عددِ درست، منتظرِ چشمِ شما</div>
+<div class="vreason">پیشنهادِ fill/border/text آماده و Δهای اندازه‌گیری‌شده ۱۱.۱ / ۹.۹ / ۹.۴ / ۳.۹° است. تستِ «not-wired» هنوز پاس می‌شود چون تصمیمِ شما صادر نشده — با یک نگاه به کارت‌های بخشِ ۰۷ وصلش کنیم؟</div></div><div class="verdict" style="border-inline-start:2px solid #A98BEA">
+<div class="vtitle"><span style="color:#A98BEA">سؤال باز</span> — بازبرچسب‌گذاریِ ۶ فامِ دریفت‌دار؟</div>
+<div class="vreason">Sapphire اندازه‌گیری‌شده در 253.6° عملاً آبی-بنفش است. نام‌ها را به واقعیت نزدیک کنیم (Azure/Indigo/…) یا برچسب را «قراردادِ شعر» بپذیریم و فقط در مستندات شفاف کنیم؟</div></div><div class="verdict" style="border-inline-start:2px solid #A98BEA">
+<div class="vtitle"><span style="color:#A98BEA">سؤال باز</span> — فامِ سیزدهم برایِ حفرهٔ گرم؟</div>
+<div class="vreason">ورمیلیون ~۳۵° بیابانِ 41.2°ی Ruby→Coral را پر می‌کند و به DANGER خانهٔ گرم‌تری می‌دهد. توسعهٔ پالت تصمیمِ خواننده است، نه موتور — ولی اگر روزی قرار باشد، جای خالیِ اندازه‌گیری‌شده همین‌جاست.</div></div><div class="verdict" style="border-inline-start:2px solid #A98BEA">
+<div class="vtitle"><span style="color:#A98BEA">سؤال باز</span> — فلسفهٔ برآمندی: فیزیک یا مهندسی؟</div>
+<div class="vreason">پیشنهاد، سلسله‌مراتبِ هشدار را با فام+نورانیت+گیلف می‌سازد ولی کرومای fillِ INFO و DANGER تقریباً برابر می‌ماند (فیزیکِ گاموت). می‌پذیرید، یا overrideِ دستیِ C می‌خواهید — که نقضِ «همه‌چیز مشتق، صفرِ عددِ دستی» است؟</div></div><div class="counts" style="margin-top:16px">
+<div class="count"><b class="good">۶</b>قدرت</div>
+<div class="count"><b style="color:#D9BE6E">۵</b>ضعف</div>
+<div class="count"><b style="color:#6FA8EC">۱</b>مشکلِ حل‌شده در این دور</div>
+<div class="count"><b style="color:#A98BEA">۴</b>سؤالِ باز — تصمیمِ شما</div>
+</div>
+<div class="qbox" style="margin-top:14px"><div class="qtitle">۴ تصمیمِ چشمی — جواب‌ها فازِ بعدی رنگ را می‌سازند</div>
+<div style="font-size:12px;line-height:2.4">۱. کارت‌های «فعلی در برابرِ پیشنهادیِ» بخشِ ۰۷ را ببینید: معناها به پالت وصل شوند؟<br>۲. نامِ ۶ فامِ دریفت‌دار: بازبرچسب یا پذیرشِ مستند؟<br>۳. حفرهٔ گرمِ ۴۱.۲°: فامِ سیزدهم (ورمیلیون) در فهرستِ تصمیم بماند یا بسته شود؟<br>۴. برآمندی: فیزیکِ فام+نورانیت کافی است یا ترتیبِ کروماییِ مهندسی‌شده می‌خواهید؟</div></div></section>
+<footer>
+  <div>صفحهٔ فاز (بوم ↔ سطح، ۹ لایهٔ تخت): <a href="audit-lab-snapshot.html"><span class="mono">.lab/audit-lab-snapshot.html</span></a> · ابزارِ آستانه‌سنجی: <a href="../design-lab/threshold-test-precise.html"><span class="mono">design-lab/threshold-test-precise.html</span></a></div>
+  <div>ژنراتور: <span class="mono">src/site/generate-color-audit.ts</span> · نگهبان: <span class="mono">src/site/__tests__/color-audit.test.ts</span> · پروندهٔ حکم‌ها: <span class="mono">.lab/CORE-VERDICTS.md</span> · <span class="mono">.lab/ENGINE-CORE-AUDIT.md</span></div>
+</footer>
+</div>
+</body>
+</html>

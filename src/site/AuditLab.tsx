@@ -205,7 +205,7 @@ export function AuditLab() {
           </p>
           <div style={{ ...flexWrap, marginTop: 18 }}>
             <div style={{ padding: '7px 14px', border: `1px solid ${C.line}`, borderRadius: 8, fontSize: 12, ...mono }}>
-              vitest: <span style={{ color: C.green }}>544 passed</span> · <span style={{ color: C.amber }}>6 skipped (zero-state)</span> · <span style={{ color: C.green }}>0 failed</span>
+              vitest: <span style={{ color: C.green }}>560 passed</span> · <span style={{ color: C.amber }}>6 skipped (zero-state)</span> · <span style={{ color: C.green }}>0 failed</span>
             </div>
             <div style={{ padding: '7px 14px', border: `1px solid ${C.line}`, borderRadius: 8, fontSize: 12, ...mono }}>
               tsc --noEmit: <span style={{ color: C.green }}>clean</span>

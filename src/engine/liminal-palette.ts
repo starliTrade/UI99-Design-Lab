@@ -240,7 +240,11 @@ export const SEMANTIC_FROM_PALETTE = (
     text: paletteHex(hue.label, 7), // step 7 — the approved colour as text
     border: paletteHex(hue.label, 5), // step 5 — the border band
     fill: paletteHex(hue.label, 2), // step 2 — a dark, saturated fill
-    delta: hueDistance(hue.hue, angle),
+    /* MEASURED, not nominal. nearestHue picks on hueMeasured; reporting the
+       delta against the nominal label lied to the reader — INFO→Sapphire read
+       "Δ27.5°" (label 230) while the true measured shift is 3.9° (253.6).
+       Found by the merciless colour audit; pinned in palette.test.ts. */
+    delta: hueDistance(hue.hueMeasured, angle),
   };
 });
 

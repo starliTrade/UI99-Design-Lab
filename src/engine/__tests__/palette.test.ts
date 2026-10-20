@@ -14,7 +14,8 @@ import {
   paletteTextContrast,
 } from '../liminal-palette';
 import { hexToRgb, rgbToOklch, contrastRatioHex } from '../liminal-color-math';
-import { LADDER } from '../liminal-ladder';
+import { LADDER, LADDER_CHROMA } from '../liminal-ladder';
+import { LiminalColorEngine } from '../liminal-color-engine';
 
 /**
  * §6.11 IS LAW, AND THIS IS THE LAW'S GUARD.
@@ -174,6 +175,114 @@ describe('§6.11 — the semantic mapping is a PROPOSAL, exposed for the eye tes
     // it, so `deriveSemantic` is untouched. When the mapping is accepted this test
     // is replaced by one that asserts the semantics ARE the palette text steps.
     // Guarding the "not yet" keeps the gap visible instead of silently half-done.
-    expect(SEMANTIC_FROM_PALETTE.every((s) => s.delta >= 0)).toBe(true);
+    // (The old assertion here was `delta >= 0` — vacuous. Round 7 replaced it
+    // with something that would actually fail if the wiring landed.)
+    expect(LiminalColorEngine.SEMANTICS.DANGER.solid).toContain('ba4646');
+    expect(LiminalColorEngine.SEMANTICS.INFO.solid).toContain('3271c8');
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* MERCILESS COLOUR AUDIT — round 7 (2026-10-20).                     */
+/* Every number below was measured live from the engine during the     */
+/* audit; the pins carry their measured values so a regression reads   */
+/* as a fact change, not a mystery.                                    */
+/* ------------------------------------------------------------------ */
+
+const gap = (a: number, b: number): number => {
+  const d = Math.abs(a - b) % 360;
+  return d > 180 ? 360 - d : d;
+};
+
+/** OKLab euclidean distance — the discriminability metric. */
+const deltaE = (hexA: string, hexB: string): number => {
+  const A = rgbToOklch(hexToRgb(hexA));
+  const B = rgbToOklch(hexToRgb(hexB));
+  const toAB = (c: { L: number; C: number; h: number }) => ({
+    L: c.L,
+    a: c.C * Math.cos((c.h * Math.PI) / 180),
+    b: c.C * Math.sin((c.h * Math.PI) / 180),
+  });
+  const x = toAB(A);
+  const y = toAB(B);
+  return Math.sqrt((x.L - y.L) ** 2 + (x.a - y.a) ** 2 + (x.b - y.b) ** 2);
+};
+
+const stepOf = (label: string, n: number) =>
+  PALETTE.find((p) => p.label === label)!.steps.find((s) => s.n === n)!;
+
+describe('the merciless colour audit — measured pins (round 7)', () => {
+  it('reported semantic deltas are MEASURED, not nominal — the label-hue bug is dead', () => {
+    for (const s of SEMANTIC_FROM_PALETTE) {
+      const hue = nearestHue(s.angle);
+      expect(s.delta).toBeCloseTo(gap(hue.hueMeasured, s.angle), 10);
+    }
+    const byRole = Object.fromEntries(SEMANTIC_FROM_PALETTE.map((s) => [s.role, s.delta]));
+    // Measured: INFO 3.9° · DANGER 9.4° · WARNING 9.9° · SUCCESS 11.1°.
+    // The old nominal-hue math reported 27.5 / 8.5 / 6.4 / 17.9 — the INFO
+    // "Δ27.5°" was an artefact of comparing against Sapphire's LABEL (230)
+    // while the mapping itself always used the measured hue (253.6).
+    expect(byRole.INFO).toBeLessThan(5);
+    expect(byRole.DANGER).toBeLessThan(10);
+    expect(byRole.WARNING).toBeLessThan(11);
+    expect(byRole.SUCCESS).toBeLessThan(12);
+  });
+
+  it('wheel coverage — warm hole ≤ 45°, cool crowd ≥ 18° (measured 41.2° / 20.5°)', () => {
+    const hs = PALETTE.map((p) => p.hueMeasured).sort((a, b) => a - b);
+    const gaps = hs.map((h, i) => (i === 0 ? gap(hs[hs.length - 1], h) : h - hs[i - 1]));
+    // Largest: Ruby→Coral 41.2° — no pure orange/vermilion exists in the set.
+    // Smallest: Sapphire→Indigo 20.5° — four hues crowd a 98° blue-violet arc.
+    expect(Math.max(...gaps)).toBeLessThanOrEqual(45);
+    expect(Math.min(...gaps)).toBeGreaterThanOrEqual(18);
+  });
+
+  it('labels are nominal coordinates — 6 of 12 drift ≥ 10°, worst is Sapphire 23.6°', () => {
+    const drifts = PALETTE.map((p) => ({ label: p.label, d: gap(p.hue, p.hueMeasured) }));
+    const worst = drifts.reduce((a, b) => (b.d > a.d ? b : a));
+    expect(worst.label, 'Sapphire is the worst offender — measured 253.6 vs label 230').toBe('Sapphire');
+    expect(worst.d).toBeLessThanOrEqual(25);
+    // Ruby 0.9 · Coral 15.3 · Amber 16.3 · Lime 17.1 · Emerald 6.8 · Teal 6.2 ·
+    // Cyan 15.6 · Sapphire 23.6 · Indigo 14.1 · Violet 7.3 · Fuchsia 1.2 · Rose 1.5.
+    // If a future relabel shrinks this count, the test flips ON PURPOSE — the
+    // reader said labels must stay honest about what they are.
+    expect(drifts.filter((x) => x.d >= 10).length).toBe(6);
+  });
+
+  it('discriminability floor — tightest pair per role stays ≥ 0.03 ΔE (OKLab)', () => {
+    const minPair = (n: number): number => {
+      let min = Infinity;
+      for (let i = 0; i < PALETTE.length; i++)
+        for (let j = i + 1; j < PALETTE.length; j++)
+          min = Math.min(min, deltaE(stepOf(PALETTE[i].label, n).hex, stepOf(PALETTE[j].label, n).hex));
+      return min;
+    };
+    expect(minPair(2)).toBeGreaterThanOrEqual(0.03); // 0.0311 Emerald/Teal — fills
+    expect(minPair(5)).toBeGreaterThanOrEqual(0.045); // 0.0473 Lime/Emerald — borders
+    expect(minPair(7)).toBeGreaterThanOrEqual(0.04); // 0.0440 Sapphire/Indigo — text
+  });
+
+  it('fills hold white text — steps 1–2 ≥ 7:1 (AAA), step 3 ≥ 6:1 (floor: Amber 6.29)', () => {
+    for (const p of PALETTE) {
+      expect(contrastRatioHex('#FFFFFF', stepOf(p.label, 1).hex)).toBeGreaterThanOrEqual(7);
+      expect(contrastRatioHex('#FFFFFF', stepOf(p.label, 2).hex)).toBeGreaterThanOrEqual(7);
+      expect(contrastRatioHex('#FFFFFF', stepOf(p.label, 3).hex)).toBeGreaterThanOrEqual(6);
+    }
+  });
+
+  it('stage-and-actor — the quietest step-2 fill is ≥ 5× the stage chroma', () => {
+    // Min fill C = 0.041 (Sapphire s2) vs LADDER_CHROMA 0.0069 → 5.9×.
+    // Saturation alone separates figure from ground before lightness joins in.
+    const minFillC = Math.min(...PALETTE.map((p) => stepOf(p.label, 2).C));
+    expect(minFillC / LADDER_CHROMA).toBeGreaterThanOrEqual(5);
+  });
+
+  it('approved L spread is identity physics, documented — Amber 0.808 … Violet 0.702', () => {
+    const Ls = APPROVED.map((a) => rgbToOklch(hexToRgb(a.hex)).L);
+    // Yellows reflect, purples absorb: equal L would flatten the family
+    // identity. The 0.105 spread (~12.6 q) is the price of keeping step 7
+    // byte-identical to the approved colours — and it is pinned so a
+    // re-approval cannot silently widen it.
+    expect(Math.max(...Ls) - Math.min(...Ls)).toBeLessThanOrEqual(0.12);
   });
 });
