@@ -477,6 +477,39 @@ describe('the exact ladder — the design, which hex cannot write', () => {
     }
     expect(HALF_EXACT.length).toBe(8);
   });
+
+  it('hex fallback still keeps Law 1 — every measured step ≥ 1q, noise band ≤ 0.25q', () => {
+    // The audit measured the published hex table: steps land 1.07–1.21q, jittering
+    // ±0.07q around the exact 1.1416q because one RGB unit at ladder darkness is a
+    // third of a quantum. The law survives the rounding; the uniformity does not —
+    // which is exactly why the oklch declaration exists.
+    LADDER.slice(0, -1).forEach((hex, n) => {
+      const s = lightnessStep(hex, LADDER[n + 1]) / PERCEPTUAL_QUANTUM;
+      expect(s, `S${n}→S${n + 1} falls below one quantum in the hex fallback`).toBeGreaterThanOrEqual(1);
+      expect(Math.abs(s - LADDER_STEP / PERCEPTUAL_QUANTUM), `S${n}→S${n + 1} noise exceeds the band`).toBeLessThanOrEqual(0.25);
+    });
+  });
+
+  it('hex half-step OFFSETS survive 8-bit — every S(n).5 stays inside the visible band', () => {
+    // Measured: 0.54–0.71q around the exact 0.5708q. The rounding noise (±0.14q)
+    // is the same order as the half-step itself, yet the law survives: every
+    // offset stays above the edge threshold (0.48q) and below one full quantum —
+    // a hint, never a level. The right quantity is the offset from the step's own
+    // hex, NOT the gap between consecutive halves (that is a full step by design).
+    HALF.forEach((hex, n) => {
+      const off = lightnessStep(LADDER[n], hex) / PERCEPTUAL_QUANTUM;
+      expect(off, `S${n}.5 sank below the edge threshold`).toBeGreaterThan(0.48);
+      expect(off, `S${n}.5 became a full level`).toBeLessThan(1);
+    });
+  });
+
+  it('consecutive half-steps stay a full step apart — even through 8-bit', () => {
+    // By design S(n).5→S(n+1).5 spans exactly one LADDER_STEP; measured on hex
+    // 1.08–1.18q — the rounding never collapses two consecutive border levels.
+    HALF.slice(0, -1).forEach((hex, n) => {
+      expect(lightnessStep(hex, HALF[n + 1]) / PERCEPTUAL_QUANTUM).toBeGreaterThanOrEqual(1);
+    });
+  });
 });
 
 /**

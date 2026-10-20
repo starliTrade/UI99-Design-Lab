@@ -6,3 +6,4 @@ dist
 public/fonts
 # the library build, like the app build
 dist-lib
+package-lock.json

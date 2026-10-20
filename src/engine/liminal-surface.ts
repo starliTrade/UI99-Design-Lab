@@ -53,7 +53,8 @@ export type SurfaceRole =
   | 'popover' // a larger floating panel
   | 'modal' // a dialog or sheet that takes over the view
   | 'toast' // the highest floating anchor
-  | 'well'; // the resting fill of a control that is OFF
+  | 'well' // the resting fill of a control that is OFF
+  | 'region'; // a bounded area, one step above its host, flat (no rim/shadow) — Stepper, Collapsible, TreeView, MessageScroller
 
 /** What is happening to the element right now. */
 export type SurfaceState = 'idle' | 'hover' | 'focus' | 'active' | 'disabled';
@@ -74,6 +75,10 @@ export const ROLE_LEVEL: Record<SurfaceRole, number> = {
   // that still makes the control read as an object. Seven sites hand-picked
   // `getDirectionalRim(2, 2, …)` because the engine had no name for it.
   well: 2,
+  // A region is a RELATIONSHIP role like control/well: nominally S2, but
+  // one step above its host when `on` is given. Flat — no rim, no shadow.
+  // Added for Stepper, Collapsible, TreeView, MessageScroller (§1.5).
+  region: 2,
   panel: 3,
   control: 4,
   menu: 5,
@@ -121,6 +126,7 @@ export const ROLE_RIM: Record<SurfaceRole, boolean> = {
   chrome: false,
   work: false,
   well: true,
+  region: false, // flat by design — a structural area, not a raised object
   panel: true,
   control: true,
   menu: true,
@@ -145,6 +151,7 @@ export const ROLE_SHADOW: Record<SurfaceRole, 1 | 2 | 3 | 4 | null> = {
   chrome: null, // chrome is part of the frame, not floating above it
   work: null,
   well: null, // a well is cut into the flow; nothing in the flow floats
+  region: null, // flat — a bounded area, never floating
   panel: null,
   control: null,
   menu: 1,
@@ -833,6 +840,14 @@ export function allowedHost(role: SurfaceRole): SurfaceRole | null {
  * Listed here so the exemption is deliberate and visible rather than the rule quietly
  * not applying.
  */
+/**
+ * RELATIONSHIP ROLES — a role that is ONE STEP ABOVE its host, not an absolute level.
+ * `control`/`well`/`region` all share this: nominally S2/S4/S2 but +1 when `on` is given.
+ * The guard derives exemptions from this list so a fourth relationship role cannot
+ * be added without deciding its ceiling behavior.
+ */
+export const RELATIONSHIP_ROLES: readonly SurfaceRole[] = ['control', 'well', 'region'] as const;
+
 export const PLACEMENT_EXEMPTIONS: readonly { role: SurfaceRole; on: SurfaceRole; reason: string }[] = [
   {
     role: 'control',
@@ -843,6 +858,26 @@ export const PLACEMENT_EXEMPTIONS: readonly { role: SurfaceRole; on: SurfaceRole
     role: 'control',
     on: 'modal',
     reason: 'the same: a control inside a floating surface has no step above it to take',
+  },
+  {
+    role: 'well',
+    on: 'toast',
+    reason: 'a well is the resting fill of a control — same ceiling problem as control',
+  },
+  {
+    role: 'well',
+    on: 'modal',
+    reason: 'the same: well inside a floating surface has no step above it',
+  },
+  {
+    role: 'region',
+    on: 'toast',
+    reason: 'a region one step above its host — no step above the ceiling, anchors on host',
+  },
+  {
+    role: 'region',
+    on: 'modal',
+    reason: 'the same: region inside a floating surface has no step above it',
   },
 ];
 
@@ -871,12 +906,12 @@ export function checkPlacement(request: { role: SurfaceRole; on: SurfaceRole }):
   const { role, on } = request;
   if (PLACEMENT_EXEMPTIONS.some((e) => e.role === role && e.on === on)) return { ok: true };
 
-  if (role === 'control') {
-    const gap = resolvedLevel('control', on) - ROLE_LEVEL[on];
+  if ((RELATIONSHIP_ROLES as readonly string[]).includes(role)) {
+    const gap = resolvedLevel(role as SurfaceRole, on) - ROLE_LEVEL[on];
     if (gap === 1) return { ok: true };
     return {
       ok: false,
-      reason: `control on ${on} resolves to S${resolvedLevel('control', on)}: the ceiling clamps it onto its host`,
+      reason: `${role} on ${on} resolves to S${resolvedLevel(role as SurfaceRole, on)}: the ceiling clamps it onto its host`,
     };
   }
 

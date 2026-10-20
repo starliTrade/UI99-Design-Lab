@@ -7,6 +7,7 @@ import { LADDER } from './liminal-ladder';
 import { hexToRgb, rgbToOklch, oklchToHex } from './liminal-color-math';
 import { apcaMagnitude } from './liminal-contrast';
 import { contrastRatioHex } from './liminal-color-math';
+import { APPROVED } from './liminal-palette';
 
 /**
  * THE FOUR SEMANTIC HUES — a CONVENTION, not a derivation.
@@ -248,20 +249,13 @@ export class LiminalColorEngine {
   };
 
   // 3. EXTENDED SPECTRUM (12 hues, text role, chroma compensated)
-  static readonly EXTENDED_SPECTRUM: Array<{ hue: number; hex: string; label: string }> = [
-    { hue: 15, hex: '#E88A93', label: 'Ruby' },
-    { hue: 40, hex: '#E8A87C', label: 'Coral' },
-    { hue: 75, hex: '#D9BE6E', label: 'Amber' },
-    { hue: 110, hex: '#A8CC74', label: 'Lime' },
-    { hue: 145, hex: '#74CE8E', label: 'Emerald' },
-    { hue: 175, hex: '#5FCDBB', label: 'Teal' },
-    { hue: 200, hex: '#56C6E0', label: 'Cyan' },
-    { hue: 230, hex: '#6FA8EC', label: 'Sapphire' },
-    { hue: 260, hex: '#8B9CF0', label: 'Indigo' },
-    { hue: 290, hex: '#A98BEA', label: 'Violet' },
-    { hue: 320, hex: '#C983D6', label: 'Fuchsia' },
-    { hue: 350, hex: '#E083AE', label: 'Rose' },
-  ];
+  //
+  // SINGLE SOURCE: these twelve live in `liminal-palette.ts` as step 7 of the
+  // 12×7 palette (§6.11). The spectrum IS the palette's top step — the contract,
+  // the CSS variables and the seven-step ramp all read the same twelve, so they
+  // can never drift. `APPROVED` is `as const`, spread to a mutable array here
+  // because the class field's historical type is `Array<…>`.
+  static readonly EXTENDED_SPECTRUM: Array<{ hue: number; hex: string; label: string }> = [...APPROVED];
 
   // 4. BRAND PRIMARY (referencing CSS Variables with fallback)
   static readonly BRAND_PRIMARY = {

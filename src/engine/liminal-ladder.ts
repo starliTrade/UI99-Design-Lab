@@ -171,9 +171,15 @@ export const LADDER = [
 ] as const;
 
 /**
- * Midpoints between ladder steps — half-steps, used for state changes
- * (hover / active). A half-step is ~0.6q, deliberately below the threshold:
- * a state change should be *felt*, not *seen*.
+ * Midpoints between ladder steps — half-steps, used for BORDERS, not states.
+ *
+ * A state change is a SURFACE change, so it must land on an INTEGER step
+ * (1.1416q ≥ 1q). Half a step is 0.5708q — below the flat-surface threshold,
+ * invisible. The old rule that hover=0.5 step was the defect fixed in §6.8.
+ *
+ * A half-step is a BORDER: separator (n+0.5) is 0.57q = 1.18× the edge
+ * threshold, a hint. Edge (n+1) is 1.14q = 2.38×, a border. Both are
+ * half-step-derived, neither is a state.
  */
 export const HALF = [
   '#07080a',

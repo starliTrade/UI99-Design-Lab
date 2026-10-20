@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve, join } from 'node:path';
+import { ZERO_ABSOLUTE } from './zero-state';
 
 // vitest runs from the project root, so this is stable.
 const SRC = resolve(process.cwd(), 'src');
@@ -59,7 +60,7 @@ describe('the interaction variables have ONE producer', () => {
   // reads focus and the focus border. A component that opts into either and
   // publishes nothing gets `transparent` — the state it asked for, silently dead.
   for (const attr of ['data-liminal-surface', 'data-liminal-focus-within']) {
-    it(`no component opts into ${attr} without publishing them`, () => {
+    it.skipIf(ZERO_ABSOLUTE)(`no component opts into ${attr} without publishing them`, () => {
       const optIn: string[] = [];
       const offenders: string[] = [];
       for (const file of COMPONENT_FILES) {
@@ -90,7 +91,7 @@ describe('the interaction variables have ONE producer', () => {
    * opt-in ANYWHERE, because a component may publish for a child it renders.
    * Coarse and true beats precise and silent.
    */
-  it('no component publishes the variables without opting in somewhere', () => {
+  it.skipIf(ZERO_ABSOLUTE)('no component publishes the variables without opting in somewhere', () => {
     const offenders: string[] = [];
     let publishers = 0;
     for (const file of COMPONENT_FILES) {

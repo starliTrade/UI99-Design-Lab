@@ -27,6 +27,7 @@ import { LiminalLayoutEngine } from './liminal-layout-engine';
 import { FLOAT_SHADOWS } from './liminal-surface';
 import { LiminalMotionEngine } from './liminal-motion-engine';
 import { LiminalColorEngine } from './liminal-color-engine';
+import { PALETTE } from './liminal-palette';
 
 const lines: string[] = [];
 const section = (title: string) => {
@@ -133,8 +134,19 @@ export function generateCssVars(): string {
   v('brand-subtle', BRAND_ALPHA.subtle);
 
   // ── 9. EXTENDED SPECTRUM ───────────────────────────────────────────
-  section('9. EXTENDED SPECTRUM (12 hues)');
+  section('9. EXTENDED SPECTRUM (12 hues · step 7 of the palette)');
   LiminalColorEngine.EXTENDED_SPECTRUM.forEach((h) => v(`hue-${h.hue}`, h.hex, h.label));
+
+  // ── 9.5 PALETTE · 12 hues × 7 steps (§6.11) ────────────────────────
+  // fill 1–3 · border 4–5 · text 6–7. Step 7 IS the approved colour above; the
+  // six below are derived (each hue keeps its own fraction of gamut, −0.08 L a
+  // step). Published so a coloured button, chart region, border or text reads a
+  // variable instead of hand-picking a hex — the same rule the ladder follows.
+  section('9.5 PALETTE (12 hues × 7 steps · §6.11)');
+  PALETTE.forEach((hue) => {
+    const slug = hue.label.toLowerCase();
+    hue.steps.forEach((s) => v(`palette-${slug}-${s.n}`, s.hex, s.n === 7 ? `${hue.label} · text (approved)` : `${hue.label} · ${s.role}`));
+  });
 
   // ── 10. SPACING ────────────────────────────────────────────────────
   section('10. SPACING (atom 4)');

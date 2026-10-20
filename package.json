@@ -21,7 +21,9 @@
     "build:lib": "vite build --config vite.lib.config.ts && tsc -p tsconfig.lib.json",
     "verify:package": "node scripts/verify-package.mjs",
     "gen:api": "bun scripts/gen-api.ts",
-    "gen:policy": "bun scripts/gen-policy-md.ts"
+    "gen:policy": "bun scripts/gen-policy-md.ts",
+    "scaffold": "node scripts/scaffold-component.mjs",
+    "gen:tokens": "bun scripts/gen-dtcg.ts"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -54,7 +56,8 @@
     "typescript-eslint": "^8.71.1",
     "typescript6": "npm:typescript@^6",
     "vite": "^8.3.2",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.3",
+    "@testing-library/dom": "^10.4.0"
   },
   "exports": {
     ".": {

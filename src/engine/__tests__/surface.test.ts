@@ -286,6 +286,21 @@ describe('surface decision engine — the border rule', () => {
 describe('surface decision engine — controls are relative to their host', () => {
   const HOSTS: SurfaceRole[] = ['canvas', 'chrome', 'work', 'panel', 'menu', 'popover', 'modal'];
 
+  it('FINDING PIN — `on` anchors from the host\'s NOMINAL level, so relationship-on-relationship collapses', () => {
+    // Documented weakness (POLICY §10.4 gap 6), found by rendering the nesting
+    // chain live: region on work resolves to S3, but control on region anchors to
+    // region's NOMINAL level (2)+1 = S3 — the control lands exactly on its real
+    // host's resolved level: zero fill difference, Law 2 broken for chains of two
+    // relationship roles. The engine is internally consistent (the tests below pin
+    // nominal hosts, which never move); composing anchored hosts is an API decision
+    // (a resolved-level host, or depth arithmetic), not a math fix. If this pin
+    // fails, the API landed — retire the finding and add composition tests.
+    const region = resolveSurface({ role: 'region', on: 'work' });
+    const control = resolveSurface({ role: 'control', on: 'region' });
+    expect(control.level, 'current behaviour: nominal anchor').toBe(ROLE_LEVEL.region + 1);
+    expect(control.level, 'zero separation from the resolved host').toBe(region.level);
+  });
+
   it('places a control one step above whatever hosts it', () => {
     for (const host of HOSTS) {
       const control = resolveSurface({ role: 'control', on: host });

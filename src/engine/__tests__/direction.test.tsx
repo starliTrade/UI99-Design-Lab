@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pick, inlineStart, inlineEnd } from '../liminal-direction';
 
@@ -63,7 +63,13 @@ describe('direction — the components are written along an axis, not a side', (
     // A rotated square's two visible edges are physical by necessity: the arrow
     // points up, down, left or right relative to the tooltip, and those are
     // physical placements. Named here so the exception is deliberate.
-    const tooltip = readFileSync(resolve(SRC, 'feedback/Tooltip/SimpleTooltip.tsx'), 'utf8');
+    //
+    // ZERO ABSOLUTE: the Tooltip itself was archived with the other components
+    // (2026-10-20). The exception is checked only while the file exists — when
+    // the Tooltip is reborn, this re-arms without anyone remembering it.
+    const path = resolve(SRC, 'feedback/Tooltip/SimpleTooltip.tsx');
+    if (!existsSync(path)) return;
+    const tooltip = readFileSync(path, 'utf8');
     expect((tooltip.match(/border(Left|Right):/g) ?? []).length).toBe(4);
   });
 });

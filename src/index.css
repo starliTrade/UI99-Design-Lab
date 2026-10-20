@@ -112,7 +112,7 @@
   --liminal-brand-active: #DDE1E8;
   --liminal-brand-subtle: rgba(233, 236, 242, 0.08);
 
-  /* ── 9. EXTENDED SPECTRUM (12 hues) ──────────────────────────── */
+  /* ── 9. EXTENDED SPECTRUM (12 hues · step 7 of the palette) ──── */
   --liminal-hue-15: #E88A93; /* Ruby */
   --liminal-hue-40: #E8A87C; /* Coral */
   --liminal-hue-75: #D9BE6E; /* Amber */
@@ -125,6 +125,92 @@
   --liminal-hue-290: #A98BEA; /* Violet */
   --liminal-hue-320: #C983D6; /* Fuchsia */
   --liminal-hue-350: #E083AE; /* Rose */
+
+  /* ── 9.5 PALETTE (12 hues × 7 steps · §6.11) ─────────────────── */
+  --liminal-palette-ruby-1: #3e1118; /* Ruby · fill */
+  --liminal-palette-ruby-2: #5d1d28; /* Ruby · fill */
+  --liminal-palette-ruby-3: #7e2b38; /* Ruby · fill */
+  --liminal-palette-ruby-4: #a03949; /* Ruby · border */
+  --liminal-palette-ruby-5: #c4475b; /* Ruby · border */
+  --liminal-palette-ruby-6: #e25f72; /* Ruby · text */
+  --liminal-palette-ruby-7: #E88A93; /* Ruby · text (approved) */
+  --liminal-palette-coral-1: #412714; /* Coral · fill */
+  --liminal-palette-coral-2: #5c3a20; /* Coral · fill */
+  --liminal-palette-coral-3: #794d2d; /* Coral · fill */
+  --liminal-palette-coral-4: #96613b; /* Coral · border */
+  --liminal-palette-coral-5: #b57648; /* Coral · border */
+  --liminal-palette-coral-6: #d58c57; /* Coral · text */
+  --liminal-palette-coral-7: #E8A87C; /* Coral · text (approved) */
+  --liminal-palette-amber-1: #3d341a; /* Amber · fill */
+  --liminal-palette-amber-2: #544926; /* Amber · fill */
+  --liminal-palette-amber-3: #6d5f34; /* Amber · fill */
+  --liminal-palette-amber-4: #877542; /* Amber · border */
+  --liminal-palette-amber-5: #a18d50; /* Amber · border */
+  --liminal-palette-amber-6: #bda55f; /* Amber · text */
+  --liminal-palette-amber-7: #D9BE6E; /* Amber · text (approved) */
+  --liminal-palette-lime-1: #2c371b; /* Lime · fill */
+  --liminal-palette-lime-2: #3e4e28; /* Lime · fill */
+  --liminal-palette-lime-3: #526536; /* Lime · fill */
+  --liminal-palette-lime-4: #667e45; /* Lime · border */
+  --liminal-palette-lime-5: #7c9754; /* Lime · border */
+  --liminal-palette-lime-6: #92b164; /* Lime · text */
+  --liminal-palette-lime-7: #A8CC74; /* Lime · text (approved) */
+  --liminal-palette-emerald-1: #193421; /* Emerald · fill */
+  --liminal-palette-emerald-2: #274b31; /* Emerald · fill */
+  --liminal-palette-emerald-3: #356442; /* Emerald · fill */
+  --liminal-palette-emerald-4: #447d54; /* Emerald · border */
+  --liminal-palette-emerald-5: #549767; /* Emerald · border */
+  --liminal-palette-emerald-6: #64b27a; /* Emerald · text */
+  --liminal-palette-emerald-7: #74CE8E; /* Emerald · text (approved) */
+  --liminal-palette-teal-1: #12342f; /* Teal · fill */
+  --liminal-palette-teal-2: #1d4b44; /* Teal · fill */
+  --liminal-palette-teal-3: #29635a; /* Teal · fill */
+  --liminal-palette-teal-4: #367c71; /* Teal · border */
+  --liminal-palette-teal-5: #449689; /* Teal · border */
+  --liminal-palette-teal-6: #51b1a2; /* Teal · text */
+  --liminal-palette-teal-7: #5FCDBB; /* Teal · text (approved) */
+  --liminal-palette-cyan-1: #0e3139; /* Cyan · fill */
+  --liminal-palette-cyan-2: #194752; /* Cyan · fill */
+  --liminal-palette-cyan-3: #245f6c; /* Cyan · fill */
+  --liminal-palette-cyan-4: #307788; /* Cyan · border */
+  --liminal-palette-cyan-5: #3c91a4; /* Cyan · border */
+  --liminal-palette-cyan-6: #49abc2; /* Cyan · text */
+  --liminal-palette-cyan-7: #56C6E0; /* Cyan · text (approved) */
+  --liminal-palette-sapphire-1: #07203b; /* Sapphire · fill */
+  --liminal-palette-sapphire-2: #0c335e; /* Sapphire · fill */
+  --liminal-palette-sapphire-3: #1a487c; /* Sapphire · fill */
+  --liminal-palette-sapphire-4: #235fa1; /* Sapphire · border */
+  --liminal-palette-sapphire-5: #2e76c5; /* Sapphire · border */
+  --liminal-palette-sapphire-6: #3f8ee7; /* Sapphire · text */
+  --liminal-palette-sapphire-7: #6FA8EC; /* Sapphire · text (approved) */
+  --liminal-palette-indigo-1: #120d56; /* Indigo · fill */
+  --liminal-palette-indigo-2: #201982; /* Indigo · fill */
+  --liminal-palette-indigo-3: #2f27b1; /* Indigo · fill */
+  --liminal-palette-indigo-4: #3f34e2; /* Indigo · border */
+  --liminal-palette-indigo-5: #535ee7; /* Indigo · border */
+  --liminal-palette-indigo-6: #6e7feb; /* Indigo · text */
+  --liminal-palette-indigo-7: #8B9CF0; /* Indigo · text (approved) */
+  --liminal-palette-violet-1: #210b40; /* Violet · fill */
+  --liminal-palette-violet-2: #371764; /* Violet · fill */
+  --liminal-palette-violet-3: #4f248b; /* Violet · fill */
+  --liminal-palette-violet-4: #6831b4; /* Violet · border */
+  --liminal-palette-violet-5: #8240de; /* Violet · border */
+  --liminal-palette-violet-6: #9569e5; /* Violet · text */
+  --liminal-palette-violet-7: #A98BEA; /* Violet · text (approved) */
+  --liminal-palette-fuchsia-1: #2a122e; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-2: #432149; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-3: #5d3066; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-4: #794184; /* Fuchsia · border */
+  --liminal-palette-fuchsia-5: #9652a3; /* Fuchsia · border */
+  --liminal-palette-fuchsia-6: #b564c4; /* Fuchsia · text */
+  --liminal-palette-fuchsia-7: #C983D6; /* Fuchsia · text (approved) */
+  --liminal-palette-rose-1: #341123; /* Rose · fill */
+  --liminal-palette-rose-2: #511f38; /* Rose · fill */
+  --liminal-palette-rose-3: #6f2e4e; /* Rose · fill */
+  --liminal-palette-rose-4: #8f3d66; /* Rose · border */
+  --liminal-palette-rose-5: #b04d7e; /* Rose · border */
+  --liminal-palette-rose-6: #d35d98; /* Rose · text */
+  --liminal-palette-rose-7: #E083AE; /* Rose · text (approved) */
 
   /* ── 10. SPACING (atom 4) ────────────────────────────────────── */
   --liminal-space-0: 2px; /* sub-atom: optical only */
@@ -323,7 +409,7 @@
   --liminal-brand-active: #DDE1E8;
   --liminal-brand-subtle: rgba(233, 236, 242, 0.08);
 
-  /* ── 9. EXTENDED SPECTRUM (12 hues) ──────────────────────────── */
+  /* ── 9. EXTENDED SPECTRUM (12 hues · step 7 of the palette) ──── */
   --liminal-hue-15: #E88A93; /* Ruby */
   --liminal-hue-40: #E8A87C; /* Coral */
   --liminal-hue-75: #D9BE6E; /* Amber */
@@ -336,6 +422,92 @@
   --liminal-hue-290: #A98BEA; /* Violet */
   --liminal-hue-320: #C983D6; /* Fuchsia */
   --liminal-hue-350: #E083AE; /* Rose */
+
+  /* ── 9.5 PALETTE (12 hues × 7 steps · §6.11) ─────────────────── */
+  --liminal-palette-ruby-1: #3e1118; /* Ruby · fill */
+  --liminal-palette-ruby-2: #5d1d28; /* Ruby · fill */
+  --liminal-palette-ruby-3: #7e2b38; /* Ruby · fill */
+  --liminal-palette-ruby-4: #a03949; /* Ruby · border */
+  --liminal-palette-ruby-5: #c4475b; /* Ruby · border */
+  --liminal-palette-ruby-6: #e25f72; /* Ruby · text */
+  --liminal-palette-ruby-7: #E88A93; /* Ruby · text (approved) */
+  --liminal-palette-coral-1: #412714; /* Coral · fill */
+  --liminal-palette-coral-2: #5c3a20; /* Coral · fill */
+  --liminal-palette-coral-3: #794d2d; /* Coral · fill */
+  --liminal-palette-coral-4: #96613b; /* Coral · border */
+  --liminal-palette-coral-5: #b57648; /* Coral · border */
+  --liminal-palette-coral-6: #d58c57; /* Coral · text */
+  --liminal-palette-coral-7: #E8A87C; /* Coral · text (approved) */
+  --liminal-palette-amber-1: #3d341a; /* Amber · fill */
+  --liminal-palette-amber-2: #544926; /* Amber · fill */
+  --liminal-palette-amber-3: #6d5f34; /* Amber · fill */
+  --liminal-palette-amber-4: #877542; /* Amber · border */
+  --liminal-palette-amber-5: #a18d50; /* Amber · border */
+  --liminal-palette-amber-6: #bda55f; /* Amber · text */
+  --liminal-palette-amber-7: #D9BE6E; /* Amber · text (approved) */
+  --liminal-palette-lime-1: #2c371b; /* Lime · fill */
+  --liminal-palette-lime-2: #3e4e28; /* Lime · fill */
+  --liminal-palette-lime-3: #526536; /* Lime · fill */
+  --liminal-palette-lime-4: #667e45; /* Lime · border */
+  --liminal-palette-lime-5: #7c9754; /* Lime · border */
+  --liminal-palette-lime-6: #92b164; /* Lime · text */
+  --liminal-palette-lime-7: #A8CC74; /* Lime · text (approved) */
+  --liminal-palette-emerald-1: #193421; /* Emerald · fill */
+  --liminal-palette-emerald-2: #274b31; /* Emerald · fill */
+  --liminal-palette-emerald-3: #356442; /* Emerald · fill */
+  --liminal-palette-emerald-4: #447d54; /* Emerald · border */
+  --liminal-palette-emerald-5: #549767; /* Emerald · border */
+  --liminal-palette-emerald-6: #64b27a; /* Emerald · text */
+  --liminal-palette-emerald-7: #74CE8E; /* Emerald · text (approved) */
+  --liminal-palette-teal-1: #12342f; /* Teal · fill */
+  --liminal-palette-teal-2: #1d4b44; /* Teal · fill */
+  --liminal-palette-teal-3: #29635a; /* Teal · fill */
+  --liminal-palette-teal-4: #367c71; /* Teal · border */
+  --liminal-palette-teal-5: #449689; /* Teal · border */
+  --liminal-palette-teal-6: #51b1a2; /* Teal · text */
+  --liminal-palette-teal-7: #5FCDBB; /* Teal · text (approved) */
+  --liminal-palette-cyan-1: #0e3139; /* Cyan · fill */
+  --liminal-palette-cyan-2: #194752; /* Cyan · fill */
+  --liminal-palette-cyan-3: #245f6c; /* Cyan · fill */
+  --liminal-palette-cyan-4: #307788; /* Cyan · border */
+  --liminal-palette-cyan-5: #3c91a4; /* Cyan · border */
+  --liminal-palette-cyan-6: #49abc2; /* Cyan · text */
+  --liminal-palette-cyan-7: #56C6E0; /* Cyan · text (approved) */
+  --liminal-palette-sapphire-1: #07203b; /* Sapphire · fill */
+  --liminal-palette-sapphire-2: #0c335e; /* Sapphire · fill */
+  --liminal-palette-sapphire-3: #1a487c; /* Sapphire · fill */
+  --liminal-palette-sapphire-4: #235fa1; /* Sapphire · border */
+  --liminal-palette-sapphire-5: #2e76c5; /* Sapphire · border */
+  --liminal-palette-sapphire-6: #3f8ee7; /* Sapphire · text */
+  --liminal-palette-sapphire-7: #6FA8EC; /* Sapphire · text (approved) */
+  --liminal-palette-indigo-1: #120d56; /* Indigo · fill */
+  --liminal-palette-indigo-2: #201982; /* Indigo · fill */
+  --liminal-palette-indigo-3: #2f27b1; /* Indigo · fill */
+  --liminal-palette-indigo-4: #3f34e2; /* Indigo · border */
+  --liminal-palette-indigo-5: #535ee7; /* Indigo · border */
+  --liminal-palette-indigo-6: #6e7feb; /* Indigo · text */
+  --liminal-palette-indigo-7: #8B9CF0; /* Indigo · text (approved) */
+  --liminal-palette-violet-1: #210b40; /* Violet · fill */
+  --liminal-palette-violet-2: #371764; /* Violet · fill */
+  --liminal-palette-violet-3: #4f248b; /* Violet · fill */
+  --liminal-palette-violet-4: #6831b4; /* Violet · border */
+  --liminal-palette-violet-5: #8240de; /* Violet · border */
+  --liminal-palette-violet-6: #9569e5; /* Violet · text */
+  --liminal-palette-violet-7: #A98BEA; /* Violet · text (approved) */
+  --liminal-palette-fuchsia-1: #2a122e; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-2: #432149; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-3: #5d3066; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-4: #794184; /* Fuchsia · border */
+  --liminal-palette-fuchsia-5: #9652a3; /* Fuchsia · border */
+  --liminal-palette-fuchsia-6: #b564c4; /* Fuchsia · text */
+  --liminal-palette-fuchsia-7: #C983D6; /* Fuchsia · text (approved) */
+  --liminal-palette-rose-1: #341123; /* Rose · fill */
+  --liminal-palette-rose-2: #511f38; /* Rose · fill */
+  --liminal-palette-rose-3: #6f2e4e; /* Rose · fill */
+  --liminal-palette-rose-4: #8f3d66; /* Rose · border */
+  --liminal-palette-rose-5: #b04d7e; /* Rose · border */
+  --liminal-palette-rose-6: #d35d98; /* Rose · text */
+  --liminal-palette-rose-7: #E083AE; /* Rose · text (approved) */
 
   /* ── 10. SPACING (atom 4) ────────────────────────────────────── */
   --liminal-space-0: 2px; /* sub-atom: optical only */

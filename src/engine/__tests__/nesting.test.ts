@@ -4,8 +4,9 @@ import { resolve } from 'node:path';
 import { getDirectionalRim, getLadderColor, RIM } from '../spec-engine';
 import { shadowPeakAlpha } from '../liminal-shadow';
 import { oklchLightness } from '../liminal-color-math';
-import { NEST_MIN, CONTROL_LIFT, resolveInset, resolveSurface, ROLE_LEVEL, ROLE_RIM, resolveBorderLevel, allowedHost, checkPlacement, resolvedLevel, PLACEMENT_EXEMPTIONS } from '../liminal-surface';
+import { NEST_MIN, CONTROL_LIFT, resolveInset, resolveSurface, ROLE_LEVEL, ROLE_RIM, resolveBorderLevel, allowedHost, checkPlacement, resolvedLevel, PLACEMENT_EXEMPTIONS, RELATIONSHIP_ROLES } from '../liminal-surface';
 import { LADDER, PERCEPTUAL_QUANTUM, LADDER_STEP, CANVAS_L, CEILING_IS_HARD } from '../liminal-ladder';
+import { ZERO_ABSOLUTE } from './zero-state';
 import type { SurfaceRole } from '../liminal-surface';
 
 /**
@@ -271,7 +272,25 @@ describe('Law 2 — a layer sits on the one below it, and the gap is exactly one
       expect(e.reason.length, `${e.role} on ${e.on} has no reason`).toBeGreaterThan(20);
       expect(checkPlacement({ role: e.role, on: e.on }).ok).toBe(true);
     }
-    expect(PLACEMENT_EXEMPTIONS.length, 'there is more than one kind of exemption').toBe(2);
+    // ONE KIND of exemption, counted by kind and not by rows: a RELATIONSHIP
+    // role at the CEILING. `region` joined `control` and `well` (2026-10-20),
+    // so the list is now roles × the two floating hosts that clamp — and the
+    // assertion is derived, so a fourth relationship role cannot sneak past
+    // and a non-relationship exemption cannot be added without failing here.
+    const floatingHosts: SurfaceRole[] = ['modal', 'toast'];
+    expect(PLACEMENT_EXEMPTIONS.length, 'exemptions = relationship roles × floating hosts').toBe(
+      RELATIONSHIP_ROLES.length * floatingHosts.length,
+    );
+    for (const e of PLACEMENT_EXEMPTIONS) {
+      expect(RELATIONSHIP_ROLES, `${e.role} is exempt but is not a relationship role`).toContain(e.role);
+      expect(floatingHosts, `${e.role} on ${e.on}: only a floating host clamps`).toContain(e.on);
+    }
+    // AND THE EXEMPTION IS LOAD-BEARING WHERE IT MUST BE: on the toast there is
+    // no step above, so without the row the guard would refuse. On the modal
+    // the lift still fits (7+1=8) — its rows are the same KIND, written down so
+    // the list stays roles × hosts and a reader never wonders why modal is absent.
+    expect(resolvedLevel('control', 'toast'), 'toast clamps').toBe(ROLE_LEVEL.toast);
+    expect(resolvedLevel('control', 'modal'), 'modal still has the step above').toBe(ROLE_LEVEL.modal + 1);
   });
 
   it('and every legal placement is accepted', () => {
@@ -302,7 +321,7 @@ describe('Law 2 — a layer sits on the one below it, and the gap is exactly one
  * declared anywhere, so the rule can only check what is written down.
  */
 describe('Law 2 — against the components that declare a host', () => {
-  it('every declared placement is legal', async () => {
+  it.skipIf(ZERO_ABSOLUTE)('every declared placement is legal', async () => {
     const { readFileSync, readdirSync, statSync } = await import('node:fs');
     const { join } = await import('node:path');
     const walk = (dir: string): string[] => {

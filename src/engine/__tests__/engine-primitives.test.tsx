@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { render, cleanup, renderHook, act, fireEvent } from '@testing-library/react';
+import { render, cleanup, renderHook, act } from '@testing-library/react';
 import React, { useRef } from 'react';
 import { createVariants } from '../liminal-variants';
 import { composeRefs, composeEventHandlers, mergeSlotProps, Slot } from '../liminal-slot';

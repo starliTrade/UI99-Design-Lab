@@ -12,6 +12,7 @@
  */
 export * from './spec-engine';
 export * from './liminal-color-engine';
+export * from './liminal-palette';
 export * from './liminal-layout-engine';
 export * from './liminal-motion-engine';
 export * from './liminal-component';

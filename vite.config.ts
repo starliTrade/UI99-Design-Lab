@@ -9,13 +9,11 @@ export default defineConfig({
   ],
   build: {
     rollupOptions: {
-      // TWO ENTRIES, TWO JOBS. `index.html` is the site — a product page that tells a
-      // story. `studio.html` is the tool that produces and inspects components. Running
-      // one inside the other meant every change to the tool touched the page a visitor
-      // reads.
+      // ZERO ABSOLUTE: only `index.html` remains — the site that shows the living
+      // engine. `studio.html` and the app entries were archived with the components;
+      // they return when the components are born again.
       input: {
         main: 'index.html',
-        studio: 'studio.html',
       },
     },
   },

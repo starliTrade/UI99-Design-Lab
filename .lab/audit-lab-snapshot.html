@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LIMINAL — ممیزیِ هسته (اسنپ‌شاتِ زنده از موتور)</title>
+<style>
+:root {
+
+  /* ── 1. TONAL LADDER ─────────────────────────────────────────── */
+  --liminal-s0: #060709; /* canvas */
+  --liminal-s0: oklch(0.1280000 0.0069 258.4);
+  --liminal-s1: #07090b;
+  --liminal-s1: oklch(0.1374750 0.0069 258.4);
+  --liminal-s2: #090b0d;
+  --liminal-s2: oklch(0.1469500 0.0069 258.4);
+  --liminal-s3: #0b0d0f;
+  --liminal-s3: oklch(0.1564250 0.0069 258.4);
+  --liminal-s4: #0d0f12;
+  --liminal-s4: oklch(0.1659000 0.0069 258.4);
+  --liminal-s5: #0f1114;
+  --liminal-s5: oklch(0.1753750 0.0069 258.4);
+  --liminal-s6: #111316;
+  --liminal-s6: oklch(0.1848500 0.0069 258.4);
+  --liminal-s7: #131518;
+  --liminal-s7: oklch(0.1943250 0.0069 258.4);
+  --liminal-s8: #15171a;
+  --liminal-s8: oklch(0.2038000 0.0069 258.4);
+  --liminal-s0-5: #07080a;
+  --liminal-s0-5: oklch(0.1327375 0.0069 258.4);
+  --liminal-s1-5: #080a0c;
+  --liminal-s1-5: oklch(0.1422125 0.0069 258.4);
+  --liminal-s2-5: #0a0c0e;
+  --liminal-s2-5: oklch(0.1516875 0.0069 258.4);
+  --liminal-s3-5: #0c0e10;
+  --liminal-s3-5: oklch(0.1611625 0.0069 258.4);
+  --liminal-s4-5: #0e1013;
+  --liminal-s4-5: oklch(0.1706375 0.0069 258.4);
+  --liminal-s5-5: #101215;
+  --liminal-s5-5: oklch(0.1801125 0.0069 258.4);
+  --liminal-s6-5: #121417;
+  --liminal-s6-5: oklch(0.1895875 0.0069 258.4);
+  --liminal-s7-5: #141619;
+  --liminal-s7-5: oklch(0.1990625 0.0069 258.4);
+  --liminal-s-minus-1: #030406; /* penumbra */
+  --liminal-s-minus-2: #010203; /* contact umbra */
+
+  /* ── 2. RIM ──────────────────────────────────────────────────── */
+  --liminal-rim-1-top: #0a0c0e;
+  --liminal-rim-1-side: #090b0d;
+  --liminal-rim-1-bottom: #080a0c;
+  --liminal-rim-2-top: #0c0e10;
+  --liminal-rim-2-side: #0b0d0f;
+  --liminal-rim-2-bottom: #0a0c0e;
+  --liminal-rim-3-top: #0e1013;
+  --liminal-rim-3-side: #0d0f12;
+  --liminal-rim-3-bottom: #0c0e10;
+
+  /* ── 3. SHADOW ───────────────────────────────────────────────── */
+  --liminal-shadow-menu: 0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-popover: 0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-modal: 0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-toast: 0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991);
+
+  /* ── 4. SURFACE TINT (fills — never for type) ────────────────── */
+  --liminal-tint-faint: rgba(255, 255, 255, 0.01);
+  --liminal-tint-subtle: rgba(255, 255, 255, 0.03);
+  --liminal-tint-medium: rgba(255, 255, 255, 0.06);
+  --liminal-tint-strong: rgba(255, 255, 255, 0.20);
+  --liminal-tint-solid: rgba(255, 255, 255, 0.40);
+
+  /* ── 5. VEIL ─────────────────────────────────────────────────── */
+  --liminal-veil-backdrop: rgba(3, 4, 6, 0.60);
+  --liminal-veil-canvas: rgba(6, 7, 9, 0.85);
+
+  /* ── 6. TEXT (never pure white) ──────────────────────────────── */
+  --liminal-text-primary: rgba(255, 255, 255, 0.89); /* S0 alpha — safe on every surface */
+  --liminal-text-secondary: rgba(255, 255, 255, 0.79); /* S0 alpha — safe on every surface */
+  --liminal-text-tertiary: rgba(255, 255, 255, 0.79); /* S0 floor; AA ≥4.5:1 */
+  --liminal-text-quaternary: rgba(255, 255, 255, 0.448); /* ≥3:1, non-text only */
+
+  /* ── 7. SEMANTICS ────────────────────────────────────────────── */
+  --liminal-success: #00875d;
+  --liminal-success-text: #54e5aa;
+  --liminal-success-subtle: rgba(0, 135, 93, 0.1);
+  --liminal-success-border: rgba(0, 135, 93, 0.22);
+  --liminal-success-on: #FFFFFF;
+  --liminal-warning: #946a00;
+  --liminal-warning-text: #ffc348;
+  --liminal-warning-subtle: rgba(148, 106, 0, 0.1);
+  --liminal-warning-border: rgba(148, 106, 0, 0.22);
+  --liminal-warning-on: #FFFFFF;
+  --liminal-danger: #ba4646;
+  --liminal-danger-text: #ffbdb6;
+  --liminal-danger-subtle: rgba(186, 70, 70, 0.1);
+  --liminal-danger-border: rgba(186, 70, 70, 0.22);
+  --liminal-danger-on: #FFFFFF;
+  --liminal-info: #3271c8;
+  --liminal-info-text: #a4d1ff;
+  --liminal-info-subtle: rgba(50, 113, 200, 0.1);
+  --liminal-info-border: rgba(50, 113, 200, 0.22);
+  --liminal-info-on: #FFFFFF;
+
+  /* ── 8. BRAND ────────────────────────────────────────────────── */
+  --liminal-brand: #E9ECF2;
+  --liminal-brand-on: #060709;
+  --liminal-brand-hover: #F5F7FA;
+  --liminal-brand-active: #DDE1E8;
+  --liminal-brand-subtle: rgba(233, 236, 242, 0.08);
+
+  /* ── 9. EXTENDED SPECTRUM (12 hues · step 7 of the palette) ──── */
+  --liminal-hue-15: #E88A93; /* Ruby */
+  --liminal-hue-40: #E8A87C; /* Coral */
+  --liminal-hue-75: #D9BE6E; /* Amber */
+  --liminal-hue-110: #A8CC74; /* Lime */
+  --liminal-hue-145: #74CE8E; /* Emerald */
+  --liminal-hue-175: #5FCDBB; /* Teal */
+  --liminal-hue-200: #56C6E0; /* Cyan */
+  --liminal-hue-230: #6FA8EC; /* Sapphire */
+  --liminal-hue-260: #8B9CF0; /* Indigo */
+  --liminal-hue-290: #A98BEA; /* Violet */
+  --liminal-hue-320: #C983D6; /* Fuchsia */
+  --liminal-hue-350: #E083AE; /* Rose */
+
+  /* ── 9.5 PALETTE (12 hues × 7 steps · §6.11) ─────────────────── */
+  --liminal-palette-ruby-1: #3e1118; /* Ruby · fill */
+  --liminal-palette-ruby-2: #5d1d28; /* Ruby · fill */
+  --liminal-palette-ruby-3: #7e2b38; /* Ruby · fill */
+  --liminal-palette-ruby-4: #a03949; /* Ruby · border */
+  --liminal-palette-ruby-5: #c4475b; /* Ruby · border */
+  --liminal-palette-ruby-6: #e25f72; /* Ruby · text */
+  --liminal-palette-ruby-7: #E88A93; /* Ruby · text (approved) */
+  --liminal-palette-coral-1: #412714; /* Coral · fill */
+  --liminal-palette-coral-2: #5c3a20; /* Coral · fill */
+  --liminal-palette-coral-3: #794d2d; /* Coral · fill */
+  --liminal-palette-coral-4: #96613b; /* Coral · border */
+  --liminal-palette-coral-5: #b57648; /* Coral · border */
+  --liminal-palette-coral-6: #d58c57; /* Coral · text */
+  --liminal-palette-coral-7: #E8A87C; /* Coral · text (approved) */
+  --liminal-palette-amber-1: #3d341a; /* Amber · fill */
+  --liminal-palette-amber-2: #544926; /* Amber · fill */
+  --liminal-palette-amber-3: #6d5f34; /* Amber · fill */
+  --liminal-palette-amber-4: #877542; /* Amber · border */
+  --liminal-palette-amber-5: #a18d50; /* Amber · border */
+  --liminal-palette-amber-6: #bda55f; /* Amber · text */
+  --liminal-palette-amber-7: #D9BE6E; /* Amber · text (approved) */
+  --liminal-palette-lime-1: #2c371b; /* Lime · fill */
+  --liminal-palette-lime-2: #3e4e28; /* Lime · fill */
+  --liminal-palette-lime-3: #526536; /* Lime · fill */
+  --liminal-palette-lime-4: #667e45; /* Lime · border */
+  --liminal-palette-lime-5: #7c9754; /* Lime · border */
+  --liminal-palette-lime-6: #92b164; /* Lime · text */
+  --liminal-palette-lime-7: #A8CC74; /* Lime · text (approved) */
+  --liminal-palette-emerald-1: #193421; /* Emerald · fill */
+  --liminal-palette-emerald-2: #274b31; /* Emerald · fill */
+  --liminal-palette-emerald-3: #356442; /* Emerald · fill */
+  --liminal-palette-emerald-4: #447d54; /* Emerald · border */
+  --liminal-palette-emerald-5: #549767; /* Emerald · border */
+  --liminal-palette-emerald-6: #64b27a; /* Emerald · text */
+  --liminal-palette-emerald-7: #74CE8E; /* Emerald · text (approved) */
+  --liminal-palette-teal-1: #12342f; /* Teal · fill */
+  --liminal-palette-teal-2: #1d4b44; /* Teal · fill */
+  --liminal-palette-teal-3: #29635a; /* Teal · fill */
+  --liminal-palette-teal-4: #367c71; /* Teal · border */
+  --liminal-palette-teal-5: #449689; /* Teal · border */
+  --liminal-palette-teal-6: #51b1a2; /* Teal · text */
+  --liminal-palette-teal-7: #5FCDBB; /* Teal · text (approved) */
+  --liminal-palette-cyan-1: #0e3139; /* Cyan · fill */
+  --liminal-palette-cyan-2: #194752; /* Cyan · fill */
+  --liminal-palette-cyan-3: #245f6c; /* Cyan · fill */
+  --liminal-palette-cyan-4: #307788; /* Cyan · border */
+  --liminal-palette-cyan-5: #3c91a4; /* Cyan · border */
+  --liminal-palette-cyan-6: #49abc2; /* Cyan · text */
+  --liminal-palette-cyan-7: #56C6E0; /* Cyan · text (approved) */
+  --liminal-palette-sapphire-1: #07203b; /* Sapphire · fill */
+  --liminal-palette-sapphire-2: #0c335e; /* Sapphire · fill */
+  --liminal-palette-sapphire-3: #1a487c; /* Sapphire · fill */
+  --liminal-palette-sapphire-4: #235fa1; /* Sapphire · border */
+  --liminal-palette-sapphire-5: #2e76c5; /* Sapphire · border */
+  --liminal-palette-sapphire-6: #3f8ee7; /* Sapphire · text */
+  --liminal-palette-sapphire-7: #6FA8EC; /* Sapphire · text (approved) */
+  --liminal-palette-indigo-1: #120d56; /* Indigo · fill */
+  --liminal-palette-indigo-2: #201982; /* Indigo · fill */
+  --liminal-palette-indigo-3: #2f27b1; /* Indigo · fill */
+  --liminal-palette-indigo-4: #3f34e2; /* Indigo · border */
+  --liminal-palette-indigo-5: #535ee7; /* Indigo · border */
+  --liminal-palette-indigo-6: #6e7feb; /* Indigo · text */
+  --liminal-palette-indigo-7: #8B9CF0; /* Indigo · text (approved) */
+  --liminal-palette-violet-1: #210b40; /* Violet · fill */
+  --liminal-palette-violet-2: #371764; /* Violet · fill */
+  --liminal-palette-violet-3: #4f248b; /* Violet · fill */
+  --liminal-palette-violet-4: #6831b4; /* Violet · border */
+  --liminal-palette-violet-5: #8240de; /* Violet · border */
+  --liminal-palette-violet-6: #9569e5; /* Violet · text */
+  --liminal-palette-violet-7: #A98BEA; /* Violet · text (approved) */
+  --liminal-palette-fuchsia-1: #2a122e; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-2: #432149; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-3: #5d3066; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-4: #794184; /* Fuchsia · border */
+  --liminal-palette-fuchsia-5: #9652a3; /* Fuchsia · border */
+  --liminal-palette-fuchsia-6: #b564c4; /* Fuchsia · text */
+  --liminal-palette-fuchsia-7: #C983D6; /* Fuchsia · text (approved) */
+  --liminal-palette-rose-1: #341123; /* Rose · fill */
+  --liminal-palette-rose-2: #511f38; /* Rose · fill */
+  --liminal-palette-rose-3: #6f2e4e; /* Rose · fill */
+  --liminal-palette-rose-4: #8f3d66; /* Rose · border */
+  --liminal-palette-rose-5: #b04d7e; /* Rose · border */
+  --liminal-palette-rose-6: #d35d98; /* Rose · text */
+  --liminal-palette-rose-7: #E083AE; /* Rose · text (approved) */
+
+  /* ── 10. SPACING (atom 4) ────────────────────────────────────── */
+  --liminal-space-0: 2px; /* sub-atom: optical only */
+  --liminal-space-1: 4px;
+  --liminal-space-2: 8px;
+  --liminal-space-3: 12px;
+  --liminal-space-4: 16px;
+  --liminal-space-5: 24px;
+  --liminal-space-6: 32px;
+  --liminal-space-7: 48px;
+  --liminal-space-8: 64px;
+  --liminal-space-9: 96px;
+  --liminal-control-sm: 32px;
+  --liminal-control-md: 44px;
+  --liminal-control-lg: 52px;
+  --liminal-target-min: 44px; /* WCAG 2.5.5 AAA */
+  --liminal-border-hairline: 1px;
+  --liminal-border-emphasis: 2px;
+
+  /* ── 11. RADIUS ──────────────────────────────────────────────── */
+  --liminal-radius-chip: 6px;
+  --liminal-radius-control: 10px;
+  --liminal-radius-card: 16px;
+  --liminal-radius-panel: 20px;
+  --liminal-radius-container: 24px;
+  --liminal-radius-full: 9999px;
+
+  /* ── 12. TYPE (modular 1.2, fluid base) ──────────────────────── */
+  --liminal-type-ratio: 1.2; /* fixed — this is the design */
+  --liminal-type-base: clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem); /* fluid 14→16.5px; rem-based for WCAG 1.4.4 */
+  --liminal-fs-1: calc(var(--liminal-type-base) * 0.694444);
+  --liminal-lh-1: 1.4167; /* unitless multiplier */
+  --liminal-weight-1: 400;
+  --liminal-fs-2: calc(var(--liminal-type-base) * 0.833333);
+  --liminal-lh-2: 1.3472; /* unitless multiplier */
+  --liminal-weight-2: 500;
+  --liminal-fs-3: var(--liminal-type-base);
+  --liminal-lh-3: 1.2894; /* unitless multiplier */
+  --liminal-weight-3: 400;
+  --liminal-fs-4: calc(var(--liminal-type-base) * 1.200000);
+  --liminal-lh-4: 1.2411; /* unitless multiplier */
+  --liminal-weight-4: 600;
+  --liminal-fs-5: calc(var(--liminal-type-base) * 1.440000);
+  --liminal-lh-5: 1.2009; /* unitless multiplier */
+  --liminal-weight-5: 600;
+  --liminal-fs-6: calc(var(--liminal-type-base) * 1.728000);
+  --liminal-lh-6: 1.1674; /* unitless multiplier */
+  --liminal-weight-6: 600;
+  --liminal-fs-7: calc(var(--liminal-type-base) * 2.073600);
+  --liminal-lh-7: 1.1395; /* unitless multiplier */
+  --liminal-weight-7: 600;
+  --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
+  --liminal-lh-8: 1.1163; /* unitless multiplier */
+  --liminal-weight-8: 700;
+  --liminal-fs-9: calc(var(--liminal-type-base) * 2.985984);
+  --liminal-lh-9: 1.0969; /* unitless multiplier */
+  --liminal-weight-9: 700;
+  --liminal-fs-10: calc(var(--liminal-type-base) * 3.583181);
+  --liminal-lh-10: 1.0808; /* unitless multiplier */
+  --liminal-weight-10: 700;
+
+  /* ── 12b. FONTS ──────────────────────────────────────────────── */
+  --liminal-font-en: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --liminal-font-fa: Vazirmatn, "Vazirmatn RD", "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif;
+  --liminal-line-height-fa-floor: 1.5625; /* from Vazirmatn metrics */
+
+  /* ── 13. MOTION ──────────────────────────────────────────────── */
+  --liminal-duration-instant: 100ms;
+  --liminal-duration-fast: 150ms;
+  --liminal-duration-normal: 200ms;
+  --liminal-duration-slow: 250ms;
+  --liminal-duration-slower: 350ms;
+  --liminal-duration-dramatic: 500ms;
+  --liminal-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --liminal-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --liminal-ease-inOut: cubic-bezier(0.65, 0, 0.35, 1);
+  --liminal-ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --liminal-ease-linear: linear;
+
+  /* ── 14. LAYER ───────────────────────────────────────────────── */
+  --liminal-z-canvas: 0;
+  --liminal-z-chrome: 1;
+  --liminal-z-work: 2;
+  --liminal-z-panel: 3;
+  --liminal-z-control: 4;
+  --liminal-z-menu: 5;
+  --liminal-z-popover: 6;
+  --liminal-z-modal: 7;
+  --liminal-z-toast: 8;
+  --liminal-z-dropdown: 5;
+  --liminal-z-tooltip: 6;
+  --liminal-z-floating: 5;
+}
+
+.dark {
+
+  /* ── 1. TONAL LADDER ─────────────────────────────────────────── */
+  --liminal-s0: #060709; /* canvas */
+  --liminal-s0: oklch(0.1280000 0.0069 258.4);
+  --liminal-s1: #07090b;
+  --liminal-s1: oklch(0.1374750 0.0069 258.4);
+  --liminal-s2: #090b0d;
+  --liminal-s2: oklch(0.1469500 0.0069 258.4);
+  --liminal-s3: #0b0d0f;
+  --liminal-s3: oklch(0.1564250 0.0069 258.4);
+  --liminal-s4: #0d0f12;
+  --liminal-s4: oklch(0.1659000 0.0069 258.4);
+  --liminal-s5: #0f1114;
+  --liminal-s5: oklch(0.1753750 0.0069 258.4);
+  --liminal-s6: #111316;
+  --liminal-s6: oklch(0.1848500 0.0069 258.4);
+  --liminal-s7: #131518;
+  --liminal-s7: oklch(0.1943250 0.0069 258.4);
+  --liminal-s8: #15171a;
+  --liminal-s8: oklch(0.2038000 0.0069 258.4);
+  --liminal-s0-5: #07080a;
+  --liminal-s0-5: oklch(0.1327375 0.0069 258.4);
+  --liminal-s1-5: #080a0c;
+  --liminal-s1-5: oklch(0.1422125 0.0069 258.4);
+  --liminal-s2-5: #0a0c0e;
+  --liminal-s2-5: oklch(0.1516875 0.0069 258.4);
+  --liminal-s3-5: #0c0e10;
+  --liminal-s3-5: oklch(0.1611625 0.0069 258.4);
+  --liminal-s4-5: #0e1013;
+  --liminal-s4-5: oklch(0.1706375 0.0069 258.4);
+  --liminal-s5-5: #101215;
+  --liminal-s5-5: oklch(0.1801125 0.0069 258.4);
+  --liminal-s6-5: #121417;
+  --liminal-s6-5: oklch(0.1895875 0.0069 258.4);
+  --liminal-s7-5: #141619;
+  --liminal-s7-5: oklch(0.1990625 0.0069 258.4);
+  --liminal-s-minus-1: #030406; /* penumbra */
+  --liminal-s-minus-2: #010203; /* contact umbra */
+
+  /* ── 2. RIM ──────────────────────────────────────────────────── */
+  --liminal-rim-1-top: #0a0c0e;
+  --liminal-rim-1-side: #090b0d;
+  --liminal-rim-1-bottom: #080a0c;
+  --liminal-rim-2-top: #0c0e10;
+  --liminal-rim-2-side: #0b0d0f;
+  --liminal-rim-2-bottom: #0a0c0e;
+  --liminal-rim-3-top: #0e1013;
+  --liminal-rim-3-side: #0d0f12;
+  --liminal-rim-3-bottom: #0c0e10;
+
+  /* ── 3. SHADOW ───────────────────────────────────────────────── */
+  --liminal-shadow-menu: 0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-popover: 0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-modal: 0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-toast: 0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991);
+
+  /* ── 4. SURFACE TINT (fills — never for type) ────────────────── */
+  --liminal-tint-faint: rgba(255, 255, 255, 0.01);
+  --liminal-tint-subtle: rgba(255, 255, 255, 0.03);
+  --liminal-tint-medium: rgba(255, 255, 255, 0.06);
+  --liminal-tint-strong: rgba(255, 255, 255, 0.20);
+  --liminal-tint-solid: rgba(255, 255, 255, 0.40);
+
+  /* ── 5. VEIL ─────────────────────────────────────────────────── */
+  --liminal-veil-backdrop: rgba(3, 4, 6, 0.60);
+  --liminal-veil-canvas: rgba(6, 7, 9, 0.85);
+
+  /* ── 6. TEXT (never pure white) ──────────────────────────────── */
+  --liminal-text-primary: rgba(255, 255, 255, 0.89); /* S0 alpha — safe on every surface */
+  --liminal-text-secondary: rgba(255, 255, 255, 0.79); /* S0 alpha — safe on every surface */
+  --liminal-text-tertiary: rgba(255, 255, 255, 0.79); /* S0 floor; AA ≥4.5:1 */
+  --liminal-text-quaternary: rgba(255, 255, 255, 0.448); /* ≥3:1, non-text only */
+
+  /* ── 7. SEMANTICS ────────────────────────────────────────────── */
+  --liminal-success: #00875d;
+  --liminal-success-text: #54e5aa;
+  --liminal-success-subtle: rgba(0, 135, 93, 0.1);
+  --liminal-success-border: rgba(0, 135, 93, 0.22);
+  --liminal-success-on: #FFFFFF;
+  --liminal-warning: #946a00;
+  --liminal-warning-text: #ffc348;
+  --liminal-warning-subtle: rgba(148, 106, 0, 0.1);
+  --liminal-warning-border: rgba(148, 106, 0, 0.22);
+  --liminal-warning-on: #FFFFFF;
+  --liminal-danger: #ba4646;
+  --liminal-danger-text: #ffbdb6;
+  --liminal-danger-subtle: rgba(186, 70, 70, 0.1);
+  --liminal-danger-border: rgba(186, 70, 70, 0.22);
+  --liminal-danger-on: #FFFFFF;
+  --liminal-info: #3271c8;
+  --liminal-info-text: #a4d1ff;
+  --liminal-info-subtle: rgba(50, 113, 200, 0.1);
+  --liminal-info-border: rgba(50, 113, 200, 0.22);
+  --liminal-info-on: #FFFFFF;
+
+  /* ── 8. BRAND ────────────────────────────────────────────────── */
+  --liminal-brand: #E9ECF2;
+  --liminal-brand-on: #060709;
+  --liminal-brand-hover: #F5F7FA;
+  --liminal-brand-active: #DDE1E8;
+  --liminal-brand-subtle: rgba(233, 236, 242, 0.08);
+
+  /* ── 9. EXTENDED SPECTRUM (12 hues · step 7 of the palette) ──── */
+  --liminal-hue-15: #E88A93; /* Ruby */
+  --liminal-hue-40: #E8A87C; /* Coral */
+  --liminal-hue-75: #D9BE6E; /* Amber */
+  --liminal-hue-110: #A8CC74; /* Lime */
+  --liminal-hue-145: #74CE8E; /* Emerald */
+  --liminal-hue-175: #5FCDBB; /* Teal */
+  --liminal-hue-200: #56C6E0; /* Cyan */
+  --liminal-hue-230: #6FA8EC; /* Sapphire */
+  --liminal-hue-260: #8B9CF0; /* Indigo */
+  --liminal-hue-290: #A98BEA; /* Violet */
+  --liminal-hue-320: #C983D6; /* Fuchsia */
+  --liminal-hue-350: #E083AE; /* Rose */
+
+  /* ── 9.5 PALETTE (12 hues × 7 steps · §6.11) ─────────────────── */
+  --liminal-palette-ruby-1: #3e1118; /* Ruby · fill */
+  --liminal-palette-ruby-2: #5d1d28; /* Ruby · fill */
+  --liminal-palette-ruby-3: #7e2b38; /* Ruby · fill */
+  --liminal-palette-ruby-4: #a03949; /* Ruby · border */
+  --liminal-palette-ruby-5: #c4475b; /* Ruby · border */
+  --liminal-palette-ruby-6: #e25f72; /* Ruby · text */
+  --liminal-palette-ruby-7: #E88A93; /* Ruby · text (approved) */
+  --liminal-palette-coral-1: #412714; /* Coral · fill */
+  --liminal-palette-coral-2: #5c3a20; /* Coral · fill */
+  --liminal-palette-coral-3: #794d2d; /* Coral · fill */
+  --liminal-palette-coral-4: #96613b; /* Coral · border */
+  --liminal-palette-coral-5: #b57648; /* Coral · border */
+  --liminal-palette-coral-6: #d58c57; /* Coral · text */
+  --liminal-palette-coral-7: #E8A87C; /* Coral · text (approved) */
+  --liminal-palette-amber-1: #3d341a; /* Amber · fill */
+  --liminal-palette-amber-2: #544926; /* Amber · fill */
+  --liminal-palette-amber-3: #6d5f34; /* Amber · fill */
+  --liminal-palette-amber-4: #877542; /* Amber · border */
+  --liminal-palette-amber-5: #a18d50; /* Amber · border */
+  --liminal-palette-amber-6: #bda55f; /* Amber · text */
+  --liminal-palette-amber-7: #D9BE6E; /* Amber · text (approved) */
+  --liminal-palette-lime-1: #2c371b; /* Lime · fill */
+  --liminal-palette-lime-2: #3e4e28; /* Lime · fill */
+  --liminal-palette-lime-3: #526536; /* Lime · fill */
+  --liminal-palette-lime-4: #667e45; /* Lime · border */
+  --liminal-palette-lime-5: #7c9754; /* Lime · border */
+  --liminal-palette-lime-6: #92b164; /* Lime · text */
+  --liminal-palette-lime-7: #A8CC74; /* Lime · text (approved) */
+  --liminal-palette-emerald-1: #193421; /* Emerald · fill */
+  --liminal-palette-emerald-2: #274b31; /* Emerald · fill */
+  --liminal-palette-emerald-3: #356442; /* Emerald · fill */
+  --liminal-palette-emerald-4: #447d54; /* Emerald · border */
+  --liminal-palette-emerald-5: #549767; /* Emerald · border */
+  --liminal-palette-emerald-6: #64b27a; /* Emerald · text */
+  --liminal-palette-emerald-7: #74CE8E; /* Emerald · text (approved) */
+  --liminal-palette-teal-1: #12342f; /* Teal · fill */
+  --liminal-palette-teal-2: #1d4b44; /* Teal · fill */
+  --liminal-palette-teal-3: #29635a; /* Teal · fill */
+  --liminal-palette-teal-4: #367c71; /* Teal · border */
+  --liminal-palette-teal-5: #449689; /* Teal · border */
+  --liminal-palette-teal-6: #51b1a2; /* Teal · text */
+  --liminal-palette-teal-7: #5FCDBB; /* Teal · text (approved) */
+  --liminal-palette-cyan-1: #0e3139; /* Cyan · fill */
+  --liminal-palette-cyan-2: #194752; /* Cyan · fill */
+  --liminal-palette-cyan-3: #245f6c; /* Cyan · fill */
+  --liminal-palette-cyan-4: #307788; /* Cyan · border */
+  --liminal-palette-cyan-5: #3c91a4; /* Cyan · border */
+  --liminal-palette-cyan-6: #49abc2; /* Cyan · text */
+  --liminal-palette-cyan-7: #56C6E0; /* Cyan · text (approved) */
+  --liminal-palette-sapphire-1: #07203b; /* Sapphire · fill */
+  --liminal-palette-sapphire-2: #0c335e; /* Sapphire · fill */
+  --liminal-palette-sapphire-3: #1a487c; /* Sapphire · fill */
+  --liminal-palette-sapphire-4: #235fa1; /* Sapphire · border */
+  --liminal-palette-sapphire-5: #2e76c5; /* Sapphire · border */
+  --liminal-palette-sapphire-6: #3f8ee7; /* Sapphire · text */
+  --liminal-palette-sapphire-7: #6FA8EC; /* Sapphire · text (approved) */
+  --liminal-palette-indigo-1: #120d56; /* Indigo · fill */
+  --liminal-palette-indigo-2: #201982; /* Indigo · fill */
+  --liminal-palette-indigo-3: #2f27b1; /* Indigo · fill */
+  --liminal-palette-indigo-4: #3f34e2; /* Indigo · border */
+  --liminal-palette-indigo-5: #535ee7; /* Indigo · border */
+  --liminal-palette-indigo-6: #6e7feb; /* Indigo · text */
+  --liminal-palette-indigo-7: #8B9CF0; /* Indigo · text (approved) */
+  --liminal-palette-violet-1: #210b40; /* Violet · fill */
+  --liminal-palette-violet-2: #371764; /* Violet · fill */
+  --liminal-palette-violet-3: #4f248b; /* Violet · fill */
+  --liminal-palette-violet-4: #6831b4; /* Violet · border */
+  --liminal-palette-violet-5: #8240de; /* Violet · border */
+  --liminal-palette-violet-6: #9569e5; /* Violet · text */
+  --liminal-palette-violet-7: #A98BEA; /* Violet · text (approved) */
+  --liminal-palette-fuchsia-1: #2a122e; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-2: #432149; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-3: #5d3066; /* Fuchsia · fill */
+  --liminal-palette-fuchsia-4: #794184; /* Fuchsia · border */
+  --liminal-palette-fuchsia-5: #9652a3; /* Fuchsia · border */
+  --liminal-palette-fuchsia-6: #b564c4; /* Fuchsia · text */
+  --liminal-palette-fuchsia-7: #C983D6; /* Fuchsia · text (approved) */
+  --liminal-palette-rose-1: #341123; /* Rose · fill */
+  --liminal-palette-rose-2: #511f38; /* Rose · fill */
+  --liminal-palette-rose-3: #6f2e4e; /* Rose · fill */
+  --liminal-palette-rose-4: #8f3d66; /* Rose · border */
+  --liminal-palette-rose-5: #b04d7e; /* Rose · border */
+  --liminal-palette-rose-6: #d35d98; /* Rose · text */
+  --liminal-palette-rose-7: #E083AE; /* Rose · text (approved) */
+
+  /* ── 10. SPACING (atom 4) ────────────────────────────────────── */
+  --liminal-space-0: 2px; /* sub-atom: optical only */
+  --liminal-space-1: 4px;
+  --liminal-space-2: 8px;
+  --liminal-space-3: 12px;
+  --liminal-space-4: 16px;
+  --liminal-space-5: 24px;
+  --liminal-space-6: 32px;
+  --liminal-space-7: 48px;
+  --liminal-space-8: 64px;
+  --liminal-space-9: 96px;
+  --liminal-control-sm: 32px;
+  --liminal-control-md: 44px;
+  --liminal-control-lg: 52px;
+  --liminal-target-min: 44px; /* WCAG 2.5.5 AAA */
+  --liminal-border-hairline: 1px;
+  --liminal-border-emphasis: 2px;
+
+  /* ── 11. RADIUS ──────────────────────────────────────────────── */
+  --liminal-radius-chip: 6px;
+  --liminal-radius-control: 10px;
+  --liminal-radius-card: 16px;
+  --liminal-radius-panel: 20px;
+  --liminal-radius-container: 24px;
+  --liminal-radius-full: 9999px;
+
+  /* ── 12. TYPE (modular 1.2, fluid base) ──────────────────────── */
+  --liminal-type-ratio: 1.2; /* fixed — this is the design */
+  --liminal-type-base: clamp(0.875rem, 0.2232vw + 0.8304rem, 1.03125rem); /* fluid 14→16.5px; rem-based for WCAG 1.4.4 */
+  --liminal-fs-1: calc(var(--liminal-type-base) * 0.694444);
+  --liminal-lh-1: 1.4167; /* unitless multiplier */
+  --liminal-weight-1: 400;
+  --liminal-fs-2: calc(var(--liminal-type-base) * 0.833333);
+  --liminal-lh-2: 1.3472; /* unitless multiplier */
+  --liminal-weight-2: 500;
+  --liminal-fs-3: var(--liminal-type-base);
+  --liminal-lh-3: 1.2894; /* unitless multiplier */
+  --liminal-weight-3: 400;
+  --liminal-fs-4: calc(var(--liminal-type-base) * 1.200000);
+  --liminal-lh-4: 1.2411; /* unitless multiplier */
+  --liminal-weight-4: 600;
+  --liminal-fs-5: calc(var(--liminal-type-base) * 1.440000);
+  --liminal-lh-5: 1.2009; /* unitless multiplier */
+  --liminal-weight-5: 600;
+  --liminal-fs-6: calc(var(--liminal-type-base) * 1.728000);
+  --liminal-lh-6: 1.1674; /* unitless multiplier */
+  --liminal-weight-6: 600;
+  --liminal-fs-7: calc(var(--liminal-type-base) * 2.073600);
+  --liminal-lh-7: 1.1395; /* unitless multiplier */
+  --liminal-weight-7: 600;
+  --liminal-fs-8: calc(var(--liminal-type-base) * 2.488320);
+  --liminal-lh-8: 1.1163; /* unitless multiplier */
+  --liminal-weight-8: 700;
+  --liminal-fs-9: calc(var(--liminal-type-base) * 2.985984);
+  --liminal-lh-9: 1.0969; /* unitless multiplier */
+  --liminal-weight-9: 700;
+  --liminal-fs-10: calc(var(--liminal-type-base) * 3.583181);
+  --liminal-lh-10: 1.0808; /* unitless multiplier */
+  --liminal-weight-10: 700;
+
+  /* ── 12b. FONTS ──────────────────────────────────────────────── */
+  --liminal-font-en: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --liminal-font-fa: Vazirmatn, "Vazirmatn RD", "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif;
+  --liminal-line-height-fa-floor: 1.5625; /* from Vazirmatn metrics */
+
+  /* ── 13. MOTION ──────────────────────────────────────────────── */
+  --liminal-duration-instant: 100ms;
+  --liminal-duration-fast: 150ms;
+  --liminal-duration-normal: 200ms;
+  --liminal-duration-slow: 250ms;
+  --liminal-duration-slower: 350ms;
+  --liminal-duration-dramatic: 500ms;
+  --liminal-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --liminal-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --liminal-ease-inOut: cubic-bezier(0.65, 0, 0.35, 1);
+  --liminal-ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --liminal-ease-linear: linear;
+
+  /* ── 14. LAYER ───────────────────────────────────────────────── */
+  --liminal-z-canvas: 0;
+  --liminal-z-chrome: 1;
+  --liminal-z-work: 2;
+  --liminal-z-panel: 3;
+  --liminal-z-control: 4;
+  --liminal-z-menu: 5;
+  --liminal-z-popover: 6;
+  --liminal-z-modal: 7;
+  --liminal-z-toast: 8;
+  --liminal-z-dropdown: 5;
+  --liminal-z-tooltip: 6;
+  --liminal-z-floating: 5;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:#060709;color:#E9ECF2;font-family:Vazirmatn,system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.9}
+.shell{width:min(980px,100% - 24px);margin:0 auto;padding:24px 0 70px}
+header{padding-bottom:20px;border-bottom:1px solid #0d0f12}
+.eyebrow{font:11px ui-monospace,monospace;color:rgba(233,236,242,.4);letter-spacing:.08em}
+h1{font-size:clamp(22px,5.5vw,36px);line-height:1.3;letter-spacing:-.02em;margin:8px 0 10px}
+.lede{color:rgba(233,236,242,.6);font-size:12.5px;line-height:2;margin:6px 0 0;max-width:860px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.pill{padding:6px 12px;border:1px solid #0d0f12;border-radius:8px;font:11px ui-monospace,monospace;color:rgba(233,236,242,.75)}
+section{padding:28px 0;border-bottom:1px solid #0d0f12}
+.shead{display:flex;gap:12px;margin-bottom:14px}
+.snum{font:12px ui-monospace,monospace;color:rgba(233,236,242,.35);padding-top:5px}
+h2{margin:0;font-size:18px;letter-spacing:-.01em}
+h2 + .lede{margin-top:6px}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;color:#a4d1ff;direction:ltr;unicode-bidi:embed}
+.swrow{display:flex;gap:8px;flex-wrap:wrap}
+.sw{flex-shrink:0}
+.swl{font:10.5px ui-monospace,monospace;color:#E9ECF2;margin-top:4px}
+.sws{font:9.5px ui-monospace,monospace;color:rgba(233,236,242,.4)}
+.card{background:#090b0d;border:1px solid #0d0f12;border-radius:12px;padding:14px;margin-top:12px}
+.ctitle{font:11.5px ui-monospace,monospace;color:rgba(233,236,242,.55);margin-bottom:10px}
+.cols{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:760px){.cols{grid-template-columns:1fr 1fr}}
+.tblwrap{overflow-x:auto}
+table.matrix{border-collapse:collapse;font:10.5px ui-monospace,monospace;direction:ltr;margin:0 auto}
+table.matrix .mx{padding:4px 5px;text-align:center;white-space:nowrap}
+table.matrix .mx-role{padding:4px 8px;color:rgba(233,236,242,.6);text-align:left;white-space:nowrap}
+.mx-dot{padding:4px 5px;text-align:center;color:#0d0f12}
+table.mini{border-collapse:collapse;font:10.5px ui-monospace,monospace;direction:ltr;width:100%}
+table.mini td,table.mini th{padding:4px 8px;text-align:center;border-bottom:1px solid #0d0f12}
+table.mini th{color:rgba(233,236,242,.4);font-weight:400}
+.note{font-size:11px;color:rgba(233,236,242,.42);line-height:1.9;margin-top:8px}
+.chainrole{font:11px ui-monospace,monospace;color:#E9ECF2}
+.chainsub{font:10px ui-monospace,monospace;color:rgba(233,236,242,.4)}
+.test{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #0d0f12}
+.finding{display:flex;gap:10px;align-items:flex-start;margin-top:10px;padding:10px 12px;background:rgba(217,190,110,.05);border:1px solid rgba(217,190,110,.3);border-radius:9px}
+.fmark{font:13px ui-monospace,monospace;color:#D9BE6E;flex-shrink:0}
+.tmark{font:13px ui-monospace,monospace;flex-shrink:0}
+.tname{font-size:12.5px;color:#E9ECF2}
+.tvalue{font:11px ui-monospace,monospace;color:#6FA8EC;margin-inline-start:6px}
+.twhy{font-size:11px;color:rgba(233,236,242,.42);line-height:1.9;margin-top:2px}
+.verdict{background:#090b0d;border-radius:8px;padding:10px 14px;margin-top:8px}
+.vtitle{font:12px ui-monospace,monospace;color:#E9ECF2}
+.vreason{font-size:11.5px;color:rgba(233,236,242,.55);line-height:1.9;margin-top:4px}
+.counts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:640px){.counts{grid-template-columns:repeat(4,1fr)}}
+.count{background:#090b0d;border:1px solid #0d0f12;border-radius:12px;padding:14px;text-align:center;font-size:12px;color:rgba(233,236,242,.6)}
+.count b{display:block;font:28px ui-monospace,monospace;margin-bottom:4px}
+footer{padding-top:20px;font-size:11px;color:rgba(233,236,242,.35);line-height:2}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <div class="eyebrow">LIMINAL · CORE AUDIT · SNAPSHOT FROM REAL ENGINE · 2026-10-20</div>
+  <h1>ممیزیِ هستهٔ موتور — اسنپ‌شاتِ زنده</h1>
+  <p class="lede">این فایل خودبسنده است: هر رنگ و عدد و حکم، لحظهٔ تولید از <b>خودِ موتور</b> محاسبه و اینجا فریز شده — بدون سرور، بدون شبکه، روی هر مرورگری. متغیرهای CSS هم embed شده‌اند تا var()های موتور واقعی رندر شوند. مرجعِ ریاضی: <span class="mono">.lab/ENGINE-CORE-AUDIT.md</span> · سیاست: <span class="mono">LIMINAL-POLICY.md</span></p>
+  <div class="pills">
+    <span class="pill">vitest: 542 passed · 6 skipped · 0 failed</span>
+    <span class="pill">tsc: clean</span>
+    <span class="pill">۸۴ رنگِ پالت · ۱۶۸ متغیرِ CSS</span>
+  </div>
+</header>
+<section><div class="shead"><span class="snum">01</span><div><h2>بوم و چاه‌ها</h2><p class="lede">بوم تنها انتخابِ آزادِ سیستم است: <code>L₀=0.128</code> · <code>C=0.0069</code> · <code>H=258.4°</code>. دو چاه زیر بوم‌اند — تاریک‌ترین رنگ‌های مجاز، برای سایهٔ محیطی و تماسی.</p></div></div><div class="swrow">
+      <div class="sw" style="width:74px"><div style="height:54px;background:#010203;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S-2 umbra</div><div class="sws">0.0823 · -5.52q</div></div>
+      <div class="sw" style="width:74px"><div style="height:54px;background:#030406;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S-1 penumbra</div><div class="sws">0.1061 · -2.66q</div></div>
+      <div class="sw" style="width:96px"><div style="height:62px;background:#060709;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S0 canvas</div><div class="sws">0.1281 · 0q</div></div>
+    </div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">L بوم = مقدارِ اعلام‌شدهٔ فرمول <code class="tvalue">L=0.1281</code></div>
+<div class="twhy">دلیل: hex بوم رنگ‌سنجی شد؛ فاصله از فرمول یعنی نردبان دستی دست‌کاری شده.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">چاه‌ها زیر بوم‌اند و به ترتیب <code class="tvalue">penumbra -2.66q · umbra -5.52q</code></div>
+<div class="twhy">دلیل: چاه «پلهٔ منفی» است — جای سایه، نه جای سطح.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">یک منبعِ حقیقت برای چاه‌ها <code class="tvalue">liminal-ladder.WELLS</code></div>
+<div class="twhy">دلیل: قبلاً در css-vars و contract دوبار نوشته شده بود؛ حالا هر دو از WELLS می‌خوانند.</div></div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — L₀ یک انتخابِ مستند است، نه عددِ تصادفی</div>
+<div class="vreason">برازش به طراحیِ تأییدشده در POLICY §2 — تمامِ نردبان از آن مشتق می‌شود.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #D9BE6E">
+<div class="vtitle"><span style="color:#D9BE6E">ضعف</span> — چاه‌ها در موتور هستند ولی در POLICY فصل ندارند</div>
+<div class="vreason">اقدام: فصلِ چاه‌ها — S-1/S-2 با مقدار، کار و قانونِ «هیچ سطحی روی چاه نمی‌نشیند».</div></div></section><section><div class="shead"><span class="snum">02</span><div><h2>نردبان — ۹ پله، یک فرمول</h2><p class="lede"><code>L(n) = 0.128 + n × 0.009475</code> — هر پله <code>1.1416q</code> فاصله دارد (q=0.0083، اندازه‌گیری‌شده در سه نشست). نیم‌پله‌ها برای بوردرند، نه state.</p></div></div><div class="swrow"><div class="sw" style="width:58px"><div style="height:46px;background:#060709;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S0</div><div class="sws">canvas</div></div><div class="sw" style="width:58px"><div style="height:46px;background:#07090b;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S1</div><div class="sws">+1.20q</div></div><div class="sw" style="width:58px"><div style="height:46px;background:#090b0d;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S2</div><div class="sws">+1.21q</div></div><div class="sw" style="width:58px"><div style="height:46px;background:#0b0d0f;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S3</div><div class="sws">+1.15q</div></div><div class="sw" style="width:58px"><div style="height:46px;background:#0d0f12;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S4</div><div class="sws">+1.19q</div></div><div class="sw" style="width:58px"><div style="height:46px;background:#0f1114;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S5</div><div class="sws">+1.11q</div></div><div class="sw" style="width:58px"><div style="height:46px;background:#111316;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S6</div><div class="sws">+1.10q</div></div><div class="sw" style="width:58px"><div style="height:46px;background:#131518;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S7</div><div class="sws">+1.08q</div></div><div class="sw" style="width:58px"><div style="height:46px;background:#15171a;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S8</div><div class="sws">+1.07q</div></div></div><div class="swrow" style="margin-top:8px"><div class="sw" style="width:58px"><div style="height:30px;background:#07080a;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S0.5</div><div class="sws">border</div></div><div class="sw" style="width:58px"><div style="height:30px;background:#080a0c;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S1.5</div><div class="sws">border</div></div><div class="sw" style="width:58px"><div style="height:30px;background:#0a0c0e;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S2.5</div><div class="sws">border</div></div><div class="sw" style="width:58px"><div style="height:30px;background:#0c0e10;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S3.5</div><div class="sws">border</div></div><div class="sw" style="width:58px"><div style="height:30px;background:#0e1013;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S4.5</div><div class="sws">border</div></div><div class="sw" style="width:58px"><div style="height:30px;background:#101215;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S5.5</div><div class="sws">border</div></div><div class="sw" style="width:58px"><div style="height:30px;background:#121417;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S6.5</div><div class="sws">border</div></div><div class="sw" style="width:58px"><div style="height:30px;background:#141619;border-radius:8px;border:1px solid rgba(255,255,255,.06)"></div>
+<div class="swl">S7.5</div><div class="sws">border</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">قانون ۱ روی مقادیرِ اکسکت: هر پله و هر نیم‌پله ثابت <code class="tvalue">پله 1.1416q × ۸ · نیم‌پله 0.5708q × ۷</code></div>
+<div class="twhy">دلیل: LADDER_EXACT/HALF_EXACT همان رشته‌های oklch هستند که در css-vars پشت @supports منتشر می‌شوند — مرورگرِ مدرن قانون را دقیق می‌بیند.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">hex جدول = خروجیِ فرمول <code class="tvalue">۹ از ۹</code></div>
+<div class="twhy">دلیل: LADDER دستی و getLadderColor فرمولی واگرا نشده‌اند.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">fallback هشت‌بیتی هم قانون ۱ را نگه می‌دارد <code class="tvalue">1.07–1.21q اندازه‌گیری‌شده روی hex</code></div>
+<div class="twhy">دلیل: رُندِ ۸ بیتی در این تاریکی ±۰.۰۷q نویز دارد ولی هیچ پله‌ای زیر ۱q نمی‌افتد — لایه‌ها حتی بدون oklch هم جدا می‌مانند.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">نیم‌پلهٔ اکسکت: دیده‌شده ولی مرز نیست <code class="tvalue">0.5708q = 1.19× آستانهٔ لبه (0.48q)</code></div>
+<div class="twhy">دلیل: نیم‌پله به‌عنوان state رد شده (§6.8) ولی به‌عنوان جداکننده ۱.۱۸× آستانه است — کامنتِ HALF در موتور اصلاح شد.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">نیم‌پله در hex هم زنده می‌ماند <code class="tvalue">0.54–0.71q آفستِ اندازه‌گیری‌شده</code></div>
+<div class="twhy">دلیل: نویزِ رُند ±۰.۱۴q است — هم‌اندازهٔ خودِ نیم‌پله — ولی هیچ آفستی از باندِ دیدنی (آستانهٔ لبه، ۱q) بیرون نمی‌زند. اندازهٔ درست: آفست از پلهٔ خودش، نه فاصلهٔ دو نیم‌پلهٔ متوالی (آن طراحیِ یک پلهٔ کامل است).</div></div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — یک فرمول، فاصلهٔ ثابت، بدون جدولِ دستی</div>
+<div class="vreason">سلسله‌مراتب از ریاضی می‌آید نه سلیقه، و تم‌پذیر است چون همه‌چیز از L₀ مشتق می‌شود.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — طراحی در ۸ بیت هم زنده می‌ماند — fallback هم قانون دارد</div>
+<div class="vreason">پله‌های hex: ۱.۰۷–۱.۲۱q (همه ≥۱q) · آفستِ نیم‌پله‌ها: ۰.۵۴–۰.۷۱q (همه در باندِ دیدنی). css-vars دو اعلان منتشر می‌کند: hex برای مرورگرِ قدیمی، oklch پشتِ @supports برای دقتِ اکسکت — هیچ مصرف‌کننده‌ای قانون را از دست نمی‌دهد.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #6FA8EC">
+<div class="vtitle"><span style="color:#6FA8EC">مشکل·حل‌شده</span> — کامنتِ HALF می‌گفت «state باید حس شود نه دیده شود»</div>
+<div class="vreason">در §6.8 رد شده: state یک تغییرِ سطح است و باید ≥۱q باشد. نیم‌پله فقط border است — کامنت اصلاح شد.</div></div></section><section><div class="shead"><span class="snum">03</span><div><h2>لایه‌ها و تو در تویی — قانون ۲</h2><p class="lede">۱۱ نقش (region تازه اضافه شد)، ۳ نقشِ رابطه‌ای (<code>control / well / region</code>) که یک پله بالای میزبان‌اند. ماتریس زیر خروجیِ واقعیِ checkPlacement است — سبز مجاز، قرمز رد (دلیل در title دسکتاپ؛ فهرست استثناها پایین).</p></div></div><div class="tblwrap"><table class="matrix"><thead><tr><th class="mx-role">role↓ on→</th><th class="mx">canvas</th><th class="mx">chrome</th><th class="mx">work</th><th class="mx">well</th><th class="mx">region</th><th class="mx">panel</th><th class="mx">control</th><th class="mx">menu</th><th class="mx">popover</th><th class="mx">modal</th><th class="mx">toast</th></tr></thead><tbody><tr><td class="mx-role">canvas</td><td class="mx-dot">·</td><td class="mx" style="color:rgba(232,138,147,.55)" title="canvas (S0) is not above chrome (S1)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="canvas (S0) is not above work (S2)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="canvas (S0) is not above well (S2)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="canvas (S0) is not above region (S2)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="canvas (S0) is not above panel (S3)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="canvas (S0) is not above control (S4)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="canvas (S0) is not above menu (S5)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="canvas (S0) is not above popover (S6)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="canvas (S0) is not above modal (S7)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="canvas (S0) is not above toast (S8)">✗</td></tr><tr><td class="mx-role">chrome</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx-dot">·</td><td class="mx" style="color:rgba(232,138,147,.55)" title="chrome (S1) is not above work (S2)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="chrome (S1) is not above well (S2)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="chrome (S1) is not above region (S2)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="chrome (S1) is not above panel (S3)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="chrome (S1) is not above control (S4)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="chrome (S1) is not above menu (S5)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="chrome (S1) is not above popover (S6)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="chrome (S1) is not above modal (S7)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="chrome (S1) is not above toast (S8)">✗</td></tr><tr><td class="mx-role">work</td><td class="mx" style="color:rgba(232,138,147,.55)" title="work (S2) skipped 1 layer(s) to sit on canvas (S0): every layer sits on the one below it">✗</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx-dot">·</td><td class="mx" style="color:rgba(232,138,147,.55)" title="work (S2) is not above well (S2)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="work (S2) is not above region (S2)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="work (S2) is not above panel (S3)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="work (S2) is not above control (S4)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="work (S2) is not above menu (S5)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="work (S2) is not above popover (S6)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="work (S2) is not above modal (S7)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="work (S2) is not above toast (S8)">✗</td></tr><tr><td class="mx-role">well</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx-dot">·</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td></tr><tr><td class="mx-role">region</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx-dot">·</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td></tr><tr><td class="mx-role">panel</td><td class="mx" style="color:rgba(232,138,147,.55)" title="panel (S3) skipped 2 layer(s) to sit on canvas (S0): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="panel (S3) skipped 1 layer(s) to sit on chrome (S1): every layer sits on the one below it">✗</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx-dot">·</td><td class="mx" style="color:rgba(232,138,147,.55)" title="panel (S3) is not above control (S4)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="panel (S3) is not above menu (S5)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="panel (S3) is not above popover (S6)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="panel (S3) is not above modal (S7)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="panel (S3) is not above toast (S8)">✗</td></tr><tr><td class="mx-role">control</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx-dot">·</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx" style="color:#74CE8E" title="ok">✓</td></tr><tr><td class="mx-role">menu</td><td class="mx" style="color:rgba(232,138,147,.55)" title="menu (S5) skipped 4 layer(s) to sit on canvas (S0): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="menu (S5) skipped 3 layer(s) to sit on chrome (S1): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="menu (S5) skipped 2 layer(s) to sit on work (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="menu (S5) skipped 2 layer(s) to sit on well (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="menu (S5) skipped 2 layer(s) to sit on region (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="menu (S5) skipped 1 layer(s) to sit on panel (S3): every layer sits on the one below it">✗</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx-dot">·</td><td class="mx" style="color:rgba(232,138,147,.55)" title="menu (S5) is not above popover (S6)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="menu (S5) is not above modal (S7)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="menu (S5) is not above toast (S8)">✗</td></tr><tr><td class="mx-role">popover</td><td class="mx" style="color:rgba(232,138,147,.55)" title="popover (S6) skipped 5 layer(s) to sit on canvas (S0): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="popover (S6) skipped 4 layer(s) to sit on chrome (S1): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="popover (S6) skipped 3 layer(s) to sit on work (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="popover (S6) skipped 3 layer(s) to sit on well (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="popover (S6) skipped 3 layer(s) to sit on region (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="popover (S6) skipped 2 layer(s) to sit on panel (S3): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="popover (S6) skipped 1 layer(s) to sit on control (S4): every layer sits on the one below it">✗</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx-dot">·</td><td class="mx" style="color:rgba(232,138,147,.55)" title="popover (S6) is not above modal (S7)">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="popover (S6) is not above toast (S8)">✗</td></tr><tr><td class="mx-role">modal</td><td class="mx" style="color:rgba(232,138,147,.55)" title="modal (S7) skipped 6 layer(s) to sit on canvas (S0): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="modal (S7) skipped 5 layer(s) to sit on chrome (S1): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="modal (S7) skipped 4 layer(s) to sit on work (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="modal (S7) skipped 4 layer(s) to sit on well (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="modal (S7) skipped 4 layer(s) to sit on region (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="modal (S7) skipped 3 layer(s) to sit on panel (S3): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="modal (S7) skipped 2 layer(s) to sit on control (S4): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="modal (S7) skipped 1 layer(s) to sit on menu (S5): every layer sits on the one below it">✗</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx-dot">·</td><td class="mx" style="color:rgba(232,138,147,.55)" title="modal (S7) is not above toast (S8)">✗</td></tr><tr><td class="mx-role">toast</td><td class="mx" style="color:rgba(232,138,147,.55)" title="toast (S8) skipped 7 layer(s) to sit on canvas (S0): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="toast (S8) skipped 6 layer(s) to sit on chrome (S1): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="toast (S8) skipped 5 layer(s) to sit on work (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="toast (S8) skipped 5 layer(s) to sit on well (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="toast (S8) skipped 5 layer(s) to sit on region (S2): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="toast (S8) skipped 4 layer(s) to sit on panel (S3): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="toast (S8) skipped 3 layer(s) to sit on control (S4): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="toast (S8) skipped 2 layer(s) to sit on menu (S5): every layer sits on the one below it">✗</td><td class="mx" style="color:rgba(232,138,147,.55)" title="toast (S8) skipped 1 layer(s) to sit on popover (S6): every layer sits on the one below it">✗</td><td class="mx" style="color:#74CE8E" title="ok">✓</td><td class="mx-dot">·</td></tr></tbody></table></div>
+    <div class="note">استثناهای سقف: control↞toast · control↞modal · well↞toast · well↞modal · region↞toast · region↞modal — هر شش «نقشِ رابطه‌ای روی میزبانِ شناور»، چون بالای سقف پله‌ای نیست.</div>
+    <div class="cols">
+      <div class="card"><div class="ctitle">تو در توییِ زنده — خروجیِ واقعیِ resolveSurface</div><div style="margin-inline-start:0px;margin-top:0px">
+      <div style="background:var(--liminal-s0);border:none;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;isolation:isolate;z-index:0;border:1px solid none;border-radius:10px;padding:10px 14px">
+        <div class="chainrole">canvas → S0</div>
+        <div class="chainsub">rim ✗ · shadow ✗ · bg var(--liminal-s0)</div>
+      </div></div><div style="margin-inline-start:16px;margin-top:8px">
+      <div style="background:var(--liminal-s1);border:none;box-shadow:none;outline:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;isolation:isolate;z-index:1;border:1px solid none;border-radius:10px;padding:10px 14px">
+        <div class="chainrole">chrome on canvas → S1</div>
+        <div class="chainsub">rim ✗ · shadow ✗ · bg var(--liminal-s1)</div>
+      </div></div><div style="margin-inline-start:32px;margin-top:8px">
+      <div style="background:var(--liminal-s2);border:none;box-shadow:none;outline:none;opacity:1;cursor:default;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;isolation:isolate;z-index:2;border:1px solid none;border-radius:10px;padding:10px 14px">
+        <div class="chainrole">work on chrome → S2</div>
+        <div class="chainsub">rim ✗ · shadow ✗ · bg var(--liminal-s2)</div>
+      </div></div><div style="margin-inline-start:48px;margin-top:8px">
+      <div style="background:var(--liminal-s3);border:none;box-shadow:none;outline:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;isolation:isolate;z-index:3;border:1px solid none;border-radius:10px;padding:10px 14px">
+        <div class="chainrole">region on work → S3</div>
+        <div class="chainsub">rim ✗ · shadow ✗ · bg var(--liminal-s3)</div>
+      </div></div><div style="margin-inline-start:64px;margin-top:8px">
+      <div style="background:linear-gradient(var(--liminal-s3), var(--liminal-s3)) padding-box, linear-gradient(180deg, oklch(0.1706375 0.0069 258.4) 0%, oklch(0.1659000 0.0069 258.4) 55%, oklch(0.1611625 0.0069 258.4) 100%) border-box;border:1px solid transparent;box-shadow:none;outline:none;opacity:1;cursor:pointer;transition:color, background-color, border-color, box-shadow, opacity, transform 200ms cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;isolation:isolate;z-index:3;border:1px solid 1px solid transparent;border-radius:10px;padding:10px 14px">
+        <div class="chainrole">control on region → S3</div>
+        <div class="chainsub">rim ✓ · shadow ✗ · bg var(--liminal-s3)</div>
+      </div></div></div>
+      <div class="card"><div class="ctitle">قاعدهٔ «چه روی چه» — resolveLayerState</div><div class="tblwrap"><table class="mini"><thead><tr><th>content</th><th>on</th><th>border</th><th>shadow</th><th>rim</th></tr></thead><tbody><tr><td>region</td><td>canvas</td><td style="color:#6FA8EC">edge</td><td>false</td><td>false</td></tr><tr><td>region</td><td>work</td><td style="color:#555c66">none</td><td>false</td><td>false</td></tr><tr><td>control</td><td>canvas</td><td style="color:#6FA8EC">edge</td><td>false</td><td>true</td></tr><tr><td>control</td><td>work</td><td style="color:#6FA8EC">edge</td><td>false</td><td>true</td></tr><tr><td>transient</td><td>canvas</td><td style="color:#555c66">none</td><td>true</td><td>true</td></tr><tr><td>transient</td><td>work</td><td style="color:#555c66">none</td><td>true</td><td>true</td></tr><tr><td>empty</td><td>canvas</td><td style="color:#555c66">none</td><td>false</td><td>false</td></tr><tr><td>empty</td><td>work</td><td style="color:#555c66">none</td><td>false</td><td>false</td></tr></tbody></table></div>
+      <div class="note">region روی بوم مرز می‌گیرد (یک پله از بوم = آستانهٔ لبه)، روی سطحِ میزبان نه.</div></div>
+    </div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">هر نقش روی میزبانِ مجازش قبول می‌شود <code class="tvalue">10 زنجیره</code></div>
+<div class="twhy">دلیل: قانون ۲: هر لایه روی لایهٔ زیرِ خودش — زنجیره، نه جفت‌های دلخواه.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">جابه‌جاییِ لایه رد می‌شود، با دلیل <code class="tvalue">work (S2) skipped 1 layer(s) to sit on canvas (S0): every la…</code></div>
+<div class="twhy">دلیل: نقصِ واقعیِ سایتِ قدیمی: work مستقیم روی canvas — گارد همان روز رد می‌کند.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">نقش‌های رابطه‌ای یک پله بالای میزبان‌اند <code class="tvalue">control/region on work → S3</code></div>
+<div class="twhy">دلیل: RELATIONSHIP_ROLES نام‌گذاری شد تا استثنای سقف از لیست مشتق شود، نه دستی.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">region تخت است — بدون ریم و سایه <code class="tvalue">rim=false shadow=none</code></div>
+<div class="twhy">دلیل: region یک محدودهٔ ساختاری است نه شیءِ برجسته — POLICY §1.5 گفت، موتور نداشت؛ در ممیزی اضافه شد.</div></div></div>
+    <div class="finding"><span class="fmark">⚠</span>
+<div><div class="tname">on ترکیب نمی‌شود — لنگر از سطحِ اسمیِ میزبان می‌آید، نه سطحِ حل‌شده‌اش</div><div class="twhy">زنجیرهٔ بالا را ببینید: <code>region on work → S3</code> ولی <code>control on region → S3</code> — چون موتور region را به‌سطحِ اسمیِ خودش (۲) لنگر می‌کند، control دقیقاً هم‌سطحِ میزبانِ واقعی‌اش می‌نشیند: صفر اختلافِ fill، نقضِ قانون ۲ در زنجیره‌های رابطه‌ای. region تازه اضافه شده و این حالت تست نداشت. اقدامِ پیشنهادی: API سطحِ حل‌شده (<code>onLevel</code>) یا حسابِ depth — تصمیمِ طراحی، نه باگِ ریاضی.</div></div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — گاردِ جای‌گذاری واقعاً اجبار می‌کند</div>
+<div class="vreason">ماتریسِ ۱۱×۱۰ زنده اجرا شد — POLICY §10 از «نوشته‌شده، اجبارنشده» به «اجبار می‌شود» ارتقا یافت.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #D9BE6E">
+<div class="vtitle"><span style="color:#D9BE6E">ضعف</span> — میزبانِ رابطه‌ای، لنگرِ رابطه‌ای نمی‌دهد</div>
+<div class="vreason">control/well/region روی میزبانی که خودش لنگر شده (region on work) هم‌سطحِ او حل می‌شوند — fill سلسله‌مراتب را نمی‌سازد. تا تصمیمِ API (onLevel یا depth) زنجیره‌های عمیق‌تر از دو نقشِ رابطه‌ای باید دستی سطح ببرند. رندرِ زندهٔ زنجیره در همین بخش، دلیلِ بصری است.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — استثنای سقف مشتق است نه دستی</div>
+<div class="vreason">PLACEMENT_EXEMPTIONS = نقش‌های رابطه‌ای × میزبانِ شناور — نقشِ چهارم بدون تصمیمِ صریح رد نمی‌شود.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #6FA8EC">
+<div class="vtitle"><span style="color:#6FA8EC">مشکل·حل‌شده</span> — region در POLICY بود ولی در موتور نبود</div>
+<div class="vreason">🔴 بحرانی: ۱۰ نقش در موتور، ۱۱ در سیاست. region:۲ رابطه‌ای/تخت اضافه شد + ROLE_RIM/ROLE_SHADOW/استثناها.</div></div></section><section><div class="shead"><span class="snum">04</span><div><h2>بوردر — دو حالت، دو فاصلهٔ ثابت</h2><p class="lede">separator = +۰.۵ پله (<code>0.58q</code> = 1.21× آستانهٔ لبه) — یک اشاره. edge = +۱ پله (<code>1.15q</code> = 2.39× آستانه) — یک مرز. هر دو از سطحِ خودشان، با میزبان جابه‌جا نمی‌شوند.</p></div></div><div class="cols">
+      <div class="card"><div class="ctitle">separator روی work</div><div style="background:#090b0d;border-radius:10px;padding:14px">
+        <div class="note">ردیف اول</div><div style="border-top:1px solid #0a0c0e;margin:10px 0"></div><div class="note">ردیف دوم</div></div>
+        <div class="note mono">#0a0c0e</div></div>
+      <div class="card"><div class="ctitle">edge دور panel روی work</div><div style="background:#090b0d;border-radius:10px;padding:14px">
+        <div style="background:#0b0d0f;border:1px solid #0d0f12;border-radius:8px;padding:14px" class="note">panel با مرزِ یک پله</div></div>
+        <div class="note mono">#0d0f12</div></div>
+    </div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">separator دیدنی است ولی مرز نیست <code class="tvalue">0.58q = 1.21× آستانه</code></div>
+<div class="twhy">دلیل: زیر ۰.۴۸q محو، بالای ۱q «جداسازیِ دو سطح» خوانده می‌شود — نیم‌پله دقیقاً بین این دو.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">edge یک پلهٔ کامل است — اندازه‌گیری‌شده <code class="tvalue">1.15q = 2.39× آستانه</code></div>
+<div class="twhy">دلیل: انتخابِ خواننده: «کمتر از یک پله، حتی بوردر هم بوردر نیست.»</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">در سقف، edge به separator تنزل می‌کند <code class="tvalue">toast edge → S7.5</code></div>
+<div class="twhy">دلیل: معکوسِ قدیمی مرز را هم‌رنگِ میزبان می‌کرد (۰q — ناپیدا). طرح تنزل می‌کند، گسترش نمی‌یابد.</div></div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — چارچوبِ مرجع حل‌شده: بوردر از سطحِ خودش</div>
+<div class="vreason">یک خط‌کشِ ثابت — پیامدش پذیرفته: مرزِ پنل روی بوم ۴.۵۶q و روی work ۲.۲۸q است؛ این سلسله‌مراتب است، نه خطا.</div></div></section><section><div class="shead"><span class="snum">05</span><div><h2>سایه — یک کوانتوم، حل‌شده</h2><p class="lede">اوجِ سایه همیشه دقیقاً ۱q تاریک‌تر از میزبان است — α برای هر میزبان حل می‌شود (bisection روی OKLCH) و فقط شعاع با ارتفاع رشد می‌کند.</p></div></div><div style="background:#090b0d;border-radius:14px;padding:22px;display:flex;gap:18px;flex-wrap:wrap;justify-content:center"><div style="width:120px;background:#0f1114;border-radius:10px;box-shadow:0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991);padding:14px 12px">
+      <div class="chainrole">menu</div><div class="chainsub">S5 · shadow ✓</div></div><div style="width:120px;background:#111316;border-radius:10px;box-shadow:0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991);padding:14px 12px">
+      <div class="chainrole">popover</div><div class="chainsub">S6 · shadow ✓</div></div><div style="width:120px;background:#131518;border-radius:10px;box-shadow:0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991);padding:14px 12px">
+      <div class="chainrole">modal</div><div class="chainsub">S7 · shadow ✓</div></div><div style="width:120px;background:#15171a;border-radius:10px;box-shadow:0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991);padding:14px 12px">
+      <div class="chainrole">toast</div><div class="chainsub">S8 · shadow ✓</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">اوجِ سایه = دقیقاً ۱q زیر میزبان <code class="tvalue">α=0.1883 → Δ=1.00q</code></div>
+<div class="twhy">دلیل: سایهٔ «حس‌شده» نه «دودی»: آلفا حل می‌شود تا تاریک‌ترین نقطه یک کوانتوم باشد — همان واحدِ نردبان.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">α با روشن‌تر شدنِ میزبان کوچک می‌شود <code class="tvalue">S0=0.2477 … S8=0.0890</code></div>
+<div class="twhy">دلیل: شدتِ ادراکی ثابت می‌ماند، عددِ فیزیکی عوض می‌شود.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">شعاع خطی در ارتفاع، بدون ثابتِ غالب <code class="tvalue">near=2+h×1.5 · far=4+h×6</code></div>
+<div class="twhy">دلیل: فرمولِ قدیمی ۹۳٪ ثابت بود — همه یک سایه داشتند؛ حالا ارتفاع واقعاً سایه را باز می‌کند.</div></div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — سایه از «ارتفاع» به «رابطه با میزبان» ارتقا یافت</div>
+<div class="vreason">شدت از میزبان (خط‌کشِ دوم)، شعاع از ارتفاع — دو خط‌کش، هر کدام یک کار.</div></div></section><section><div class="shead"><span class="snum">06</span><div><h2>ریم — یک نور، سه ایستگاه</h2><p class="lede">بالا +1.5 پله، پهلو +1، پایین +0.5 — اندازه‌گیری‌شده در سه مرز، جوابِ هر سه: ۱.۵. در S7 فشرده (۱/۰.۶۷/۰.۳۳)، در S8 معکوس (همه زیر سطح)، ریمِ چاه وارونه.</p></div></div><div class="swrow"><div style="width:104px">
+      <div style="height:52px;border-radius:9px;background:linear-gradient(#07090b, #07090b) padding-box, linear-gradient(180deg, #0a0c0e 0%, #090b0d 55%, #080a0c 100%) border-box;border:1px solid #0d0f12"></div>
+      <div class="swl">S1 · top +1.57 پله</div>
+      <div class="sws">عادی</div></div><div style="width:104px">
+      <div style="height:52px;border-radius:9px;background:linear-gradient(#090b0d, #090b0d) padding-box, linear-gradient(180deg, #0c0e10 0%, #0b0d0f 55%, #0a0c0e 100%) border-box;border:1px solid #0d0f12"></div>
+      <div class="swl">S2 · top +1.50 پله</div>
+      <div class="sws">عادی</div></div><div style="width:104px">
+      <div style="height:52px;border-radius:9px;background:linear-gradient(#0b0d0f, #0b0d0f) padding-box, linear-gradient(180deg, #0e1013 0%, #0d0f12 55%, #0c0e10 100%) border-box;border:1px solid #0d0f12"></div>
+      <div class="swl">S3 · top +1.53 پله</div>
+      <div class="sws">عادی</div></div><div style="width:104px">
+      <div style="height:52px;border-radius:9px;background:linear-gradient(#0d0f12, #0d0f12) padding-box, linear-gradient(180deg, #101215 0%, #0f1114 55%, #0e1013 100%) border-box;border:1px solid #0d0f12"></div>
+      <div class="swl">S4 · top +1.45 پله</div>
+      <div class="sws">عادی</div></div><div style="width:104px">
+      <div style="height:52px;border-radius:9px;background:linear-gradient(#0f1114, #0f1114) padding-box, linear-gradient(180deg, #121417 0%, #111316 55%, #101215 100%) border-box;border:1px solid #0d0f12"></div>
+      <div class="swl">S5 · top +1.44 پله</div>
+      <div class="sws">عادی</div></div><div style="width:104px">
+      <div style="height:52px;border-radius:9px;background:linear-gradient(#111316, #111316) padding-box, linear-gradient(180deg, #141619 0%, #131518 55%, #121417 100%) border-box;border:1px solid #0d0f12"></div>
+      <div class="swl">S6 · top +1.42 پله</div>
+      <div class="sws">عادی</div></div><div style="width:104px">
+      <div style="height:52px;border-radius:9px;background:linear-gradient(#131518, #131518) padding-box, linear-gradient(180deg, #15171a 0%, #141619 55%, #141619 100%) border-box;border:1px solid #0d0f12"></div>
+      <div class="swl">S7 · top +0.94 پله</div>
+      <div class="sws">فشرده</div></div><div style="width:104px">
+      <div style="height:52px;border-radius:9px;background:linear-gradient(#15171a, #15171a) padding-box, linear-gradient(180deg, #141619 0%, #131518 55%, #121417 100%) border-box;border:1px solid #0d0f12"></div>
+      <div class="swl">S8 · top -0.47 پله</div>
+      <div class="sws">معکوس</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">سه ایستگاه = ۱.۵ / ۱ / ۰.۵ پله <code class="tvalue">S3: 1.53 / 1.04 / 0.50</code></div>
+<div class="twhy">دلیل: بالا ۱.۷۱q = ۲.۷۳× آستانهٔ لبه، پایین ۰.۵۷q = ۱.۱۸× — گرادیان، نورِ لبه می‌سازد نه خطِ تزئینی. تلورانس ۰.۰۸q: ایستگاه‌ها روی hex اندازه‌گیری می‌شوند و رُندِ ۸ بیتی ±۰.۰۵q نویز دارد.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">S7 فشرده می‌شود — جهت حفظ، شدت نه <code class="tvalue">S7: 0.94 / 0.47 / 0.47</code></div>
+<div class="twhy">دلیل: معکوسِ قدیمی به مودال ریمی تیره‌تر از سطحش می‌داد — «فرورفته» خوانده می‌شد. رُندِ hex پهلو/پایینِ S7 را یکی می‌کند (اختلافِ ۰.۳۳ پله زیر نویزِ رُند است) — جهت محفوظ است: بالا ≥ پهلو ≥ پایین.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">S8: همهٔ ایستگاه‌ها زیر سطح <code class="tvalue">S8: -0.47 / -0.94 / -1.41</code></div>
+<div class="twhy">دلیل: در سقف جا نیست؛ گرادیان جهت دارد ولی کلِ لبه تیره‌تر از سطح است — POLICY می‌گوید «معکوس» کلمهٔ غلطی است.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">ریمِ فرورفته (well/inset) وارونه است <code class="tvalue">top -0.52 پله</code></div>
+<div class="twhy">دلیل: نور لبهٔ دورِ فرورفتگی را از پایین می‌گیرد — فیزیکِ جهت، نه سلیقه.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">هیچ ایستگاهِ ریمی از سقف بالاتر نمی‌رود <code class="tvalue">S0…S8</code></div>
+<div class="twhy">دلیل: سقف سخت است: پالت هویت است و گسترش نمی‌یابد.</div></div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — یک شدت برای همه — جدولِ چهاردرجه‌ای جمع شد</div>
+<div class="vreason">ROLE_RIM می‌گوید «ریم دارد یا نه»؛ شدت یکی است چون اندازه‌گیری در سه مرز یک جواب داد.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #A98BEA">
+<div class="vtitle"><span style="color:#A98BEA">سؤال باز</span> — توست در S8 ریمِ تیره می‌گیرد — شناور ولی بی‌نور</div>
+<div class="vreason">POLICY §9 صریحاً باز گذاشته. گزینه‌ها: پذیرشِ تنزل (فعلی) · ریمِ α-سفید · یک پلهٔ نورِ مجاز بالای S8 — تا چشم‌سنجیِ توستِ واقعی، فعلی می‌ماند.</div></div></section><section><div class="shead"><span class="snum">07</span><div><h2>رنگِ معنایی و پالت ۱۲×۷ (§6.11)</h2><p class="lede">۴ نقش + ۱۲ فامِ تأییدشده + رمپِ هفت‌پلهٔ تازه‌ساخته. پالت بزرگ‌ترین شکافِ بسته‌شدهٔ این ممیزی است: §6.11 قانون بود بدون موتور.</p></div></div><div class="swrow"><div style="width:140px">
+      <div style="background:var(--liminal-success, #00875d);color:#FFFFFF;border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600"><span style="margin-inline-end:8px">✓</span>SUCCESS</div>
+      <div style="display:flex;gap:4px;margin-top:6px">
+        <div style="flex:1"><div style="height:22px;background:#54e5aa;border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">text</div></div><div style="flex:1"><div style="height:22px;background:rgba(0, 135, 93, 0.22);border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">border</div></div><div style="flex:1"><div style="height:22px;background:rgba(0, 135, 93, 0.1);border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">subtle</div></div>
+      </div>
+      <div class="sws mono">h=162.9</div></div><div style="width:140px">
+      <div style="background:var(--liminal-warning, #946a00);color:#FFFFFF;border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600"><span style="margin-inline-end:8px">!</span>WARNING</div>
+      <div style="display:flex;gap:4px;margin-top:6px">
+        <div style="flex:1"><div style="height:22px;background:#ffc348;border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">text</div></div><div style="flex:1"><div style="height:22px;background:rgba(148, 106, 0, 0.22);border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">border</div></div><div style="flex:1"><div style="height:22px;background:rgba(148, 106, 0, 0.1);border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">subtle</div></div>
+      </div>
+      <div class="sws mono">h=81.4</div></div><div style="width:140px">
+      <div style="background:var(--liminal-danger, #ba4646);color:#FFFFFF;border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600"><span style="margin-inline-end:8px">×</span>DANGER</div>
+      <div style="display:flex;gap:4px;margin-top:6px">
+        <div style="flex:1"><div style="height:22px;background:#ffbdb6;border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">text</div></div><div style="flex:1"><div style="height:22px;background:rgba(186, 70, 70, 0.22);border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">border</div></div><div style="flex:1"><div style="height:22px;background:rgba(186, 70, 70, 0.1);border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">subtle</div></div>
+      </div>
+      <div class="sws mono">h=23.5</div></div><div style="width:140px">
+      <div style="background:var(--liminal-info, #3271c8);color:#FFFFFF;border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600"><span style="margin-inline-end:8px">i</span>INFO</div>
+      <div style="display:flex;gap:4px;margin-top:6px">
+        <div style="flex:1"><div style="height:22px;background:#a4d1ff;border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">text</div></div><div style="flex:1"><div style="height:22px;background:rgba(50, 113, 200, 0.22);border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">border</div></div><div style="flex:1"><div style="height:22px;background:rgba(50, 113, 200, 0.1);border-radius:5px;border:1px solid #0d0f12"></div><div class="sws">subtle</div></div>
+      </div>
+      <div class="sws mono">h=257.5</div></div></div>
+    <div class="card"><div class="ctitle">پالتِ ۱۲ فام × ۷ پله — fill ۱–۳ · border ۴–۵ · text ۶–۷ (انگشت روی خانه = جزئیات در title)</div><div class="tblwrap"><table class="matrix"><thead><tr><th class="mx-role">hue</th>
+        <th class="mx" style="color:#6FA8EC;font-weight:400">s1</th><th class="mx" style="color:#6FA8EC;font-weight:400">s2</th><th class="mx" style="color:#6FA8EC;font-weight:400">s3</th><th class="mx" style="color:#D9BE6E;font-weight:400">s4</th><th class="mx" style="color:#D9BE6E;font-weight:400">s5</th><th class="mx" style="color:#74CE8E;font-weight:400">s6</th><th class="mx" style="color:#74CE8E;font-weight:400">s7</th>
+        <th class="mx" style="font-weight:400">frac</th></tr></thead><tbody><tr>
+      <td class="mx-role">Ruby</td>
+      <td title="Ruby s1 · fill · L=0.255 C=0.071 · #3e1118"><div style="width:44px;height:24px;background:#3e1118;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Ruby s2 · fill · L=0.335 C=0.093 · #5d1d28"><div style="width:44px;height:24px;background:#5d1d28;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Ruby s3 · fill · L=0.415 C=0.115 · #7e2b38"><div style="width:44px;height:24px;background:#7e2b38;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Ruby s4 · border · L=0.495 C=0.137 · #a03949"><div style="width:44px;height:24px;background:#a03949;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Ruby s5 · border · L=0.575 C=0.159 · #c4475b"><div style="width:44px;height:24px;background:#c4475b;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Ruby s6 · text · L=0.655 C=0.163 · #e25f72"><div style="width:44px;height:24px;background:#e25f72;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Ruby s7 · text · L=0.735 C=0.115 · #E88A93"><div style="width:44px;height:24px;background:#E88A93;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">68%</td></tr><tr>
+      <td class="mx-role">Coral</td>
+      <td title="Coral s1 · fill · L=0.302 C=0.050 · #412714"><div style="width:44px;height:24px;background:#412714;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Coral s2 · fill · L=0.382 C=0.062 · #5c3a20"><div style="width:44px;height:24px;background:#5c3a20;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Coral s3 · fill · L=0.462 C=0.075 · #794d2d"><div style="width:44px;height:24px;background:#794d2d;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Coral s4 · border · L=0.542 C=0.087 · #96613b"><div style="width:44px;height:24px;background:#96613b;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Coral s5 · border · L=0.622 C=0.100 · #b57648"><div style="width:44px;height:24px;background:#b57648;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Coral s6 · text · L=0.702 C=0.112 · #d58c57"><div style="width:44px;height:24px;background:#d58c57;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Coral s7 · text · L=0.782 C=0.096 · #E8A87C"><div style="width:44px;height:24px;background:#E8A87C;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">63%</td></tr><tr>
+      <td class="mx-role">Amber</td>
+      <td title="Amber s1 · fill · L=0.328 C=0.043 · #3d341a"><div style="width:44px;height:24px;background:#3d341a;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Amber s2 · fill · L=0.408 C=0.053 · #544926"><div style="width:44px;height:24px;background:#544926;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Amber s3 · fill · L=0.488 C=0.064 · #6d5f34"><div style="width:44px;height:24px;background:#6d5f34;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Amber s4 · border · L=0.568 C=0.074 · #877542"><div style="width:44px;height:24px;background:#877542;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Amber s5 · border · L=0.648 C=0.084 · #a18d50"><div style="width:44px;height:24px;background:#a18d50;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Amber s6 · text · L=0.728 C=0.094 · #bda55f"><div style="width:44px;height:24px;background:#bda55f;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Amber s7 · text · L=0.808 C=0.105 · #D9BE6E"><div style="width:44px;height:24px;background:#D9BE6E;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">62%</td></tr><tr>
+      <td class="mx-role">Lime</td>
+      <td title="Lime s1 · fill · L=0.319 C=0.049 · #2c371b"><div style="width:44px;height:24px;background:#2c371b;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Lime s2 · fill · L=0.399 C=0.061 · #3e4e28"><div style="width:44px;height:24px;background:#3e4e28;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Lime s3 · fill · L=0.479 C=0.073 · #526536"><div style="width:44px;height:24px;background:#526536;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Lime s4 · border · L=0.559 C=0.086 · #667e45"><div style="width:44px;height:24px;background:#667e45;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Lime s5 · border · L=0.639 C=0.097 · #7c9754"><div style="width:44px;height:24px;background:#7c9754;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Lime s6 · text · L=0.719 C=0.109 · #92b164"><div style="width:44px;height:24px;background:#92b164;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Lime s7 · text · L=0.799 C=0.122 · #A8CC74"><div style="width:44px;height:24px;background:#A8CC74;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">58%</td></tr><tr>
+      <td class="mx-role">Emerald</td>
+      <td title="Emerald s1 · fill · L=0.298 C=0.049 · #193421"><div style="width:44px;height:24px;background:#193421;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Emerald s2 · fill · L=0.378 C=0.062 · #274b31"><div style="width:44px;height:24px;background:#274b31;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Emerald s3 · fill · L=0.458 C=0.075 · #356442"><div style="width:44px;height:24px;background:#356442;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Emerald s4 · border · L=0.538 C=0.088 · #447d54"><div style="width:44px;height:24px;background:#447d54;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Emerald s5 · border · L=0.618 C=0.100 · #549767"><div style="width:44px;height:24px;background:#549767;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Emerald s6 · text · L=0.698 C=0.113 · #64b27a"><div style="width:44px;height:24px;background:#64b27a;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Emerald s7 · text · L=0.778 C=0.127 · #74CE8E"><div style="width:44px;height:24px;background:#74CE8E;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">60%</td></tr><tr>
+      <td class="mx-role">Teal</td>
+      <td title="Teal s1 · fill · L=0.299 C=0.041 · #12342f"><div style="width:44px;height:24px;background:#12342f;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Teal s2 · fill · L=0.379 C=0.052 · #1d4b44"><div style="width:44px;height:24px;background:#1d4b44;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Teal s3 · fill · L=0.459 C=0.062 · #29635a"><div style="width:44px;height:24px;background:#29635a;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Teal s4 · border · L=0.539 C=0.073 · #367c71"><div style="width:44px;height:24px;background:#367c71;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Teal s5 · border · L=0.619 C=0.083 · #449689"><div style="width:44px;height:24px;background:#449689;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Teal s6 · text · L=0.699 C=0.094 · #51b1a2"><div style="width:44px;height:24px;background:#51b1a2;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Teal s7 · text · L=0.779 C=0.105 · #5FCDBB"><div style="width:44px;height:24px;background:#5FCDBB;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">74%</td></tr><tr>
+      <td class="mx-role">Cyan</td>
+      <td title="Cyan s1 · fill · L=0.292 C=0.042 · #0e3139"><div style="width:44px;height:24px;background:#0e3139;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Cyan s2 · fill · L=0.372 C=0.053 · #194752"><div style="width:44px;height:24px;background:#194752;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Cyan s3 · fill · L=0.452 C=0.064 · #245f6c"><div style="width:44px;height:24px;background:#245f6c;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Cyan s4 · border · L=0.532 C=0.074 · #307788"><div style="width:44px;height:24px;background:#307788;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Cyan s5 · border · L=0.612 C=0.085 · #3c91a4"><div style="width:44px;height:24px;background:#3c91a4;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Cyan s6 · text · L=0.692 C=0.096 · #49abc2"><div style="width:44px;height:24px;background:#49abc2;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Cyan s7 · text · L=0.772 C=0.107 · #56C6E0"><div style="width:44px;height:24px;background:#56C6E0;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">77%</td></tr><tr>
+      <td class="mx-role">Sapphire</td>
+      <td title="Sapphire s1 · fill · L=0.240 C=0.061 · #07203b"><div style="width:44px;height:24px;background:#07203b;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Sapphire s2 · fill · L=0.320 C=0.087 · #0c335e"><div style="width:44px;height:24px;background:#0c335e;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Sapphire s3 · fill · L=0.400 C=0.101 · #1a487c"><div style="width:44px;height:24px;background:#1a487c;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Sapphire s4 · border · L=0.480 C=0.123 · #235fa1"><div style="width:44px;height:24px;background:#235fa1;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Sapphire s5 · border · L=0.560 C=0.142 · #2e76c5"><div style="width:44px;height:24px;background:#2e76c5;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Sapphire s6 · text · L=0.640 C=0.154 · #3f8ee7"><div style="width:44px;height:24px;background:#3f8ee7;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Sapphire s7 · text · L=0.720 C=0.116 · #6FA8EC"><div style="width:44px;height:24px;background:#6FA8EC;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">77%</td></tr><tr>
+      <td class="mx-role">Indigo</td>
+      <td title="Indigo s1 · fill · L=0.234 C=0.123 · #120d56"><div style="width:44px;height:24px;background:#120d56;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Indigo s2 · fill · L=0.314 C=0.165 · #201982"><div style="width:44px;height:24px;background:#201982;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Indigo s3 · fill · L=0.394 C=0.206 · #2f27b1"><div style="width:44px;height:24px;background:#2f27b1;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Indigo s4 · border · L=0.474 C=0.247 · #3f34e2"><div style="width:44px;height:24px;background:#3f34e2;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Indigo s5 · border · L=0.554 C=0.205 · #535ee7"><div style="width:44px;height:24px;background:#535ee7;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Indigo s6 · text · L=0.634 C=0.163 · #6e7feb"><div style="width:44px;height:24px;background:#6e7feb;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Indigo s7 · text · L=0.714 C=0.124 · #8B9CF0"><div style="width:44px;height:24px;background:#8B9CF0;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">82%</td></tr><tr>
+      <td class="mx-role">Violet</td>
+      <td title="Violet s1 · fill · L=0.222 C=0.094 · #210b40"><div style="width:44px;height:24px;background:#210b40;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Violet s2 · fill · L=0.302 C=0.126 · #371764"><div style="width:44px;height:24px;background:#371764;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Violet s3 · fill · L=0.382 C=0.160 · #4f248b"><div style="width:44px;height:24px;background:#4f248b;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Violet s4 · border · L=0.462 C=0.193 · #6831b4"><div style="width:44px;height:24px;background:#6831b4;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Violet s5 · border · L=0.542 C=0.225 · #8240de"><div style="width:44px;height:24px;background:#8240de;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Violet s6 · text · L=0.622 C=0.182 · #9569e5"><div style="width:44px;height:24px;background:#9569e5;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Violet s7 · text · L=0.702 C=0.138 · #A98BEA"><div style="width:44px;height:24px;background:#A98BEA;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">76%</td></tr><tr>
+      <td class="mx-role">Fuchsia</td>
+      <td title="Fuchsia s1 · fill · L=0.231 C=0.060 · #2a122e"><div style="width:44px;height:24px;background:#2a122e;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Fuchsia s2 · fill · L=0.311 C=0.081 · #432149"><div style="width:44px;height:24px;background:#432149;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Fuchsia s3 · fill · L=0.391 C=0.101 · #5d3066"><div style="width:44px;height:24px;background:#5d3066;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Fuchsia s4 · border · L=0.471 C=0.121 · #794184"><div style="width:44px;height:24px;background:#794184;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Fuchsia s5 · border · L=0.551 C=0.141 · #9652a3"><div style="width:44px;height:24px;background:#9652a3;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Fuchsia s6 · text · L=0.631 C=0.162 · #b564c4"><div style="width:44px;height:24px;background:#b564c4;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Fuchsia s7 · text · L=0.711 C=0.139 · #C983D6"><div style="width:44px;height:24px;background:#C983D6;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">53%</td></tr><tr>
+      <td class="mx-role">Rose</td>
+      <td title="Rose s1 · fill · L=0.242 C=0.061 · #341123"><div style="width:44px;height:24px;background:#341123;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Rose s2 · fill · L=0.322 C=0.081 · #511f38"><div style="width:44px;height:24px;background:#511f38;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Rose s3 · fill · L=0.402 C=0.101 · #6f2e4e"><div style="width:44px;height:24px;background:#6f2e4e;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Rose s4 · border · L=0.482 C=0.121 · #8f3d66"><div style="width:44px;height:24px;background:#8f3d66;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Rose s5 · border · L=0.562 C=0.141 · #b04d7e"><div style="width:44px;height:24px;background:#b04d7e;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Rose s6 · text · L=0.642 C=0.161 · #d35d98"><div style="width:44px;height:24px;background:#d35d98;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td><td title="Rose s7 · text · L=0.722 C=0.125 · #E083AE"><div style="width:44px;height:24px;background:#E083AE;border-radius:5px;border:1px solid rgba(255,255,255,.06)"></div></td>
+      <td class="sws">60%</td></tr></tbody></table></div>
+      <div class="note">پلهٔ ۷ = رنگِ تأییدشده، دست‌نخورده. شش پلهٔ زیرش مشتق: هر فام «کسرِ گاموتِ» خودش را نگه می‌دارد و هر پله ۰.۰۸ تاریک‌تر — شخصیت حفظ می‌شود، نه یکسان‌سازی.</div></div>
+    <div class="card"><div class="ctitle">معنایی: فعلی (کرومای بیرونِ ۰.۱۵) در برابر پیشنهادِ §6.11 (از پالت)</div><div style="display:flex;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:120px">
+      <div class="chainrole">SUCCESS</div>
+      <div class="sws">فعلی</div>
+      <div style="height:26px;background:var(--liminal-success, #00875d);border-radius:5px;border:1px solid #0d0f12" title="var(--liminal-success, #00875d)"></div>
+      <div class="sws" style="margin-top:6px">پیشنهاد ← Emerald (Δ18°)</div>
+      <div style="display:flex;gap:3px">
+        <div style="flex:1;height:26px;background:#274b31;border-radius:5px" title="fill s2 #274b31"></div>
+        <div style="flex:1;height:26px;background:#549767;border-radius:5px" title="border s5 #549767"></div>
+        <div style="flex:1;height:26px;background:#74CE8E;border-radius:5px" title="text s7 #74CE8E"></div>
+      </div></div><div style="flex:1;min-width:120px">
+      <div class="chainrole">WARNING</div>
+      <div class="sws">فعلی</div>
+      <div style="height:26px;background:var(--liminal-warning, #946a00);border-radius:5px;border:1px solid #0d0f12" title="var(--liminal-warning, #946a00)"></div>
+      <div class="sws" style="margin-top:6px">پیشنهاد ← Amber (Δ6°)</div>
+      <div style="display:flex;gap:3px">
+        <div style="flex:1;height:26px;background:#544926;border-radius:5px" title="fill s2 #544926"></div>
+        <div style="flex:1;height:26px;background:#a18d50;border-radius:5px" title="border s5 #a18d50"></div>
+        <div style="flex:1;height:26px;background:#D9BE6E;border-radius:5px" title="text s7 #D9BE6E"></div>
+      </div></div><div style="flex:1;min-width:120px">
+      <div class="chainrole">DANGER</div>
+      <div class="sws">فعلی</div>
+      <div style="height:26px;background:var(--liminal-danger, #ba4646);border-radius:5px;border:1px solid #0d0f12" title="var(--liminal-danger, #ba4646)"></div>
+      <div class="sws" style="margin-top:6px">پیشنهاد ← Ruby (Δ9°)</div>
+      <div style="display:flex;gap:3px">
+        <div style="flex:1;height:26px;background:#5d1d28;border-radius:5px" title="fill s2 #5d1d28"></div>
+        <div style="flex:1;height:26px;background:#c4475b;border-radius:5px" title="border s5 #c4475b"></div>
+        <div style="flex:1;height:26px;background:#E88A93;border-radius:5px" title="text s7 #E88A93"></div>
+      </div></div><div style="flex:1;min-width:120px">
+      <div class="chainrole">INFO</div>
+      <div class="sws">فعلی</div>
+      <div style="height:26px;background:var(--liminal-info, #3271c8);border-radius:5px;border:1px solid #0d0f12" title="var(--liminal-info, #3271c8)"></div>
+      <div class="sws" style="margin-top:6px">پیشنهاد ← Sapphire (Δ28°)</div>
+      <div style="display:flex;gap:3px">
+        <div style="flex:1;height:26px;background:#0c335e;border-radius:5px" title="fill s2 #0c335e"></div>
+        <div style="flex:1;height:26px;background:#2e76c5;border-radius:5px" title="border s5 #2e76c5"></div>
+        <div style="flex:1;height:26px;background:#6FA8EC;border-radius:5px" title="text s7 #6FA8EC"></div>
+      </div></div></div>
+      <div class="note">پیشنهاد = نزدیک‌ترین فامِ تأییدشده (روی فامِ اندازه‌گیری‌شده، نه برچسب). <strong style="color:#D9BE6E">هنوز وصل نشده</strong> — اتصالش چهار رنگِ تأییدشده را عوض می‌کند؛ تصمیمِ چشمِ خواننده است، نه نزدیک‌ترین زاویه.</div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">چهار نقش هم‌بلندند — روشناییِ برابر <code class="tvalue">0.5513–0.5531</code></div>
+<div class="twhy">دلیل: هم‌بلندی یعنی وزنِ بصریِ برابر: هیچ نقشی بلندتر فریاد نمی‌زند؛ روشناییِ solid از bisection می‌آید.</div></div></div>
+    <div class="finding"><span class="fmark">⚠</span>
+<div><div class="tname">دو جهانِ کروما — کرومای معناییِ فعلی یکی نیست</div><div class="twhy"><code>C = 0.12 / 0.11 / 0.15 / 0.15</code> — گسترشِ ۰.۰۳۶: سبز/زرد ~۰.۱۱۵، قرمز/آبی ~۰.۱۵۰. همین شکاف بهانهٔ §6.11 و ساختِ پالت بود؛ نقشهٔ پیشنهادیِ بالا کروما را پله‌محور و یکدست می‌کند. حکمش پایین‌تر: «معنایی هنوز به پالت وصل نشده» — تصمیمِ چشمِ خواننده.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">متنِ سفید روی هر fill — WCAG AA <code class="tvalue">4.54 / 4.86 / 5.18 / 4.85</code></div>
+<div class="twhy">دلیل: دو لنز: APCA تنها SUCCESS را در WCAG 4.37 رها می‌کرد؛ روشناییِ solid از bisection می‌آید.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">پالتِ ۱۲×۷ ساخته شد <code class="tvalue">۸۴ رنگ</code></div>
+<div class="twhy">دلیل: قانونِ §6.11 نوشت ولی موتور نداشت — حالا کلِ رمپ از ۱۲ رنگِ تأییدشده مشتق می‌شود و به‌عنوان متغیرِ CSS منتشر شده.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">پلهٔ متن روی هر ۹ سطح ≥ 6.47:1 — دقیقاً ادّعای §6.11 <code class="tvalue">min 6.47:1 (Violet)</code></div>
+<div class="twhy">دلیل: این عدد در POLICY اندازه‌گیری شده بود؛ derivation همان را از اصولِ نخست بازتولید می‌کند — پالت «لایه نمی‌خواهد».</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">هر فام کسری از گاموتِ خودش را نگه می‌دارد <code class="tvalue">53%–82%</code></div>
+<div class="twhy">دلیل: کروما ثابت بعضی فام‌ها را پررنگ و بعضی را مات می‌کند؛ کسرِ گاموت از خودِ رنگِ تأییدشده خوانده می‌شود.</div></div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — پالتِ ۱۲×۷ — §6.11 حالا موتور دارد</div>
+<div class="vreason">بزرگ‌ترین شکافِ هسته بسته شد: ۸۴ رنگِ مشتق، ۱۷ تستِ نگهبان، ۸۴ متغیرِ CSS منتشرشده، و ادّعای 6.47:1 زنده بازتولید شد.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #6FA8EC">
+<div class="vtitle"><span style="color:#6FA8EC">مشکل·حل‌شده</span> — «دو جهانِ کروما» — مسیرِ حل ساخته شد</div>
+<div class="vreason">معناییِ فعلی C=0.15 (۲۲× بیرونِ سیستم — ممنوعهٔ §6.11). SEMANTIC_FROM_PALETTE نقشهٔ درست را می‌دهد: danger→Ruby · warning→Amber · success→Emerald · info→Sapphire — ساخته و رندر شد، اتصال منتظرِ تستِ چشمی.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #D9BE6E">
+<div class="vtitle"><span style="color:#D9BE6E">ضعف</span> — معنایی هنوز به پالت وصل نشده</div>
+<div class="vreason">اتصالش چهار رنگِ تأییدشده را عوض می‌کند → تصمیمِ چشمِ خواننده. تستِ «هنوز وصل نشده» شکاف را نگه می‌دارد تا بی‌صدا نیمه‌کاره نماند.</div></div></section><section><div class="shead"><span class="snum">08</span><div><h2>تایپوگرافی و آلفای متن</h2><p class="lede"><code>lh = 1 + 8/fs</code> — خط = فونت + یک گامِ فاصله (SPACING[2]=8px): مشتق از مقیاسِ خودِ سیستم. فارسی کفِ خودش را دارد: 1.5625.</p></div></div><div class="cols">
+      <div class="card"><div class="ctitle">آلفای متن — زنده از TEXT_HIERARCHY</div><div class="tblwrap"><table class="matrix"><thead><tr><th class="mx-role">level</th><th class="mx">S0</th><th class="mx">S2</th><th class="mx">S8</th></tr></thead><tbody><tr><td class="mx-role">primary</td><td class="mx"><span style="background:#060709;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.89)">نمونه 0.89</span></td><td class="mx"><span style="background:#090b0d;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.888)">نمونه 0.89</span></td><td class="mx"><span style="background:#15171a;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.887)">نمونه 0.89</span></td></tr><tr><td class="mx-role">secondary</td><td class="mx"><span style="background:#060709;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.79)">نمونه 0.79</span></td><td class="mx"><span style="background:#090b0d;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.789)">نمونه 0.79</span></td><td class="mx"><span style="background:#15171a;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.783)">نمونه 0.78</span></td></tr><tr><td class="mx-role">tertiary</td><td class="mx"><span style="background:#060709;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.79)">نمونه 0.79</span></td><td class="mx"><span style="background:#090b0d;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.789)">نمونه 0.79</span></td><td class="mx"><span style="background:#15171a;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.783)">نمونه 0.78</span></td></tr><tr><td class="mx-role">quaternary</td><td class="mx"><span style="background:#060709;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.448)">نمونه 0.45</span></td><td class="mx"><span style="background:#090b0d;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.441)">نمونه 0.44</span></td><td class="mx"><span style="background:#15171a;border-radius:5px;padding:3px 8px;color:rgba(255,255,255,0.421)">نمونه 0.42</span></td></tr></tbody></table></div></div>
+      <div class="card"><div class="ctitle">line-height — فرمول در برابر کفِ فارسی</div><div class="tblwrap"><table class="matrix"><thead><tr><th class="mx-role">lvl</th><th class="mx">fs</th><th class="mx">lh</th><th class="mx">fa</th></tr></thead><tbody><tr><td class="mx-role">1</td><td class="mx">11.11</td><td class="mx">1.4167</td><td class="mx" style="color:#D9BE6E">1.5625 ▲</td></tr><tr><td class="mx-role">2</td><td class="mx">13.33</td><td class="mx">1.3472</td><td class="mx" style="color:#D9BE6E">1.5625 ▲</td></tr><tr><td class="mx-role">3</td><td class="mx">16.00</td><td class="mx">1.2894</td><td class="mx" style="color:#D9BE6E">1.5625 ▲</td></tr><tr><td class="mx-role">4</td><td class="mx">19.20</td><td class="mx">1.2411</td><td class="mx" style="color:#D9BE6E">1.5625 ▲</td></tr><tr><td class="mx-role">5</td><td class="mx">23.04</td><td class="mx">1.2009</td><td class="mx" style="color:#D9BE6E">1.5625 ▲</td></tr><tr><td class="mx-role">6</td><td class="mx">27.65</td><td class="mx">1.1674</td><td class="mx" style="color:#D9BE6E">1.5625 ▲</td></tr><tr><td class="mx-role">7</td><td class="mx">33.18</td><td class="mx">1.1395</td><td class="mx" style="color:#D9BE6E">1.5625 ▲</td></tr></tbody></table></div>
+      <div class="note">▲ = کفِ فارسی بالاتر از مقدارِ طراحی است و جایش را می‌گیرد.</div></div>
+    </div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">lh دقیقاً ۱+۸/fs است <code class="tvalue">lvl3: fs=16.00 lh=1.2894</code></div>
+<div class="twhy">دلیل: ۸px = SPACING[2] — فاصلهٔ خط از مقیاسِ خودِ سیستم می‌آید؛ جدولِ دستیِ قبلی برای سه سطحِ اول معکوس بود.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">کفِ فارسی فقط جا را می‌گیرد، تحمیل نمی‌کند <code class="tvalue">floor=1.5625</code></div>
+<div class="twhy">دلیل: max(lh, floor): هر جا طراحی بلندتر است دست‌نخورده می‌ماند؛ en هرگز کف نمی‌گیرد.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">سلسله‌مراتبِ متن با آلفا، روی هر ۹ سطح <code class="tvalue">S0: 0.89 &gt; 0.45</code></div>
+<div class="twhy">دلیل: آلفا از کفِ کنتراستِ دولنز derive می‌شود و با میزبان تنظیم — tertiary روی S8 همان‌قدر خوانا است که روی S0.</div></div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — تایپو کاملاً مشتق است</div>
+<div class="vreason">fs از نسبتِ ۱.۲، lh از گامِ فاصله، آلفا از کفِ کنتراست — هیچ جدولِ دستیِ واگراشدنی نیست.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #D9BE6E">
+<div class="vtitle"><span style="color:#D9BE6E">ضعف</span> — فارسی تستِ بصری ندارد</div>
+<div class="vreason">کفِ ۱.۵۶۲۵ درست به‌نظر می‌رسد ولی روی Vazirmatnِ واقعی چشم‌سنجی نشده — اقدام: سه سطح در دو زبان کنار هم، فاز ۱.</div></div></section><section><div class="shead"><span class="snum">09</span><div><h2>جمع‌بندی — حکمِ نهاییِ هسته</h2><p class="lede">جمعِ همهٔ حکم‌ها + وضعیتِ سوئیتِ واقعی. skipها داستان دارند: گاردهایی که «نباید روی لیستِ خالی پاس شوند» در صفرِ مطلق به خواب رفته‌اند و با اولین کامپوننت خودکار مسلح می‌شوند.</p></div></div><div class="counts">
+      <div class="count" style="color:#74CE8E"><b>10</b>قدرت</div>
+      <div class="count" style="color:#D9BE6E"><b>4</b>ضعف</div>
+      <div class="count" style="color:#6FA8EC"><b>3</b>مشکل·حل‌شده</div>
+      <div class="count" style="color:#A98BEA"><b>1</b>سؤال باز</div>
+    </div>
+    <div class="note">شمارندهٔ بالا حکم‌های بخش‌های ۰۱–۰۸ را می‌شمارد؛ سه حکمِ پایین جمع‌بندی‌اند و شمرده نمی‌شوند. رکوردِ کاملِ ممیزی با همهٔ ریزحکم‌ها: <code>.lab/CORE-VERDICTS.md</code>.</div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">موتور: ۲۶ فایلِ سطح-بالا + ۳۱ تست، کامپوننت: ۰ <code class="tvalue">صفرِ مطلق</code></div>
+<div class="twhy">دلیل: کامپوننت‌ها حذف شدند تا از سیاست→قانون→موتور متولد شوند — ۲۱۸ فایل در .archive.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">vitest: ۵۴۲ پاس · ۶ skip (zero-state) · ۰ شکست <code class="tvalue">۳۱ فایل تست</code></div>
+<div class="twhy">دلیل: ۶ skip = گاردهای reachability روی src/componentsِ خالی — skipIf(ZERO_ABSOLUTE) یعنی با اولین کامپوننت برمی‌گردند. تازه‌ها: پینِ کوانتیزاسیونِ hex (tokens)، پینِ ترکیبِ on (surface)، و ۵ تستِ نگهبانِ همین اسنپ‌شات.</div></div></div>
+    <div class="test"><span class="tmark" style="color:#74CE8E">✓</span>
+<div><div class="tname">tsc --noEmit پاک است <code class="tvalue">۰ خطا</code></div>
+<div class="twhy">دلیل: SurfaceRoleِ جدید (region) در همهٔ Recordها پوشش داده شده.</div></div></div>
+    <div class="verdict" style="border-inline-start:2px solid #74CE8E">
+<div class="vtitle"><span style="color:#74CE8E">قدرت</span> — هسته محکم است — ریاضیِ هر درمان ثابت و تست‌شده</div>
+<div class="vreason">هر درمان یک شدتِ ثابت (۰.۵/۱/۱.۵ پله و ۱q)، هر شدت یک خط‌کش، هر خط‌کش یک تست — این فایل خودش دلیل است: همهٔ ✓ها از موتورِ واقعی محاسبه شدند.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #D9BE6E">
+<div class="vtitle"><span style="color:#D9BE6E">ضعف</span> — چهار اقدامِ باز</div>
+<div class="vreason">۱) فصلِ چاه‌ها در POLICY · ۲) اتصالِ معنایی به پالت (تصمیمِ چشمی) · ۳) تستِ بصریِ فارسی · ۴) API میزبانِ حل‌شده برای زنجیره‌های رابطه‌ای (on ترکیب نمی‌شود). هیچ‌کدام ریاضیِ موتور را عوض نمی‌کنند.</div></div>
+    <div class="verdict" style="border-inline-start:2px solid #A98BEA">
+<div class="vtitle"><span style="color:#A98BEA">سؤال باز</span> — ریمِ توست در سقف — تنها تصمیمِ نگرفته</div>
+<div class="vreason">تا چشم‌سنجی روی توستِ واقعی، تنزلِ صادقانهٔ فعلی می‌ماند و POLICY صریحاً «باز» نگهش داشته.</div></div></section>
+<footer>
+  ژنراتور: src/site/generate-audit-snapshot.ts — با هر بار اجرای سوئیت تست، اسنپ‌شات تازه می‌شود.<br>
+  تصمیمِ چشمیِ باز: اتصالِ معنایی به پالت (بخش ۰۷) — danger→Ruby · warning→Amber · success→Emerald · info→Sapphire.
+</footer>
+</div>
+</body>
+</html>
