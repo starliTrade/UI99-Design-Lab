@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · سایه و قانون مجاورت</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #030406; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.75; padding: 20px 16px 60px; }
+  .wrap { max-width: 620px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .lvl { padding: 12px; border-radius: 14px; margin-top: 10px; }
+  .card { padding: 10px 12px; border-radius: 12px; color: rgba(233,236,242,0.85); }
+  .t { font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.5); }
+  .note { margin-top: 12px; padding: 12px 14px; border-right: 2px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.6); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>سایه و قانون مجاورت</h1>
+  <div class="muted">هر کارت سایه‌اش را فقط روی لایهٔ <b>بلافاصلهٔ پایینش</b> می‌اندازد. تیرگی هر سایه از همان میزبان حساب می‌شود: اوج دقیقاً ۱q زیر میزبان.</div>
+
+  <h2>۱. زنجیره: هر سایه روی لایهٔ پایینش</h2>
+  <div id="chain"></div>
+
+  <h2>۲. نمونهٔ اشتباه: سایهٔ S3 با میزبان S1 محاسبه شده</h2>
+  <div class="muted">همین کارت ولی تیرگی‌اش از دو لایه پایین‌تر حساب شده. اگر قانون درست باشد، باید با کارت بالا فرق داشته باشد.</div>
+  <div id="wrong"></div>
+
+  <div class="note">
+    <b>کدام را تأیید می‌کنی؟</b> در زنجیرهٔ ۱ سایه‌ها باید ملایم و هم‌اندازه دیده شوند، و هیچ سایه‌ای نباید از روی یک لایه بپرد. در نمونهٔ ۲، تفاوت باید دیده شود: کارت اشتباه یا تیره‌تر است یا کم‌رنگ‌تر.
+  </div>
+</div>
+<script>
+const LV = ['#060709','#07090b','#090b0d','#0b0d0f','#0d0f12','#0f1114','#111316','#131518','#15171a'];
+const SH = [1,2,3], Q = 0.0083;
+const hex2 = h => [1,3,5].map(i => parseInt(h.slice(i,i+2),16));
+const lin = v => { v/=255; return v<=0.04045 ? v/12.92 : Math.pow((v+0.055)/1.055,2.4); };
+function oklabL(c){ const [R,G,B]=c.map(lin);
+  const l=Math.cbrt(0.4122214708*R+0.5363325363*G+0.0514459929*B), m=Math.cbrt(0.2119034982*R+0.6806995451*G+0.1073969566*B), s=Math.cbrt(0.0883024619*R+0.2817188376*G+0.6299787005*B);
+  return 0.2104542553*l+0.7936177850*m-0.0040720468*s; }
+const over = (a, host) => host.map((b,i) => b + a*(SH[i]-b));
+function peakAlpha(hostHex, quanta = 1){
+  const host = hex2(hostHex), hl = oklabL(host); let lo=0, hi=1;
+  for (let i=0;i<80;i++){ const mid=(lo+hi)/2; const d=(oklabL(over(mid,host))-hl)/Q; if (Math.abs(d)>quanta) hi=mid; else lo=mid; }
+  return (lo+hi)/2;
+}
+const shadowCss = (h, hostHex) => { const peak = peakAlpha(hostHex), each = 1 - Math.sqrt(1 - peak);
+  const near = 2 + h*1.5, far = 4 + h*6;
+  return `0 ${near.toFixed(1)}px ${far.toFixed(0)}px rgba(1,2,3,${each.toFixed(4)}), 0 2px ${near.toFixed(1)}px rgba(1,2,3,${each.toFixed(4)})`; };
+
+// chain: S(n) card floats on S(n-1) — nested, one step each
+let html = '';
+for (let n = 1; n <= 8; n++) html += `<div class="lvl" style="background:${LV[n-1]}"><div class="card" style="background:${LV[n]};box-shadow:${shadowCss(n, LV[n-1])}"><span class="t">S${n} · روی S${n-1}</span></div>`;
+document.getElementById('chain').innerHTML = html + '</div>'.repeat(8);
+
+// wrong: S3 card shadowed for S1 host, placed on S2
+document.getElementById('wrong').innerHTML =
+  `<div class="lvl" style="background:${LV[2]};margin-top:10px"><div class="card" style="background:${LV[3]};box-shadow:${shadowCss(3, LV[1])}"><span class="t">S3 · سایه از S1 (اشتباه)</span></div></div>`;
+</script>
+</body>
+</html>
