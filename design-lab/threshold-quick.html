@@ -19,7 +19,7 @@
   .bar-fill { height: 100%; background: rgba(255,255,255,0.5); width: 0%; transition: width 150ms; }
   .stage { height: 300px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
            display: flex; align-items: center; justify-content: center; }
-  canvas.stim { width: 46%; aspect-ratio: 1; height: auto; border-radius: 4px; image-rendering: pixelated; }
+  canvas.stim { width: 46%; aspect-ratio: 1; height: auto; border-radius: 4px; image-rendering: auto; }
   .choices { display: flex; gap: 10px; margin-top: 14px; }
   button { flex: 1; min-height: 56px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16);
            background: transparent; color: rgba(255,255,255,0.9); font: inherit; font-size: 15px; cursor: pointer; }
@@ -40,7 +40,7 @@
 <body>
 <div class="wrap">
 
-  <h1>سنجش q و r با دیترینگ <span class="muted">(v2)</span></h1>
+  <h1>سنجش q و r با دیترینگ <span class="muted">(v3)</span></h1>
   <div class="muted">حداکثر ۶۰ آزمایش · ترکیب پله‌های ۸ بیتی برای ساختن سطوح میانی · تکرارِ داخلی برای کنترل دقت</div>
 
   <div class="box">
@@ -74,7 +74,7 @@
   <div class="hide" id="experiment">
     <div class="mono muted" id="progress"></div>
     <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
-    <div class="stage" id="stage"><canvas class="stim" id="stim" width="256" height="256"></canvas></div>
+    <div class="stage" id="stage"><canvas class="stim" id="stim" width="512" height="512"></canvas></div>
     <div class="choices">
       <button class="primary" id="yes">مرز را می‌بینم</button>
       <button id="no">نمی‌بینم</button>
@@ -129,8 +129,9 @@ const LAMBDA = 0.02;                               // lapse / false-alarm floor
 const SLOPES = [0.0003, 0.0006, 0.0010, 0.0015, 0.0022, 0.0030];
 const K95 = Math.log(19);                          // logistic 95% point = θ + s·ln19
 const DITHER_N = 256;                              // 16×16 Bayer → 256 mix levels
-const CATCH_EVERY = 6, REPEAT_EVERY = 10;
-const TOTAL = 60, MIN_EARLY = 40, CI_TARGET = 0.0006;
+const CATCH_EVERY = 6, REPEAT_EVERY = 8;
+const TOTAL = 80, MIN_EARLY = 50, CI_TARGET = 0.0006;
+const MAX_RT_MS = 2500, MIN_REPEATS = 4, MIN_REPEAT_AGREE = 0.8, MAX_FA = 0.1;
 const TH_GRID = Array.from({ length: 151 }, (_, i) => i * 0.0002);   // 0 … 0.03
 
 function hex2rgb(h){ return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
@@ -280,17 +281,21 @@ document.querySelectorAll('input[name=amb]').forEach(r => r.addEventListener('ch
 function startSession(){
   COND = readConditions();
   CANDS = buildCandidates();
+  HIGH = CANDS.reduce((x, y) => (y.dl > x.dl ? y : x));
   P = makePosterior(); trials = []; idx = 0; nonCatch = [];
   $('intro').classList.add('hide'); $('result').classList.add('hide');
   $('experiment').classList.remove('hide');
   next();
 }
+let SHOW_T = 0, HIGH = null;
 function next(){
   const n = idx + 1;
   if (idx >= TOTAL) return finish();
-  if (idx >= MIN_EARLY && idx > 0 && earlyStop()) return finish();
+  if (idx >= MIN_EARLY && earlyStop()) return finish();
   let c;
-  if (n % CATCH_EVERY === 0) c = { catch: true, A: CANVAS_HEX, B: CANVAS_HEX, k: 0, dl: 0, key: 'catch' };
+  if (idx === 0) c = { control: 'high', ...HIGH, catch: false, repeat: false };          // must be seen
+  else if (idx === 1) c = { control: 'blank', catch: true, A: CANVAS_HEX, B: CANVAS_HEX, k: 0, dl: 0, key: 'catch', repeat: false }; // must not be seen
+  else if (n % CATCH_EVERY === 0) c = { catch: true, A: CANVAS_HEX, B: CANVAS_HEX, k: 0, dl: 0, key: 'catch', repeat: false };
   else if (n % REPEAT_EVERY === 0 && nonCatch.length) {
     const src = nonCatch[Math.floor(Math.random()*nonCatch.length)];
     c = { ...src, repeat: true };
@@ -299,16 +304,18 @@ function next(){
   if (c.catch) drawCatch(); else drawStim(c);
   $('progress').textContent = `آزمایش ${n} از حداکثر ${TOTAL}`;
   $('barFill').style.width = (idx/TOTAL*100) + '%';
+  SHOW_T = performance.now();
 }
 function earlyStop(){
   const e = estimate(P);
   return (e.qhi - e.qlo) <= CI_TARGET;
 }
 function answer(seen){
+  const rt = Math.round(performance.now() - SHOW_T);
   const t = { key: pending.key, A: pending.A, B: pending.B, k: pending.k, dl: pending.dl,
-              catch: !!pending.catch, repeat: !!pending.repeat, seen };
+              catch: !!pending.catch, repeat: !!pending.repeat, control: pending.control || null, rt, seen };
   trials.push(t);
-  if (!t.catch) { updatePosterior(P, t.dl, seen); if (!t.repeat) nonCatch.push(pending); }
+  if (!t.catch && !t.control) { updatePosterior(P, t.dl, seen); if (!t.repeat) nonCatch.push(pending); }
   idx++; next();
 }
 function levelTable(){
@@ -332,8 +339,20 @@ function finish(){
   const reps = trials.filter(t => t.repeat);
   const orig = new Map(); for (const t of trials) if (!t.catch && !t.repeat) orig.set(t.key, t.seen);
   const repOk = reps.filter(t => orig.has(t.key) && orig.get(t.key) === t.seen).length;
+  const hiT = trials.find(t => t.control === 'high'), blT = trials.find(t => t.control === 'blank');
+  const rts = trials.filter(t => !t.catch && !t.control).map(t => t.rt).sort((x, y) => x - y);
+  const medRT = rts.length ? rts[Math.floor(rts.length/2)] : null;
+  const faRate = catches.length ? fa / catches.length : 1;
+  const repRate = reps.length ? repOk / reps.length : 0;
+  const reasons = [];
+  if (!(hiT && hiT.seen === true && blT && blT.seen === false)) reasons.push('کنترل‌ها رد شد (روشنایی یا دقت پاسخ)');
+  if (faRate > MAX_FA) reasons.push(`خطای مثبت کاذب ${Math.round(faRate*100)}٪ (مجاز ≤ ۱۰٪)`);
+  if (reps.length < MIN_REPEATS || repRate < MIN_REPEAT_AGREE) reasons.push(`تکرار داخلی ${repOk} از ${reps.length} (مجاز ≥ ۸۰٪)`);
+  if (medRT === null || medRT > MAX_RT_MS) reasons.push(`زمان پاسخ میانه ${medRT} ms (مجاز ≤ ${MAX_RT_MS})`);
+  if (e.qhi - e.qlo > CI_TARGET) reasons.push(`بازه‌ی q پهن است (${(e.qhi-e.qlo).toFixed(4)})`);
+  const VALID = reasons.length === 0;
   const lv = levelTable(), bd = band(lv);
-  const rec = { at: new Date().toISOString(), engine: 'quick-v2', cond: COND, n: trials.length,
+  const rec = { at: new Date().toISOString(), engine: 'quick-v3', cond: COND, valid: VALID, reasons, medRT, n: trials.length,
     q: e.q, qlo: e.qlo, qhi: e.qhi, r: e.r, rlo: e.rlo, rhi: e.rhi, sdQ: e.sdQ,
     falseAlarms: fa, catchN: catches.length, repeatOk: repOk, repeatN: reps.length,
     band: bd, levels: lv, trials };
@@ -348,16 +367,12 @@ function finish(){
   $('rfa').textContent = `${fa} از ${catches.length}`;
   const d = (e.q/REF.q - 1)*100;
   $('rdiff').textContent = (d>=0?'+':'') + d.toFixed(0) + '٪';
-  const width = e.qhi - e.qlo;
-  const ok = width <= CI_TARGET && (reps.length === 0 || repOk/reps.length >= 0.8) && fa === 0;
-  $('rverdict').textContent = (COND.standard ? 'شرایط: استاندارد ✓. ' : 'شرایط: غیراستاندارد — این نشست در میانگین استاندارد نمی‌آید. ') + (ok
-    ? 'بازه‌ی باریک و تکرار هم‌خوان: این نشست قابل اتکاست.'
-    : 'این نشست هنوز قطعی نیست (بازه پهن یا تکرار ناهم‌خوان یا خطای کاذب). یک نشست دیگر بزن.');
+  $('rverdict').textContent = (COND.standard ? 'شرایط: استاندارد ✓. ' : 'شرایط: غیراستاندارد. ') + (VALID ? 'نشست معتبر است.' : 'نشست نامعتبر: ' + reasons.join(' · '));
 
   $('levels').innerHTML = '<tr><th>ΔL</th><th>رنگ‌ها (A→B, k/256)</th><th>دیده</th><th>نرخ</th></tr>' +
     lv.map(g => `<tr><td>${g.dl.toFixed(5)}</td><td>${g.n}</td><td>${g.s}</td><td>${Math.round(g.s/g.n*100)}٪</td></tr>`).join('');
 
-  const all2 = all.filter(s => s.engine === 'quick-v2' && s.cond && s.cond.standard);
+  const all2 = all.filter(s => s.engine === 'quick-v3' && s.valid && s.cond && s.cond.standard);
   const qs = all2.map(s => s.q), rs = all2.map(s => s.r);
   const mean = a => a.reduce((x,y)=>x+y,0)/a.length;
   const sd = a => { const m = mean(a); return Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/Math.max(1,a.length-1)); };
@@ -370,7 +385,7 @@ function finish(){
     : (sd(qs) <= 0.0004 ? 'سه نشست یا بیشتر با پراکندگی کم: میانگین قابل اتکاست.'
                         : 'پراکندگی بین نشست‌ها بالاست؛ نشست بیشتری بزن و دستگاه را ثابت کن.');
   $('export').value =
-    `Q=${f4(e.q)} [${f4(e.qlo)},${f4(e.qhi)}] R=${f4(e.r)} cond=${COND.standard ? 'STD' : 'NONSTD'}/${COND.ambient} n=${trials.length} FA=${fa}/${catches.length} REP=${repOk}/${reps.length} band=${bd.lo!==null?f4(bd.lo):'-'}..${bd.hi!==null?f4(bd.hi):'-'} v2\n` +
+    `Q=${f4(e.q)} [${f4(e.qlo)},${f4(e.qhi)}] R=${f4(e.r)} cond=${COND.standard ? 'STD' : 'NONSTD'}/${COND.ambient} valid=${VALID ? 'YES' : 'NO'} medRT=${medRT} n=${trials.length} FA=${fa}/${catches.length} REP=${repOk}/${reps.length} band=${bd.lo!==null?f4(bd.lo):'-'}..${bd.hi!==null?f4(bd.hi):'-'} v3\n` +
     JSON.stringify(rec);
 }
 
