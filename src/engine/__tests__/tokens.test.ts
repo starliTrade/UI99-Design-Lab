@@ -10,6 +10,7 @@ import { Z_INDEX } from '../spec-engine';
 import { TEXT_ROLE_SPEC, whiteAlphaApcaOn } from '../liminal-contrast';
 import {
   PERCEPTUAL_QUANTUM,
+  RELIABLE_BOUNDARY,
   CANVAS_L,
   LADDER_STEP,
   LADDER_CHROMA,
@@ -483,6 +484,40 @@ describe('the exact ladder — the design, which hex cannot write', () => {
     for (const d of steps) expect(d).toBeCloseTo(LADDER_STEP, 9);
     expect(lightness(LADDER_EXACT[0])).toBeCloseTo(CANVAS_L, 9);
     expect(LADDER_STEP / PERCEPTUAL_QUANTUM).toBeCloseTo(1.1416, 3);
+  });
+
+  it('δ is the MAXIMAL uniform step under the hard ceiling — 99.74% of the geometric max', () => {
+    // Lock 1 of POLICY §2 (round-7 optimality): anchor + ceiling + nine levels
+    // + uniformity leave zero degrees of freedom — δ is forced, not picked.
+    const CEILING = 0.204;
+    const geoMax = (CEILING - CANVAS_L) / (LADDER_SIZE - 1);
+    const fit = LADDER_STEP / geoMax;
+    expect(fit).toBeGreaterThanOrEqual(0.997);
+    expect(fit).toBeLessThanOrEqual(1);
+    // the exact ladder never pokes through the hard ceiling
+    expect(CANVAS_L + (LADDER_SIZE - 1) * LADDER_STEP).toBeLessThanOrEqual(CEILING);
+  });
+
+  it('δ sits inside the measured liminal band [q, r] — never sub-, never supraliminal', () => {
+    // Lock 4 of POLICY §2: below q the hierarchy is unreadable (subliminal),
+    // above r the seam is loud (decoration). δ = 1.1416q lives at 40.5% of
+    // the band — the liminal-EST state that still functions.
+    expect(LADDER_STEP).toBeGreaterThanOrEqual(PERCEPTUAL_QUANTUM);
+    expect(LADDER_STEP).toBeLessThanOrEqual(RELIABLE_BOUNDARY);
+  });
+
+  it('nine levels is the maximum — a tenth seam cannot stay above q at this bit depth', () => {
+    // Lock 2 of POLICY §2, arithmetic core. The full proof was a maximin DP
+    // over ALL representable 10-level ladders (round 7): the best possible
+    // weakest seam is 1.0024q → p ≈ 50.1%, a coin flip with zero quantisation
+    // insurance. Pinned live without the DP: the 10-gap mean step, minus this
+    // ladder's own realised quantisation residual, already falls below q.
+    const span = oklchLightness(LADDER[8]) - oklchLightness(LADDER[0]);
+    const step10 = span / 9;
+    const resid = Math.max(
+      ...LADDER.slice(0, -1).map((h, n) => Math.abs(lightnessStep(h, LADDER[n + 1]) - LADDER_STEP)),
+    );
+    expect(step10 - resid).toBeLessThan(PERCEPTUAL_QUANTUM);
   });
 
   it('and the hex ladder is measurably off the design — which is why it exists', () => {
