@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · سنجش سریع q و r (۴۰ آزمایش)</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #030406; color: rgba(255,255,255,0.88);
+         font-family: Inter, system-ui, -apple-system, sans-serif; font-size: 15px; line-height: 1.7;
+         padding: 20px 16px 60px; }
+  .wrap { max-width: 520px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 15px; font-weight: 600; margin: 22px 0 6px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .box { margin-top: 14px; padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.10); background: #060709; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13px; }
+  .bar-track { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; margin: 14px 0; overflow: hidden; }
+  .bar-fill { height: 100%; background: rgba(255,255,255,0.5); width: 0%; transition: width 150ms; }
+  .stage { height: 300px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
+           display: flex; align-items: center; justify-content: center; }
+  .stim { width: 46%; height: 46%; border-radius: 6px; }
+  .choices { display: flex; gap: 10px; margin-top: 14px; }
+  button { flex: 1; min-height: 56px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16);
+           background: transparent; color: rgba(255,255,255,0.9); font: inherit; font-size: 15px; cursor: pointer; }
+  button.primary { background: #E9ECF2; color: #060709; border-color: transparent; }
+  button.small { min-height: 42px; flex: 0 0 auto; padding: 0 14px; font-size: 13px; }
+  .big { font-family: "JetBrains Mono", monospace; font-size: 24px; color: #6EE0B4; }
+  .row { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  textarea { width: 100%; min-height: 90px; background: #0b0d10; color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.12);
+             border-radius: 10px; padding: 10px; font-family: "JetBrains Mono", monospace; font-size: 12px; direction: ltr; }
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>سنجش سریع q و r</h1>
+  <div class="muted">۴۰ آزمایش · حدود یک دقیقه · نتیجه برای خودت ذخیره می‌شود</div>
+
+  <div class="box">
+    <h2 style="margin-top:0">این تست برای چیست؟</h2>
+    <div class="muted">
+      فرمول نردبان: <span class="mono">L(n) = 0.128 + n × δ</span> و <span class="mono">δ = 1.1416 × q</span>.<br>
+      <b>q</b> = کوچک‌ترین اختلاف روشنایی که نیمی از دفعات دیده می‌شود (۵۰٪).<br>
+      <b>r</b> = همان نقطه در ۹۵٪ (مرز اطمینان).<br>
+      تنها متغیر بازِ فرمول <b>q</b> است (POLICY §۲). این تست فقط همین عدد را اندازه می‌گیرد؛
+      رنگ‌ها، بوردر، سایه و ریم را تغییر نمی‌دهد.<br>
+      مرجع فعلی: <span class="mono">q = 0.0083 · r = 0.0112</span>
+    </div>
+  </div>
+
+  <div class="box hide" id="intro">
+    <h2 style="margin-top:0">راهنما</h2>
+    <div class="muted">
+      داخل مربع یک مستطیل کم‌نور می‌بینی. اگر <b>مرز</b> بین مربع و زمینه را می‌بینی «می‌بینم» را بزن؛
+      اگر نه «نمی‌بینم». <b>با نگاه اول جواب بده</b>، خیره نشو. گاهی هیچ اختلافی نیست؛ همان‌جا هم جواب بده.
+    </div>
+    <div class="choices"><button class="primary" id="startBtn">شروع</button></div>
+  </div>
+
+  <div class="hide" id="experiment">
+    <div class="mono muted" id="progress"></div>
+    <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+    <div class="stage" id="stage"><div class="stim" id="stim"></div></div>
+    <div class="choices">
+      <button class="primary" id="yes">مرز را می‌بینم</button>
+      <button id="no">نمی‌بینم</button>
+    </div>
+  </div>
+
+  <div class="hide" id="result">
+    <div class="box">
+      <h2 style="margin-top:0">نتیجه‌ی این نشست</h2>
+      <div class="row"><span>q (۵۰٪)</span><span class="big" id="rq"></span></div>
+      <div class="row"><span>r (۹۵٪)</span><span class="mono" id="rr"></span></div>
+      <div class="row"><span>عدم‌قطعیت q (±)</span><span class="mono" id="rsd"></span></div>
+      <div class="row"><span>خطای مثبت کاذب (روی تله‌ها)</span><span class="mono" id="rfa"></span></div>
+      <div class="row"><span>نسبت به مرجع ۰.۰۰۸۳</span><span class="mono" id="rdiff"></span></div>
+    </div>
+
+    <div class="box">
+      <h2 style="margin-top:0">همه‌ی نشست‌های ذخیره‌شده روی این مرورگر</h2>
+      <div class="row"><span>تعداد نشست</span><span class="mono" id="cn"></span></div>
+      <div class="row"><span>میانگین q</span><span class="mono" id="cq"></span></div>
+      <div class="row"><span>میانگین r</span><span class="mono" id="cr"></span></div>
+      <div class="row"><span>پراکندگی q بین نشست‌ها</span><span class="mono" id="cs"></span></div>
+      <div class="muted" style="margin-top:8px" id="cverdict"></div>
+    </div>
+
+    <div class="box">
+      <h2 style="margin-top:0">برای فرستادن به چت</h2>
+      <textarea id="export" readonly></textarea>
+      <div class="choices">
+        <button class="small primary" id="copyBtn">کپی</button>
+        <button class="small" id="againBtn">نشست جدید</button>
+        <button class="small" id="clearBtn">پاک کردن همه</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ==CORE (pure math; tested in node)
+const CANVAS_HEX = '#060709';
+const HUE = 258.4, CHROMA = 0.0069;
+const LAMBDA = 0.02;                       // lapse / false-alarm floor
+const SLOPES = [0.0004, 0.0008, 0.0012, 0.0016, 0.0024];
+const K95 = Math.log(19);                  // logistic 95% point = θ + s·ln19
+const CATCH_EVERY = 5;                     // every 5th trial is a catch (Δ=0)
+const TOTAL = 40;
+
+function hex2rgb(h){ return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
+function lin(c){ c/=255; return c<=0.04045 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); }
+function oklchL(hex){
+  const [r,g,b] = hex2rgb(hex).map(lin);
+  const l = Math.cbrt(0.4122214708*r + 0.5363325363*g + 0.0514459929*b);
+  const m = Math.cbrt(0.2119034982*r + 0.6806995451*g + 0.1073969566*b);
+  const s = Math.cbrt(0.0883024619*r + 0.2817188376*g + 0.6299787005*b);
+  return 0.2104542553*l + 0.7936177850*m - 0.0040720468*s;
+}
+function oklchToHex(L, C, h){
+  const a = C*Math.cos(h*Math.PI/180), b = C*Math.sin(h*Math.PI/180);
+  const l_ = L + 0.3963377774*a + 0.2158037573*b;
+  const m_ = L - 0.1055613458*a - 0.0638541728*b;
+  const s_ = L - 0.0894841775*a - 1.2914855480*b;
+  const l = l_**3, m = m_**3, s = s_**3;
+  const lr = 4.0767416621*l - 3.3077115913*m + 0.2309699292*s;
+  const lg = -1.2684380046*l + 2.6097574011*m - 0.3413193965*s;
+  const lb = -0.0041960863*l - 0.7034186147*m + 1.7076147010*s;
+  const enc = v => { v = Math.min(1, Math.max(0, v));
+    v = v <= 0.0031308 ? 12.92*v : 1.055*Math.pow(v, 1/2.4) - 0.055;
+    return Math.round(v*255); };
+  return '#' + [lr, lg, lb].map(enc).map(v => v.toString(16).padStart(2,'0')).join('');
+}
+// Realisable stimuli: only real 8-bit hexes can be shown, so the candidate
+// set is the set of distinct hexes on this hue/chroma family above the canvas.
+function buildLevels(){
+  const base = oklchL(CANVAS_HEX), seen = new Map();
+  seen.set(CANVAS_HEX, 0);
+  for (let L = 0.1280; L <= 0.1600; L += 0.00002) {
+    const hx = oklchToHex(L, CHROMA, HUE);
+    if (!seen.has(hx)) seen.set(hx, oklchL(hx) - base);
+  }
+  return [...seen.entries()].map(([hex, dl]) => ({ hex, dl })).sort((a,b) => a.dl - b.dl);
+}
+function pSeen(dl, p){ return LAMBDA/2 + (1-LAMBDA) / (1 + Math.exp(-(dl - p.th) / p.s)); }
+function entropy(ws){ let h = 0; for (const w of ws) if (w > 1e-12) h -= w*Math.log2(w); return h; }
+function makePosterior(levels){
+  const P = [];
+  for (const lv of levels) for (const s of SLOPES) P.push({ th: lv.dl, s, w: 1 });
+  const t = P.length; P.forEach(p => p.w = 1/t);
+  return P;
+}
+function chooseNext(P, levels){
+  let best = null, bestH = Infinity;
+  for (const lv of levels) {
+    if (lv.dl <= 0) continue;                         // catches are scheduled, not chosen
+    let pY = 0; for (const p of P) pY += p.w * pSeen(lv.dl, p);
+    let eH = 0;
+    for (const y of [1, 0]) {
+      const ws = P.map(p => { const q = pSeen(lv.dl, p); return p.w * (y ? q : 1-q); });
+      const py = ws.reduce((a,b) => a+b, 0);
+      if (py < 1e-12) continue;
+      eH += py * entropy(ws.map(v => v/py));
+    }
+    if (eH < bestH) { bestH = eH; best = lv; }
+  }
+  return best;
+}
+function updatePosterior(P, dl, seen){
+  let t = 0;
+  for (const p of P) { const q = pSeen(dl, p); p.w *= seen ? q : 1-q; t += p.w; }
+  for (const p of P) p.w /= t;
+  return P;
+}
+function estimate(P){
+  let q = 0, r = 0;
+  for (const p of P) { q += p.w*p.th; r += p.w*(p.th + p.s*K95); }
+  let v = 0; for (const p of P) v += p.w*(p.th-q)**2;
+  return { q, r, sdQ: Math.sqrt(v) };
+}
+// ==END CORE
+
+// ── UI ──────────────────────────────────────────────────────────────────────
+const KEY = 'liminal-threshold-quick-v1';
+const REF = { q: 0.0083, r: 0.0112 };
+let levels = [], P = [], trials = [], idx = 0, pending = null;
+const $ = id => document.getElementById(id);
+const f4 = x => x.toFixed(4);
+
+function loadAll(){ try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; } }
+function saveAll(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
+
+function startSession(){
+  levels = buildLevels();
+  const adaptive = levels.filter(l => l.dl > 0);
+  P = makePosterior(adaptive);
+  trials = []; idx = 0;
+  $('intro').classList.add('hide'); $('result').classList.add('hide');
+  $('experiment').classList.remove('hide');
+  next();
+}
+function isCatchTrial(i){ return (i+1) % CATCH_EVERY === 0; }
+function next(){
+  if (idx >= TOTAL) return finish();
+  const canvasHex = CANVAS_HEX;
+  let lv;
+  if (isCatchTrial(idx)) lv = { hex: CANVAS_HEX, dl: 0, catch: true };
+  else { lv = chooseNext(P, levels.filter(l => l.dl > 0)); lv = { ...lv, catch: false }; }
+  pending = lv;
+  $('stage').style.background = canvasHex;
+  $('stim').style.background = lv.hex;
+  $('progress').textContent = `آزمایش ${idx+1} از ${TOTAL}`;
+  $('barFill').style.width = (idx/TOTAL*100) + '%';
+}
+function answer(seen){
+  const t = { dl: pending.dl, catch: pending.catch, seen, hex: pending.hex };
+  trials.push(t);
+  if (!t.catch) updatePosterior(P, t.dl, seen);
+  idx++; next();
+}
+function finish(){
+  const e = estimate(P);
+  const catches = trials.filter(t => t.catch);
+  const fa = catches.filter(t => t.seen).length;
+  const rec = { at: new Date().toISOString(), engine: 'quick-v1', n: trials.length,
+                q: e.q, r: e.r, sdQ: e.sdQ, falseAlarms: fa, catchN: catches.length,
+                trials: trials.map(t => ({ hex: t.hex, dl: t.dl, catch: t.catch, seen: t.seen })) };
+  const all = loadAll(); all.push(rec); saveAll(all);
+
+  $('experiment').classList.add('hide'); $('result').classList.remove('hide');
+  $('rq').textContent = f4(e.q);
+  $('rr').textContent = f4(e.r);
+  $('rsd').textContent = '±' + f4(e.sdQ);
+  $('rfa').textContent = `${fa} از ${catches.length}`;
+  const d = (e.q/REF.q - 1)*100;
+  $('rdiff').textContent = (d>=0?'+':'') + d.toFixed(0) + '٪';
+
+  const qs = all.map(s => s.q), rs = all.map(s => s.r);
+  const mean = a => a.reduce((x,y)=>x+y,0)/a.length;
+  const sd = a => { const m = mean(a); return Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/Math.max(1,a.length-1)); };
+  $('cn').textContent = all.length;
+  $('cq').textContent = f4(mean(qs));
+  $('cr').textContent = f4(mean(rs));
+  $('cs').textContent = all.length >= 2 ? '±' + f4(sd(qs)) : '—';
+  $('cverdict').textContent = all.length < 3
+    ? 'برای نتیجه‌ی محکم حداقل ۳ نشست لازم است.'
+    : (sd(qs) <= 0.0010 ? 'سه نشست یا بیشتر و پراکندگی کم: میانگین قابل اتکاست.'
+                       : 'پراکندگی بالاست؛ نشست بیشتری بزن.');
+  const summary = `Q=${f4(e.q)} R=${f4(e.r)} n=${trials.length} FA=${fa}/${catches.length} sd=${f4(e.sdQ)}`;
+  $('export').value = summary + '\n' + JSON.stringify(rec);
+}
+
+$('startBtn').onclick = startSession;
+$('yes').onclick = () => answer(true);
+$('no').onclick = () => answer(false);
+$('againBtn').onclick = startSession;
+$('copyBtn').onclick = async () => {
+  const ta = $('export'); ta.select();
+  try { await navigator.clipboard.writeText(ta.value); $('copyBtn').textContent = 'کپی شد ✓'; }
+  catch { document.execCommand('copy'); $('copyBtn').textContent = 'کپی شد ✓'; }
+};
+$('clearBtn').onclick = () => { if (confirm('همه‌ی نشست‌های ذخیره‌شده پاک شود؟')) { saveAll([]); finish_reset(); } };
+function finish_reset(){ $('result').classList.add('hide'); $('intro').classList.remove('hide'); }
+
+$('intro').classList.remove('hide');
+</script>
+</body>
+</html>
