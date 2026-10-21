@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · قانون مجاورت — هر لایه فقط روی لایهٔ بعدی</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #030406; color: rgba(255,255,255,0.88);
+         font-family: Inter, system-ui, -apple-system, sans-serif; font-size: 15px; line-height: 1.75; padding: 20px 16px 60px; }
+  .wrap { max-width: 620px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 26px 0 8px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; }
+  .rule { margin-top: 14px; padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.10); background: #060709; }
+  .chain { margin-top: 12px; }
+  .lvl { padding: 10px 12px 12px; border-radius: 12px; color: rgba(233,236,242,0.85); }
+  .lvl .t { font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.5); }
+  table { width: 100%; border-collapse: collapse; font-family: "JetBrains Mono", monospace; font-size: 12px; direction: ltr; }
+  th, td { padding: 6px 6px; border-bottom: 1px solid rgba(255,255,255,0.07); text-align: right; }
+  th { color: rgba(255,255,255,0.46); font-weight: 500; }
+  td.l { text-align: left; font-family: inherit; direction: rtl; }
+  .ok { color: #6EE0B4; }
+  .no { color: #E8806E; }
+  .ex { color: #E8C36E; }
+  .note { margin-top: 12px; padding: 12px 14px; border-right: 2px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.6); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>قانون مجاورت</h1>
+  <div class="muted">هر لایه فقط روی لایهٔ <b>بلافاصلهٔ پایین‌تر</b> می‌نشیند. S1 فقط روی S0، S2 فقط روی S1، و همین ترتیب تا S8.</div>
+
+  <div class="rule">
+    <b>این قانون عمق نیست.</b> عمق داخل صفحه جدا تعیین می‌شود (تا S3، طبق §۸). این صفحه فقط می‌گوید چه چیزی روی چه چیزی می‌نشیند.
+  </div>
+
+  <h2>۱. زنجیره: هر لایه روی یکی پایین‌تر</h2>
+  <div class="chain" id="chain"></div>
+
+  <h2>۲. هر نقش یک میزبان دارد</h2>
+  <table id="tbl"><tr><th>نقش</th><th>سطح</th><th>میزبان مجاز</th><th>وضعیت</th></tr></table>
+
+  <h2>۳. استثناهای قانون (تصمیم با تو)</h2>
+  <div class="rule" id="exbox"></div>
+
+  <div class="note">
+    <b>کدام را تأیید می‌کنی؟</b> زنجیرهٔ بالا باید مرز هر لایه را نشان بدهد بدون اینکه لایه‌ای از دو لایه بالاتر روی هم بیفتد.
+    و استثناها: کنترل، چاله و ناحیه روی اعلان و مودال، در سقف، به میزبانشان می‌چسبند. اگر این را نمی‌خواهی، آن شش جفت حذف می‌شوند و کنترل روی مودال بی‌معنی می‌شود.
+  </div>
+</div>
+
+<script>
+const LV = ['#060709','#07090b','#090b0d','#0b0d0f','#0d0f12','#0f1114','#111316','#131518','#15171a'];
+// engine's ROLE_LEVEL (liminal-surface.ts) and RELATIONSHIP_ROLES
+const ROLE = [
+  ['canvas',0,false], ['chrome',1,false], ['work',2,false], ['well',2,true], ['region',2,true],
+  ['panel',3,false], ['control',4,true], ['menu',5,false], ['popover',6,false], ['modal',7,false], ['toast',8,false],
+];
+const EXEMPT = new Set(['control>toast','control>modal','well>toast','well>modal','region>toast','region>modal']);
+
+// 1. chain — each layer nested on the one below, labelled by role and level
+const chain = document.getElementById('chain');
+let html = '';
+for (let n = 0; n <= 8; n++) {
+  const role = ROLE.find(r => r[1] === n);
+  html += `<div class="lvl" style="background:${LV[n]};margin-top:8px"><div class="t">S${n} · ${role ? role[0] : ''} · روی S${n-1 >= 0 ? n-1 : '—'}</div>`;
+}
+html += '</div>'.repeat(9);
+chain.innerHTML = html;
+
+// 2. one host per role — the level below (relationship roles: their resolved level)
+const tbl = document.getElementById('tbl');
+ROLE.forEach(([name, lvl, rel]) => {
+  if (lvl === 0) { tbl.innerHTML += `<tr><td class="l">${name}</td><td>S${lvl}</td><td>—</td><td class="ok">بوم</td></tr>`; return; }
+  const hosts = ROLE.filter(h => h[1] === lvl - 1).map(h => h[0]);
+  tbl.innerHTML += `<tr><td class="l">${name}</td><td>S${lvl}</td><td>${hosts.join(' / ')}</td><td class="ok">مجاز</td></tr>`;
+});
+
+// 3. the six exemptions, listed so the decision is explicit
+document.getElementById('exbox').innerHTML = [...EXEMPT].map(e => {
+  const [r, o] = e.split('>');
+  return `<div class="mono" style="padding:4px 0;color:#E8C36E">${r} روی ${o} — استثنا (سقف: به میزبان می‌چسبد)</div>`;
+}).join('');
+</script>
+</body>
+</html>
