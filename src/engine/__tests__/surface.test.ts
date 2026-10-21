@@ -11,6 +11,8 @@ import {
   roleDepthInQuanta,
   resolveBorderHex,
   resolveBorder,
+  resolveBorderLevel,
+  checkPlacement,
   resolveInteractionVars,
   type SurfaceRole,
   type SurfaceState,
@@ -286,19 +288,65 @@ describe('surface decision engine — the border rule', () => {
 describe('surface decision engine — controls are relative to their host', () => {
   const HOSTS: SurfaceRole[] = ['canvas', 'chrome', 'work', 'panel', 'menu', 'popover', 'modal'];
 
-  it('FINDING PIN — `on` anchors from the host\'s NOMINAL level, so relationship-on-relationship collapses', () => {
-    // Documented weakness (POLICY §10.4 gap 6), found by rendering the nesting
-    // chain live: region on work resolves to S3, but control on region anchors to
-    // region's NOMINAL level (2)+1 = S3 — the control lands exactly on its real
-    // host's resolved level: zero fill difference, Law 2 broken for chains of two
-    // relationship roles. The engine is internally consistent (the tests below pin
-    // nominal hosts, which never move); composing anchored hosts is an API decision
-    // (a resolved-level host, or depth arithmetic), not a math fix. If this pin
-    // fails, the API landed — retire the finding and add composition tests.
+  it('the retired FINDING: control on region, threaded with the host\'s RESOLVED level, lands one step above it', () => {
+    // The defect (POLICY §10.4 gap 6, found by rendering the nesting chain live):
+    // region on work → S3, but control on region anchored to region's NOMINAL
+    // level (2)+1 = S3 — zero fill difference, Law 2 broken for chains of two
+    // relationship roles. The reader reconfirmed Law 2 on 2026-10-21
+    // (containment = host + 1) and the API landed: `onLevel` threads the host's
+    // RESOLVED level. Nominal `on` alone is unchanged — nominal hosts never move.
     const region = resolveSurface({ role: 'region', on: 'work' });
-    const control = resolveSurface({ role: 'control', on: 'region' });
-    expect(control.level, 'current behaviour: nominal anchor').toBe(ROLE_LEVEL.region + 1);
-    expect(control.level, 'zero separation from the resolved host').toBe(region.level);
+    const control = resolveSurface({ role: 'control', on: 'region', onLevel: region.level });
+    expect(region.level).toBe(ROLE_LEVEL.work + 1);
+    expect(control.level, 'one step above the RESOLVED host').toBe(region.level + 1);
+    const gap = (oklchLightness(control.backgroundHex) - oklchLightness(region.backgroundHex)) / PERCEPTUAL_QUANTUM;
+    expect(gap, `fill separation ${gap.toFixed(2)}q`).toBeGreaterThanOrEqual(1.0);
+  });
+
+  it('a six-hop chain from the work plane adds exactly one step per hop — and lands exactly on the ceiling', () => {
+    // THE COMPOSITION LAW: every containment hop is exactly +1, so a chain of
+    // alternating relationship roles walks the ladder without collapsing — and
+    // work(2) + 6 hops reaches S8 with no clamp needed. This is the law the
+    // reader confirmed: on the canvas only S1, on S1 only S2, and so on.
+    let host = resolveSurface({ role: 'work' }); // S2
+    for (let i = 0; i < 6; i++) {
+      const role: SurfaceRole = i % 2 === 0 ? 'region' : 'control';
+      const child = resolveSurface({ role, onLevel: host.level });
+      expect(child.level, `hop ${i + 1}: ${role} on S${host.level}`).toBe(host.level + 1);
+      host = child;
+    }
+    expect(host.level, 'work(2) + 6 hops = the ceiling, exactly').toBe(8);
+  });
+
+  it('the ceiling still degrades rather than expands: a chain that reaches the toast anchors on it', () => {
+    // The reader's decision stands: the ceiling is a hard bound — a control with
+    // nowhere to go anchors on its host (the PLACEMENT_EXEMPTIONS case, now
+    // reachable through a long chain as well as by name).
+    const r = resolveSurface({ role: 'control', onLevel: 8 });
+    expect(r.level, 'no step above the ceiling — anchors on the host').toBe(8);
+  });
+
+  it('checkPlacement reads the resolved host too — through onLevel', () => {
+    expect(checkPlacement({ role: 'work', on: 'chrome', onLevel: 1 }).ok).toBe(true);
+    expect(checkPlacement({ role: 'panel', on: 'chrome', onLevel: 1 }).ok, 'panel skipped work').toBe(false);
+    expect(checkPlacement({ role: 'control', on: 'region', onLevel: 3 }).ok).toBe(true);
+    expect(checkPlacement({ role: 'control', on: 'region', onLevel: 8 }).ok, 'ceiling clamps — needs a named exemption').toBe(false);
+  });
+
+  it('the border follows the threaded host — same composition law', () => {
+    const nominal = resolveBorderLevel({ role: 'control', kind: 'edge', on: 'region' });
+    const threaded = resolveBorderLevel({ role: 'control', kind: 'edge', on: 'region', onLevel: 3 });
+    expect(nominal, 'nominal anchor: region(2) + 1 lift + 1 edge').toBe(4);
+    expect(threaded, 'resolved anchor: S3 + 1 lift + 1 edge').toBe(nominal + 1);
+  });
+
+  it('the interaction variables follow it — a chained control publishes its chained fill', () => {
+    const nominal = resolveInteractionVars({ role: 'control', on: 'region' });
+    const threaded = resolveInteractionVars({ role: 'control', on: 'region', onLevel: 3 });
+    expect(threaded['--liminal-surface-idle']).not.toBe(nominal['--liminal-surface-idle']);
+    expect(threaded['--liminal-surface-idle']).toBe(
+      resolveSurface({ role: 'control', on: 'region', onLevel: 3 }).background,
+    );
   });
 
   it('places a control one step above whatever hosts it', () => {

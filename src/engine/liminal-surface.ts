@@ -278,6 +278,23 @@ export interface SurfaceRequest {
    * relationship is the same at every depth.
    */
   on?: SurfaceRole;
+  /**
+   * The RESOLVED level of the host — THE COMPOSITION LAW (LAW 2, reconfirmed by
+   * the reader 2026-10-21): containment = host + 1, and "host" means the level
+   * the host actually RESOLVED to, not its nominal ROLE_LEVEL.
+   *
+   * This is what killed the retired defect "`on` does not compose": a region on
+   * work resolves to S3, but `control on region` anchored to region's NOMINAL
+   * level (2) + 1 = S3 — the control landed exactly on its real host: zero fill
+   * difference, LAW 2 broken for chains of two relationship roles. Threading the
+   * resolved level (`onLevel: regionSurface.level`) lands the control at S4.
+   *
+   * Nominal hosts (chrome, work, panel…) never move, so `on` alone stays correct
+   * for them; `onLevel` is required exactly where the host is itself anchored.
+   * When both are given, `onLevel` wins the anchor and `on` keeps its other jobs
+   * (the shadow's host, the placement guard's names).
+   */
+  onLevel?: number;
 }
 
 /**
@@ -377,7 +394,17 @@ export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
   // absolute level. Without `on`, the role's fixed level is used, which is
   // correct for structural surfaces (chrome, work, panel) that define the
   // hierarchy rather than sit inside it.
-  const anchored = request.on !== undefined
+  //
+  // ── AND THE HOST IS THE LEVEL IT RESOLVED TO, NOT ITS NAME (2026-10-21) ──
+  // LAW 2, reconfirmed by the reader: containment = host + 1. When the host is
+  // itself anchored (a region on work → S3), `onLevel` threads that RESOLVED
+  // level through, so a control on the region lands at S4 — one step above its
+  // REAL host. With only `on`, the anchor stays the host's NOMINAL level: the
+  // retired defect "`on` does not compose". Nominal hosts never move, so both
+  // readings agree there; the chain pins in surface.test hold the law.
+  const anchored = request.onLevel !== undefined
+    ? request.onLevel + CONTROL_LIFT
+    : request.on !== undefined
     ? ROLE_LEVEL[request.on] + CONTROL_LIFT
     : base;
 
@@ -543,12 +570,14 @@ interface BorderRequest {
   state?: SurfaceState;
   /** The surface this border sits on — see SurfaceRequest.on. */
   on?: SurfaceRole;
+  /** The host's RESOLVED level — see SurfaceRequest.onLevel (composition law). */
+  onLevel?: number;
 }
 
 /** The ladder level a border lands on, before it is turned into a value. */
 function borderLevel(request: BorderRequest): number {
   const { role, kind = 'separator', state = 'idle' } = request;
-  const anchored = request.on !== undefined ? ROLE_LEVEL[request.on] + CONTROL_LIFT : ROLE_LEVEL[role];
+  const anchored = request.onLevel !== undefined ? request.onLevel + CONTROL_LIFT : request.on !== undefined ? ROLE_LEVEL[request.on] + CONTROL_LIFT : ROLE_LEVEL[role];
   // Clamp BEFORE deciding whether there is room above. Without this, a control
   // anchored on the toast lands at 8 + 1 = 9, `above` is 9.5, the inversion
   // computes 9 - 0.5 = 8.5 — which is STILL above the ceiling, so the border
@@ -686,6 +715,8 @@ export interface InteractionVarsRequest {
   role: SurfaceRole;
   /** The surface this control sits on. */
   on?: SurfaceRole;
+  /** The host's RESOLVED level — see SurfaceRequest.onLevel (composition law). */
+  onLevel?: number;
   /** Freeze the control in one state — a checked box keeps its fill on hover. */
   frozen?: string;
   /**
@@ -710,8 +741,8 @@ export interface InteractionVarsRequest {
 }
 
 export function resolveInteractionVars(request: InteractionVarsRequest): InteractionVars {
-  const { role, on, frozen, idle, hover, active, border, borderFocus } = request;
-  const at = (state: SurfaceState) => resolveSurface({ role, state, on }).background;
+  const { role, on, onLevel, frozen, idle, hover, active, border, borderFocus } = request;
+  const at = (state: SurfaceState) => resolveSurface({ role, state, on, onLevel }).background;
 
   const idleBg = idle ?? at('idle');
   // A frozen control — a checked box, a selected row — keeps its own fill in
@@ -723,7 +754,7 @@ export function resolveInteractionVars(request: InteractionVarsRequest): Interac
     '--liminal-surface-hover': hover ?? (frozen ? frozenBg : at('hover')),
     '--liminal-surface-active': active ?? (frozen ? frozenBg : at('active')),
     '--liminal-surface-focus': frozen ? frozenBg : at('focus'),
-    '--liminal-border-idle': border ?? resolveBorder({ role, kind: 'edge', on }),
+    '--liminal-border-idle': border ?? resolveBorder({ role, kind: 'edge', on, onLevel }),
     '--liminal-border-focus': borderFocus ?? FOCUS_RING_COLOR,
   };
 }
@@ -881,9 +912,16 @@ export const PLACEMENT_EXEMPTIONS: readonly { role: SurfaceRole; on: SurfaceRole
   },
 ];
 
-/** The level a role resolves to, given what it sits on. */
-export function resolvedLevel(role: SurfaceRole, on?: SurfaceRole): number {
-  return on !== undefined ? Math.min(ROLE_LEVEL[on] + CONTROL_LIFT, Math.max(...Object.values(ROLE_LEVEL))) : ROLE_LEVEL[role];
+/**
+ * The level a role resolves to, given what it sits on.
+ *
+ * `onLevel` is the host's RESOLVED level (composition law — see
+ * SurfaceRequest.onLevel): when the host is itself anchored, the chain only
+ * composes if the anchor is the level it resolved to, not its nominal one.
+ */
+export function resolvedLevel(role: SurfaceRole, on?: SurfaceRole, onLevel?: number): number {
+  const host = onLevel ?? (on !== undefined ? ROLE_LEVEL[on] : undefined);
+  return host !== undefined ? Math.min(host + CONTROL_LIFT, Math.max(...Object.values(ROLE_LEVEL))) : ROLE_LEVEL[role];
 }
 
 /**
@@ -902,12 +940,14 @@ export function resolvedLevel(role: SurfaceRole, on?: SurfaceRole): number {
  * The engine applies `CONTROL_LIFT` to any role that names a host, so the API cannot
  * tell the two apart on its own. This can, and says which one it is reading.
  */
-export function checkPlacement(request: { role: SurfaceRole; on: SurfaceRole }): { ok: boolean; reason?: string } {
-  const { role, on } = request;
+export function checkPlacement(request: { role: SurfaceRole; on: SurfaceRole; onLevel?: number }): { ok: boolean; reason?: string } {
+  const { role, on, onLevel } = request;
   if (PLACEMENT_EXEMPTIONS.some((e) => e.role === role && e.on === on)) return { ok: true };
+  // The composition law reads the host at its RESOLVED level when one is given.
+  const hostLevel = onLevel ?? ROLE_LEVEL[on];
 
   if ((RELATIONSHIP_ROLES as readonly string[]).includes(role)) {
-    const gap = resolvedLevel(role as SurfaceRole, on) - ROLE_LEVEL[on];
+    const gap = resolvedLevel(role as SurfaceRole, on, onLevel) - hostLevel;
     if (gap === 1) return { ok: true };
     return {
       ok: false,
@@ -915,13 +955,13 @@ export function checkPlacement(request: { role: SurfaceRole; on: SurfaceRole }):
     };
   }
 
-  const gap = ROLE_LEVEL[role] - ROLE_LEVEL[on];
+  const gap = ROLE_LEVEL[role] - hostLevel;
   if (gap === 1) return { ok: true };
   if (gap <= 0) {
-    return { ok: false, reason: `${role} (S${ROLE_LEVEL[role]}) is not above ${on} (S${ROLE_LEVEL[on]})` };
+    return { ok: false, reason: `${role} (S${ROLE_LEVEL[role]}) is not above ${on} (S${hostLevel})` };
   }
   return {
     ok: false,
-    reason: `${role} (S${ROLE_LEVEL[role]}) skipped ${gap - 1} layer(s) to sit on ${on} (S${ROLE_LEVEL[on]}): every layer sits on the one below it`,
+    reason: `${role} (S${ROLE_LEVEL[role]}) skipped ${gap - 1} layer(s) to sit on ${on} (S${hostLevel}): every layer sits on the one below it`,
   };
 }

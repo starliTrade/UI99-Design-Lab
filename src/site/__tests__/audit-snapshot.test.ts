@@ -44,7 +44,13 @@ describe('phase snapshot — canvas ↔ surface, flat, from the real engine', ()
     expect(html).toContain('#0b0d0f'); // S3 — work/panel boundary
     // the nested flat chain runs through the real resolveSurface
     expect(html).toContain('canvas → S0');
-    expect(html).toContain('control on region → S3'); // the composition gap, rendered flat
+    // the composition law (2026-10-21): the chain threads each host's RESOLVED
+    // level through onLevel — control on region now lands one step above its
+    // real host, and the retired defect's rendering (same level as the host)
+    // can never appear again.
+    expect(html).toContain('region on work@S2 → S3');
+    expect(html).toContain('control on region@S3 → S4');
+    expect(html, 'the retired composition gap must never render').not.toContain('هم‌سطحِ میزبان!');
   });
 
   it('embeds the reader\'s own threshold sessions, live from the JSON', () => {

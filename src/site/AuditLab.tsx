@@ -205,7 +205,7 @@ export function AuditLab() {
           </p>
           <div style={{ ...flexWrap, marginTop: 18 }}>
             <div style={{ padding: '7px 14px', border: `1px solid ${C.line}`, borderRadius: 8, fontSize: 12, ...mono }}>
-              vitest: <span style={{ color: C.green }}>562 passed</span> · <span style={{ color: C.amber }}>6 skipped (zero-state)</span> · <span style={{ color: C.green }}>0 failed</span>
+              vitest: <span style={{ color: C.green }}>567 passed</span> · <span style={{ color: C.amber }}>6 skipped (zero-state)</span> · <span style={{ color: C.green }}>0 failed</span>
             </div>
             <div style={{ padding: '7px 14px', border: `1px solid ${C.line}`, borderRadius: 8, fontSize: 12, ...mono }}>
               tsc --noEmit: <span style={{ color: C.green }}>clean</span>
@@ -299,9 +299,12 @@ export function AuditLab() {
           <div style={{ ...grid2, marginTop: 14 }}>
             <Card title="تو در تویی زنده — خروجی واقعی resolveSurface">
               {(() => {
-                const chain: { role: SurfaceRole; on?: SurfaceRole }[] = [
+                // قانونِ ترکیب (۲۰۲۶-۱۰-۲۱): سطحِ حل‌شدهٔ هر میزبان با onLevel به
+                // فرزند پاس می‌شود — control on region حالا S4 است، نه S3.
+                const chain: { role: SurfaceRole; on?: SurfaceRole; onLevel?: number }[] = [
                   { role: 'canvas' }, { role: 'chrome', on: 'canvas' }, { role: 'work', on: 'chrome' },
-                  { role: 'region', on: 'work' }, { role: 'control', on: 'region' },
+                  { role: 'region', on: 'work', onLevel: resolveSurface({ role: 'work' }).level },
+                  { role: 'control', on: 'region', onLevel: resolveSurface({ role: 'region', on: 'work' }).level },
                 ];
                 return (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -311,7 +314,7 @@ export function AuditLab() {
                         <div key={i} style={{ marginInlineStart: i * 18, marginTop: i ? 8 : 0 }}>
                           <div style={{ ...s.style, borderRadius: 10, padding: '10px 14px', border: s.border ? `1px solid ${s.border}` : `1px solid ${C.line}` }}>
                             <div style={{ fontSize: 11, ...mono, color: C.ink }}>
-                              {c.role}{c.on ? ` on ${c.on}` : ''} → S{s.level}
+                              {c.role}{c.on ? ` on ${c.on}${c.onLevel !== undefined ? `@S${c.onLevel}` : ''}` : ''} → S{s.level}
                             </div>
                             <div style={{ fontSize: 10, ...mono, color: C.faint }}>
                               rim {s.rim ? '✓' : '✗'} · shadow {s.shadow === 'none' ? '✗' : '✓'} · bg {s.background}
@@ -354,17 +357,17 @@ export function AuditLab() {
               const regionRes = resolveSurface({ role: 'region', on: 'work' });
               return <Test pass={!regionRes.rim && regionRes.shadow === 'none'} name="region تخت است — بدون ریم و سایه" value={`rim=${String(regionRes.rim)} shadow=${regionRes.shadow}`} why="region یک «محدودهٔ ساختاری» است نه شیء برجسته (Stepper، Collapsible، TreeView). POLICY §1.5 می‌گفت ولی موتور نداشت — در این ممیزی اضافه شد." />;
             })()}
-            <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 10, background: 'rgba(217,190,110,0.05)', border: '1px solid rgba(217,190,110,0.3)', borderRadius: 9, padding: '9px 11px' }}>
-              <span style={{ color: '#D9BE6E', fontSize: 13, lineHeight: '16px', flexShrink: 0 }}>⚠</span>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 10, background: 'rgba(116,206,142,0.05)', border: '1px solid rgba(116,206,142,0.3)', borderRadius: 9, padding: '9px 11px' }}>
+              <span style={{ color: C.green, fontSize: 13, lineHeight: '16px', flexShrink: 0 }}>✓</span>
               <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.9 }}>
-                <b style={{ color: C.ink }}>on ترکیب نمی‌شود — لنگر از سطحِ اسمیِ میزبان می‌آید، نه سطحِ حل‌شده‌اش.</b> زنجیرهٔ بالا: region on work → S{resolvedLevel('region', 'work')}، ولی control on region → S{resolvedLevel('control', 'region')} — موتور region را به سطحِ اسمیِ خودش (۲) لنگر می‌کند، پس control دقیقاً هم‌سطحِ میزبانِ واقعی‌اش می‌نشیند: صفر اختلافِ fill، نقضِ قانون ۲ در زنجیره‌های رابطه‌ای. region تازه اضافه شده و این حالت تست نداشت. اقدام پیشنهادی: API سطحِ حل‌شده (onLevel) یا حسابِ depth — تصمیمِ طراحی، نه باگِ ریاضی.
+                <b style={{ color: C.ink }}>on حالا ترکیب می‌شود — لنگر، سطحِ حل‌شدهٔ میزبان است (onLevel).</b> زنجیرهٔ بالا onLevel را پاس می‌دهد: region on work → S{resolvedLevel('region', 'work')} و control on region → S{resolvedLevel('control', 'region', resolveSurface({ role: 'region', on: 'work' }).level)} — دقیقاً یک پله بالای میزبانِ واقعی. نقصِ بازنشسته: لنگرِ اسمی، control هم S3 می‌شد — صفر اختلافِ fill. قانونِ ۲ (تأییدِ خواننده ۲۰۲۶-۱۰-۲۱): هر زنجیرهٔ containment = میزبان + ۱؛ پین‌ها: زنجیرهٔ شش‌پرشی که دقیقاً به سقف می‌رسد، سقف همچنان degrade می‌کند نه expand، بوردر و متغیرهای تعامل هم همین قانون را دنبال می‌کنند (surface.test ×۶).
               </div>
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
-            {count('قدرت', 2)}{count('مشکل·حل‌شده')}{count('ضعف')}
+            {count('قدرت', 2)}{count('مشکل·حل‌شده', 2)}
             <Verdict kind="قدرت" title="گارد جای‌گذاری واقعاً اجبار می‌کند" reason="checkPlacement روی همهٔ ۱۱×۱۰ جای‌گذاری زنده اجرا شد — POLICY §10 از «نوشته‌شده، اجبارنشده» به «اجبار می‌شود» ارتقا یافت." />
-            <Verdict kind="ضعف" title="میزبانِ رابطه‌ای، لنگرِ رابطه‌ای نمی‌دهد" reason="control/well/region روی میزبانی که خودش لنگر شده (region on work) هم‌سطحِ او حل می‌شوند — fill سلسله‌مراتب را نمی‌سازد. تا تصمیمِ API (onLevel یا depth)، زنجیره‌های عمیق‌تر از دو نقشِ رابطه‌ای باید دستی سطح ببرند. یافتهٔ رندرِ زندهٔ همین بخش." />
+            <Verdict kind="مشکل·حل‌شده" title="میزبانِ رابطه‌ای حالا لنگرِ رابطه‌ای می‌دهد — onLevel فرود آمد" reason="نقصِ «on ترکیب نمی‌شود» بازنشسته شد: SurfaceRequest/BorderRequest/checkPlacement/resolvedLevel/resolveInteractionVars همگی onLevel می‌گیرند — سطحِ حل‌شدهٔ میزبان. قانونِ ۲ (تأییدِ خواننده): containment = میزبان+۱؛ زنجیرهٔ شش‌پرشی دقیقاً روی سقف فرود می‌آید و سقف همچنان degrade می‌کند نه expand. پین‌های ترکیب در surface.test ×۶." />
             <Verdict kind="قدرت" title="استثنای سقف مشتق است نه دستی" reason="PLACEMENT_EXEMPTIONS = نقش‌های رابطه‌ای × میزبان‌های شناور؛ تست nesting حالا از RELATIONSHIP_ROLES deriv می‌کند — نقش چهارم بدون تصمیم‌گیری صریح نمی‌تواند رد شود." />
             <Verdict kind="مشکل·حل‌شده" title="region در POLICY بود ولی در موتور نبود" reason="🔴 یافتهٔ بحرانی ممیزی: ۱۰ نقش در موتور، ۱۱ در سیاست. region:2 رابطه‌ای/تخت به ROLE_LEVEL اضافه شد + ROLE_RIM/ROLE_SHADOW/استثناهای سقف (commit e512ef9)." />
           </div>
