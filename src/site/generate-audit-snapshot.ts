@@ -307,6 +307,7 @@ export function buildAuditSnapshotHtml(): string {
     `${card('۱ · درزهای همسایه — هر جفت یک پله (۱.۰۷–۱.۲۱q محقق‌شده)', `<div class="seamgrid">${seamPairs}</div>`)}
     ${card('۲ · رابطه‌های پرکاربرد — پرش‌های ≥۲ پله (همه بالای r = مرزِ ۹۵٪)', `<div class="seamgrid">${relPairs}</div>`)}
     ${card('۳ · تو در توییِ تخت — خروجیِ زندهٔ resolveSurface، فقط fill', nestHtml)}
+    ${card('۴ · آزمونِ تو در تویِ اختصاصی — دروازهٔ تأییدِ چشمیِ مرحلهٔ صفر', `<div style="font-size:12.5px;line-height:2.4">صفحهٔ جدا برایِ قضاوتِ مستقیمِ شما: چیدمانِ تو در تویِ ۹ لایه، خط‌کشِ کالیبرهٔ درزها (۰.۶q نامرئی / ۱.۷q واضح)، سه رقیبِ لغزان با همان دو سرِ pinned، و <b>آزمونِ کورِ چهارتایی</b> با کلید در انتها. اگر تأیید کنید، فرمولِ دقیقِ <span class="mono">L(n) = CANVAS_L + n × LADDER_STEP</span> در POLICY نوشته می‌شود.<br><a href="nested-test.html" style="color:#6FA8EC;font:12px ui-monospace,monospace">.lab/nested-test.html ←</a></div>`)}
     ${finding('control on region هم‌سطحِ میزبانِ واقعی‌اش می‌نشیند — نقصِ «on ترکیب نمی‌شود»، این بار با چشم', `در زنجیرهٔ بالا: region on work → S3 (درست، یک پله بالای میزبان) ولی control on region → <b>S3</b> — موتور میزبان را به سطحِ <b>اسمیِ</b> region (۲) لنگر می‌کند، نه سطحِ حل‌شده‌اش (۳). نتیجهٔ بصری‌اش را خودتان می‌بینید: جعبهٔ control در region <b>محو</b> است — صفر اختلافِ fill. در حالتِ تخت (بدونِ بوردر/ریم) این نقص فقط با چشم قابلِ تشخیص است، و چشم هم که چیزی نمی‌بیند. اقدام: تصمیمِ API — میزبانِ سطحِ حل‌شده (<code>onLevel</code>) یا حسابِ <code>depth</code>. پینِ تست: surface.test.ts.`)}
     ${verdict('ضعف', 'میزبانِ رابطه‌ای، لنگرِ رابطه‌ای نمی‌دهد', 'control/well/region روی میزبانی که خودش لنگر شده هم‌سطحِ او حل می‌شوند — قانونِ ۲ (یک پله بالای میزبان) در زنجیره‌های دو رابطه‌ای نقض می‌شود. موتور درون‌سازگار است (میزبان‌های اسمی جایِ ثابت دارند) — رفعش یک تصمیمِ API است، نه ریاضی. رندرِ تختِ بالا دلیلِ بصریِ حکم است.')}`);
 
@@ -363,7 +364,7 @@ export function buildAuditSnapshotHtml(): string {
     <div class="qbox"><div class="qtitle">سؤال ۴ — بازسنجیِ q روی گوشی</div>
       <div class="twhy">آستانه روی نمایشگرِ رومیزیِ شما سنجیده شد (۲۰۲۶-۱۰-۱۱). گوشی نمایشگرِ دیگری است. ابزارِ همان سه نشست، خودبسنده، همین‌جا سرو می‌شود:
       <div style="margin-top:6px"><a class="mono" style="color:#6FA8EC" href="https://starlitrade.github.io/UI99-Design-Lab/design-lab/threshold-test-precise.html">بازکردنِ ابزارِ آستانه‌سنجی (همین‌جا روی Pages سرو می‌شود)</a></div>
-      اگر qِ گوشی بالاتر از ۰.۰۰۸۳ درآمد، حاشیهٔ ۱.۱۴q روی موبایل باید دوباره چک شود — آن‌وقت با داده تصمیم می‌گیریم، نه با حدس.</div></div>    ${test(true, 'وضعیتِ سوئیت در لحظهٔ تولیدِ این فایل', 'vitest 552 passed · 6 skipped · 0 failed · tsc clean', '۶ skip = گاردهای reachability روی src/componentsِ خالی — با اولین کامپوننت خودکار مسلح می‌شوند (صفرِ مطلق، طبقِ قانونِ خودتان). این صفحه هم خودش ۷ نگهبان در سوئیت دارد: هیچ ✗ بی‌صدا نمی‌تواند منتشر شود.')}
+      اگر qِ گوشی بالاتر از ۰.۰۰۸۳ درآمد، حاشیهٔ ۱.۱۴q روی موبایل باید دوباره چک شود — آن‌وقت با داده تصمیم می‌گیریم، نه با حدس.</div></div>    ${test(true, 'وضعیتِ سوئیت در لحظهٔ تولیدِ این فایل', 'vitest 559 passed · 6 skipped · 0 failed · tsc clean', '۶ skip = گاردهای reachability روی src/componentsِ خالی — با اولین کامپوننت خودکار مسلح می‌شوند (صفرِ مطلق، طبقِ قانونِ خودتان). این صفحه هم خودش ۷ نگهبان در سوئیت دارد (آزمونِ تو در تویِ چشمی هم ۷ تای دیگر): هیچ ✗ بی‌صدا نمی‌تواند منتشر شود.')}
     ${verdict('قدرت', 'مرحلهٔ بوم↔سطح: ادراک‌ترینِ ممکنِ محصور — با دلیل', 'لنگرِ مستند + آستانهٔ روان‌فیزیکیِ خودِ خواننده + سقفِ قرارداد + ۹ لایه برایِ ۱۱ نقش ⇒ گامِ یکتا در ۹۹.۷٪ِ بیشینهٔ جداسازی؛ در fallback هشت‌بیتی هم هر دو قانون زنده؛ تک‌محور (≥۹۴٪ فاصلهٔ ادراکی از نورانیت)؛ متن در همهٔ لایه‌ها امن (WCAG ≥۱۸، APCA ≥۱۰۷). جایگزین‌ها عددی رد شدند، نه سلیقه‌ای.', false)}
     ${verdict('ضعف', 'سه اقدامِ بازِ این مرحله', '۱) فصلِ چاه‌ها در POLICY (ریاضی‌اش آماده است) · ۲) نقصِ ترکیبِ on — تصمیمِ API (onLevel/depth) · ۳) بازسنجیِ q روی نمایشگرِ گوشی (ابزارش بالا). هیچ‌کدام فرمولِ نردبان را عوض نمی‌کنند.', false)}
     ${verdict('سؤال باز', 'اتکای همسایه در میدانِ واقعی — منتظرِ چشمِ شما', 'آزمایشگاه ~۷۷٪ می‌گوید؛ میدانِ واقعی (بزرگ، هم‌جوار، پایدار + هندسهٔ تو در تویی) تقریباً همیشه بیشتر. تا گزارشِ چشمِ شما روی درزهای بخش ۰۶، این «باز» می‌ماند — و اگر لغزشی دیدید، مسیرش بازسنجیِ q است نه دست‌کاریِ گام.', false)}`);
@@ -447,7 +448,7 @@ footer{padding-top:20px;font-size:11px;color:rgba(233,236,242,.35);line-height:2
   <div class="pills">
     <span class="pill">q = ${Q} · r = ${RELIABLE_BOUNDARY} (اندازه‌گیری‌شده)</span>
     <span class="pill">گام = ${f4(q(LADDER_STEP))}q = ${fa(Number((fitRatio * 100).toFixed(2)))}٪ بیشینهٔ هندسی</span>
-    <span class="pill">vitest: 552 passed · tsc clean</span>
+    <span class="pill">vitest: 559 passed · tsc clean</span>
   </div>
 </header>
 ${s01}${s02}${s03}${s04}${s05}${s06}${s07}${s08}${s09}
@@ -455,6 +456,7 @@ ${s01}${s02}${s03}${s04}${s05}${s06}${s07}${s08}${s09}
   <div>ژنراتور: <span class="mono">src/site/generate-audit-snapshot.ts</span> · نگهبان: <span class="mono">src/site/__tests__/audit-snapshot.test.ts</span> (هیچ ✗ بی‌صدا منتشر نمی‌شود)</div>
   <div>پروندهٔ کاملِ ممیزیِ همهٔ مراحل: <span class="mono">.lab/CORE-VERDICTS.md</span> · <span class="mono">.lab/ENGINE-CORE-AUDIT.md</span> · آزمایشگاهِ زندهٔ دسکتاپ: <span class="mono">src/site/AuditLab.tsx</span></div>
   <div>سیاست: <span class="mono">LIMINAL-POLICY.md</span> §۲ (نردبان) · دادهٔ خامِ آستانه: <span class="mono">.threshold-sessions.json</span></div>
+  <div>آزمونِ تو در تویِ چشمی (دروازهٔ تأییدِ فرمول در POLICY): <a href="nested-test.html" style="color:#6FA8EC"><span class="mono">.lab/nested-test.html</span></a></div>
 </footer>
 </div>
 </body>
