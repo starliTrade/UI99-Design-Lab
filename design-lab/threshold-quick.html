@@ -32,6 +32,8 @@
   th { color: rgba(255,255,255,0.46); font-weight: 500; }
   textarea { width: 100%; min-height: 80px; background: #0b0d10; color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.12);
              border-radius: 10px; padding: 10px; font-family: "JetBrains Mono", monospace; font-size: 12px; direction: ltr; }
+  .chk { display: block; padding: 6px 2px; font-size: 14px; }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
   .hide { display: none !important; }
 </style>
 </head>
@@ -52,13 +54,21 @@
   </div>
 
   <div class="box hide" id="intro">
-    <h2>راهنما</h2>
-    <div class="muted">
-      داخل مربع یک مستطیل کم‌نور می‌بینی. اگر <b>مرز</b> بین مربع و زمینه را می‌بینی «می‌بینم» را بزن؛ اگر نه «نمی‌بینم».
-      با نگاه اول جواب بده. <b>برای نتیجه‌ی معتبر: روشنایی گوشی را روی دستی ثابت کن، auto-brightness و حالت شب را خاموش کن،
-      و نور مستقیم روی صفحه نباشد.</b> شروع بعد از ۳۰ ثانیه تنظیم چشم.
+    <h2>شرایط مشاهده (استاندارد IEC 61966-2-1 / sRGB)</h2>
+    <div class="muted" style="margin-bottom:8px">
+      نتیجه فقط وقتی «استاندارد» است که همهٔ موارد زیر رعایت شده باشد. گوشی اتاق‌ها را یکسان نمی‌کند، پس شرایط را ثبت می‌کنیم.
     </div>
-    <div class="choices"><button class="primary" id="startBtn">شروع</button></div>
+    <label class="chk"><input type="checkbox" id="c1"> روشنایی <b>دستی</b> است و auto-brightness خاموش است</label>
+    <label class="chk"><input type="checkbox" id="c2"> حالت شب، True Tone / Adaptive و فیلتر نور آبی خاموش است</label>
+    <label class="chk"><input type="checkbox" id="c3"> روشنایی روی حدود نیمه‌ی بازهٔ دستی تنظیم شده، نه حداکثر</label>
+    <label class="chk"><input type="checkbox" id="c4"> نور مستقیم یا بازتاب روی صفحه نیست</label>
+    <div class="muted" style="margin-top:10px">نور محیط (اتاق):</div>
+    <label class="chk"><input type="radio" name="amb" value="dim" checked> <b>کم‌نور ≈ ۶۴ لوکس</b> — معیار استاندارد (اتاق با چراغ کم)</label>
+    <label class="chk"><input type="radio" name="amb" value="typical"> عادی ≈ ۲۰۰ لوکس — روشنایی معمول اتاق (ثبت می‌شود، معیار نیست)</label>
+    <div class="choices"><button class="primary" id="startBtn" disabled>شروع</button></div>
+    <div class="muted" style="margin-top:10px">
+      <b>محدودیت:</b> مرورگر روشنایی واقعی صفحه (cd/m²) و نور اتاق را نمی‌خواند. ۸۰ cd/m² را فقط دستگاه اندازه‌گیری تأیید می‌کند؛ اینجا «تنظیم دستی + ثبت» است.
+    </div>
   </div>
 
   <div class="hide" id="experiment">
@@ -235,7 +245,7 @@ const KEY = 'liminal-threshold-quick-v2';
 const REF = { q: 0.0083, r: 0.0112 };
 const $ = id => document.getElementById(id);
 const f4 = x => x.toFixed(4);
-let CANDS = [], P = [], trials = [], idx = 0, pending = null, nonCatch = [];
+let CANDS = [], P = [], trials = [], idx = 0, pending = null, nonCatch = [], COND = null;
 
 function loadAll(){ try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; } }
 function saveAll(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
@@ -256,7 +266,19 @@ function drawCatch(){
   ctx.fillStyle = CANVAS_HEX; ctx.fillRect(0, 0, cv.width, cv.height);
 }
 
+function readConditions(){
+  const checks = ['c1','c2','c3','c4'].map(id => $(id).checked);
+  const amb = document.querySelector('input[name=amb]:checked').value;
+  const standard = checks.every(Boolean) && amb === 'dim';
+  return { standard, ambient: amb === 'dim' ? 'dim-64lx' : 'typical-200lx', checks };
+}
+function gate(){
+  $('startBtn').disabled = !['c1','c2','c3','c4'].every(id => $(id).checked);
+}
+['c1','c2','c3','c4'].forEach(id => $(id).addEventListener('change', gate));
+document.querySelectorAll('input[name=amb]').forEach(r => r.addEventListener('change', gate));
 function startSession(){
+  COND = readConditions();
   CANDS = buildCandidates();
   P = makePosterior(); trials = []; idx = 0; nonCatch = [];
   $('intro').classList.add('hide'); $('result').classList.add('hide');
@@ -311,7 +333,7 @@ function finish(){
   const orig = new Map(); for (const t of trials) if (!t.catch && !t.repeat) orig.set(t.key, t.seen);
   const repOk = reps.filter(t => orig.has(t.key) && orig.get(t.key) === t.seen).length;
   const lv = levelTable(), bd = band(lv);
-  const rec = { at: new Date().toISOString(), engine: 'quick-v2', n: trials.length,
+  const rec = { at: new Date().toISOString(), engine: 'quick-v2', cond: COND, n: trials.length,
     q: e.q, qlo: e.qlo, qhi: e.qhi, r: e.r, rlo: e.rlo, rhi: e.rhi, sdQ: e.sdQ,
     falseAlarms: fa, catchN: catches.length, repeatOk: repOk, repeatN: reps.length,
     band: bd, levels: lv, trials };
@@ -328,18 +350,18 @@ function finish(){
   $('rdiff').textContent = (d>=0?'+':'') + d.toFixed(0) + '٪';
   const width = e.qhi - e.qlo;
   const ok = width <= CI_TARGET && (reps.length === 0 || repOk/reps.length >= 0.8) && fa === 0;
-  $('rverdict').textContent = ok
+  $('rverdict').textContent = (COND.standard ? 'شرایط: استاندارد ✓. ' : 'شرایط: غیراستاندارد — این نشست در میانگین استاندارد نمی‌آید. ') + (ok
     ? 'بازه‌ی باریک و تکرار هم‌خوان: این نشست قابل اتکاست.'
-    : 'این نشست هنوز قطعی نیست (بازه پهن یا تکرار ناهم‌خوان یا خطای کاذب). یک نشست دیگر بزن.';
+    : 'این نشست هنوز قطعی نیست (بازه پهن یا تکرار ناهم‌خوان یا خطای کاذب). یک نشست دیگر بزن.');
 
   $('levels').innerHTML = '<tr><th>ΔL</th><th>رنگ‌ها (A→B, k/256)</th><th>دیده</th><th>نرخ</th></tr>' +
     lv.map(g => `<tr><td>${g.dl.toFixed(5)}</td><td>${g.n}</td><td>${g.s}</td><td>${Math.round(g.s/g.n*100)}٪</td></tr>`).join('');
 
-  const all2 = all.filter(s => s.engine === 'quick-v2');
+  const all2 = all.filter(s => s.engine === 'quick-v2' && s.cond && s.cond.standard);
   const qs = all2.map(s => s.q), rs = all2.map(s => s.r);
   const mean = a => a.reduce((x,y)=>x+y,0)/a.length;
   const sd = a => { const m = mean(a); return Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/Math.max(1,a.length-1)); };
-  $('cn').textContent = all2.length;
+  $('cn').textContent = all2.length + ' (فقط شرایط استاندارد)';
   $('cq').textContent = f4(mean(qs));
   $('cr').textContent = f4(mean(rs));
   $('cs').textContent = all2.length >= 2 ? f4(sd(qs)) : '—';
@@ -348,7 +370,7 @@ function finish(){
     : (sd(qs) <= 0.0004 ? 'سه نشست یا بیشتر با پراکندگی کم: میانگین قابل اتکاست.'
                         : 'پراکندگی بین نشست‌ها بالاست؛ نشست بیشتری بزن و دستگاه را ثابت کن.');
   $('export').value =
-    `Q=${f4(e.q)} [${f4(e.qlo)},${f4(e.qhi)}] R=${f4(e.r)} n=${trials.length} FA=${fa}/${catches.length} REP=${repOk}/${reps.length} band=${bd.lo!==null?f4(bd.lo):'-'}..${bd.hi!==null?f4(bd.hi):'-'} v2\n` +
+    `Q=${f4(e.q)} [${f4(e.qlo)},${f4(e.qhi)}] R=${f4(e.r)} cond=${COND.standard ? 'STD' : 'NONSTD'}/${COND.ambient} n=${trials.length} FA=${fa}/${catches.length} REP=${repOk}/${reps.length} band=${bd.lo!==null?f4(bd.lo):'-'}..${bd.hi!==null?f4(bd.hi):'-'} v2\n` +
     JSON.stringify(rec);
 }
 
@@ -365,6 +387,7 @@ $('clearBtn').onclick = () => {
   if (confirm('همه‌ی نشست‌های v2 ذخیره‌شده پاک شود؟')) { saveAll([]); $('result').classList.add('hide'); $('intro').classList.remove('hide'); }
 };
 $('intro').classList.remove('hide');
+gate();
 </script>
 </body>
 </html>
