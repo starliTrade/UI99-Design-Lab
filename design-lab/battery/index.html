@@ -249,7 +249,7 @@ function strip(hexes) {
 function t2Start() {
   const gaps = [1.00, 1.14, 1.30];
   const pairs = [];
-  for (const [a, b] of [[0, 1], [1, 2], [0, 2]]) for (const ord of [0, 1]) for (let rep = 0; rep < 2; rep++) {
+  for (const [a, b] of [[0, 1], [1, 2], [0, 2]]) for (const ord of [0, 1]) for (let rep = 0; rep < 3; rep++) {
     pairs.push(ord ? { A: gaps[b], B: gaps[a] } : { A: gaps[a], B: gaps[b] });
   }
   // random order
@@ -278,14 +278,22 @@ function t2Finish() {
   const gaps = [1.00, 1.14, 1.30];
   const rate = {};
   for (const g of gaps) rate[g] = S.t2Apps[g] ? +((S.t2Wins[g] || 0) / S.t2Apps[g]).toFixed(2) : null;
-  // consistency: repeated comparisons of the same pair agree on the winner
+  // consistency: for every unordered pair shown more than once, how often the answers
+  // agree with that pair's majority winner (all repeats count, not just the first two).
   const byKey = {};
   for (const l of S.t2Log) { const k = [l.A, l.B].sort().join('|'); (byKey[k] = byKey[k] || []).push(l.winner); }
-  let agree = 0, tot = 0;
-  for (const k in byKey) { const w = byKey[k]; if (w.length >= 2) { tot++; if (w[0] === w[1]) agree++; } }
+  const shares = [];
+  for (const k in byKey) {
+    const w = byKey[k];
+    if (w.length < 2) continue;
+    const counts = {};
+    w.forEach(v => { counts[v] = (counts[v] || 0) + 1; });
+    shares.push(Math.max(...Object.values(counts)) / w.length);
+  }
+  const consistency = shares.length ? +(shares.reduce((a, b) => a + b, 0) / shares.length).toFixed(2) : null;
   const best = gaps.reduce((a, b) => (rate[b] > rate[a] ? b : a));
-  S.res2 = { winRate: rate, best, consistency: tot ? +(agree / tot).toFixed(2) : null, n: S.t2Log.length,
-             valid: tot ? agree / tot >= 0.5 : false };
+  S.res2 = { winRate: rate, best, consistency, pairs: shares.length, n: S.t2Log.length,
+             valid: consistency !== null && consistency >= 0.85 };
   t3Start();
 }
 
