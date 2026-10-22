@@ -188,7 +188,7 @@ export function floatingShadow(role: SurfaceRole, on: SurfaceRole = 'work'): str
 }
 
 /** A ladder level as sRGB, for the shadow model — which takes numbers, not roles. */
-function ladderRgb(level: number): number[] {
+export function ladderRgb(level: number): number[] {
   const { r, g, b } = oklchToRgb({ L: CANVAS_L + level * LADDER_STEP, C: LADDER_CHROMA, h: LADDER_HUE });
   return [r, g, b];
 }

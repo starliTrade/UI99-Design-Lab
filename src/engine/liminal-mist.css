@@ -38,11 +38,7 @@
 
   /* The height: a dark shadow below, and one hairline of light on the top edge.
    * No symmetric glow — nothing radiates outward. */
-  box-shadow:
-    0 var(--liminal-mist-shadow-near) var(--liminal-mist-shadow-far)
-      rgba(1, 2, 3, var(--liminal-mist-shadow-far-alpha)),
-    0 2px var(--liminal-mist-shadow-near) rgba(1, 2, 3, var(--liminal-mist-shadow-near-alpha)),
-    var(--liminal-mist-inner-light);
+  box-shadow: var(--liminal-mist-float-shadow), var(--liminal-mist-inner-light);
 
   border: 1px solid var(--liminal-mist-seam);
 }

@@ -15,6 +15,7 @@ import {
   mistShadowFarRadius,
   mistShadowNearAlpha,
   mistShadowNearRadius,
+  mistFloatShadow,
 } from '../liminal-mist';
 import { LADDER } from '../liminal-ladder';
 import { shadowModel } from '../liminal-shadow';
@@ -64,7 +65,9 @@ describe('mist — the surface diffuses light, it does not emit it', () => {
     }
     // The shadow is near-black, not the brand: light is neutral and the shadow
     // is the absence of it.
-    expect(mistCss).toMatch(/rgba\(1, 2, 3,/);
+    // The colour moved with the shadow itself (roadmap 2.4): the stylesheet now uses the
+    // engine's single floating-shadow string, so the rule is checked there.
+    for (const role of ROLES) expect(mistFloatShadow(role)).toMatch(/rgba\(1, 2, 3,/);
   });
 
   it('builds the fog as a vertical gradient, top lighter than bottom', () => {
@@ -229,7 +232,8 @@ describe('mist — every published value is a real CSS value', () => {
   );
 
   it('publishes a complete set for every floating role', () => {
-    expect(all.length).toBe(ROLES.length * 11);
+    // 12 per role: the 11 readouts, plus the one shadow variable the stylesheet uses (2.4).
+    expect(all.length).toBe(ROLES.length * 12);
   });
 
   it('parses as a CSS value', () => {

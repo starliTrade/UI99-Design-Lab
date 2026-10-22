@@ -24,7 +24,7 @@
  */
 
 import { LADDER, PERCEPTUAL_QUANTUM, getLadderVar } from './liminal-ladder';
-import { ROLE_LEVEL, resolveBorder } from './liminal-surface';
+import { ROLE_LEVEL, resolveBorder, floatingShadow, ladderRgb } from './liminal-surface';
 import type { SurfaceRole } from './liminal-surface';
 import { shadowModel } from './liminal-shadow';
 import { oklchToRgb } from './liminal-color-math';
@@ -37,10 +37,7 @@ import { CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from './liminal-ladd
  * work plane: a menu, a popover, a modal and a toast all float over the surface the
  * work is done on, not over the canvas.
  */
-const WORK_PLANE = (() => {
-  const { r, g, b } = oklchToRgb({ L: CANVAS_L + 2 * LADDER_STEP, C: LADDER_CHROMA, h: LADDER_HUE });
-  return [r, g, b];
-})();
+const WORK_PLANE = ladderRgb(ROLE_LEVEL.work); // the same sRGB the engine's floating shadow uses
 
 /** The roles that float above the page, and therefore catch mist. */
 export const FLOATING_MIST_ROLES: SurfaceRole[] = ['menu', 'popover', 'modal', 'toast'];
@@ -194,6 +191,19 @@ export function mistHaloRadius(role: SurfaceRole): number {
  * of them is the mist's own dependency. See `liminal-shadow.ts`.
  */
 export { shadowModel, floatShadow, REST_SHADOW } from './liminal-shadow';
+
+/**
+ * THE MIST'S SHADOW IS THE ENGINE'S FLOATING SHADOW — one string, not a second copy.
+ *
+ * Before roadmap 2.4 the mist re-assembled the same two layers from four separate
+ * variables, so a change to `floatShadow` would have left the mist behind without a
+ * single failing test. Now the stylesheet consumes this string directly. Verified
+ * before the change: the four numbers in the old assembly equal this string's to the
+ * fourth decimal, for every floating role.
+ */
+export function mistFloatShadow(role: SurfaceRole): string {
+  return floatingShadow(role);
+}
 
 export function mistShadowNearRadius(role: SurfaceRole): number {
   return shadowModel(floatHeight(role), WORK_PLANE).near;
@@ -355,7 +365,10 @@ export function mistCssVars(role: SurfaceRole, options: MistOptions = {}): Recor
     '--liminal-mist-inner-light': isToast
       ? 'inset 0 0 0 rgba(0, 0, 0, 0)'
       : `inset 0 1px 0 rgba(${r}, ${g}, ${b}, ${mistInnerLight(role).toFixed(4)})`,
-    // The dark shadow that expresses the height. No light shadow.
+    // The dark shadow that expresses the height: THE ENGINE'S STRING (see mistFloatShadow).
+    '--liminal-mist-float-shadow': mistFloatShadow(role),
+    // READOUTS of the same model, for tests and the contract. The stylesheet does not
+    // use them: a second assembly would be a second formula.
     '--liminal-mist-shadow-near': `${mistShadowNearRadius(role).toFixed(1)}px`,
     '--liminal-mist-shadow-far': `${mistShadowFarRadius(role).toFixed(0)}px`,
     '--liminal-mist-shadow-near-alpha': String(mistShadowNearAlpha(role)),
