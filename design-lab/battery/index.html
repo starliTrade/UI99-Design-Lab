@@ -52,7 +52,7 @@
   <!-- test 1 -->
   <div id="s-t1" class="card hidden">
     <h2>آزمون ۱ از ۲ — کدام پنل درز دارد؟</h2>
-    <div class="muted">یکی از دو پنل یک خط افقی وسطش دارد. نگاه کن و بگو درز کدام است.</div>
+    <div class="muted">یکی از دو پنل یک خط افقی وسطش دارد. نگاه کن و بگو درز کدام است. این آزمون سه بار اجرا می‌شود: روی زمینهٔ بوم (تیره)، سطح میانی و سطح روشن.</div>
     <div class="panels" id="t1-panels"></div>
     <div class="row">
       <button id="t1-left">چپ</button>
@@ -264,9 +264,21 @@ function t1Plan() {
   for (let i = 0; i < 36; i++) plan.push(i % 9 === 4 ? 'catch' : (i % 9 === 8 ? 'repeat' : 'adaptive'));
   return plan;
 }
+// v3: test 1 runs once per level of the canvas ladder: canvas #060709 (L 0.128), mid (0.1565), top (0.1943).
+const LEVELS = [0.128, 0.1565, 0.1943];
+function levelCandidates(L) {
+  return pureCandidates().filter(c => c.bL === L)
+    .map(c => ({ kind: 'pure', d: +c.x.toFixed(3), x: c.x, hex: c.hex, bh: c.bh, key: 'p:' + c.hex }))
+    .sort((a, b) => a.x - b.x);
+}
+function t1BeginLevel() {
+  const L = LEVELS[S.t1LevelIdx];
+  S.t1 = BatteryCore.newStaircase(levelCandidates(L));
+  S.t1Plan = t1Plan(); S.t1Trials = []; S.t1Idx = 0; S.t1Base = L; S.t1Seen = [];
+}
 function t1Start() {
-  S.t1 = BatteryCore.newStaircase(buildCandidates());
-  S.t1Plan = t1Plan(); S.t1Trials = []; S.t1Idx = 0;
+  S.t1Levels = []; S.t1LevelIdx = 0;
+  t1BeginLevel();
   show('s-t1'); t1Next();
 }
 function t1Next() {
@@ -296,7 +308,7 @@ function t1Next() {
     const plainP = wrap(ditherPanel(pair, DITH_F_BASE, DITH_F_BASE));
     [seamLeft ? seamP : plainP, seamLeft ? plainP : seamP].forEach(p => panelsEl.appendChild(p));
   }
-  $('t1-counter').textContent = `${S.t1Idx + 1} از ${S.t1Plan.length}`;
+  $('t1-counter').textContent = `سطح ${S.t1LevelIdx + 1} از ${LEVELS.length} · ${S.t1Idx + 1} از ${S.t1Plan.length}`;
   setProg(S.t1Idx / (S.t1Plan.length * 3));
 }
 function t1Answer(choseLeft) {
@@ -310,10 +322,8 @@ function t1Answer(choseLeft) {
 }
 function t1Finish() {
   const cat = S.t1Trials.filter(t => t.role === 'catch');
-  S.t1Stopped = S.t1Idx < S.t1Plan.length;
   const rep = S.t1Trials.filter(t => t.role === 'repeat');
   const catchAcc = cat.filter(t => t.correct).length / Math.max(1, cat.length);
-  // repeat agreement: a repeated stimulus gave the same correctness as its first presentation
   const firsts = S.t1Trials.filter(t => t.role === 'adaptive');
   let agree = 0, nRep = 0;
   for (const r of rep) {
@@ -321,14 +331,19 @@ function t1Finish() {
     if (first) { nRep++; if (first.correct === r.correct) agree++; }
   }
   const th = BatteryCore.threshold75(S.t1), iv = BatteryCore.threshold75Interval(S.t1);
-  S.res1 = {
-    x75: +th.x75.toFixed(3), lo: +iv.lo.toFixed(3), hi: +iv.hi.toFixed(3),
+  S.t1Levels.push({
+    L: S.t1Base, x75: +th.x75.toFixed(3), lo: +iv.lo.toFixed(3), hi: +iv.hi.toFixed(3),
     catchAcc: +catchAcc.toFixed(2), repeatAgree: nRep ? +(agree / nRep).toFixed(2) : null, nRepeat: nRep,
-    n: S.t1Trials.length,
-    valid: catchAcc >= 0.75 && S.t1Trials.length >= 24,   // repeat agreement is reported, not gated: 4 repeats are too few to gate on
-    stoppedEarly: S.t1Stopped,
-  };
-  // v2: test 2 (ladder preference) is out of the main path; it stays in the file for research only.
+    n: S.t1Trials.length, stoppedEarly: S.t1Idx < S.t1Plan.length,
+    valid: catchAcc >= 0.75 && S.t1Trials.length >= 24,  // repeat agreement reported, not gated (too few repeats)
+  });
+  if (S.t1LevelIdx < LEVELS.length - 1) { S.t1LevelIdx++; t1BeginLevel(); return t1Next(); }
+  // overall: canvas level is the first block; q_bg = margin k x the worst (largest) level threshold
+  const worst = Math.max(...S.t1Levels.map(l => l.x75));
+  const K = 2;
+  S.res1 = { ...S.t1Levels[0], levels: S.t1Levels, k: K, qBg: +(K * worst).toFixed(3),
+    valid: S.t1Levels.every(l => l.valid) };
+  // v2: test 2 is out of the main path
   S.t2Pairs = []; S.t2Idx = 0;
   t3Start();
 }
