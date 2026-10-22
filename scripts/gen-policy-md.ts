@@ -16,7 +16,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  LADDER, CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE, PERCEPTUAL_QUANTUM,
+  LADDER, CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE, PERCEPTUAL_QUANTUM, RELIABLE_BOUNDARY,
 } from '../src/engine/liminal-ladder';
 import {
   ROLE_LEVEL, ROLE_RIM, ROLE_SHADOW, resolveBorderLevel, FLOATING_ROLES,
@@ -40,9 +40,11 @@ const blocks: Record<string, string> = {
     `L(n) = ${CANVAS_L} + n × ${LADDER_STEP}`,
     `C    = ${LADDER_CHROMA}      ← ثابت، یک مقیاس است`,
     `H    = ${LADDER_HUE}°     ← ثابت`,
-    `q    = ${PERCEPTUAL_QUANTUM}    ← کوانتوم ادراکی، اندازه‌گیری‌شده`,
+    `q    = ${PERCEPTUAL_QUANTUM}    ← کوانتوم ادراکی — ثابت طراحی به تصمیم چشمی (نه اندازه‌گیری معتبر)`,
+    `r    = ${RELIABLE_BOUNDARY} = ${(RELIABLE_BOUNDARY / q).toFixed(4)}q   ← مرز اطمینان — ثابت طراحی، مشتق از q (اندازه‌گیری مستقل ندارد)`,
     `گام  = ${LADDER_STEP} = ${(LADDER_STEP / q).toFixed(4)}q   ← فاصله‌ی هر لایه از لایه‌ی قبلی`,
-    `سقف  = L ≤ ${(CANVAS_L + 8 * LADDER_STEP).toFixed(4)}`,
+    `سقف  = L ≤ 0.204   ← سقف سخت، قرارداد؛ سرِ نردبان = L(8) = ${(CANVAS_L + 8 * LADDER_STEP).toFixed(4)}`,
+    `گام  = ${(LADDER_STEP / ((0.204 - CANVAS_L) / 8) * 100).toFixed(2)}٪ بیشینهٔ هندسیِ زیرِ سقف  (${((0.204 - CANVAS_L) / 8).toFixed(4)})`,
     '```',
   ].join('\n'),
 
