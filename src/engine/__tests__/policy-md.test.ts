@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { LADDER, CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from '../liminal-ladder';
 import { ROLE_LEVEL, ROLE_RIM, ROLE_SHADOW, resolveBorderLevel, FLOATING_ROLES } from '../liminal-surface';
+import { RIM } from '../spec-engine';
 import { shadowModel, shadowPeakAlpha } from '../liminal-shadow';
 import { oklchToHex } from '../liminal-color-math';
 
@@ -63,14 +64,28 @@ describe('LIMINAL-POLICY.md — the rules carry the engine’s numbers', () => {
     }
   });
 
-  it('carries the permission table, and it says what the engine says', () => {
-    const b = block('allowed');
-    for (let n = 0; n < 9; n++) {
-      const role = ROLE[n];
-      const rim = ROLE_RIM[role];
-      const shadow = ROLE_SHADOW[role];
-      expect(b, `S${n} rim`).toContain(rim ? `درجه ${rim}` : '**ممنوع**');
-      expect(b, `S${n} shadow`).toContain(shadow === null ? '**ممنوع**' : `E${shadow}`);
+  it('carries the permission table: every role, one row each, every cell from the engine', () => {
+    const rows = block('allowed')
+      .split('\n')
+      .filter((l) => l.startsWith('| S'))
+      .map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
+    const roles = Object.keys(ROLE_LEVEL) as (keyof typeof ROLE_LEVEL)[];
+    // Count first: a table that lost a row must fail, not pass by having fewer rows to check.
+    expect(rows.length, 'one row per role').toBe(roles.length);
+    const byRole = new Map(rows.map((r) => [r[1], r]));
+    for (const role of roles) {
+      const row = byRole.get(role);
+      expect(row, `${role} has a row`).toBeDefined();
+      const [level, , sep, edge, rim, shadow] = row!;
+      expect(level, `${role} level`).toBe(`S${ROLE_LEVEL[role]}`);
+      const borderOk = (kind: 'separator' | 'edge') => Number.isFinite(resolveBorderLevel({ role, kind }));
+      expect(sep.includes('✅'), `${role} separator`).toBe(borderOk('separator'));
+      expect(edge.includes('✅'), `${role} edge`).toBe(borderOk('edge'));
+      expect(rim.includes('✅'), `${role} rim`).toBe(ROLE_RIM[role]);
+      if (ROLE_RIM[role]) expect(rim, `${role} rim strength`).toContain(`+${RIM.t}`);
+      const floats = ROLE_SHADOW[role] !== null;
+      expect(shadow.includes('✅'), `${role} shadow`).toBe(floats);
+      if (floats) expect(shadow, `${role} shadow tier`).toContain(`رده ${ROLE_SHADOW[role]}`);
     }
   });
 

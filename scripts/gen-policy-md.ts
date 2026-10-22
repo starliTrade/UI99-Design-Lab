@@ -103,15 +103,26 @@ const blocks: Record<string, string> = {
     }),
   ].join('\n'),
 
+  // Every cell comes from the engine. A boolean is never printed as text, and a
+  // symbol is never printed that the policy does not define.
+  //   جداکننده / مرز : allowed when the resolver returns a level for that role
+  //   ریم           : the one rim strength (RIM.t steps) when ROLE_RIM says so
+  //   سایه          : the floating tier (ROLE_SHADOW: 1 منو … 4 توست) when it floats
   'allowed': [
     '| پله | نقش | جداکننده | مرز | ریم | سایه |',
     '|---|---|---|---|---|---|',
-    ...Array.from({ length: 9 }, (_, n) => {
-      const role = ROLE[n];
-      const rim = ROLE_RIM[role];
-      const shadow = ROLE_SHADOW[role];
-      return `| S${n} | ${role} | ✅ | ✅ | ${rim ? `درجه ${rim}` : '**ممنوع**'} | ${shadow === null ? '**ممنوع**' : `E${shadow}`} |`;
-    }),
+    // EVERY role, not only the nine that sit on the ladder: `well` and `region` are
+    // relationship roles, and a table that left them out would be silent about them.
+    ...(Object.keys(ROLE_LEVEL) as (keyof typeof ROLE_LEVEL)[])
+      .sort((a, b) => ROLE_LEVEL[a] - ROLE_LEVEL[b] || a.localeCompare(b))
+      .map((role) => {
+        const can = (kind: 'separator' | 'edge') =>
+          Number.isFinite(resolveBorderLevel({ role, kind })) ? '✅' : '**ممنوع**';
+        const rim = ROLE_RIM[role] ? `✅ +${RIM.t} پله` : '**ممنوع**';
+        const shadow = ROLE_SHADOW[role];
+        const sh = shadow === null ? '**ممنوع**' : `✅ رده ${shadow}`;
+        return `| S${ROLE_LEVEL[role]} | ${role} | ${can('separator')} | ${can('edge')} | ${rim} | ${sh} |`;
+      }),
   ].join('\n'),
 };
 
