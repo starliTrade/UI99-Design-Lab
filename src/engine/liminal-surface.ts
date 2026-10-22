@@ -383,8 +383,29 @@ const MAX_LEVEL = LADDER.length - 1;
  * This is the only function a component should call to decide its depth, rim
  * and shadow. Everything else is a rule that lives here.
  */
+/** Keys already reported, so one bad placement warns once per session, not every render. */
+const REPORTED = new Set<string>();
+
+/**
+ * Report a rule violation exactly once per key. Production too: a silent law is a
+ * law nobody can see breaking. It warns and never throws, so a page keeps rendering.
+ * (LIMINAL-ROADMAP-NEXT.md section 1.1)
+ */
+export function reportOnce(key: string, message: string): void {
+  if (REPORTED.has(key)) return;
+  REPORTED.add(key);
+  if (typeof console !== 'undefined' && typeof console.warn === 'function') {
+    console.warn(`[liminal] ${message}`);
+  }
+}
+
 export function resolveSurface(request: SurfaceRequest): SurfaceResolution {
   const { role, state = 'idle', depth = 0, elevation } = request;
+  // LAW 2 is reported in every environment (roadmap 1.1), once per pair.
+  if (request.on !== undefined) {
+    const placement = checkPlacement({ role, on: request.on, onLevel: request.onLevel });
+    if (!placement.ok) reportOnce(`${role}>${request.on}`, placement.reason ?? `${role} on ${request.on} breaks the adjacency law`);
+  }
 
   const base = ROLE_LEVEL[role];
   const shift = STATE_SHIFT[state];
