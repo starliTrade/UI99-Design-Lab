@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>انتخاب حالت‌ها — بوم #060709</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: #cfd6e4; font-family: system-ui, Vazirmatn, sans-serif; padding: 16px; font-size: 14px; }
+  h1 { font-size: 19px; margin: 6px 0 8px; }
+  h2 { font-size: 16px; margin: 22px 0 8px; }
+  p, li { line-height: 1.8; }
+  .muted { opacity: .72; font-size: 13px; }
+  .canvas { background: #060709; border-radius: 14px; padding: 16px; border: 1px solid #1a1f29; margin-bottom: 14px; }
+  .variant { border: 1px solid #1a1f29; border-radius: 14px; padding: 14px; margin-bottom: 18px; }
+  .vhead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .vname { font-weight: 700; font-size: 15px; }
+  .tag { font-family: ui-monospace, monospace; font-size: 12px; opacity: .8; direction: ltr; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .tile { background: #060709; border-radius: 12px; padding: 10px; }
+  .card { border-radius: 10px; padding: 12px; color: #e6ebf5; min-height: 92px; }
+  .card .t { font-weight: 700; margin-bottom: 4px; }
+  .card .s { font-size: 12px; opacity: .8; }
+  .btn { display: inline-block; border: 0; border-radius: 8px; padding: 7px 12px; color: #e6ebf5; font-size: 13px; margin-top: 10px; }
+  .lbl { font-size: 12px; margin-top: 6px; display: flex; justify-content: space-between; direction: ltr; font-family: ui-monospace, monospace; opacity: .85; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  th, td { border-bottom: 1px solid #1a1f29; padding: 6px 8px; text-align: right; vertical-align: top; }
+  th { opacity: .75; font-weight: 600; }
+  .ok { color: #9fe3b1; } .bad { color: #ffb4a8; }
+  .ltr { direction: ltr; font-family: ui-monospace, monospace; }
+  .rec { border: 1px solid #2c4a3a; background: #0b1510; border-radius: 12px; padding: 12px 14px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h1>حالت‌ها روی بوم #060709 — کدام را انتخاب کنیم؟</h1>
+<p class="muted">
+  همهٔ اعداد از نردبان سیاست می‌آیند: `S(n) = 0.128 + n × 0.009475` (هر پله ≈ ۱.۱۴۱۶q، و `q = 0.0083`). سطح پایه (rest) همیشه `S2` است، تا کف بوم (`S0`) جا برای فشار باقی بماند.
+</p>
+
+<div class="canvas">
+  <h2 style="margin-top:0">نردبان روی بوم (S0 تا S8)</h2>
+  <div id="ladder"></div>
+</div>
+
+<div id="variants"></div>
+
+<h2>چه چیزی را بررسی کنید</h2>
+<ul>
+  <li><b>هاور/فوکوس:</b> آیا فوکوس از هاور قابل‌تشخیص است؟ (فوکوس یک شکل دو خطی است، نه فقط روشن‌تر شدن.)</li>
+  <li><b>فشار (active):</b> آیا فشار واضح است، ولی «نابود» نیست؟</li>
+  <li><b>غیرفعال (disabled):</b> آیا حاضر است اما بی‌جان؟</li>
+  <li><b>تقارن:</b> آیا فشار و هاور حس متفاوتی دارند (عمدی)؟</li>
+</ul>
+
+<h2>معیارهای انتخاب (از سیاست)</h2>
+<table>
+  <thead><tr><th>معیار</th><th>چرا</th></tr></thead>
+  <tbody>
+    <tr><td>هر تغییر حالت یک پلهٔ کامل است</td><td>نیم‌پله زیر آستانهٔ سطح تخت است و دیده نمی‌شود (§۶.۸).</td></tr>
+    <tr><td>کوچک‌ترین تغییر ≥ ۱ پله</td><td>کمتر از این، حالت دیده نمی‌شود.</td></tr>
+    <tr><td>فشار ≥ هاور در اندازه</td><td>فشار یک رویداد قوی‌تر است؛ بنابراین عدم‌تقارن عمدی است.</td></tr>
+    <tr><td>فوکوس شکل است، نه روشنایی</td><td>در سیستم تیره، فقط شکل هویت را حفظ می‌کند (§۶.۷.۵).</td></tr>
+    <tr><td>کف بوم</td><td>زیر S0 جایی نیست؛ اما این روی S2 رخ نمی‌دهد.</td></tr>
+  </tbody>
+</table>
+
+<div class="rec" id="rec"></div>
+
+<script>
+// S(n) = 0.128 + n * 0.009475, exact sRGB hex (see README note in the policy)
+const HEX = ['#060709','#07090b','#090b0d','#0b0d0f','#0d0f12','#0f1114','#111316','#131518','#15171a'];
+const Q = 0.0083, STEP = 0.009475;
+const clamp = n => Math.max(0, Math.min(8, n));
+const REST = 2;
+
+// ladder row
+const ladder = document.getElementById('ladder');
+ladder.innerHTML = HEX.map((h, n) => `
+  <div style="display:flex;align-items:center;gap:10px;margin:4px 0;direction:ltr">
+    <div style="width:64px;height:28px;border-radius:6px;background:${h};border:1px solid #1a1f29"></div>
+    <div class="tag">S${n}</div><div class="tag">${h}</div>
+    <div class="tag">${(n * STEP / Q).toFixed(2)}q</div>
+  </div>`).join('');
+
+// variants: offsets from REST, focus style, and a note on each
+const VARIANTS = [
+  { id: 'A', name: 'سیاست فعلی', hover: +1, active: -2, disabled: -1, focus: 'double',
+    note: 'هاور +۱، فشار −۲، غیرفعال −۱، فوکوس دو خطی (fill+1 و fill+2). کاملاً مطابق سیاست.' },
+  { id: 'B', name: 'تقارن فشار', hover: +1, active: -1, disabled: -1, focus: 'double',
+    note: 'مثل A ولی فشار فقط −۱. کمتر «فشرده»، و هاور و فشار بیشتر شبیه‌اند.' },
+  { id: 'C', name: 'هاور قوی', hover: +2, active: -2, disabled: -1, focus: 'double',
+    note: 'هاور +۲. واضح‌تر، ولی خطر این‌که کارت بیش از حد بلند شود (نزدیک «نابود»).' },
+  { id: 'D', name: 'فوکوس تک‌خطی', hover: +1, active: -2, disabled: -1, focus: 'single',
+    note: 'مثل A ولی فوکوس یک خط fill+2. ساده‌تر، ولی تکرار لبه ندارد.' },
+];
+
+function tile(stateName, n, focusStyle) {
+  const fill = HEX[clamp(n)];
+  const inner = HEX[clamp(n + 1)], outer = HEX[clamp(n + 2)];
+  let ring = '';
+  if (focusStyle === 'double') ring = `box-shadow: 0 0 0 2px ${inner}, 0 0 0 4px ${outer};`;
+  if (focusStyle === 'single') ring = `box-shadow: 0 0 0 2px ${outer};`;
+  const opacity = stateName === 'غیرفعال' ? 'opacity:.92;' : '';
+  return `<div class="tile">
+    <div class="card" style="background:${fill};${stateName === 'فوکوس' ? ring : ''}${opacity}">
+      <div class="t">${stateName}</div>
+      <div class="s">S${clamp(n)} · ${fill}</div>
+      <span class="btn" style="background:${fill};border:1px solid ${inner}">دکمه</span>
+    </div>
+    <div class="lbl"><span>${stateName}</span><span>${((clamp(n) - REST) * STEP / Q).toFixed(2)}q</span></div>
+  </div>`;
+}
+
+const root = document.getElementById('variants');
+for (const v of VARIANTS) {
+  const states = [
+    ['سکون', REST, 'none'],
+    ['هاور', REST + v.hover, 'none'],
+    ['فوکوس', REST, v.focus],
+    ['فشار', REST + v.active, 'none'],
+    ['غیرفعال', REST + v.disabled, 'none'],
+  ];
+  root.insertAdjacentHTML('beforeend', `
+    <section class="variant">
+      <div class="vhead"><div class="vname">گزینهٔ ${v.id} — ${v.name}</div>
+        <div class="tag">هاور ${v.hover >= 0 ? '+' : ''}${v.hover} · فشار ${v.active} · غیرفعال ${v.disabled} · فوکوس ${v.focus === 'double' ? 'دو خطی' : 'تک‌خطی'}</div>
+      </div>
+      <div class="muted" style="margin-bottom:10px">${v.note}</div>
+      <div class="tiles">${states.map(([name, n, fs]) => tile(name, n, fs)).join('')}</div>
+    </section>`);
+}
+</script>
+
+<div class="muted" style="margin-top:14px">
+  توجه: در هر گزینه، فوکوس روی سطح سکون (S2) با حلقهٔ دو خطی یا تک‌خطی نمایش داده می‌شود.
+</div>
+
+<script>
+document.getElementById('rec').innerHTML = `
+  <b>پیشنهاد (از نظر سیاست):</b> گزینهٔ <b>A</b>.<br>
+  <span class="muted">دلیل: هر تغییر یک پلهٔ کامل است (۱.۱۴q، بالاتر از آستانه و گام طراحی)؛
+  فشار قوی‌تر از هاور است (عمدی)؛ فوکوس شکل دو خطی است (در سیستم تیره، شکل هویت را حفظ می‌کند)؛
+  و حالت‌ها در بوم کف دارند. گزینهٔ C واضح‌تر است، ولی از نظر سیاست خطر «بیش از حد» دارد.
+  گزینهٔ B و D هم قابل دفاع‌اند، ولی یکی تقارن ندارد و دیگری لبهٔ تکرارشده ندارد.<br>
+  <span class="muted">این پیشنهاد بر اساس معیارهای سیاست است، نه اندازه‌گیری جمعیتی. انتخاب نهایی با چشم شماست.</span>
+`;
+</script>
+</body>
+</html>
