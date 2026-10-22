@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · باتری سنجش ادراک</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0b0c0e; color: #e9ecf2; font-family: Vazirmatn, Inter, system-ui, sans-serif; font-size: 16px; line-height: 1.8; padding: 18px 14px 60px; }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; font-weight: 600; }
+  h2 { font-size: 17px; margin: 22px 0 8px; font-weight: 600; }
+  .muted { color: #9aa0ab; font-size: 14px; }
+  .card { background: #14161a; border: 1px solid #22252b; border-radius: 14px; padding: 16px; margin-top: 14px; }
+  button { font: inherit; color: #e9ecf2; background: #1c1f25; border: 1px solid #2c3038; border-radius: 10px; padding: 10px 16px; cursor: pointer; }
+  button:hover { background: #242830; }
+  button.primary { background: #e9ecf2; color: #0b0c0e; border-color: #e9ecf2; font-weight: 600; }
+  .row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; align-items: center; }
+  .bar { height: 6px; background: #22252b; border-radius: 4px; overflow: hidden; margin-top: 10px; }
+  .bar > i { display: block; height: 100%; background: #7d8ea8; width: 0%; transition: width .2s; }
+  .panels { display: flex; gap: 16px; justify-content: center; margin: 16px 0; }
+  .panel { width: 150px; height: 150px; border-radius: 12px; overflow: hidden; border: 1px solid #22252b; }
+  .panel > div { height: 50%; width: 100%; }
+  .strip { display: flex; gap: 0; border-radius: 10px; overflow: hidden; border: 1px solid #22252b; margin: 8px 0; }
+  .strip > div { flex: 1; height: 54px; }
+  .box { width: 100%; height: 120px; border-radius: 12px; }
+  .mono { font-family: ui-monospace, monospace; font-size: 12px; color: #9aa0ab; direction: ltr; text-align: left; }
+  textarea { width: 100%; min-height: 120px; background: #0b0c0e; color: #cfd4dc; border: 1px solid #2c3038; border-radius: 10px; padding: 10px; font-family: ui-monospace, monospace; font-size: 12px; direction: ltr; }
+  input[type=range] { width: 100%; }
+  .ok { color: #6ee0b4; } .bad { color: #e8806e; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>باتری سنجش ادراک</h1>
+  <div class="muted" id="sub">سه آزمون کوتاه. هر آزمون عدد خودش را می‌دهد و می‌گوید معتبر است یا نه.</div>
+  <div class="bar"><i id="prog"></i></div>
+
+  <!-- intro -->
+  <div id="s-intro" class="card">
+    <h2>قبل از شروع</h2>
+    <ul class="muted" style="padding-right:18px">
+      <li>روشنایی صفحه را روی حالت معمولی بگذار، و از کنتراست بالا یا حالت «شب» استفاده نکن.</li>
+      <li>چشم‌هایت را حدود ۳۰ تا ۶۰ سانتی‌متر از صفحه فاصله بده و سرت را ثابت نگه دار.</li>
+      <li>حدود ۶ تا ۸ دقیقه وقت می‌گیرد. هر وقت خسته شدی، می‌توانی وسط آزمون استراحت کنی.</li>
+      <li>جواب درست یا غلط نداره؛ همان چیزی را انتخاب کن که به چشمت بیشتر می‌آید. اگر واقعاً فرقی نمی‌بینی، حدس بزن.</li>
+    </ul>
+    <div class="row"><button class="primary" id="btn-start">شروع</button></div>
+  </div>
+
+  <!-- test 1 -->
+  <div id="s-t1" class="card hidden">
+    <h2>آزمون ۱ از ۳ — کدام پنل درز دارد؟</h2>
+    <div class="muted">یکی از دو پنل یک خط افقی وسطش دارد. نگاه کن و بگو درز کدام است.</div>
+    <div class="panels" id="t1-panels"></div>
+    <div class="row">
+      <button id="t1-left">چپ</button>
+      <button id="t1-right">راست</button>
+    </div>
+    <div class="row muted" style="margin-top:8px">فلش چپ و راست هم کار می‌کند.</div>
+    <div class="muted" id="t1-counter" style="text-align:center;margin-top:8px"></div>
+  </div>
+
+  <!-- test 2 -->
+  <div id="s-t2" class="card hidden">
+    <h2>آزمون ۲ از ۳ — کدام نردبان واضح‌تر است؟</h2>
+    <div class="muted">دو نردبان از تیره به روشن. کدام یک لایه‌ها را بهتر از هم جدا می‌کند؟</div>
+    <div id="t2-a"></div>
+    <div id="t2-b"></div>
+    <div class="row" style="margin-top:12px">
+      <button id="t2-pickA">الف</button>
+      <button id="t2-pickB">ب</button>
+    </div>
+    <div class="muted" id="t2-counter" style="text-align:center;margin-top:8px"></div>
+  </div>
+
+  <!-- test 3 -->
+  <div id="s-t3" class="card hidden">
+    <h2>آزمون ۳ از ۳ — مرزی که قبول می‌کنی</h2>
+    <div class="muted">لغزنده را حرکت بده تا مرز کادر، به نظرت یک مرز تمیز باشد، نه خیلی پررنگ و نه نامرئی.</div>
+    <div class="box" id="t3-box" style="margin-top:12px"></div>
+    <div style="margin-top:12px"><input type="range" id="t3-slider" min="0.2" max="2.4" step="0.02" value="1.0"></div>
+    <div class="row muted"><span>کمرنگ</span><span style="flex:1"></span><span>پررنگ</span></div>
+    <div class="row" style="margin-top:12px"><button class="primary" id="t3-accept">این مرز را قبول دارم</button></div>
+    <div class="muted" id="t3-counter" style="text-align:center;margin-top:8px"></div>
+  </div>
+
+  <!-- result -->
+  <div id="s-res" class="card hidden">
+    <h2>نتیجه</h2>
+    <div id="res-body"></div>
+    <div class="row" style="margin-top:12px"><button id="btn-copy">کپی JSON</button></div>
+    <textarea id="res-json" readonly></textarea>
+  </div>
+
+  <!-- aggregate -->
+  <div class="card">
+    <h2>تجمیع چند نتیجه</h2>
+    <div class="muted">نتیجه‌های JSON را از چند دستگاه و چند نفر این‌جا بچسبان (هر خط یک نتیجه، یا یک آرایهٔ JSON).</div>
+    <textarea id="agg-in" placeholder='[{...}, {...}]'></textarea>
+    <div class="row" style="margin-top:8px"><button id="btn-agg">محاسبه</button></div>
+    <div id="agg-out" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<script src="core.js"></script>
+<script>
+const Q = 0.0083, CHROMA = 0.0069, HUE = 258.4 * Math.PI / 180;
+const BASE_L = 0.148;      // stimulus base (≈ S2)
+const CANVAS_L = 0.128, STEP = 0.009475;
+
+// ---- colour: OKLCH(L, C, H) -> sRGB hex (8-bit), and back
+function oklchToHex(L) {
+  const a = CHROMA * Math.cos(HUE), b = CHROMA * Math.sin(HUE);
+  const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+  const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+  const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+  const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
+  const r = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+  const g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+  const bl = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
+  const enc = x => { x = Math.max(0, Math.min(1, x)); x = x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - 0.055; return Math.round(x * 255); };
+  return '#' + [r, g, bl].map(v => enc(v).toString(16).padStart(2, '0')).join('');
+}
+function hexToL(hex) {
+  const [R, G, B] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+  const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+  const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+  const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  return 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+}
+// achieved Δ (quanta) of a hex relative to the base, after 8-bit quantisation
+const achievedX = hex => (hexToL(hex) - hexToL(oklchToHex(BASE_L))) / Q;
+
+// ---- state
+const S = { t1: null, t1Trials: [], t1Cur: null, t1Pending: null, t1Seen: [],
+            t2Pairs: [], t2Idx: 0, t2Wins: {}, t2Apps: {}, t2Repeat: [],
+            t3Picks: [], t3Count: 0, startedAt: null };
+const $ = id => document.getElementById(id);
+function show(id) { ['s-intro','s-t1','s-t2','s-t3','s-res'].forEach(x => $(x).classList.toggle('hidden', x !== id)); }
+function setProg(p) { $('prog').style.width = (p * 100).toFixed(0) + '%'; }
+const rnd = () => Math.random();
+
+// ================= TEST 1: seam detection (2AFC, adaptive) =================
+function buildCandidates() {
+  const seen = new Map();
+  for (let d = 0.2; d <= 3.0001; d += 0.05) {
+    const hex = oklchToHex(BASE_L + d * Q);
+    if (!seen.has(hex)) seen.set(hex, { d: +d.toFixed(2), x: achievedX(hex), hex });
+  }
+  return [...seen.values()].filter(c => c.x > 0.05);
+}
+function t1Plan() {
+  // 48 adaptive, 6 catch (large seam, must be easy), 6 repeats of earlier stimuli
+  const plan = [];
+  for (let i = 0; i < 60; i++) plan.push(i % 10 === 4 ? 'catch' : (i % 10 === 9 ? 'repeat' : 'adaptive'));
+  return plan;
+}
+function t1Start() {
+  S.t1 = BatteryCore.newStaircase(buildCandidates());
+  S.t1Plan = t1Plan(); S.t1Trials = []; S.t1Idx = 0;
+  show('s-t1'); t1Next();
+}
+function t1Next() {
+  if (S.t1Idx >= S.t1Plan.length) return t1Finish();
+  const kind = S.t1Plan[S.t1Idx];
+  let stim;
+  if (kind === 'catch') stim = { d: 4.0, x: achievedX(oklchToHex(BASE_L + 4.0 * Q)), hex: oklchToHex(BASE_L + 4.0 * Q), kind };
+  else if (kind === 'repeat' && S.t1Seen.length) stim = { ...S.t1Seen[Math.floor(rnd() * S.t1Seen.length)], kind };
+  else { const c = BatteryCore.nextStimulus(S.t1); stim = { ...c, kind }; }
+  S.t1Cur = stim;
+  const seamLeft = rnd() < 0.5;
+  S.t1Cur.seamLeft = seamLeft;
+  const base = oklchToHex(BASE_L);
+  const seamPanel = `<div class="panel"><div style="background:${base}"></div><div style="background:${stim.hex}"></div></div>`;
+  const plain = `<div class="panel"><div style="background:${base}"></div><div style="background:${base}"></div></div>`;
+  $('t1-panels').innerHTML = seamLeft ? seamPanel + plain : plain + seamPanel;
+  $('t1-counter').textContent = `${S.t1Idx + 1} از ${S.t1Plan.length}`;
+  setProg(S.t1Idx / (S.t1Plan.length * 3));
+}
+function t1Answer(choseLeft) {
+  if (!S.t1Cur) return;
+  const correct = choseLeft === S.t1Cur.seamLeft;
+  const stim = S.t1Cur;
+  S.t1Trials.push({ kind: stim.kind, d: stim.d, x: stim.x, correct });
+  if (stim.kind === 'adaptive') { BatteryCore.update(S.t1, stim, correct); S.t1Seen.push({ d: stim.d, x: stim.x, hex: stim.hex }); }
+  S.t1Idx++; S.t1Cur = null;
+  t1Next();
+}
+function t1Finish() {
+  const cat = S.t1Trials.filter(t => t.kind === 'catch');
+  const rep = S.t1Trials.filter(t => t.kind === 'repeat');
+  const catchAcc = cat.filter(t => t.correct).length / Math.max(1, cat.length);
+  // repeat agreement: a repeated stimulus gave the same correctness as its first presentation
+  const firsts = S.t1Trials.filter(t => t.kind === 'adaptive');
+  let agree = 0, nRep = 0;
+  for (const r of rep) {
+    const first = firsts.find(f => Math.abs(f.d - r.d) < 1e-9);
+    if (first) { nRep++; if (first.correct === r.correct) agree++; }
+  }
+  const th = BatteryCore.threshold75(S.t1), iv = BatteryCore.threshold75Interval(S.t1);
+  S.res1 = {
+    x75: +th.x75.toFixed(3), lo: +iv.lo.toFixed(3), hi: +iv.hi.toFixed(3),
+    catchAcc: +catchAcc.toFixed(2), repeatAgree: nRep ? +(agree / nRep).toFixed(2) : null, nRepeat: nRep,
+    n: S.t1Trials.length,
+    valid: catchAcc >= 5 / 6 && (nRep === 0 || agree / nRep >= 0.66) && S.t1Trials.length >= 50,
+  };
+  t2Start();
+}
+
+// ================= TEST 2: which ladder is clearer (pairwise) =================
+function ladder(gap) {
+  const out = [];
+  for (let n = 0; n <= 8; n++) out.push(oklchToHex(CANVAS_L + n * gap * Q));
+  return out;
+}
+function strip(hexes) {
+  return `<div class="strip">${hexes.map(h => `<div style="background:${h}"></div>`).join('')}</div>`;
+}
+function t2Start() {
+  const gaps = [1.00, 1.14, 1.30];
+  const pairs = [];
+  for (const [a, b] of [[0, 1], [1, 2], [0, 2]]) for (const ord of [0, 1]) for (let rep = 0; rep < 2; rep++) {
+    pairs.push(ord ? { A: gaps[b], B: gaps[a] } : { A: gaps[a], B: gaps[b] });
+  }
+  // random order
+  S.t2Pairs = pairs.sort(() => rnd() - 0.5);
+  S.t2Idx = 0; S.t2Wins = {}; S.t2Apps = {}; S.t2Log = [];
+  show('s-t2'); t2Next();
+}
+function t2Next() {
+  if (S.t2Idx >= S.t2Pairs.length) return t2Finish();
+  const p = S.t2Pairs[S.t2Idx];
+  $('t2-a').innerHTML = strip(ladder(p.A));
+  $('t2-b').innerHTML = strip(ladder(p.B));
+  $('t2-counter').textContent = `${S.t2Idx + 1} از ${S.t2Pairs.length}`;
+  setProg((S.t1Plan.length + S.t2Idx) / (S.t1Plan.length + S.t2Pairs.length + S.t3Target));
+}
+function t2Pick(which) {
+  const p = S.t2Pairs[S.t2Idx];
+  const winner = which === 'A' ? p.A : p.B, loser = which === 'A' ? p.B : p.A;
+  S.t2Wins[winner] = (S.t2Wins[winner] || 0) + 1;
+  S.t2Apps[winner] = (S.t2Apps[winner] || 0) + 1;
+  S.t2Apps[loser] = (S.t2Apps[loser] || 0) + 1;
+  S.t2Log.push({ A: p.A, B: p.B, winner });
+  S.t2Idx++; t2Next();
+}
+function t2Finish() {
+  const gaps = [1.00, 1.14, 1.30];
+  const rate = {};
+  for (const g of gaps) rate[g] = S.t2Apps[g] ? +((S.t2Wins[g] || 0) / S.t2Apps[g]).toFixed(2) : null;
+  // consistency: repeated comparisons of the same pair agree on the winner
+  const byKey = {};
+  for (const l of S.t2Log) { const k = [l.A, l.B].sort().join('|'); (byKey[k] = byKey[k] || []).push(l.winner); }
+  let agree = 0, tot = 0;
+  for (const k in byKey) { const w = byKey[k]; if (w.length >= 2) { tot++; if (w[0] === w[1]) agree++; } }
+  const best = gaps.reduce((a, b) => (rate[b] > rate[a] ? b : a));
+  S.res2 = { winRate: rate, best, consistency: tot ? +(agree / tot).toFixed(2) : null, n: S.t2Log.length,
+             valid: tot ? agree / tot >= 0.5 : false };
+  t3Start();
+}
+
+// ================= TEST 3: accepted border step (method of adjustment) =================
+S.t3Target = 3;
+function t3Start() {
+  S.t3Picks = []; S.t3Count = 0;
+  show('s-t3'); t3Draw();
+}
+function t3Draw() {
+  const d = +$('t3-slider').value;
+  // host (BASE_L) with a 1px border whose colour is BASE_L + d·q
+  $('t3-box').style.background = oklchToHex(BASE_L);
+  $('t3-box').style.border = `3px solid ${oklchToHex(BASE_L + d * Q)}`;
+  $('t3-counter').textContent = `${S.t3Count + 1} از ${S.t3Target}`;
+  setProg((S.t1Plan.length + S.t2Pairs.length + S.t3Count) / (S.t1Plan.length + S.t2Pairs.length + S.t3Target));
+}
+function t3Accept() {
+  S.t3Picks.push(+$('t3-slider').value);
+  S.t3Count++;
+  if (S.t3Count >= S.t3Target) return t3Finish();
+  $('t3-slider').value = 1.0; t3Draw();
+}
+function t3Finish() {
+  const p = [...S.t3Picks].sort((a, b) => a - b);
+  const med = p[Math.floor(p.length / 2)];
+  const spread = +(p[p.length - 1] - p[0]).toFixed(2);
+  S.res3 = { picks: S.t3Picks, median: med, spread, valid: spread <= 0.6 };
+  finish();
+}
+
+// ================= result =================
+function finish() {
+  setProg(1);
+  const all = { schema: 'ui99-battery-v1', at: new Date().toISOString(), tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    screen: { w: screen.width, h: screen.height, dpr: devicePixelRatio }, t1: S.res1, t2: S.res2, t3: S.res3 };
+  const ok = v => v ? '<span class="ok">معتبر</span>' : '<span class="bad">نامعتبر</span>';
+  $('res-body').innerHTML = `
+    <div class="card"><b>آزمون ۱ — آستانهٔ درز</b> ${ok(S.res1.valid)}<br>
+      آستانه (۷۵٪ دو‌گزینه‌ای): <b>${S.res1.x75} q</b> &nbsp; بازه (۱۰ تا ۹۰٪): ${S.res1.lo} … ${S.res1.hi}<br>
+      کنترل‌های سادهٔ جواب درست: ${S.res1.catchAcc} · تکرار همخوان: ${S.res1.repeatAgree ?? '—'} · آزمون‌ها: ${S.res1.n}</div>
+    <div class="card"><b>آزمون ۲ — وضوح نردبان</b> ${ok(S.res2.valid)}<br>
+      برنده: <b>${S.res2.best}q</b> · نرخ برد: ${Object.entries(S.res2.winRate).map(([g,r])=>`${g}q=${r}`).join(' · ')}<br>
+      هماهنگی مقایسه‌های تکراری: ${S.res2.consistency ?? '—'}</div>
+    <div class="card"><b>آزمون ۳ — مرز قبول‌شده</b> ${ok(S.res3.valid)}<br>
+      میانه: <b>${S.res3.median}q</b> · پراکندگی: ${S.res3.spread}q · انتخاب‌ها: ${S.res3.picks.join(', ')}</div>
+    <div class="muted">این نتیجه فقط برای همین دستگاه و همین شرایط است. برای ادعای «ادراکی‌ترین عدد» باید تجمیع چند نتیجه را ببینی.</div>`;
+  $('res-json').value = JSON.stringify(all);
+  show('s-res');
+  try { localStorage.setItem('ui99-battery-last', JSON.stringify(all)); } catch (e) { /* storage blocked: the JSON box still has the result */ }
+}
+$('btn-copy').onclick = () => { $('res-json').select(); navigator.clipboard?.writeText($('res-json').value); };
+
+// ================= aggregate =================
+function median(a) { const s = [...a].sort((x, y) => x - y); if (!s.length) return null; const m = Math.floor(s.length / 2); return +(s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2).toFixed(3); }
+$('btn-agg').onclick = () => {
+  let txt = $('agg-in').value.trim(), arr = [];
+  try { arr = JSON.parse(txt.startsWith('[') ? txt : '[' + txt.split(/\n/).filter(Boolean).join(',') + ']'); }
+  catch (e) { $('agg-out').innerHTML = '<span class="bad">JSON نامعتبر است.</span>'; return; }
+  const good = arr.filter(r => r && r.t1 && r.t1.valid);
+  const q = median(good.map(r => r.t1.x75));
+  const lo = median(good.map(r => r.t1.lo)), hi = median(good.map(r => r.t1.hi));
+  const bestCount = {}; good.forEach(r => { if (r.t2 && r.t2.valid) bestCount[r.t2.best] = (bestCount[r.t2.best] || 0) + 1; });
+  const bestGap = Object.entries(bestCount).sort((a, b) => b[1] - a[1])[0];
+  const borders = arr.filter(r => r && r.t3 && r.t3.valid).map(r => r.t3.median);
+  $('agg-out').innerHTML = `
+    <div class="mono">نتیجه‌های معتبر آزمون ۱: ${good.length} از ${arr.length}</div>
+    <div>میانهٔ آستانهٔ درز (۷۵٪ دو‌گزینه‌ای): <b>${q ?? '—'} q</b> · بازهٔ میانه: ${lo ?? '—'} … ${hi ?? '—'}</div>
+    <div>پرطرفدارترین نردبان: <b>${bestGap ? bestGap[0] + 'q' : '—'}</b> (${bestGap ? bestGap[1] : 0} رأی)</div>
+    <div>میانهٔ مرز قبول‌شده: <b>${median(borders) ?? '—'} q</b></div>
+    <div class="muted" style="margin-top:6px">تجمیع فقط از نتیجه‌های معتبر می‌گیرد. اگر تعداد نتیجه‌ها کم باشد، این عددها هنوز قطعی نیستند.</div>`;
+};
+
+// ================= wire up =================
+$('btn-start').onclick = () => { S.startedAt = Date.now(); t1Start(); };
+$('t1-left').onclick = () => t1Answer(true);
+$('t1-right').onclick = () => t1Answer(false);
+$('t2-pickA').onclick = () => t2Pick('A');
+$('t2-pickB').onclick = () => t2Pick('B');
+$('t3-slider').oninput = () => t3Draw();
+$('t3-accept').onclick = () => t3Accept();
+document.addEventListener('keydown', e => {
+  if ($('s-t1').classList.contains('hidden')) return;
+  if (e.key === 'ArrowLeft') t1Answer(true);
+  if (e.key === 'ArrowRight') t1Answer(false);
+});
+</script>
+</body>
+</html>
