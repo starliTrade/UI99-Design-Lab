@@ -29,19 +29,40 @@
 </div>
 <div id="opts"></div>
 <script>
-  const L0 = 0.128, C = 0.0069, H = 258.4, Q = 0.0083;
+  const L0 = 0.128, Q = 0.0083; // colours below are exact sRGB hex (OKLCH L 0.128 / C 0.0069 / H 258.4)
   const options = [
-    { id: 'A', m: 0.75 },
-    { id: 'B', m: 1.0 },
-    { id: 'C', m: 1.25 },
-    { id: 'D', m: 1.5 },
-  ];
+  {
+    "id": "A",
+    "m": 0.75,
+    "lo": "#060709",
+    "hi": "#07080b",
+    "L1": "0.1342"
+  },
+  {
+    "id": "B",
+    "m": 1,
+    "lo": "#060709",
+    "hi": "#07080b",
+    "L1": "0.1363"
+  },
+  {
+    "id": "C",
+    "m": 1.25,
+    "lo": "#060709",
+    "hi": "#07090c",
+    "L1": "0.1384"
+  },
+  {
+    "id": "D",
+    "m": 1.5,
+    "lo": "#060709",
+    "hi": "#08090c",
+    "L1": "0.1404"
+  }
+];
   const root = document.getElementById('opts');
   for (const o of options) {
-    const L1 = L0 + o.m * Q;
-    const val = o.m.toFixed(2) + 'q = ' + (o.m * Q).toFixed(4);
-    const lo = `oklch(${L0} ${C} ${H})`;
-    const hi = `oklch(${L1.toFixed(4)} ${C} ${H})`;
+    const L1 = o.L1; const lo = o.lo; const hi = o.hi;
     root.insertAdjacentHTML('beforeend', `
       <section class="opt">
         <div class="opt-head">
