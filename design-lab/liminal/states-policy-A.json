@@ -1,0 +1,60 @@
+{
+  "schema": "liminal-states-v1",
+  "decision": "A — approved by eye on canvas #060709 (2026-10-22)",
+  "base": {
+    "canvas": "#060709",
+    "canvasL": 0.128,
+    "ladderStepL": 0.009475,
+    "q": 0.0083,
+    "ladderStepInQ": 1.1416,
+    "chroma": 0.0069,
+    "hue": 258.4
+  },
+  "ladder": {
+    "S0": { "L": 0.128,    "hex": "#060709" },
+    "S1": { "L": 0.137475, "hex": "#07090b" },
+    "S2": { "L": 0.14695,  "hex": "#090b0d" },
+    "S3": { "L": 0.156425, "hex": "#0b0d0f" },
+    "S4": { "L": 0.1659,   "hex": "#0d0f12" },
+    "S5": { "L": 0.175375, "hex": "#0f1114" },
+    "S6": { "L": 0.18485,  "hex": "#111316" },
+    "S7": { "L": 0.194325, "hex": "#131518" },
+    "S8": { "L": 0.2038,   "hex": "#15171a" }
+  },
+  "rest": "S2",
+  "clamp": { "min": "S0", "max": "S8" },
+  "states": {
+    "idle":     { "offset": 0 },
+    "hover":    { "offset": 1, "offsetAtCeiling": -1 },
+    "active":   { "offset": -2 },
+    "disabled": { "offset": -1 },
+    "focus":    {
+      "fillOffset": 0,
+      "ring": {
+        "inner": { "offset": 1, "widthPx": 2 },
+        "gapPx": 2,
+        "outer": { "offset": 2, "widthPx": 2 }
+      }
+    }
+  },
+  "rules": [
+    "Every state change is a whole ladder rung (never a half rung).",
+    "Resolved level = clamp(rest + offset, S0, S8).",
+    "At the ceiling (rest = S8), hover uses offset -1 instead of +1, so it remains a full rung.",
+    "Active below the floor clamps to S0 (on canvas, S1 - 2 becomes S0).",
+    "Focus never changes the fill. It draws a ring on top of the current state fill: inner line at fill+1, a 2px gap, then outer line at fill+2.",
+    "Hover and focus can both apply: fill comes from hover, ring from focus.",
+    "Disabled is -1 from rest and keeps the element visible but inactive.",
+    "Press is stronger than hover on purpose (-2 vs +1)."
+  ],
+  "assumptions": [
+    "Ring line widths (2px) and gap (2px) are a specification choice, not from the measured policy. Confirm by eye.",
+    "Focus is a shape-only state (§6.7.5). §6.8 table lists focus as +1; this file follows §6.7.5. Please confirm if §6.8 should win.",
+    "Ceiling rule for hover (-1 at S8) follows §6.8 point 4; it is not yet checked visually on S8."
+  ],
+  "sources": [
+    "LIMINAL-POLICY.md §6.8 (states)",
+    "LIMINAL-POLICY.md §6.7.5 (focus as a shape)",
+    "design-lab/battery/states-choice.html (visual comparison)"
+  ]
+}
