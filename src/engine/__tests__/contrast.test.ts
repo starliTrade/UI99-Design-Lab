@@ -7,7 +7,6 @@ import {
   minWhiteAlphaForApca,
   deriveTextToken,
   deriveTextHierarchy,
-  resolveTextAlpha,
   CONTRAST_FLOOR,
   APCA_FLOOR,
   type TextRole,
@@ -153,10 +152,3 @@ describe('deriveTextHierarchy · shape', () => {
   });
 });
 
-describe('resolveTextAlpha · convenience', () => {
-  it('matches deriveTextToken', () => {
-    expect(resolveTextAlpha('tertiary', LADDER[2])).toBe(
-      deriveTextToken('tertiary', LADDER[2]).alpha,
-    );
-  });
-});

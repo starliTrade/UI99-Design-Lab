@@ -143,8 +143,11 @@
 | ۰.۲ | `q` را روی ۳ مانیتور دیگر اندازه بگیر (OLED, IPS ارزان, موبایل) — `q` محلی است یا جهانی؟ | `LIMINAL-FORMULA.md` §۶ | `.threshold-sessions.json` جدید |
 | ۰.۲ *(جایگزین شد، ۲۰۲۶-۱۰-۲۲)* | به‌جای اندازه‌گیری روی ۳ مانیتور: **تأیید چشمی** صفحه‌های تحویل (حالت‌ها، تایپوگرافی، انتخاب q) روی یک مانیتور دوم. تصمیم کاربر: `q = 0.0083` ثابت طراحی است؛ پوشش جمعیتی در `LIMINAL-POLICY.md` §۷ ادعا نمی‌شود. | `LIMINAL-POLICY.md` §۲، §۷–۹ | — (تأیید کاربر ثبت شد) |
 | ۰.۳ | ۴ tautology تست را پاک کن (تست‌هایی که فقط کد را آینه می‌کنند) | `COMPONENT-CONTRACT.md` §۹ | `contrast.test.ts` بازنویسی |
+|   | ⚠️ **نیمه‌کاره (۲۰۲۶-۱۰-۲۲):** یک مورد واضح حذف شد — `resolveTextAlpha` در `contrast.test.ts` (تست «برابر با deriveTextToken»، چون تابع فقط wrapper همان است). **سه مورد دیگر هنوز تأیید نشده‌اند:** `shadow.test.ts:63-64` و `mist.test.ts:168` (برابری شعاع با `shadowModel`). فهرست کامل ۴ مورد در مخزن ثبت نشده بود؛ تصمیم حذف آن‌ها با شماست. | | |
 | ۰.۴ | `transition: all` را به `transition: background, border-color, box-shadow, transform` تبدیل کن | `liminal-motion-engine.ts` | `motion-depth.test.ts` |
+|   | ✅ **از قبل انجام شده:** `LiminalMotionEngine.ANIMATABLE` (color, background-color, border-color, box-shadow, opacity, transform) و همهٔ `TRANSITION` از آن. در `src` هیچ `transition: all` نیست. فقط `design-lab/*.html` (آرشیو لابراتوار) هنوز دارد. | | |
 | ۰.۵ | `REDUCED_MOTION_STYLE` مرده را زنده کن یا حذف کن | همان | `prefers-reduced-motion` تست |
+|   | ✅ **از قبل انجام شده:** شیء مرده حذف شده و کامنت دلیل آن را ثبت می‌کند؛ reduced motion در `liminal-interaction.css` (دو `@media`) مدیریت می‌شود. | | |
 
 **تعریف تمام:** `bun run verify` سبز + ۰ `transition:all` + ۴ tautology حذف.
 
