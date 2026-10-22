@@ -21,7 +21,7 @@
 
   function newStaircase(candidates) {
     // candidates: [{d, x}] — d = requested Δ (quanta), x = achieved Δ after 8-bit quantisation.
-    const alphas = makeGrid(0.2, 3.0, 57);
+    const alphas = makeGrid(0.2, 3.0, 561); // 0.005 steps: fine enough that percentiles do not collapse onto one node
     return { alphas, post: alphas.map(() => 1 / alphas.length), candidates, history: [] };
   }
 
@@ -60,12 +60,21 @@
 
   // Posterior spread: 10th–90th percentile of the threshold, for an honest interval.
   function threshold75Interval(st) {
-    const xs = [];
+    // 10th / 90th percentile of the posterior over alpha, linearly interpolated between grid nodes.
     const inner = -Math.log(1 - 0.5 / (1 - LAMBDA));
     const cdf = [];
     let acc = 0;
     for (let i = 0; i < st.alphas.length; i++) { acc += st.post[i]; cdf.push(acc); }
-    const pick = (q) => { for (let i = 0; i < cdf.length; i++) if (cdf[i] >= q) return st.alphas[i]; return st.alphas[st.alphas.length - 1]; };
+    const pick = (q) => {
+      for (let i = 0; i < cdf.length; i++) {
+        if (cdf[i] >= q) {
+          const prev = i ? cdf[i - 1] : 0, a0 = i ? st.alphas[i - 1] : st.alphas[0];
+          const t = cdf[i] > prev ? (q - prev) / (cdf[i] - prev) : 1;
+          return a0 + t * (st.alphas[i] - a0);
+        }
+      }
+      return st.alphas[st.alphas.length - 1];
+    };
     return { lo: pick(0.1) * Math.pow(inner, 1 / BETA), hi: pick(0.9) * Math.pow(inner, 1 / BETA) };
   }
 
