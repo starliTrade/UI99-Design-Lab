@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>بررسی چشمی · قانون مجاورت</title>
+<style>
+:root { --liminal-s0: oklch(0.1280000 0.0069 258.4); --liminal-s1: oklch(0.1374750 0.0069 258.4); --liminal-s2: oklch(0.1469500 0.0069 258.4); --liminal-s3: oklch(0.1564250 0.0069 258.4); --liminal-s4: oklch(0.1659000 0.0069 258.4); --liminal-s5: oklch(0.1753750 0.0069 258.4); --liminal-s6: oklch(0.1848500 0.0069 258.4); --liminal-s7: oklch(0.1943250 0.0069 258.4); --liminal-s8: oklch(0.2038000 0.0069 258.4); }
+html, body { margin: 0; background: var(--liminal-s0); color: #e9ecf2; font-family: system-ui, sans-serif; }
+main { padding: 32px; max-width: 980px; margin: auto; }
+h1 { font-size: 20px; margin: 0 0 8px; }
+p { color: #9aa3b2; font-size: 14px; line-height: 1.8; max-width: 70ch; }
+.lay { padding: 14px 14px 14px 14px; border-radius: 10px; }
+.lay .lbl { font-size: 12px; color: #9aa3b2; }
+.strip { display: grid; grid-template-columns: repeat(9, 1fr); gap: 10px; margin-top: 32px; }
+.cell { display: grid; gap: 6px; justify-items: center; font-size: 12px; color: #9aa3b2; }
+.chip { width: 100%; height: 70px; border-radius: 8px; border: 1px solid rgba(255,255,255,.04); }
+</style>
+</head>
+<body>
+<main>
+  <h1>بررسی چشمی · هر لایه فقط یک پله بالاتر از زیرش</h1>
+  <p>
+    بالا: همهٔ نه لایه تو در تو، هر کدام یک پله بالاتر از لایهٔ میزبانش.
+    پایین: هر لایه روی بوم، با فاصلهٔ کل آن از بوم بر حسب q.
+    یک پله = 1.14q. بگویید کدام فاصله‌ها را بیش از حد یا کم‌تر از حد ادراک می‌بینید.
+  </p>
+  <div class="lay" style="background: var(--liminal-s0)"><span class="lbl">S0 · بوم</span><div class="lay" style="background: var(--liminal-s1)"><span class="lbl">S1 · 1.14q از S0</span><div class="lay" style="background: var(--liminal-s2)"><span class="lbl">S2 · 1.14q از S1</span><div class="lay" style="background: var(--liminal-s3)"><span class="lbl">S3 · 1.14q از S2</span><div class="lay" style="background: var(--liminal-s4)"><span class="lbl">S4 · 1.14q از S3</span><div class="lay" style="background: var(--liminal-s5)"><span class="lbl">S5 · 1.14q از S4</span><div class="lay" style="background: var(--liminal-s6)"><span class="lbl">S6 · 1.14q از S5</span><div class="lay" style="background: var(--liminal-s7)"><span class="lbl">S7 · 1.14q از S6</span><div class="lay" style="background: var(--liminal-s8)"><span class="lbl">S8 · 1.14q از S7</span></div></div></div></div></div></div></div></div></div>
+  <div class="strip">
+  <div class="cell">
+    <div class="chip" style="background: var(--liminal-s0)"></div>
+    <span>S0</span>
+    <small>0.00q از بوم</small>
+  </div>
+  <div class="cell">
+    <div class="chip" style="background: var(--liminal-s1)"></div>
+    <span>S1</span>
+    <small>1.14q از بوم</small>
+  </div>
+  <div class="cell">
+    <div class="chip" style="background: var(--liminal-s2)"></div>
+    <span>S2</span>
+    <small>2.28q از بوم</small>
+  </div>
+  <div class="cell">
+    <div class="chip" style="background: var(--liminal-s3)"></div>
+    <span>S3</span>
+    <small>3.42q از بوم</small>
+  </div>
+  <div class="cell">
+    <div class="chip" style="background: var(--liminal-s4)"></div>
+    <span>S4</span>
+    <small>4.57q از بوم</small>
+  </div>
+  <div class="cell">
+    <div class="chip" style="background: var(--liminal-s5)"></div>
+    <span>S5</span>
+    <small>5.71q از بوم</small>
+  </div>
+  <div class="cell">
+    <div class="chip" style="background: var(--liminal-s6)"></div>
+    <span>S6</span>
+    <small>6.85q از بوم</small>
+  </div>
+  <div class="cell">
+    <div class="chip" style="background: var(--liminal-s7)"></div>
+    <span>S7</span>
+    <small>7.99q از بوم</small>
+  </div>
+  <div class="cell">
+    <div class="chip" style="background: var(--liminal-s8)"></div>
+    <span>S8</span>
+    <small>9.13q از بوم</small>
+  </div></div>
+</main>
+</body>
+</html>
