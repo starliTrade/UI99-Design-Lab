@@ -141,6 +141,7 @@
 |---|---|---|---|
 | ۰.۱ | ممیزی عدد ثابت: هر `0.009475`, `0.0069`, `258.4` یک منبع دارد — `AUDIT-REPORT` §۷ را تکمیل کن | `LIMINAL-POLICY.md` §۲ | `tokens.test.ts` |
 | ۰.۲ | `q` را روی ۳ مانیتور دیگر اندازه بگیر (OLED, IPS ارزان, موبایل) — `q` محلی است یا جهانی؟ | `LIMINAL-FORMULA.md` §۶ | `.threshold-sessions.json` جدید |
+| ۰.۲ *(جایگزین شد، ۲۰۲۶-۱۰-۲۲)* | به‌جای اندازه‌گیری روی ۳ مانیتور: **تأیید چشمی** صفحه‌های تحویل (حالت‌ها، تایپوگرافی، انتخاب q) روی یک مانیتور دوم. تصمیم کاربر: `q = 0.0083` ثابت طراحی است؛ پوشش جمعیتی در `LIMINAL-POLICY.md` §۷ ادعا نمی‌شود. | `LIMINAL-POLICY.md` §۲، §۷–۹ | — (تأیید کاربر ثبت شد) |
 | ۰.۳ | ۴ tautology تست را پاک کن (تست‌هایی که فقط کد را آینه می‌کنند) | `COMPONENT-CONTRACT.md` §۹ | `contrast.test.ts` بازنویسی |
 | ۰.۴ | `transition: all` را به `transition: background, border-color, box-shadow, transform` تبدیل کن | `liminal-motion-engine.ts` | `motion-depth.test.ts` |
 | ۰.۵ | `REDUCED_MOTION_STYLE` مرده را زنده کن یا حذف کن | همان | `prefers-reduced-motion` تست |
