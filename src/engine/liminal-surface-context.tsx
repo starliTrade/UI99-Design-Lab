@@ -15,7 +15,9 @@ import { createContext, useContext } from 'react';
 import type { ReactNode, ReactElement } from 'react';
 import type { SurfaceRole } from './liminal-surface';
 
-const SurfaceContext = createContext<SurfaceRole>('work');
+// Roadmap 1.2: with no provider, a control sits on the CANVAS (the bottom of the hierarchy).
+// Defaulting to 'work' claimed a chrome layer that might not exist and broke LAW 2 silently.
+const SurfaceContext = createContext<SurfaceRole>('canvas');
 
 export function SurfaceProvider({
   role,
@@ -27,7 +29,7 @@ export function SurfaceProvider({
   return <SurfaceContext.Provider value={role}>{children}</SurfaceContext.Provider>;
 }
 
-/** The role of the nearest hosting surface. Defaults to the work surface. */
+/** The role of the nearest hosting surface. Defaults to the canvas when no provider exists. */
 export function useHostSurface(): SurfaceRole {
   return useContext(SurfaceContext);
 }

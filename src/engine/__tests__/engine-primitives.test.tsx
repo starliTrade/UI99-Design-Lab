@@ -111,9 +111,10 @@ describe('slot — the asChild pattern, and the three things it has to get right
 describe('surface context — a control knows what hosts it', () => {
   const Probe = () => <span data-testid="h">{useHostSurface()}</span>;
 
-  it('defaults to the work surface', () => {
+  // Roadmap 1.2: no provider = the canvas, never an invented chrome layer.
+  it('defaults to the canvas when no provider exists', () => {
     const { getByTestId } = render(<Probe />);
-    expect(getByTestId('h').textContent).toBe('work');
+    expect(getByTestId('h').textContent).toBe('canvas');
   });
 
   it('a provider changes what the subtree sees', () => {

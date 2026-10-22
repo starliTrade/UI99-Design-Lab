@@ -158,6 +158,7 @@
 | ۱.۱ | `resolveSurface` را در `production` هم گزارش کند (نه فقط dev) — `reportOnce` به `Sentry`/`console.warn` | `LIMINAL-POLICY.md` §۱.۵ | `placement.test.ts` |
 |   | ✅ **انجام شد (۲۰۲۶-۱۰-۲۲):** `reportOnce` در `liminal-surface.ts` اضافه شد؛ هر جفت ناقض قانون ۲ یک‌بار و در همه محیط‌ها `console.warn` می‌شود، بدون throw. Sentry هنوز وصل نیست. تست: `placement-report.test.ts` (۳ تست). | | |
 | ۱.۲ | `on: host` پیش‌فرض `canvas` را در همهٔ کامپوننت‌های بدون provider تست کن — باگ Studio که ثبت شده | همان | `surface.test.ts` — سطح بالاتر از بوم بدون provider |
+|   | ✅ **انجام شد (۲۰۲۶-۱۰-۲۲):** پیش‌فرض `SurfaceContext` از `work` به `canvas` تغییر کرد (همخوان با کامنت تمپلیت). تست `engine-primitives.test.tsx` به‌روز شد. `vitest run src/engine` ۳۶ فایل pass؛ `tsc` تمیز. | | |
 | ۱.۳ | `PLACEMENT_EXEMPTIONS` باقی‌مانده (control روی toast) را با `data-exempt` در DOM قابل مشاهده کن | `DESIGN-CONTRACT.md` §1 | `verify-hierarchy.mjs` |
 | ۱.۴ | دو نوع نقش (مطلق vs رابطه) را در `LIMINAL-POLICY.md` جدول نهایی کن | `LIMINAL-POLICY.md` §۱.۵ جدول | `policy-md.test.ts` |
 
