@@ -24,7 +24,7 @@
  */
 
 import { LADDER, PERCEPTUAL_QUANTUM, getLadderVar } from './liminal-ladder';
-import { ROLE_LEVEL, resolveBorder, floatingShadow, ladderRgb } from './liminal-surface';
+import { ROLE_LEVEL, resolveBorder, floatingShadow, ladderRgb, FLOAT_HOST } from './liminal-surface';
 import type { SurfaceRole } from './liminal-surface';
 import { shadowModel } from './liminal-shadow';
 import { oklchToRgb } from './liminal-color-math';
@@ -37,7 +37,10 @@ import { CANVAS_L, LADDER_STEP, LADDER_CHROMA, LADDER_HUE } from './liminal-ladd
  * work plane: a menu, a popover, a modal and a toast all float over the surface the
  * work is done on, not over the canvas.
  */
-const WORK_PLANE = ladderRgb(ROLE_LEVEL.work); // the same sRGB the engine's floating shadow uses
+/** The sRGB a floating role's shadow falls on: its one-step host (see FLOAT_HOST). */
+function hostRgb(role: SurfaceRole): number[] {
+  return ladderRgb(ROLE_LEVEL[(FLOAT_HOST as Record<string, SurfaceRole>)[role] ?? 'work']);
+}
 
 /** The roles that float above the page, and therefore catch mist. */
 export const FLOATING_MIST_ROLES: SurfaceRole[] = ['menu', 'popover', 'modal', 'toast'];
@@ -202,23 +205,23 @@ export { shadowModel, floatShadow, REST_SHADOW } from './liminal-shadow';
  * fourth decimal, for every floating role.
  */
 export function mistFloatShadow(role: SurfaceRole): string {
-  return floatingShadow(role);
+  return floatingShadow(role, FLOAT_HOST[role as keyof typeof FLOAT_HOST]);
 }
 
 export function mistShadowNearRadius(role: SurfaceRole): number {
-  return shadowModel(floatHeight(role), WORK_PLANE).near;
+  return shadowModel(floatHeight(role), hostRgb(role)).near;
 }
 
 export function mistShadowFarRadius(role: SurfaceRole): number {
-  return shadowModel(floatHeight(role), WORK_PLANE).far;
+  return shadowModel(floatHeight(role), hostRgb(role)).far;
 }
 
 export function mistShadowNearAlpha(role: SurfaceRole): number {
-  return shadowModel(floatHeight(role), WORK_PLANE).nearAlpha;
+  return shadowModel(floatHeight(role), hostRgb(role)).nearAlpha;
 }
 
 export function mistShadowFarAlpha(role: SurfaceRole): number {
-  return shadowModel(floatHeight(role), WORK_PLANE).farAlpha;
+  return shadowModel(floatHeight(role), hostRgb(role)).farAlpha;
 }
 
 /**

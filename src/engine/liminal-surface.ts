@@ -193,6 +193,24 @@ export function ladderRgb(level: number): number[] {
   return [r, g, b];
 }
 
+/**
+ * THE ONE-STEP HOST OF EACH FLOATING ROLE — the adjacency law, applied to floats.
+ *
+ * A floating surface sits ONE step above the layer it is on, and no further. So a menu
+ * (S5) is on a control (S4), a popover (S6) on a menu, a modal (S7) on a popover, a
+ * toast (S8) on a modal. Each is checked against `checkPlacement` in float-host.test.ts.
+ *
+ * Its shadow falls on THIS host, so its alpha is solved for this host. Solving it for
+ * the work plane (S2) — what `floatingShadow` defaults to — is three to six steps off
+ * for every float, and that is the distance the reader saw on the mist page.
+ */
+export const FLOAT_HOST: Record<'menu' | 'popover' | 'modal' | 'toast', SurfaceRole> = {
+  menu: 'control',
+  popover: 'menu',
+  modal: 'popover',
+  toast: 'modal',
+};
+
 export const FLOAT_SHADOWS = Object.fromEntries(
   FLOATING_ROLES.map((role) => [role, floatingShadow(role)]),
 ) as Record<(typeof FLOATING_ROLES)[number], string>;

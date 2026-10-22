@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { mistCssVars, mistFloatShadow, FLOATING_MIST_ROLES } from '../liminal-mist';
-import { floatingShadow, FLOAT_SHADOWS, FLOATING_ROLES } from '../liminal-surface';
+import { floatingShadow, FLOAT_SHADOWS, FLOATING_ROLES, FLOAT_HOST } from '../liminal-surface';
 
 /**
  * Roadmap 2.4 — the mist and the floating shadow are ONE formula.
@@ -24,8 +24,9 @@ describe('the mist casts the engine’s floating shadow (2.4)', () => {
 
   it('every mist role publishes exactly the engine’s floating shadow', () => {
     for (const role of FLOATING_MIST_ROLES) {
-      expect(mistCssVars(role)['--liminal-mist-float-shadow'], role).toBe(floatingShadow(role));
-      expect(mistFloatShadow(role), role).toBe(floatingShadow(role));
+      // The host is the one-step host (FLOAT_HOST), not the work plane: see float-host.test.ts.
+      expect(mistCssVars(role)['--liminal-mist-float-shadow'], role).toBe(floatingShadow(role, FLOAT_HOST[role as keyof typeof FLOAT_HOST]));
+      expect(mistFloatShadow(role), role).toBe(floatingShadow(role, FLOAT_HOST[role as keyof typeof FLOAT_HOST]));
     }
   });
 

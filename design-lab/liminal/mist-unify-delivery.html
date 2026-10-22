@@ -2,19 +2,16 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>مه — سایهٔ واحد · ۲.۴</title>
+<title>شناورها روی میزبان یک‌پله‌ای · مه و سایه</title>
 <style>
-:root { --liminal-s0: oklch(0.1280000 0.0069 258.4); --liminal-s0-5: oklch(0.1327375 0.0069 258.4); --liminal-s1: oklch(0.1374750 0.0069 258.4); --liminal-s1-5: oklch(0.1422125 0.0069 258.4); --liminal-s2: oklch(0.1469500 0.0069 258.4); --liminal-s2-5: oklch(0.1516875 0.0069 258.4); --liminal-s3: oklch(0.1564250 0.0069 258.4); --liminal-s3-5: oklch(0.1611625 0.0069 258.4); --liminal-s4: oklch(0.1659000 0.0069 258.4); --liminal-s4-5: oklch(0.1706375 0.0069 258.4); --liminal-s5: oklch(0.1753750 0.0069 258.4); --liminal-s5-5: oklch(0.1801125 0.0069 258.4); --liminal-s6: oklch(0.1848500 0.0069 258.4); --liminal-s6-5: oklch(0.1895875 0.0069 258.4); --liminal-s7: oklch(0.1943250 0.0069 258.4); --liminal-s7-5: oklch(0.1990625 0.0069 258.4); --liminal-s8: oklch(0.2038000 0.0069 258.4); }
+:root { --liminal-s0: oklch(0.1280000 0.0069 258.4); --liminal-s1: oklch(0.1374750 0.0069 258.4); --liminal-s2: oklch(0.1469500 0.0069 258.4); --liminal-s3: oklch(0.1564250 0.0069 258.4); --liminal-s4: oklch(0.1659000 0.0069 258.4); --liminal-s5: oklch(0.1753750 0.0069 258.4); --liminal-s6: oklch(0.1848500 0.0069 258.4); --liminal-s7: oklch(0.1943250 0.0069 258.4); --liminal-s8: oklch(0.2038000 0.0069 258.4); }
 html, body { margin: 0; background: var(--liminal-s0); color: #e9ecf2; font-family: system-ui, sans-serif; }
-.stage { background: var(--liminal-s2); margin: 32px; padding: 48px; border-radius: 12px; }
-.grid { display: grid; grid-template-columns: repeat(2, minmax(260px, 1fr)); gap: 48px; }
-.sample { display: grid; gap: 14px; }
-.surface { width: 100%; min-height: 150px; border-radius: 12px; padding: 20px; box-sizing: border-box;
-  display: grid; align-content: space-between; }
-.surface strong { font-size: 18px; }
-.surface span { font-size: 13px; opacity: .7; }
-code { font-size: 11px; color: #9aa3b2; word-break: break-all; direction: ltr; text-align: left; }
-p { max-width: 70ch; color: #9aa3b2; font-size: 14px; line-height: 1.8; }
+main { padding: 28px; max-width: 980px; margin: auto; }
+h1 { font-size: 20px; margin: 0 0 8px; }
+p { color: #9aa3b2; font-size: 14px; line-height: 1.8; max-width: 70ch; }
+.lay { padding: 14px 14px 10px; border-radius: 12px; margin-top: 10px; }
+.lay .lbl { display: block; font-size: 11px; color: #9aa3b2; direction: ltr; text-align: left; word-break: break-all; }
+.lay.float { padding-bottom: 14px; }
 </style>
 <style>
 /**
@@ -102,43 +99,14 @@ p { max-width: 70ch; color: #9aa3b2; font-size: 14px; line-height: 1.8; }
 </style>
 </head>
 <body>
-<div class="stage">
-  <h1 style="font-size:20px;margin:0 0 8px">مه و سایه — یک فرمول (۲.۴)</h1>
+<main>
+  <h1>شناورها روی میزبان یک‌پله‌ای</h1>
   <p>
-    هر چهار سطح شناور از <code>floatingShadow</code> همان موتور سایه می‌گیرند، نه از چهار متغیر جدا.
-    زیر هر نمونه، رشتهٔ سایهٔ دقیقی که مرورگر دریافت می‌کند چاپ شده است. مقدارها پیش از تغییر و بعد از آن
-    در تست <code>mist.test.ts</code> و <code>mist-shadow-single.test.ts</code> با هم برابرند.
+    زنجیرهٔ کامل از بوم تا توست، هر لایه درون لایهٔ زیرش و فقط یک پله بالاتر از آن.
+    منو روی کنترل (S4) می‌نشیند، پاپ‌اور روی منو، مودال روی پاپ‌اور، توست روی مودال.
+    زیر هر شناور، رشتهٔ سایه‌ای که از موتور می‌آید و روی همان میزبان حل شده چاپ شده است.
   </p>
-  <div class="grid">
-
-  <div class="sample">
-    <div class="surface" data-liminal-mist="" style="--liminal-mist-fill-top: var(--liminal-s5); --liminal-mist-fill-bottom: var(--liminal-s3); --liminal-mist-fill-top-alpha: 0.8400000000000001; --liminal-mist-fill-bottom-alpha: 0.74; --liminal-mist-inner-light: inset 0 1px 0 rgba(233, 236, 242, 0.0850); --liminal-mist-float-shadow: 0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991); --liminal-mist-shadow-near: 9.5px; --liminal-mist-shadow-far: 34px; --liminal-mist-shadow-near-alpha: 0.09905035809879226; --liminal-mist-shadow-far-alpha: 0.09905035809879226; --liminal-mist-seam: color-mix(in oklab, var(--liminal-s5-5) 100%, transparent); --liminal-mist-blur: 13.5px;">
-      <strong>menu</strong><span>S5 · ارتفاع 5</span>
-    </div>
-    <code>0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991)</code>
-  </div>
-
-  <div class="sample">
-    <div class="surface" data-liminal-mist="" style="--liminal-mist-fill-top: var(--liminal-s6); --liminal-mist-fill-bottom: var(--liminal-s4); --liminal-mist-fill-top-alpha: 0.8480000000000001; --liminal-mist-fill-bottom-alpha: 0.748; --liminal-mist-inner-light: inset 0 1px 0 rgba(233, 236, 242, 0.0910); --liminal-mist-float-shadow: 0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991); --liminal-mist-shadow-near: 11.0px; --liminal-mist-shadow-far: 40px; --liminal-mist-shadow-near-alpha: 0.09905035809879226; --liminal-mist-shadow-far-alpha: 0.09905035809879226; --liminal-mist-seam: color-mix(in oklab, var(--liminal-s6-5) 100%, transparent); --liminal-mist-blur: 15px;">
-      <strong>popover</strong><span>S6 · ارتفاع 6</span>
-    </div>
-    <code>0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991)</code>
-  </div>
-
-  <div class="sample">
-    <div class="surface" data-liminal-mist="" style="--liminal-mist-fill-top: var(--liminal-s7); --liminal-mist-fill-bottom: var(--liminal-s5); --liminal-mist-fill-top-alpha: 0.8560000000000001; --liminal-mist-fill-bottom-alpha: 0.756; --liminal-mist-inner-light: inset 0 1px 0 rgba(233, 236, 242, 0.0970); --liminal-mist-float-shadow: 0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991); --liminal-mist-shadow-near: 12.5px; --liminal-mist-shadow-far: 46px; --liminal-mist-shadow-near-alpha: 0.09905035809879226; --liminal-mist-shadow-far-alpha: 0.09905035809879226; --liminal-mist-seam: color-mix(in oklab, var(--liminal-s7-5) 100%, transparent); --liminal-mist-blur: 16.5px;">
-      <strong>modal</strong><span>S7 · ارتفاع 7</span>
-    </div>
-    <code>0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991)</code>
-  </div>
-
-  <div class="sample">
-    <div class="surface" data-liminal-mist="toast" style="--liminal-mist-fill-top: var(--liminal-s8); --liminal-mist-fill-bottom: var(--liminal-s6); --liminal-mist-fill-top-alpha: 0.94; --liminal-mist-fill-bottom-alpha: 0.94; --liminal-mist-inner-light: inset 0 0 0 rgba(0, 0, 0, 0); --liminal-mist-float-shadow: 0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991); --liminal-mist-shadow-near: 14.0px; --liminal-mist-shadow-far: 52px; --liminal-mist-shadow-near-alpha: 0.09905035809879226; --liminal-mist-shadow-far-alpha: 0.09905035809879226; --liminal-mist-seam: color-mix(in oklab, var(--liminal-s7-5) 100%, transparent); --liminal-mist-blur: 18px;">
-      <strong>toast</strong><span>S8 · ارتفاع 8</span>
-    </div>
-    <code>0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991)</code>
-  </div>
-  </div>
-</div>
+  <div class="lay" style="background: var(--liminal-s0);"><span class="lbl">بوم</span><div class="lay" style="background: var(--liminal-s1);"><span class="lbl">chrome · S1</span><div class="lay" style="background: var(--liminal-s2);"><span class="lbl">work · S2</span><div class="lay" style="background: var(--liminal-s3);"><span class="lbl">panel · S3</span><div class="lay" style="background: var(--liminal-s4);"><span class="lbl">control · S4</span><div class="lay float" data-liminal-mist="" style="--liminal-mist-fill-top: var(--liminal-s5); --liminal-mist-fill-bottom: var(--liminal-s3); --liminal-mist-fill-top-alpha: 0.8400000000000001; --liminal-mist-fill-bottom-alpha: 0.74; --liminal-mist-inner-light: inset 0 1px 0 rgba(233, 236, 242, 0.0850); --liminal-mist-float-shadow: 0 9.5px 34px rgba(1, 2, 3, 0.0710), 0 2px 9.5px rgba(1, 2, 3, 0.0710); --liminal-mist-shadow-near: 9.5px; --liminal-mist-shadow-far: 34px; --liminal-mist-shadow-near-alpha: 0.07096241794790559; --liminal-mist-shadow-far-alpha: 0.07096241794790559; --liminal-mist-seam: color-mix(in oklab, var(--liminal-s5-5) 100%, transparent); --liminal-mist-blur: 13.5px;"><span class="lbl">menu · S5 · روی control (S4) · 0 9.5px 34px rgba(1, 2, 3, 0.0710), 0 2px 9.5px rgba(1, 2, 3, 0.0710)</span><div class="lay float" data-liminal-mist="" style="--liminal-mist-fill-top: var(--liminal-s6); --liminal-mist-fill-bottom: var(--liminal-s4); --liminal-mist-fill-top-alpha: 0.8480000000000001; --liminal-mist-fill-bottom-alpha: 0.748; --liminal-mist-inner-light: inset 0 1px 0 rgba(233, 236, 242, 0.0910); --liminal-mist-float-shadow: 0 11.0px 40px rgba(1, 2, 3, 0.0621), 0 2px 11.0px rgba(1, 2, 3, 0.0621); --liminal-mist-shadow-near: 11.0px; --liminal-mist-shadow-far: 40px; --liminal-mist-shadow-near-alpha: 0.06205482608317581; --liminal-mist-shadow-far-alpha: 0.06205482608317581; --liminal-mist-seam: color-mix(in oklab, var(--liminal-s6-5) 100%, transparent); --liminal-mist-blur: 15px;"><span class="lbl">popover · S6 · روی menu (S5) · 0 11.0px 40px rgba(1, 2, 3, 0.0621), 0 2px 11.0px rgba(1, 2, 3, 0.0621)</span><div class="lay float" data-liminal-mist="" style="--liminal-mist-fill-top: var(--liminal-s7); --liminal-mist-fill-bottom: var(--liminal-s5); --liminal-mist-fill-top-alpha: 0.8560000000000001; --liminal-mist-fill-bottom-alpha: 0.756; --liminal-mist-inner-light: inset 0 1px 0 rgba(233, 236, 242, 0.0970); --liminal-mist-float-shadow: 0 12.5px 46px rgba(1, 2, 3, 0.0553), 0 2px 12.5px rgba(1, 2, 3, 0.0553); --liminal-mist-shadow-near: 12.5px; --liminal-mist-shadow-far: 46px; --liminal-mist-shadow-near-alpha: 0.05526046522715056; --liminal-mist-shadow-far-alpha: 0.05526046522715056; --liminal-mist-seam: color-mix(in oklab, var(--liminal-s7-5) 100%, transparent); --liminal-mist-blur: 16.5px;"><span class="lbl">modal · S7 · روی popover (S6) · 0 12.5px 46px rgba(1, 2, 3, 0.0553), 0 2px 12.5px rgba(1, 2, 3, 0.0553)</span><div class="lay float" data-liminal-mist="toast" style="--liminal-mist-fill-top: var(--liminal-s8); --liminal-mist-fill-bottom: var(--liminal-s6); --liminal-mist-fill-top-alpha: 0.94; --liminal-mist-fill-bottom-alpha: 0.94; --liminal-mist-inner-light: inset 0 0 0 rgba(0, 0, 0, 0); --liminal-mist-float-shadow: 0 14.0px 52px rgba(1, 2, 3, 0.0499), 0 2px 14.0px rgba(1, 2, 3, 0.0499); --liminal-mist-shadow-near: 14.0px; --liminal-mist-shadow-far: 52px; --liminal-mist-shadow-near-alpha: 0.04989986952514747; --liminal-mist-shadow-far-alpha: 0.04989986952514747; --liminal-mist-seam: color-mix(in oklab, var(--liminal-s7-5) 100%, transparent); --liminal-mist-blur: 18px;"><span class="lbl">toast · S8 · روی modal (S7) · 0 14.0px 52px rgba(1, 2, 3, 0.0499), 0 2px 14.0px rgba(1, 2, 3, 0.0499)</span></div></div></div></div></div></div></div></div></div>
+</main>
 </body>
 </html>
