@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تحویل حالت‌ها — سیاست A + فوکوس F2</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#060709; color:#cfd6e4; font-family: system-ui, Vazirmatn, sans-serif; padding:16px; font-size:14px; }
+  h1 { font-size:19px; margin:6px 0 8px; } h2 { font-size:16px; margin:22px 0 8px; }
+  p, li { line-height:1.8; } .muted { opacity:.72; font-size:13px; }
+  .ltr { direction:ltr; font-family: ui-monospace, monospace; font-size:12px; }
+  .lrow { display:flex; gap:12px; align-items:center; margin:4px 0; }
+  .sw { width:56px; height:26px; border-radius:6px; border:1px solid #1a1f29; }
+  .wrap { overflow-x:auto; }
+  table { border-collapse: separate; border-spacing: 10px; }
+  th { font-size:12px; opacity:.8; font-weight:600; text-align:center; padding:4px; }
+  td.cell { text-align:center; vertical-align:top; }
+  .tile { width:96px; height:56px; border-radius:10px; margin:0 auto; }
+  .cap { display:flex; flex-direction:column; gap:2px; margin-top:6px; font-size:12px; }
+  td.edge .cap b { color:#ffd98a; }
+  tr.edgeRow th { color:#ffd98a; }
+  .ok { color:#9fe3b1; } .warn { color:#ffd98a; }
+  .box { border:1px solid #1a1f29; border-radius:12px; padding:12px 14px; margin-top:10px; }
+</style>
+</head>
+<body>
+<h1>تحویل حالت‌ها — بوم #060709</h1>
+<p class="muted">این صفحه از موتور <span class="ltr">resolve.cjs</span> و فایل <span class="ltr">states-policy-A.json</span> ساخته شده است. هیچ عدد دستی ندارد. قانون: هر تغییر یک پلهٔ کامل، کف S0، سقف S8، فوکوس فقط شکل (حلقهٔ ۱px، فاصلهٔ ۱px).</p>
+
+<h2>نردبان</h2>
+<div>
+  <div class="lrow"><div class="sw" style="background:#060709"></div>
+  <div class="ltr">S0</div><div class="ltr">L 0.128000</div><div class="ltr">#060709</div>
+  <div class="ltr">0.00q</div></div>
+  <div class="lrow"><div class="sw" style="background:#07090b"></div>
+  <div class="ltr">S1</div><div class="ltr">L 0.137475</div><div class="ltr">#07090b</div>
+  <div class="ltr">1.14q</div></div>
+  <div class="lrow"><div class="sw" style="background:#090b0d"></div>
+  <div class="ltr">S2</div><div class="ltr">L 0.146950</div><div class="ltr">#090b0d</div>
+  <div class="ltr">2.28q</div></div>
+  <div class="lrow"><div class="sw" style="background:#0b0d0f"></div>
+  <div class="ltr">S3</div><div class="ltr">L 0.156425</div><div class="ltr">#0b0d0f</div>
+  <div class="ltr">3.42q</div></div>
+  <div class="lrow"><div class="sw" style="background:#0d0f12"></div>
+  <div class="ltr">S4</div><div class="ltr">L 0.165900</div><div class="ltr">#0d0f12</div>
+  <div class="ltr">4.57q</div></div>
+  <div class="lrow"><div class="sw" style="background:#0f1114"></div>
+  <div class="ltr">S5</div><div class="ltr">L 0.175375</div><div class="ltr">#0f1114</div>
+  <div class="ltr">5.71q</div></div>
+  <div class="lrow"><div class="sw" style="background:#111316"></div>
+  <div class="ltr">S6</div><div class="ltr">L 0.184850</div><div class="ltr">#111316</div>
+  <div class="ltr">6.85q</div></div>
+  <div class="lrow"><div class="sw" style="background:#131518"></div>
+  <div class="ltr">S7</div><div class="ltr">L 0.194325</div><div class="ltr">#131518</div>
+  <div class="ltr">7.99q</div></div>
+  <div class="lrow"><div class="sw" style="background:#15171a"></div>
+  <div class="ltr">S8</div><div class="ltr">L 0.203800</div><div class="ltr">#15171a</div>
+  <div class="ltr">9.13q</div></div></div>
+
+<h2>ماتریس حالت‌ها (همهٔ سطوح سکون)</h2>
+<p class="muted">ردیف S0 و S8 لبه‌اند و با رنگ زرد مشخص‌اند. S0 کف است؛ S8 سقفی است که هاور در آن به −۱ تبدیل می‌شود.</p>
+<div class="wrap"><table><tr><th>سطح سکون</th><th>سکون</th><th>هاور</th><th>فوکوس</th><th>فشار</th><th>غیرفعال</th><th>هاور + فوکوس</th></tr><tr class="edgeRow"><th>S0</th><td class="cell edge"><div class="tile" style="background:#060709;"></div>
+    <div class="cap"><b>S0</b><span class="ltr">#060709</span></div></td><td class="cell"><div class="tile" style="background:#07090b;"></div>
+    <div class="cap"><b>S1</b><span class="ltr">#07090b</span></div></td><td class="cell edge"><div class="tile" style="background:#060709;box-shadow: 0 0 0 1px #07090b, 0 0 0 2px #060709, 0 0 0 3px #090b0d;"></div>
+    <div class="cap"><b>S0</b><span class="ltr">#060709</span></div></td><td class="cell edge"><div class="tile" style="background:#060709;"></div>
+    <div class="cap"><b>S0</b><span class="ltr">#060709</span></div></td><td class="cell edge"><div class="tile" style="background:#060709;"></div>
+    <div class="cap"><b>S0</b><span class="ltr">#060709</span></div></td><td class="cell"><div class="tile" style="background:#07090b;box-shadow: 0 0 0 1px #090b0d, 0 0 0 2px #060709, 0 0 0 3px #0b0d0f;"></div>
+    <div class="cap"><b>S1</b><span class="ltr">#07090b</span></div></td></tr><tr class=""><th>S1</th><td class="cell"><div class="tile" style="background:#07090b;"></div>
+    <div class="cap"><b>S1</b><span class="ltr">#07090b</span></div></td><td class="cell"><div class="tile" style="background:#090b0d;"></div>
+    <div class="cap"><b>S2</b><span class="ltr">#090b0d</span></div></td><td class="cell"><div class="tile" style="background:#07090b;box-shadow: 0 0 0 1px #090b0d, 0 0 0 2px #060709, 0 0 0 3px #0b0d0f;"></div>
+    <div class="cap"><b>S1</b><span class="ltr">#07090b</span></div></td><td class="cell edge"><div class="tile" style="background:#060709;"></div>
+    <div class="cap"><b>S0</b><span class="ltr">#060709</span></div></td><td class="cell edge"><div class="tile" style="background:#060709;"></div>
+    <div class="cap"><b>S0</b><span class="ltr">#060709</span></div></td><td class="cell"><div class="tile" style="background:#090b0d;box-shadow: 0 0 0 1px #0b0d0f, 0 0 0 2px #060709, 0 0 0 3px #0d0f12;"></div>
+    <div class="cap"><b>S2</b><span class="ltr">#090b0d</span></div></td></tr><tr class=""><th>S2</th><td class="cell"><div class="tile" style="background:#090b0d;"></div>
+    <div class="cap"><b>S2</b><span class="ltr">#090b0d</span></div></td><td class="cell"><div class="tile" style="background:#0b0d0f;"></div>
+    <div class="cap"><b>S3</b><span class="ltr">#0b0d0f</span></div></td><td class="cell"><div class="tile" style="background:#090b0d;box-shadow: 0 0 0 1px #0b0d0f, 0 0 0 2px #060709, 0 0 0 3px #0d0f12;"></div>
+    <div class="cap"><b>S2</b><span class="ltr">#090b0d</span></div></td><td class="cell edge"><div class="tile" style="background:#060709;"></div>
+    <div class="cap"><b>S0</b><span class="ltr">#060709</span></div></td><td class="cell"><div class="tile" style="background:#07090b;"></div>
+    <div class="cap"><b>S1</b><span class="ltr">#07090b</span></div></td><td class="cell"><div class="tile" style="background:#0b0d0f;box-shadow: 0 0 0 1px #0d0f12, 0 0 0 2px #060709, 0 0 0 3px #0f1114;"></div>
+    <div class="cap"><b>S3</b><span class="ltr">#0b0d0f</span></div></td></tr><tr class=""><th>S3</th><td class="cell"><div class="tile" style="background:#0b0d0f;"></div>
+    <div class="cap"><b>S3</b><span class="ltr">#0b0d0f</span></div></td><td class="cell"><div class="tile" style="background:#0d0f12;"></div>
+    <div class="cap"><b>S4</b><span class="ltr">#0d0f12</span></div></td><td class="cell"><div class="tile" style="background:#0b0d0f;box-shadow: 0 0 0 1px #0d0f12, 0 0 0 2px #060709, 0 0 0 3px #0f1114;"></div>
+    <div class="cap"><b>S3</b><span class="ltr">#0b0d0f</span></div></td><td class="cell"><div class="tile" style="background:#07090b;"></div>
+    <div class="cap"><b>S1</b><span class="ltr">#07090b</span></div></td><td class="cell"><div class="tile" style="background:#090b0d;"></div>
+    <div class="cap"><b>S2</b><span class="ltr">#090b0d</span></div></td><td class="cell"><div class="tile" style="background:#0d0f12;box-shadow: 0 0 0 1px #0f1114, 0 0 0 2px #060709, 0 0 0 3px #111316;"></div>
+    <div class="cap"><b>S4</b><span class="ltr">#0d0f12</span></div></td></tr><tr class=""><th>S4</th><td class="cell"><div class="tile" style="background:#0d0f12;"></div>
+    <div class="cap"><b>S4</b><span class="ltr">#0d0f12</span></div></td><td class="cell"><div class="tile" style="background:#0f1114;"></div>
+    <div class="cap"><b>S5</b><span class="ltr">#0f1114</span></div></td><td class="cell"><div class="tile" style="background:#0d0f12;box-shadow: 0 0 0 1px #0f1114, 0 0 0 2px #060709, 0 0 0 3px #111316;"></div>
+    <div class="cap"><b>S4</b><span class="ltr">#0d0f12</span></div></td><td class="cell"><div class="tile" style="background:#090b0d;"></div>
+    <div class="cap"><b>S2</b><span class="ltr">#090b0d</span></div></td><td class="cell"><div class="tile" style="background:#0b0d0f;"></div>
+    <div class="cap"><b>S3</b><span class="ltr">#0b0d0f</span></div></td><td class="cell"><div class="tile" style="background:#0f1114;box-shadow: 0 0 0 1px #111316, 0 0 0 2px #060709, 0 0 0 3px #131518;"></div>
+    <div class="cap"><b>S5</b><span class="ltr">#0f1114</span></div></td></tr><tr class=""><th>S5</th><td class="cell"><div class="tile" style="background:#0f1114;"></div>
+    <div class="cap"><b>S5</b><span class="ltr">#0f1114</span></div></td><td class="cell"><div class="tile" style="background:#111316;"></div>
+    <div class="cap"><b>S6</b><span class="ltr">#111316</span></div></td><td class="cell"><div class="tile" style="background:#0f1114;box-shadow: 0 0 0 1px #111316, 0 0 0 2px #060709, 0 0 0 3px #131518;"></div>
+    <div class="cap"><b>S5</b><span class="ltr">#0f1114</span></div></td><td class="cell"><div class="tile" style="background:#0b0d0f;"></div>
+    <div class="cap"><b>S3</b><span class="ltr">#0b0d0f</span></div></td><td class="cell"><div class="tile" style="background:#0d0f12;"></div>
+    <div class="cap"><b>S4</b><span class="ltr">#0d0f12</span></div></td><td class="cell"><div class="tile" style="background:#111316;box-shadow: 0 0 0 1px #131518, 0 0 0 2px #060709, 0 0 0 3px #15171a;"></div>
+    <div class="cap"><b>S6</b><span class="ltr">#111316</span></div></td></tr><tr class=""><th>S6</th><td class="cell"><div class="tile" style="background:#111316;"></div>
+    <div class="cap"><b>S6</b><span class="ltr">#111316</span></div></td><td class="cell"><div class="tile" style="background:#131518;"></div>
+    <div class="cap"><b>S7</b><span class="ltr">#131518</span></div></td><td class="cell"><div class="tile" style="background:#111316;box-shadow: 0 0 0 1px #131518, 0 0 0 2px #060709, 0 0 0 3px #15171a;"></div>
+    <div class="cap"><b>S6</b><span class="ltr">#111316</span></div></td><td class="cell"><div class="tile" style="background:#0d0f12;"></div>
+    <div class="cap"><b>S4</b><span class="ltr">#0d0f12</span></div></td><td class="cell"><div class="tile" style="background:#0f1114;"></div>
+    <div class="cap"><b>S5</b><span class="ltr">#0f1114</span></div></td><td class="cell"><div class="tile" style="background:#131518;box-shadow: 0 0 0 1px #15171a, 0 0 0 2px #060709, 0 0 0 3px #15171a;"></div>
+    <div class="cap"><b>S7</b><span class="ltr">#131518</span></div></td></tr><tr class=""><th>S7</th><td class="cell"><div class="tile" style="background:#131518;"></div>
+    <div class="cap"><b>S7</b><span class="ltr">#131518</span></div></td><td class="cell edge"><div class="tile" style="background:#15171a;"></div>
+    <div class="cap"><b>S8</b><span class="ltr">#15171a</span></div></td><td class="cell"><div class="tile" style="background:#131518;box-shadow: 0 0 0 1px #15171a, 0 0 0 2px #060709, 0 0 0 3px #15171a;"></div>
+    <div class="cap"><b>S7</b><span class="ltr">#131518</span></div></td><td class="cell"><div class="tile" style="background:#0f1114;"></div>
+    <div class="cap"><b>S5</b><span class="ltr">#0f1114</span></div></td><td class="cell"><div class="tile" style="background:#111316;"></div>
+    <div class="cap"><b>S6</b><span class="ltr">#111316</span></div></td><td class="cell edge"><div class="tile" style="background:#15171a;box-shadow: 0 0 0 1px #15171a, 0 0 0 2px #060709, 0 0 0 3px #15171a;"></div>
+    <div class="cap"><b>S8</b><span class="ltr">#15171a</span></div></td></tr><tr class="edgeRow"><th>S8</th><td class="cell edge"><div class="tile" style="background:#15171a;"></div>
+    <div class="cap"><b>S8</b><span class="ltr">#15171a</span></div></td><td class="cell"><div class="tile" style="background:#131518;"></div>
+    <div class="cap"><b>S7</b><span class="ltr">#131518</span></div></td><td class="cell edge"><div class="tile" style="background:#15171a;box-shadow: 0 0 0 1px #15171a, 0 0 0 2px #060709, 0 0 0 3px #15171a;"></div>
+    <div class="cap"><b>S8</b><span class="ltr">#15171a</span></div></td><td class="cell"><div class="tile" style="background:#111316;"></div>
+    <div class="cap"><b>S6</b><span class="ltr">#111316</span></div></td><td class="cell"><div class="tile" style="background:#131518;"></div>
+    <div class="cap"><b>S7</b><span class="ltr">#131518</span></div></td><td class="cell"><div class="tile" style="background:#131518;box-shadow: 0 0 0 1px #15171a, 0 0 0 2px #060709, 0 0 0 3px #15171a;"></div>
+    <div class="cap"><b>S7</b><span class="ltr">#131518</span></div></td></tr></table></div>
+
+<h2>قواعد پیاده‌سازی‌شده</h2>
+<ul>
+  <li>هر خروجی یک سطح کامل S0…S8 است؛ نیم‌پله وجود ندارد.</li>
+  <li><span class="ltr">resolved = clamp(rest + offset, S0, S8)</span></li>
+  <li>در سقف (S8)، هاور −۱ می‌شود.</li>
+  <li>فوکوس fill را عوض نمی‌کند؛ فقط حلقه می‌کشد: داخلی fill+1، فاصله ۱px، بیرونی fill+2.</li>
+</ul>
+
+<div class="box">
+  <b>وضعیت تست:</b> <span class="ok">ALL PASS (resolve.test.cjs)</span><br>
+  <span class="warn">تأیید چشمی لبه‌ها (S0 و S8) و دیدن ۱px روی گوشی هنوز انجام نشده است.</span>
+</div>
+</body>
+</html>
