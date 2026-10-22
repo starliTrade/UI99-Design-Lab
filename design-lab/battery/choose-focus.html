@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>انتخاب فوکوس — بوم #060709</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: #cfd6e4; font-family: system-ui, Vazirmatn, sans-serif; padding: 16px; font-size: 14px; }
+  h1 { font-size: 19px; margin: 6px 0 8px; }
+  h2 { font-size: 16px; margin: 20px 0 8px; }
+  p, li { line-height: 1.8; }
+  .muted { opacity: .72; font-size: 13px; }
+  .variant { border: 1px solid #1a1f29; border-radius: 14px; padding: 14px; margin-bottom: 16px; }
+  .vhead { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .vname { font-weight: 700; font-size: 15px; }
+  .tag { font-family: ui-monospace, monospace; font-size: 12px; opacity: .8; direction: ltr; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; align-items: stretch; }
+  .tile { background: #060709; border-radius: 12px; padding: 12px; flex: 1 1 200px; }
+  .card { border-radius: 10px; padding: 14px; color: #e6ebf5; min-height: 96px; }
+  .card .t { font-weight: 700; margin-bottom: 4px; }
+  .card .s { font-size: 12px; opacity: .8; }
+  .btn { display: inline-block; border-radius: 8px; padding: 7px 12px; color: #e6ebf5; font-size: 13px; margin-top: 10px; }
+  .lbl { font-size: 12px; margin-top: 8px; direction: ltr; font-family: ui-monospace, monospace; opacity: .85; }
+  .ring-demo { display: inline-block; width: 74px; height: 44px; border-radius: 8px; }
+</style>
+</head>
+<body>
+<h1>فوکوس روی بوم #060709 — کدام را انتخاب کنیم؟</h1>
+<p class="muted">
+  روی هر کارت، سطح سکون `S2` (`#090b0d`) است. هر گزینه نشان می‌دهد فوکوس چطور دیده می‌شود.
+  کارت «هاور» مرجع است تا بتوانید فوکوس را با هاور مقایسه کنید.
+</p>
+<div id="root"></div>
+
+<h2>چهار گزینه</h2>
+<ul>
+  <li><b>F1 — دو خط، ۲px، فاصلهٔ ۲px (پیشنهاد سیاست):</b> خط داخلی fill+1، خط بیرونی fill+2؛ فوکوس فقط شکل است.</li>
+  <li><b>F2 — دو خط نازک، ۱px، فاصلهٔ ۱px:</b> همان قاعده ولی ظریف‌تر.</li>
+  <li><b>F3 — دو خط ضخیم، ۳px، فاصلهٔ ۲px:</b> واضح‌تر، ولی سنگین‌تر.</li>
+  <li><b>F4 — یک خط fill+۲ و ۲px، بدون fill+۱:</b> تک‌خطی ساده.</li>
+</ul>
+
+<h2>معیارها</h2>
+<ul>
+  <li>فوکوس باید از سکون و هاور قابل‌تشخیص باشد (بدون اینکه فقط روشنایی عوض شود).</li>
+  <li>هیچ‌کدام نباید «داغون» یا سنگین به نظر برسند (سیاست §۶.۷.۵).</li>
+  <li>در سیستم تیره، شکل باید هویت را نگه دارد.</li>
+</ul>
+
+<script>
+const HEX = { S0:'#060709', S1:'#07090b', S2:'#090b0d', S3:'#0b0d0f', S4:'#0d0f12', S5:'#0f1114', S6:'#111316', S7:'#131518', S8:'#15171a' };
+const H = ['#060709','#07090b','#090b0d','#0b0d0f','#0d0f12','#0f1114','#111316','#131518','#15171a'];
+const REST = 2;
+const variants = [
+  { id:'F1', name:'دو خط ۲px، فاصله ۲px', inner:1, gap:2, outer:2, w:2, ringOnly:false, note:'پیشنهاد سیاست؛ فوکوس فقط شکل است.' },
+  { id:'F2', name:'دو خط ۱px، فاصله ۱px', inner:1, gap:1, outer:2, w:1, ringOnly:false, note:'ظریف‌تر؛ ممکن است روی نمایشگر کم‌کنتراست گم شود.' },
+  { id:'F3', name:'دو خط ۳px، فاصله ۲px', inner:1, gap:2, outer:2, w:3, ringOnly:false, note:'واضح‌تر؛ ممکن است سنگین باشد.' },
+  { id:'F4', name:'تک‌خط fill+2 با ۲px', inner:null, gap:0, outer:2, w:2, ringOnly:true, note:'ساده؛ بدون لبهٔ تکرارشده.' },
+];
+
+function ringCss(v) {
+  const inner = H[REST + v.inner], outer = H[REST + v.outer];
+  if (v.ringOnly) return `box-shadow: 0 0 0 ${v.w}px ${outer};`;
+  // inner line, gap (shows the tile background), outer line
+  const g = v.gap, w = v.w;
+  return `box-shadow: 0 0 0 ${w}px ${inner}, 0 0 0 ${w + g}px #060709, 0 0 0 ${w + g + w}px ${outer};`;
+}
+
+function card(label, ring, fill) {
+  return `<div class="tile">
+    <div class="card" style="background:${fill};${ring}">
+      <div class="t">${label}</div>
+      <div class="s">${fill}</div>
+      <span class="btn" style="background:${fill};border:1px solid ${H[REST+1]}">دکمه</span>
+    </div>
+    <div class="lbl">${label}</div>
+  </div>`;
+}
+
+const root = document.getElementById('root');
+for (const v of variants) {
+  root.insertAdjacentHTML('beforeend', `
+    <section class="variant">
+      <div class="vhead">
+        <div class="vname">گزینهٔ ${v.id} — ${v.name}</div>
+        <div class="tag">ring: ${v.ringOnly ? 'outer only' : `inner fill+${v.inner} · gap ${v.gap}px · outer fill+${v.outer}`} · width ${v.w}px</div>
+      </div>
+      <div class="muted" style="margin-bottom:10px">${v.note}</div>
+      <div class="row">
+        ${card('سکون', '', HEX.S2)}
+        ${card('هاور (مرجع)', '', HEX.S3)}
+        ${card('فوکوس', ringCss(v), HEX.S2)}
+      </div>
+    </section>`);
+}
+</script>
+</body>
+</html>
