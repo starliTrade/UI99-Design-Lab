@@ -162,6 +162,9 @@
 | ۱.۳ | `PLACEMENT_EXEMPTIONS` باقی‌مانده (control روی toast) را با `data-exempt` در DOM قابل مشاهده کن | `DESIGN-CONTRACT.md` §1 | `verify-hierarchy.mjs` |
 |   | ✅ **انجام شد (۲۰۲۶-۱۰-۲۲):** `placementAttrs(role, on)` در `liminal-surface.ts` برای هر جفت استثنا `data-exempt="role>on"` می‌دهد، بقیه هیچ. `verify-hierarchy.mjs` تعداد و نام استثناها را گزارش می‌کند (گزارش، نه شکست). تست: `placement-exempt-dom.test.ts` (۳ تست). **هنوز اجرا نشده روی صفحهٔ زنده** (Chrome در sandbox نیست). | | |
 | ۱.۴ | دو نوع نقش (مطلق vs رابطه) را در `LIMINAL-POLICY.md` جدول نهایی کن | `LIMINAL-POLICY.md` §۱.۵ جدول | `policy-md.test.ts` |
+|   | ✅ **انجام شد (۲۰۲۶-۱۰-۲۲):** جدول نهایی ۱۱ نقش در `LIMINAL-POLICY.md` (بین `roles:start`/`roles:end`) با نوع، پلهٔ اسمی و استثناها. تست `policy-roles-table.test.ts` (۴ تست) آن را با `ROLE_LEVEL`/`RELATIONSHIP_ROLES`/`PLACEMENT_EXEMPTIONS` مقایسه می‌کند. | | |
+
+**تعریف تمام فاز ۱:** ✅ ۱.۱–۱.۴ انجام شد؛ `src/engine` ۳۸ فایل، ۵۸۸ pass، `tsc` تمیز.
 
 **تعریف تمام:** هیچ `resolveSurface` بدون `on` معتبر نیست + گارد ۵۹/۵۹ سبز در CI.
 
