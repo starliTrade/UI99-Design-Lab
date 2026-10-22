@@ -596,8 +596,24 @@ interface BorderRequest {
 }
 
 /** The ladder level a border lands on, before it is turned into a value. */
+/**
+ * WHICH BORDER A ROLE GETS BY DEFAULT — decided by the reader on the comparison page
+ * (2026-10-22, border-compare.html): «floating edge, the rest separator».
+ *
+ *   floating roles (menu, popover, modal, toast)  → edge      one full step: they must
+ *                                                              separate from the page
+ *   everything else (work, panel, control, …)     → separator a half step: the same
+ *                                                              frame, softer
+ *
+ * A caller that passes `kind` explicitly still wins; this is only the default.
+ */
+export function borderKindFor(role: SurfaceRole): BorderKind {
+  return (FLOATING_ROLES as readonly string[]).includes(role) ? 'edge' : 'separator';
+}
+
 function borderLevel(request: BorderRequest): number {
-  const { role, kind = 'separator', state = 'idle' } = request;
+  const { role, state = 'idle' } = request;
+  const kind: BorderKind = request.kind ?? borderKindFor(role);
   const anchored = request.onLevel !== undefined ? request.onLevel + CONTROL_LIFT : request.on !== undefined ? ROLE_LEVEL[request.on] + CONTROL_LIFT : ROLE_LEVEL[role];
   // Clamp BEFORE deciding whether there is room above. Without this, a control
   // anchored on the toast lands at 8 + 1 = 9, `above` is 9.5, the inversion
@@ -775,7 +791,7 @@ export function resolveInteractionVars(request: InteractionVarsRequest): Interac
     '--liminal-surface-hover': hover ?? (frozen ? frozenBg : at('hover')),
     '--liminal-surface-active': active ?? (frozen ? frozenBg : at('active')),
     '--liminal-surface-focus': frozen ? frozenBg : at('focus'),
-    '--liminal-border-idle': border ?? resolveBorder({ role, kind: 'edge', on, onLevel }),
+    '--liminal-border-idle': border ?? resolveBorder({ role, on, onLevel }),
     '--liminal-border-focus': borderFocus ?? FOCUS_RING_COLOR,
   };
 }

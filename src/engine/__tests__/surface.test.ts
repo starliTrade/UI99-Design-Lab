@@ -577,9 +577,12 @@ describe('the interaction variables have a producer', () => {
     expect(v['--liminal-border-focus']).toBe('var(--liminal-danger)');
   });
 
-  it('the border pair defaults to the engine’s edge and the focus ring', () => {
+  it('the idle border follows the role’s default kind, and the focus ring is the engine’s', () => {
+    // 2026-10-22: the reader chose floating-edge / rest-separator (border-compare.html).
+    // A control is NOT floating, so its idle border is the separator, not the edge.
     const v = resolveInteractionVars({ role: 'control', on: 'work' });
-    expect(v['--liminal-border-idle']).toBe(resolveBorder({ role: 'control', kind: 'edge', on: 'work' }));
+    expect(v['--liminal-border-idle']).toBe(resolveBorder({ role: 'control', on: 'work' }));
+    expect(v['--liminal-border-idle']).not.toBe(resolveBorder({ role: 'control', kind: 'edge', on: 'work' }));
     expect(v['--liminal-border-focus']).toBe(FOCUS_RING_COLOR);
   });
 

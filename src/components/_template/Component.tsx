@@ -61,7 +61,7 @@ export function Template({
   });
 
   // ۵. مرز را حل کن — از موتور
-  const border = resolveBorder({ role, kind: 'edge' });
+  const border = resolveBorder({ role }); // the role's default border (borderKindFor)
 
   // ۶. استایل — فقط از موتور
   const cssVars = {
