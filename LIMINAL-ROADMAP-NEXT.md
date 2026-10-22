@@ -160,6 +160,7 @@
 | ۱.۲ | `on: host` پیش‌فرض `canvas` را در همهٔ کامپوننت‌های بدون provider تست کن — باگ Studio که ثبت شده | همان | `surface.test.ts` — سطح بالاتر از بوم بدون provider |
 |   | ✅ **انجام شد (۲۰۲۶-۱۰-۲۲):** پیش‌فرض `SurfaceContext` از `work` به `canvas` تغییر کرد (همخوان با کامنت تمپلیت). تست `engine-primitives.test.tsx` به‌روز شد. `vitest run src/engine` ۳۶ فایل pass؛ `tsc` تمیز. | | |
 | ۱.۳ | `PLACEMENT_EXEMPTIONS` باقی‌مانده (control روی toast) را با `data-exempt` در DOM قابل مشاهده کن | `DESIGN-CONTRACT.md` §1 | `verify-hierarchy.mjs` |
+|   | ✅ **انجام شد (۲۰۲۶-۱۰-۲۲):** `placementAttrs(role, on)` در `liminal-surface.ts` برای هر جفت استثنا `data-exempt="role>on"` می‌دهد، بقیه هیچ. `verify-hierarchy.mjs` تعداد و نام استثناها را گزارش می‌کند (گزارش، نه شکست). تست: `placement-exempt-dom.test.ts` (۳ تست). **هنوز اجرا نشده روی صفحهٔ زنده** (Chrome در sandbox نیست). | | |
 | ۱.۴ | دو نوع نقش (مطلق vs رابطه) را در `LIMINAL-POLICY.md` جدول نهایی کن | `LIMINAL-POLICY.md` §۱.۵ جدول | `policy-md.test.ts` |
 
 **تعریف تمام:** هیچ `resolveSurface` بدون `on` معتبر نیست + گارد ۵۹/۵۹ سبز در CI.

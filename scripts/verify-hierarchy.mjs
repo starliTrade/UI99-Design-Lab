@@ -91,6 +91,13 @@ const report = await page.evaluate(() => {
   return rows;
 });
 
+// Roadmap 1.3: an exempt placement (PLACEMENT_EXEMPTIONS, e.g. control on toast) is
+// counted and named, never hidden. It is reported, not failed: the exemption is a decision.
+const exempt = await page.evaluate(() =>
+  [...document.querySelectorAll('[data-exempt]')].map((el) => el.getAttribute('data-exempt')),
+);
+console.log(`exempt placements (data-exempt): ${exempt.length}${exempt.length ? ' — ' + [...new Set(exempt)].join(', ') : ''}`);
+
 const skipped = report.filter((r) => r.gap > 1.5);
 const below = report.filter((r) => r.gap < -0.5);
 console.log(`surfaces with a host: ${report.length}`);

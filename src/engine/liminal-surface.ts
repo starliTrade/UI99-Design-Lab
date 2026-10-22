@@ -934,6 +934,17 @@ export const PLACEMENT_EXEMPTIONS: readonly { role: SurfaceRole; on: SurfaceRole
 ];
 
 /**
+ * Roadmap 1.3 — an exempt placement is VISIBLE in the DOM, not only in a list.
+ * Returns the DOM attribute for a `role` on `on` pair that is in PLACEMENT_EXEMPTIONS,
+ * or `{}` for every other pair. `verify-hierarchy.mjs` counts `[data-exempt]`, so an
+ * exemption on a page is a number someone can read, not a silent ceiling.
+ */
+export function placementAttrs(role: SurfaceRole, on: SurfaceRole | undefined): Record<string, string> {
+  if (on === undefined) return {};
+  return PLACEMENT_EXEMPTIONS.some((e) => e.role === role && e.on === on) ? { 'data-exempt': `${role}>${on}` } : {};
+}
+
+/**
  * The level a role resolves to, given what it sits on.
  *
  * `onLevel` is the host's RESOLVED level (composition law — see
