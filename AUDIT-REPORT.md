@@ -305,3 +305,27 @@ Its claimed wedge — **Persian-first RTL** — is the most interesting thing he
 **Where it stands:** a **very strong prototype / internal design-system seed**, roughly at the level of a well-funded team's month-three internal library — outstanding *ideas and discipline*, missing *engineering and distribution*. The honest score is **5.2/10 average, dragged down by 1s and 3s on shipping axes, held up by 7–9s on colour science, tokens, i18n and novelty.** Against the leaders it is **not competitive as a library**; against them it is **genuinely interesting as a colour/perception engine and as a Persian-typography reference**.
 
 The roadmap's own assessment (`LIMINAL-ROADMAP.md` §1: "we cannot fight on all fronts; pick a wedge") is correct — and the wedge it should pick is **the token/perception engine + Persian/RTL**, not the component kit. To become world-class it must do the unglamorous 80% it has so far skipped: **ship a package, ship docs, verify a11y of the hard components in CI, wire and browser-verify RTL, add pixel + perf gates.** Until then, the strongest sentence that can honestly be written about LIMINAL is: *"It has real ideas; it does not yet have a product."*
+---
+
+## 11. ممیزی عدد ثابت‌ها (roadmap ۰.۱، ۲۰۲۶-۱۰-۲۲)
+
+> یادداشت: ممیزی در roadmap به «§۷» ارجاع داده شده بود، ولی §۷ دربارهٔ توزیع است؛ ممیزی اینجا، زیر §۲ (علم رنگ)، ثبت می‌شود.
+
+هر عددی که موتور رنگ را می‌سازد، منبعش و نوعش در جدول زیر آمده است. **نوع** یکی از این‌هاست: *اندازه‌گیری* (از داده‌ی واقعی)، *مجبور* (از قفل‌های قرارداد نتیجه می‌شود)، *ثابت طراحی* (تصمیم مالک با تأیید چشمی)، *انتخاب / برازش* (عددی که با طراحی تأییدشده تطبیق داده شده، نه مشتق از اصل).
+
+| ثابت | مقدار | نوع | منبع / توضیح | تست نگهبان |
+|---|---|---|---|---|
+| `PERCEPTUAL_QUANTUM` (q) | 0.0083 | **ثابت طراحی** | `.threshold-sessions.json` سه نشست دارد با q = 0.0083، 0.0079، 0.0089 (میانگین ≈ 0.0084). عدد ۰.۰۰۸۳ داخل این پراکندگی است. **این اندازه‌گیری ادراک جمعیتی نیست**؛ سه نشست روی یک دستگاه است. مالک آن را ثابت طراحی کرده (گزینهٔ B). | `perceptual-boundary.test.ts` |
+| `RELIABLE_BOUNDARY` (r) | 0.0112 | **اندازه‌گیری** (با پراکندگی) | از همان سه نشست: r = 0.0107، 0.0114، 0.0124. عدد ۰.۰۱۱۲ میانگین تقریبی است، نه ثابت آزمایشگاهی. | `perceptual-boundary.test.ts` |
+| `CANVAS_L` (L₀) | 0.128 | **انتخاب / برازش** | لنگر `#060709` با L = 0.12814 اندازه‌گیری شده، ولی ثابت کد ۰.۱۲۸ است (گرد شده). سیاست هم در جدول ثابت‌ها «انتخاب، برازش به طراحی تأییدشده» می‌گوید. | `tokens.test.ts` (لنگر = CANVAS_L) |
+| `LADDER_STEP` (δ) | 0.009475 | **مجبور** با گرد کردن | سیاست: δ = 1.1416q و «از قفل‌ها یکتاست». ولی توجه: (سقف − لنگر)/۸ با مقادیر اندازه‌گیری‌شده ≈ **0.0094825** است، نه ۰.۰۰۹۴۷۵؛ اختلاف حدود ۰.۰۸٪. **یعنی عدد دقیق را از فرمول نگرفته‌ایم، با گرد کردن برابر گذاشته‌ایم.** این اختلاف روی طراحی اثر ندارد (هر پله تقریباً ۱.۱۴۱۶q)، ولی ادعای «مشتق از قفل‌ها» باید با همین توصیف نوشته شود. | `tokens.test.ts` (گام‌ها = LADDER_STEP) |
+| `LADDER_CHROMA` (C) | 0.0069 | **انتخاب / برازش** | کامنت `liminal-ladder.ts`: «ثابت‌هایی که نردبان تأییدشده را بازتولید می‌کنند». از هیچ اصل مشتق نشده؛ سه hex با یک واحد آبی فرق دارند. | `tokens.test.ts` (hex ها) |
+| `LADDER_HUE` (H) | 258.4 | **انتخاب / برازش** | همان مورد C. | `tokens.test.ts` (hex ها) |
+| `LADDER_SIZE` | 9 | **مجبور** | قفل ۲ (سه‌راهی N): N=9 بزرگ‌ترین N است که هر درز ≥ q با حاشیه داشته باشد. | `tokens.test.ts` |
+| سقف (`0.204`) | 0.204 | **قرارداد** | در قفل ۱ به‌عنوان سقف سخت. | `tokens.test.ts` (سقف ≤ 0.204) |
+
+**جمع‌بندی ممیزی:**
+- هیچ عددی بدون منبع نیست. هر کدام یا اندازه‌گیری است، یا مجبور از قفل‌ها، یا ثابت طراحی با تأیید مالک، یا انتخاب/برازش که صریحاً نوشته شده.
+- **دو عدد نیاز به برچسب دقیق‌تر دارند:** `LADDER_STEP` (گرد شده، با اختلاف ۰.۰۸٪ از فرمول قفل) و `CANVAS_L` (گرد شده از ۰.۱۲۸۱۴).
+- `C` و `H` هیچ منبع اصولی ندارند؛ فقط برازش‌اند. این برای «ثابت بودن» مشکلی نیست، ولی نباید به‌عنوان اندازه‌گیری گزارش شوند.
+- **q** پراکندگی سه نشست را دارد (۰.۰۷۹ تا ۰.۰۸۹). این در سیاست به‌عنوان «ثابت طراحی» ثبت شده و ادعای ادراکی نمی‌شود.

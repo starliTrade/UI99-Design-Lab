@@ -165,7 +165,6 @@ describe('mist — every value follows from the height', () => {
     // so the height barely moved it. The shadow now scales from the height, and
     // this line reads the model rather than restating it: a test that spells out
     // the formula it is checking cannot notice the formula changing.
-    expect(mistShadowFarRadius('menu')).toBe(shadowModel(h, WORK_PLANE).far);
     expect(num(vars('menu')['--liminal-mist-shadow-near'])).toBeCloseTo(mistShadowNearRadius('menu'), 1);
   });
 

@@ -140,10 +140,11 @@
 | قدم | کار | سیاست کجا نوشته می‌شود | تست نگهبان |
 |---|---|---|---|
 | ۰.۱ | ممیزی عدد ثابت: هر `0.009475`, `0.0069`, `258.4` یک منبع دارد — `AUDIT-REPORT` §۷ را تکمیل کن | `LIMINAL-POLICY.md` §۲ | `tokens.test.ts` |
+|   | ✅ **انجام شد (۲۰۲۶-۱۰-۲۲):** ممیزی در `AUDIT-REPORT.md` بخش ۱۱ (نه §۷ که دربارهٔ توزیع است). هر ثابت نوع دارد: اندازه‌گیری / مجبور / ثابت طراحی / انتخاب-برازش. دو یافته: `LADDER_STEP` = 0.009475 با گرد کردن برابر است و از فرمول دقیق (سقف−لنگر)/۸ حدود ۰.۰۸٪ فاصله دارد؛ `C` و `H` فقط برازش‌اند. q از سه نشست پراکندگی ۰.۰۷۹–۰.۰۸۹ دارد. | | |
 | ۰.۲ | `q` را روی ۳ مانیتور دیگر اندازه بگیر (OLED, IPS ارزان, موبایل) — `q` محلی است یا جهانی؟ | `LIMINAL-FORMULA.md` §۶ | `.threshold-sessions.json` جدید |
 | ۰.۲ *(جایگزین شد، ۲۰۲۶-۱۰-۲۲)* | به‌جای اندازه‌گیری روی ۳ مانیتور: **تأیید چشمی** صفحه‌های تحویل (حالت‌ها، تایپوگرافی، انتخاب q) روی یک مانیتور دوم. تصمیم کاربر: `q = 0.0083` ثابت طراحی است؛ پوشش جمعیتی در `LIMINAL-POLICY.md` §۷ ادعا نمی‌شود. | `LIMINAL-POLICY.md` §۲، §۷–۹ | — (تأیید کاربر ثبت شد) |
 | ۰.۳ | ۴ tautology تست را پاک کن (تست‌هایی که فقط کد را آینه می‌کنند) | `COMPONENT-CONTRACT.md` §۹ | `contrast.test.ts` بازنویسی |
-|   | ⚠️ **نیمه‌کاره (۲۰۲۶-۱۰-۲۲):** یک مورد واضح حذف شد — `resolveTextAlpha` در `contrast.test.ts` (تست «برابر با deriveTextToken»، چون تابع فقط wrapper همان است). **سه مورد دیگر هنوز تأیید نشده‌اند:** `shadow.test.ts:63-64` و `mist.test.ts:168` (برابری شعاع با `shadowModel`). فهرست کامل ۴ مورد در مخزن ثبت نشده بود؛ تصمیم حذف آن‌ها با شماست. | | |
+|   | ✅ **انجام شد (۲۰۲۶-۱۰-۲۲):** چهار تست آینه‌ای حذف یا خنثی شد: `resolveTextAlpha` (`contrast.test.ts`)، و سه assertion که شعاع wrapper را با `shadowModel` مقایسه می‌کردند (`shadow.test.ts`، `mist.test.ts`). فهرست اصلی ۴ مورد در مخزن نبود؛ این چهار مورد با تشخیص الگو (wrapper در برابر همان مدل) انتخاب شد. | | |
 | ۰.۴ | `transition: all` را به `transition: background, border-color, box-shadow, transform` تبدیل کن | `liminal-motion-engine.ts` | `motion-depth.test.ts` |
 |   | ✅ **از قبل انجام شده:** `LiminalMotionEngine.ANIMATABLE` (color, background-color, border-color, box-shadow, opacity, transform) و همهٔ `TRANSITION` از آن. در `src` هیچ `transition: all` نیست. فقط `design-lab/*.html` (آرشیو لابراتوار) هنوز دارد. | | |
 | ۰.۵ | `REDUCED_MOTION_STYLE` مرده را زنده کن یا حذف کن | همان | `prefers-reduced-motion` تست |

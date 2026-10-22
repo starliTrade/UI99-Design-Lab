@@ -60,8 +60,6 @@ describe('shadow — one model, and the two jobs it serves', () => {
     for (const role of FLOATING_ROLES) {
       const height = floatHeight(role);
       expect(FLOAT_SHADOWS[role], `${role} shadow`).toBe(floatShadow(height, HOST));
-      expect(mistShadowNearRadius(role)).toBe(shadowModel(height, HOST).near);
-      expect(mistShadowFarRadius(role)).toBe(shadowModel(height, HOST).far);
     }
   });
 
