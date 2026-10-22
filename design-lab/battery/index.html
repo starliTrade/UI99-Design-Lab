@@ -162,6 +162,77 @@ function pureCandidates() {
   }
   return [...out.values()].sort((a, b) => a.x - b.x);
 }
+// ---- dithering: a mix of two 8-bit colours, averaged in LINEAR light, shown with a fixed 8x8 Bayer pattern.
+// Gives lightness steps below the 0.55q floor of flat 8-bit patches, with hue held within ~0.3°.
+const DITH_F_BASE = 0.5;      // both panels sit at this mix; the seam adds t on top
+const BAYER8 = (() => {
+  const m = new Array(64);
+  for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) {
+    let v = 0;
+    for (let i = 0; i < 3; i++) { const xb = (x >> i) & 1, yb = (y >> i) & 1; v |= ((xb ^ yb) << (2 * i + 1)) | (yb << (2 * i)); }
+    m[y * 8 + x] = (v + 0.5) / 64;
+  }
+  return m;
+})();
+const toLin = v => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+function linOf(hex) { return [1, 3, 5].map(i => toLin(parseInt(hex.slice(i, i + 2), 16) / 255)); }
+function labOfLin([R, G, B]) {
+  const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+  const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+  const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  const L = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+  const a = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+  const b = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+  return { L, C: Math.hypot(a, b), h: Math.atan2(b, a) * 180 / Math.PI };
+}
+const mixLin = (lo, hi, f) => lo.map((v, i) => v * (1 - f) + hi[i] * f);
+const hueGap = (a, b) => Math.abs(((a - b + 540) % 360) - 180);
+// one (lo, hi) pair per base: hi is the 8-bit colour near +0.5q whose hue is closest to lo's
+function ditherPairs() {
+  const out = [];
+  for (const BL of PURE_BASES) {
+    const lo = oklchToHex(BL), loLin = linOf(lo), loLab = labOfLin(loLin);
+    // the span must be wide enough that the mix at f = 1 reaches ~0.6q above the base at f = 0.5
+    const [r0, g0, b0] = [1, 3, 5].map(i => parseInt(oklchToHex(BL + 1.1 * Q).slice(i, i + 2), 16));
+    let best = null;
+    for (let dr = -3; dr <= 3; dr++) for (let dg = -3; dg <= 3; dg++) for (let db = -3; db <= 3; db++) {
+      const hx = '#' + [r0 + dr, g0 + dg, b0 + db].map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
+      const lab = labOfLin(linOf(hx));
+      const x = (lab.L - loLab.L) / Q, dh = hueGap(lab.h, loLab.h);
+      if (x >= 0.95 && x <= 1.25 && dh <= 1 && (!best || dh < best.dh)) best = { hx, dh, x };
+    }
+    if (best) out.push({ bL: BL, lo, hi: best.hx, loLin, hiLin: linOf(best.hx) });
+  }
+  return out;
+}
+const DITH_PAIRS = ditherPairs();
+// lightness of the bottom mix relative to the top mix, in quanta (both averaged in linear light)
+function ditherX(pair, fTop, fBot) {
+  return (labOfLin(mixLin(pair.loLin, pair.hiLin, fBot)).L - labOfLin(mixLin(pair.loLin, pair.hiLin, fTop)).L) / Q;
+}
+// a dithered panel: top half at fTop, bottom half at fBot, both drawn with the same pattern
+function ditherPanel(pair, fTop, fBot) {
+  const size = 150, dpr = Math.max(1, Math.round(window.devicePixelRatio || 1));
+  const W = size * dpr, H = size * dpr;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  cv.style.width = size + 'px'; cv.style.height = size + 'px'; cv.style.display = 'block';
+  const ctx = cv.getContext('2d');
+  if (!ctx) return cv;
+  const img = ctx.createImageData(W, H);
+  const lo = [1, 3, 5].map(i => parseInt(pair.lo.slice(i, i + 2), 16));
+  const hi = [1, 3, 5].map(i => parseInt(pair.hi.slice(i, i + 2), 16));
+  for (let y = 0; y < H; y++) {
+    const f = y < H / 2 ? fTop : fBot;
+    for (let x = 0; x < W; x++) {
+      const c = BAYER8[(y % 8) * 8 + (x % 8)] < f ? hi : lo;
+      const k = (y * W + x) * 4;
+      img.data[k] = c[0]; img.data[k + 1] = c[1]; img.data[k + 2] = c[2]; img.data[k + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  return cv;
+}
 // achieved Δ (quanta) of a hex relative to the base, after 8-bit quantisation
 const achievedX = hex => (hexToL(hex) - hexToL(oklchToHex(BASE_L))) / Q;
 
@@ -176,7 +247,15 @@ const rnd = () => Math.random();
 
 // ================= TEST 1: seam detection (2AFC, adaptive) =================
 function buildCandidates() {
-  return pureCandidates().map(c => ({ d: +c.x.toFixed(3), x: c.x, hex: c.hex, bh: c.bh }));
+  const pure = pureCandidates().map(c => ({ kind: 'pure', d: +c.x.toFixed(3), x: c.x, hex: c.hex, bh: c.bh, key: 'p:' + c.hex }));
+  const dith = [];
+  DITH_PAIRS.forEach((p, pi) => {
+    for (let t = 0.02; t <= 0.5001; t += 0.02) {
+      const x = ditherX(p, DITH_F_BASE, DITH_F_BASE + t);
+      dith.push({ kind: 'dith', d: +x.toFixed(3), x, pi, t: +t.toFixed(2), key: 'd:' + pi + ':' + t.toFixed(2) });
+    }
+  });
+  return [...pure, ...dith].filter(c => c.x > 0.02).sort((a, b) => a.x - b.x);
 }
 function t1Plan() {
   // 48 adaptive, 6 catch (large seam, must be easy), 6 repeats of earlier stimuli
@@ -191,19 +270,30 @@ function t1Start() {
 }
 function t1Next() {
   if (S.t1Idx >= S.t1Plan.length) return t1Finish();
-  const kind = S.t1Plan[S.t1Idx];
+  const role = S.t1Plan[S.t1Idx];   // adaptive | catch | repeat
   let stim;
-  const pool = S.t1.candidates;
-  if (kind === 'catch') { const c = pool[pool.length - 1]; stim = { d: c.d, x: c.x, hex: c.hex, bh: c.bh, kind }; }
-  else if (kind === 'repeat' && S.t1Seen.length) stim = { ...S.t1Seen[Math.floor(rnd() * S.t1Seen.length)], kind };
-  else { const c = BatteryCore.nextStimulus(S.t1); stim = { ...c, kind }; }
+  const pool = S.t1.candidates.filter(c => c.kind === 'pure');
+  if (role === 'catch') { const c = pool[pool.length - 1]; stim = { ...c, role }; }
+  else if (role === 'repeat' && S.t1Seen.length) stim = { ...S.t1Seen[Math.floor(rnd() * S.t1Seen.length)], role };
+  else { const c = BatteryCore.nextStimulus(S.t1); stim = { ...c, role: 'adaptive' }; }
   S.t1Cur = stim;
   const seamLeft = rnd() < 0.5;
   S.t1Cur.seamLeft = seamLeft;
-  const base = stim.bh;
-  const seamPanel = `<div class="panel"><div style="background:${base}"></div><div style="background:${stim.hex}"></div></div>`;
-  const plain = `<div class="panel"><div style="background:${base}"></div><div style="background:${base}"></div></div>`;
-  $('t1-panels').innerHTML = seamLeft ? seamPanel + plain : plain + seamPanel;
+  const panelsEl = $('t1-panels');
+  panelsEl.innerHTML = '';
+  const wrap = (node) => { const d = document.createElement('div'); d.className = 'panel'; d.appendChild(node); return d; };
+  if (stim.kind === 'pure') {
+    const base = stim.bh;
+    const seam = document.createElement('div'); seam.innerHTML = `<div style="height:50%;background:${base}"></div><div style="height:50%;background:${stim.hex}"></div>`;
+    const plain = document.createElement('div'); plain.innerHTML = `<div style="height:50%;background:${base}"></div><div style="height:50%;background:${base}"></div>`;
+    const seamP = wrap(seam), plainP = wrap(plain);
+    [seamLeft ? seamP : plainP, seamLeft ? plainP : seamP].forEach(p => panelsEl.appendChild(p));
+  } else {
+    const pair = DITH_PAIRS[stim.pi];
+    const seamP = wrap(ditherPanel(pair, DITH_F_BASE, DITH_F_BASE + stim.t));
+    const plainP = wrap(ditherPanel(pair, DITH_F_BASE, DITH_F_BASE));
+    [seamLeft ? seamP : plainP, seamLeft ? plainP : seamP].forEach(p => panelsEl.appendChild(p));
+  }
   $('t1-counter').textContent = `${S.t1Idx + 1} از ${S.t1Plan.length}`;
   setProg(S.t1Idx / (S.t1Plan.length * 3));
 }
@@ -211,20 +301,20 @@ function t1Answer(choseLeft) {
   if (!S.t1Cur) return;
   const correct = choseLeft === S.t1Cur.seamLeft;
   const stim = S.t1Cur;
-  S.t1Trials.push({ kind: stim.kind, d: stim.d, x: stim.x, hex: stim.hex, correct });
-  if (stim.kind === 'adaptive') { BatteryCore.update(S.t1, stim, correct); S.t1Seen.push({ d: stim.d, x: stim.x, hex: stim.hex, bh: stim.bh }); }
+  S.t1Trials.push({ role: stim.role, family: stim.kind, d: stim.d, x: stim.x, key: stim.key, correct });
+  if (stim.role === 'adaptive') { BatteryCore.update(S.t1, stim, correct); S.t1Seen.push({ ...stim }); }
   S.t1Idx++; S.t1Cur = null;
   t1Next();
 }
 function t1Finish() {
-  const cat = S.t1Trials.filter(t => t.kind === 'catch');
-  const rep = S.t1Trials.filter(t => t.kind === 'repeat');
+  const cat = S.t1Trials.filter(t => t.role === 'catch');
+  const rep = S.t1Trials.filter(t => t.role === 'repeat');
   const catchAcc = cat.filter(t => t.correct).length / Math.max(1, cat.length);
   // repeat agreement: a repeated stimulus gave the same correctness as its first presentation
-  const firsts = S.t1Trials.filter(t => t.kind === 'adaptive');
+  const firsts = S.t1Trials.filter(t => t.role === 'adaptive');
   let agree = 0, nRep = 0;
   for (const r of rep) {
-    const first = firsts.find(f => f.hex === r.hex);
+    const first = firsts.find(f => f.key === r.key);
     if (first) { nRep++; if (first.correct === r.correct) agree++; }
   }
   const th = BatteryCore.threshold75(S.t1), iv = BatteryCore.threshold75Interval(S.t1);
