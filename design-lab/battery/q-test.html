@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>باتری ۲ — اندازه‌گیری q</title>
+<style>
+body{background:#060709;color:#e9ecf2;font-family:system-ui,sans-serif;margin:0;padding:18px;max-width:560px;margin:auto}
+h1{font-size:18px}.card{background:#0e1013;border:1px solid #1d2026;border-radius:12px;padding:14px;margin:10px 0;font-size:14px;line-height:1.8}
+.muted{color:#9aa3b2;font-size:13px}.hidden{display:none}button{font:inherit;padding:14px 18px;border-radius:10px;border:1px solid #2a2e36;background:#14171c;color:#e9ecf2;min-width:44%}
+#panels{display:flex;gap:12px;justify-content:center;margin:14px 0}.panel{width:150px;height:150px;border-radius:8px;overflow:hidden}
+.panel>div{width:150px;height:150px}.bar{height:6px;background:#1d2026;border-radius:3px;margin:8px 0}#prog{height:6px;background:#5b7fb8;width:0;border-radius:3px}
+.ok{color:#7fd39a}.bad{color:#e88a8a}textarea{width:100%;height:90px;direction:ltr;font-size:11px;background:#0e1013;color:#9aa3b2;border:1px solid #1d2026;border-radius:8px}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+</style></head>
+<body>
+<h1>اندازه‌گیری q — آزمون هوشمند</h1>
+<div id="bar" class="bar"><div id="prog"></div></div>
+
+<div id="s-intro" class="card">
+  <p>یکی از دو پنل یک خط افقی کم‌رنگ وسطش دارد. نگاه کن و بگو کدام پنل خط دارد: چپ یا راست.</p>
+  <p class="muted">جواب درست یا غلط نداره؛ اگر فرقی نمی‌بینی، حدس بزن. هر کوشش یک انتخاب است؛ بازخورد نمی‌گیری.</p>
+  <ul class="muted"><li>روشنایی گوشی را معمولی بگذار؛ حالت شب و کنتراست بالا را خاموش کن.</li>
+  <li>گوشی را ۳۰ تا ۶۰ سانتی‌متر از چشم نگه دار و سرت را ثابت کن.</li>
+  <li>سه سطح پشت سر هم اجرا می‌شود؛ هر سطح حدود ۳ تا ۴ دقیقه طول می‌کشد.</li></ul>
+  <div class="row"><button id="btn-start">شروع</button></div>
+</div>
+
+<div id="s-test" class="card hidden">
+  <div id="counter" class="muted"></div>
+  <div id="panels"></div>
+  <div class="row"><button id="btn-left">◀ چپ</button><button id="btn-right">راست ▶</button></div>
+  <p class="muted">با کلیدهای ← و → هم می‌شود جواب داد.</p>
+</div>
+
+<div id="s-res" class="card hidden">
+  <div id="res-body"></div>
+  <p class="muted">این نتیجه فقط برای همین گوشی و شرایط همین لحظه است. JSON را کپی کن و برای تجمیع بفرست.</p>
+  <textarea id="res-json" readonly></textarea>
+  <div class="row"><button id="btn-copy">کپی JSON</button><button id="btn-restart">دوباره</button></div>
+</div>
+
+<script>
+// Pure psychophysics core for the perception battery. No DOM here, so it can be
+// tested in Node and reused by the page.
+//
+// Model: 2AFC (which panel has the seam). P(correct) = 0.5 + 0.5(1-λ)(1-exp(-(x/α)^β)).
+// α = threshold scale (x in quanta), β fixed (slope), λ = lapse. Bayesian posterior
+// over α on a grid; the next stimulus is the one whose posterior-mean P(correct) is
+// closest to 0.75 (the 2AFC threshold). Threshold = x where P(correct) = 0.75.
+(function (root) {
+  const BETA = 3.5, LAMBDA = 0.02;
+
+  function pCorrect(x, alpha) {
+    if (x <= 0) return 0.5;
+    return 0.5 + 0.5 * (1 - LAMBDA) * (1 - Math.exp(-Math.pow(x / alpha, BETA)));
+  }
+
+  function makeGrid(lo, hi, n) {
+    const g = [];
+    for (let i = 0; i < n; i++) g.push(lo + (hi - lo) * i / (n - 1));
+    return g;
+  }
+
+  function newStaircase(candidates) {
+    // candidates: [{d, x}] — d = requested Δ (quanta), x = achieved Δ after 8-bit quantisation.
+    const alphas = makeGrid(0.2, 3.0, 561); // 0.005 steps: fine enough that percentiles do not collapse onto one node
+    return { alphas, post: alphas.map(() => 1 / alphas.length), candidates, history: [] };
+  }
+
+  function meanP(st, x) {
+    let s = 0;
+    for (let i = 0; i < st.alphas.length; i++) s += st.post[i] * pCorrect(x, st.alphas[i]);
+    return s;
+  }
+
+  function nextStimulus(st) {
+    let best = null, bestErr = Infinity;
+    for (const c of st.candidates) {
+      const err = Math.abs(meanP(st, c.x) - 0.75);
+      if (err < bestErr) { bestErr = err; best = c; }
+    }
+    return best;
+  }
+
+  function update(st, stim, correct) {
+    for (let i = 0; i < st.alphas.length; i++) {
+      const p = pCorrect(stim.x, st.alphas[i]);
+      st.post[i] *= correct ? p : 1 - p;
+    }
+    const s = st.post.reduce((a, b) => a + b, 0);
+    st.post = st.post.map((v) => v / s);
+    st.history.push({ d: stim.d, x: stim.x, correct });
+  }
+
+  function threshold75(st) {
+    let a = 0;
+    for (let i = 0; i < st.alphas.length; i++) a += st.post[i] * st.alphas[i];
+    // solve 0.5 + 0.5(1-λ)(1-e^{-(x/a)^β}) = 0.75
+    const inner = -Math.log(1 - 0.5 / (1 - LAMBDA));
+    return { alpha: a, x75: a * Math.pow(inner, 1 / BETA) };
+  }
+
+  // Posterior spread: 10th–90th percentile of the threshold, for an honest interval.
+  function threshold75Interval(st) {
+    // 10th / 90th percentile of the posterior over alpha, linearly interpolated between grid nodes.
+    const inner = -Math.log(1 - 0.5 / (1 - LAMBDA));
+    const cdf = [];
+    let acc = 0;
+    for (let i = 0; i < st.alphas.length; i++) { acc += st.post[i]; cdf.push(acc); }
+    const pick = (q) => {
+      for (let i = 0; i < cdf.length; i++) {
+        if (cdf[i] >= q) {
+          const prev = i ? cdf[i - 1] : 0, a0 = i ? st.alphas[i - 1] : st.alphas[0];
+          const t = cdf[i] > prev ? (q - prev) / (cdf[i] - prev) : 1;
+          return a0 + t * (st.alphas[i] - a0);
+        }
+      }
+      return st.alphas[st.alphas.length - 1];
+    };
+    return { lo: pick(0.1) * Math.pow(inner, 1 / BETA), hi: pick(0.9) * Math.pow(inner, 1 / BETA) };
+  }
+
+  const api = { pCorrect, newStaircase, nextStimulus, update, threshold75, threshold75Interval, BETA, LAMBDA };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.BatteryCore = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+// ui99-battery-v2 · pure logic for the q measurement. No DOM here.
+// A block is a state machine: next() gives the stimulus to show, answer(choseLeft) takes the choice.
+// Built on core.js (Bayesian 2AFC staircase, validated by simulation).
+//
+// Design, and why each part exists:
+//  - Two INTERLEAVED staircases (A and B) on the same candidates. Each is a full, independent
+//    estimate. Their agreement is the replicate check. (A repeat of the same near-threshold stimulus
+//    cannot serve this purpose: a perfect 75% observer agrees with itself only ~62% of the time.)
+//  - Catch trials: a large seam that must be seen. A miss means lapse or inattention.
+//  - Null trials: two identical panels. Their left-choice fraction exposes a side bias.
+//  - The stop rule is the posterior interval itself, not a fixed count, so easy runs end early.
+(function (root) {
+  const BC = (typeof BatteryCore !== 'undefined') ? BatteryCore : root.BatteryCore;
+
+  const MIN_ADAPTIVE = 18;      // below this a threshold is not reported
+  const MAX_ADAPTIVE = 40;      // hard cap on adaptive trials
+  const MAX_TRIALS = 50;        // hard cap on everything
+  const STOP_RATIO = 1.3;       // stop when the combined 10–90% interval is this narrow
+  const VALID_RATIO = 1.6;      // a reported interval wider than this is not valid
+  const REPLICATE_RATIO = 1.5;  // staircase A and B must agree within this factor
+  const K_MARGIN = 2;           // q_bg = K × threshold (protocol v1 §5)
+  const CATCH_EVERY = 10, CATCH_AT = 5;
+  const NULL_EVERY = 12, NULL_AT = 11;
+
+  function roleOf(i) {
+    if (i % CATCH_EVERY === CATCH_AT) return 'catch';
+    if (i % NULL_EVERY === NULL_AT) return 'null';
+    return 'adaptive';
+  }
+
+  // candidates: [{x, key}] sorted by x; catchStim: a clearly visible seam, a full stimulus object
+  function makeBlock(candidates, catchStim, rand) {
+    const rnd = rand || Math.random;
+    const stA = BC.newStaircase(candidates);
+    const stB = BC.newStaircase(candidates);
+    const stAll = BC.newStaircase(candidates);
+    const trials = [];
+    let adaptiveCount = 0;
+    let cur = null;
+
+    function done() {
+      if (trials.length >= MAX_TRIALS) return true;
+      if (adaptiveCount >= MAX_ADAPTIVE) return true;
+      if (adaptiveCount >= MIN_ADAPTIVE) {
+        const iv = BC.threshold75Interval(stAll);
+        if (iv.hi / iv.lo <= STOP_RATIO) return true;
+      }
+      return false;
+    }
+
+    return {
+      next() {
+        if (cur) return cur;
+        if (done()) return null;
+        const i = trials.length;
+        const role = roleOf(i);
+        let stim, side = null;
+        if (role === 'catch') stim = { ...catchStim, kind: 'catch', role };
+        else if (role === 'null') stim = { x: 0, key: 'null:' + i, kind: 'null', role };
+        else {
+          // interleave: even adaptive trials go to A, odd to B
+          side = adaptiveCount % 2 === 0 ? 'A' : 'B';
+          const st = side === 'A' ? stA : stB;
+          stim = { ...BC.nextStimulus(st), role: 'adaptive', side };
+        }
+        cur = { ...stim, seamLeft: rnd() < 0.5, index: i };
+        return cur;
+      },
+      answer(choseLeft) {
+        if (!cur) return;
+        const correct = cur.kind === 'null' ? null : choseLeft === cur.seamLeft;
+        trials.push({ role: cur.role, side: cur.side || null, key: cur.key, x: cur.x, seamLeft: cur.seamLeft, choseLeft, correct });
+        if (cur.role === 'adaptive') {
+          const st = cur.side === 'A' ? stA : stB;
+          BC.update(st, cur, correct);
+          BC.update(stAll, cur, correct);
+          adaptiveCount++;
+        }
+        cur = null;
+      },
+      trials,
+      staircase: stAll,
+      stA, stB,
+      minX: candidates[0].x, maxX: candidates[candidates.length - 1].x,
+    };
+  }
+
+  function blockResult(block) {
+    const T = block.trials;
+    const catches = T.filter((t) => t.role === 'catch');
+    const nulls = T.filter((t) => t.role === 'null');
+    const adaptive = T.filter((t) => t.role === 'adaptive');
+    const catchOk = catches.filter((t) => t.correct).length;
+    const leftFrac = T.length ? T.filter((t) => t.choseLeft).length / T.length : null;
+
+    const th = BC.threshold75(block.staircase);
+    const iv = BC.threshold75Interval(block.staircase);
+    const ratio = iv.hi / iv.lo;
+    const xA = BC.threshold75(block.stA).x75, xB = BC.threshold75(block.stB).x75;
+    const rep = Math.max(xA, xB) / Math.min(xA, xB);
+
+    const reasons = [];
+    if (adaptive.length < MIN_ADAPTIVE) reasons.push(`کوشش تطبیقی کم (${adaptive.length} < ${MIN_ADAPTIVE})`);
+    if (ratio > VALID_RATIO) reasons.push(`بازهٔ آستانه پهن (${ratio.toFixed(2)} > ${VALID_RATIO})`);
+    if (rep > REPLICATE_RATIO) reasons.push(`دو زنجیرهٔ مستقل همخوان نیستند (${rep.toFixed(2)} > ${REPLICATE_RATIO})`);
+    if (catches.length < 2 || catchOk / catches.length < 0.75) reasons.push(`کنترل ساده کم است (${catchOk}/${catches.length})`);
+    // a threshold pinned to the edge of the stimulus range is a range artifact, not a measurement
+    if (th.x75 > 0.9 * block.maxX || th.x75 < 1.1 * block.minX) reasons.push(`آستانه روی لبهٔ محرک‌ها (${th.x75.toFixed(2)} در بازهٔ ${block.minX.toFixed(2)}–${block.maxX.toFixed(2)})`);
+    if (leftFrac !== null && Math.abs(leftFrac - 0.5) > 0.3) reasons.push(`سوگیری موقعیت (چپ ${(leftFrac * 100).toFixed(0)}٪)`);
+
+    return {
+      x75: +th.x75.toFixed(3),
+      lo: +iv.lo.toFixed(3),
+      hi: +iv.hi.toFixed(3),
+      qBg: +(K_MARGIN * th.x75).toFixed(3),
+      adaptive: adaptive.length,
+      trials: T.length,
+      replicateA: +xA.toFixed(3),
+      replicateB: +xB.toFixed(3),
+      replicateRatio: +rep.toFixed(2),
+      catchAcc: catches.length ? +(catchOk / catches.length).toFixed(2) : null,
+      nullLeftFrac: nulls.length ? +(nulls.filter((t) => t.choseLeft).length / nulls.length).toFixed(2) : null,
+      leftFrac: leftFrac === null ? null : +leftFrac.toFixed(2),
+      valid: reasons.length === 0,
+      reasons,
+    };
+  }
+
+  const api = { makeBlock, blockResult, roleOf, MIN_ADAPTIVE, MAX_ADAPTIVE, MAX_TRIALS, STOP_RATIO, VALID_RATIO, REPLICATE_RATIO, K_MARGIN };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.QCore = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+const Q = 0.0083, CHROMA = 0.0069, HUE = 258.4 * Math.PI / 180;
+const BASE_L = 0.148;      // stimulus base (≈ S2)
+const CANVAS_L = 0.128, STEP = 0.009475;
+
+// ---- colour: OKLCH(L, C, H) -> sRGB hex (8-bit), and back
+function oklchToHex(L) {
+  const a = CHROMA * Math.cos(HUE), b = CHROMA * Math.sin(HUE);
+  const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+  const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+  const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+  const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
+  const r = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+  const g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+  const bl = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
+  const enc = x => { x = Math.max(0, Math.min(1, x)); x = x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - 0.055; return Math.round(x * 255); };
+  return '#' + [r, g, bl].map(v => enc(v).toString(16).padStart(2, '0')).join('');
+}
+function hexToL(hex) {
+  const [R, G, B] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+  const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+  const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+  const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  return 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+}
+// OKLCH (L, C, h in degrees) of a hex
+function hexToLCh(hex) {
+  const [R, G, B] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+  const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+  const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+  const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  const L = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+  const a = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+  const b = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+  return { L, C: Math.hypot(a, b), h: Math.atan2(b, a) * 180 / Math.PI };
+}
+// A stimulus is PURE when it changes lightness and almost nothing else (hue ≤ 3°, chroma ≤ 0.0005).
+// Flat 8-bit patches at this chroma rotate hue by 10–13° in single steps, so most candidates are not pure.
+const PURE_BASES = [0.128, 0.1375, 0.148, 0.1565, 0.1659, 0.1754, 0.1849, 0.1943];
+function pureCandidates() {
+  const out = new Map();
+  for (const BL of PURE_BASES) {
+    const bh = oklchToHex(BL), b0 = hexToLCh(bh);
+    const [r0, g0, b00] = [1, 3, 5].map(i => parseInt(bh.slice(i, i + 2), 16));
+    for (let dr = -5; dr <= 5; dr++) for (let dg = -5; dg <= 5; dg++) for (let db = -5; db <= 5; db++) {
+      const hx = '#' + [r0 + dr, g0 + dg, b00 + db].map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
+      const c = hexToLCh(hx);
+      const x = (c.L - b0.L) / Q;
+      const dh = Math.abs(((c.h - b0.h + 540) % 360) - 180), dC = Math.abs(c.C - b0.C);
+      if (dh <= 3 && dC <= 0.0005 && x > 0.1 && x < 3.2) {
+        const key = x.toFixed(3);
+        if (!out.has(key)) out.set(key, { x, hex: hx, bh, bL: BL, dh, dC });
+      }
+    }
+  }
+  return [...out.values()].sort((a, b) => a.x - b.x);
+}
+// ---- dithering: a mix of two 8-bit colours, averaged in LINEAR light, shown with a fixed 8x8 Bayer pattern.
+// Gives lightness steps below the 0.55q floor of flat 8-bit patches, with hue held within ~0.3°.
+const DITH_F_BASE = 0.5;      // both panels sit at this mix; the seam adds t on top
+const BAYER8 = (() => {
+  const m = new Array(64);
+  for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) {
+    let v = 0;
+    for (let i = 0; i < 3; i++) { const xb = (x >> i) & 1, yb = (y >> i) & 1; v |= ((xb ^ yb) << (2 * i + 1)) | (yb << (2 * i)); }
+    m[y * 8 + x] = (v + 0.5) / 64;
+  }
+  return m;
+})();
+const toLin = v => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+function linOf(hex) { return [1, 3, 5].map(i => toLin(parseInt(hex.slice(i, i + 2), 16) / 255)); }
+function labOfLin([R, G, B]) {
+  const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+  const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+  const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  const L = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+  const a = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+  const b = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+  return { L, C: Math.hypot(a, b), h: Math.atan2(b, a) * 180 / Math.PI };
+}
+const mixLin = (lo, hi, f) => lo.map((v, i) => v * (1 - f) + hi[i] * f);
+const hueGap = (a, b) => Math.abs(((a - b + 540) % 360) - 180);
+// one (lo, hi) pair per base: hi is the 8-bit colour near +0.5q whose hue is closest to lo's
+function ditherPairs() {
+  const out = [];
+  for (const BL of PURE_BASES) {
+    const lo = oklchToHex(BL), loLin = linOf(lo), loLab = labOfLin(loLin);
+    // the span must be wide enough that the mix at f = 1 reaches ~0.6q above the base at f = 0.5
+    const [r0, g0, b0] = [1, 3, 5].map(i => parseInt(oklchToHex(BL + 1.1 * Q).slice(i, i + 2), 16));
+    let best = null;
+    for (let dr = -3; dr <= 3; dr++) for (let dg = -3; dg <= 3; dg++) for (let db = -3; db <= 3; db++) {
+      const hx = '#' + [r0 + dr, g0 + dg, b0 + db].map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
+      const lab = labOfLin(linOf(hx));
+      const x = (lab.L - loLab.L) / Q, dh = hueGap(lab.h, loLab.h);
+      if (x >= 0.95 && x <= 1.25 && dh <= 1 && (!best || dh < best.dh)) best = { hx, dh, x };
+    }
+    if (best) out.push({ bL: BL, lo, hi: best.hx, loLin, hiLin: linOf(best.hx) });
+  }
+  return out;
+}
+const DITH_PAIRS = ditherPairs();
+// lightness of the bottom mix relative to the top mix, in quanta (both averaged in linear light)
+function ditherX(pair, fTop, fBot) {
+  return (labOfLin(mixLin(pair.loLin, pair.hiLin, fBot)).L - labOfLin(mixLin(pair.loLin, pair.hiLin, fTop)).L) / Q;
+}
+// a dithered panel: top half at fTop, bottom half at fBot, both drawn with the same pattern
+function ditherPanel(pair, fTop, fBot) {
+  const size = 150, dpr = Math.max(1, Math.round(window.devicePixelRatio || 1));
+  const W = size * dpr, H = size * dpr;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  cv.style.width = size + 'px'; cv.style.height = size + 'px'; cv.style.display = 'block';
+  const ctx = cv.getContext('2d');
+  if (!ctx) return cv;
+  const img = ctx.createImageData(W, H);
+  const lo = [1, 3, 5].map(i => parseInt(pair.lo.slice(i, i + 2), 16));
+  const hi = [1, 3, 5].map(i => parseInt(pair.hi.slice(i, i + 2), 16));
+  for (let y = 0; y < H; y++) {
+    const f = y < H / 2 ? fTop : fBot;
+    for (let x = 0; x < W; x++) {
+      const c = BAYER8[(y % 8) * 8 + (x % 8)] < f ? hi : lo;
+      const k = (y * W + x) * 4;
+      img.data[k] = c[0]; img.data[k + 1] = c[1]; img.data[k + 2] = c[2]; img.data[k + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  return cv;
+}
+// achieved Δ (quanta) of a hex relative to the base, after 8-bit quantisation
+const achievedX = hex => (hexToL(hex) - hexToL(oklchToHex(BASE_L))) / Q;
+</script>
+<script>
+// ui99-battery-v2 · UI. Uses QCore (logic) and the stimulus helpers. Single file, no network.
+const LEVELS = [0.128, 0.1565, 0.1943];   // canvas #060709 and the two levels above it
+const F = DITH_F_BASE;
+const $ = (id) => document.getElementById(id);
+const rnd = Math.random;
+
+function levelCandidates(bL) {
+  const pure = pureCandidates().filter((c) => c.bL === bL)
+    .map((c) => ({ kind: 'pure', x: c.x, key: 'p:' + c.hex, hex: c.hex, bh: c.bh }));
+  const dith = [];
+  DITH_PAIRS.forEach((pair, pi) => {
+    if (pair.bL !== bL) return;
+    for (let t = 0.02; t <= 0.5001; t += 0.02) {
+      const x = ditherX(pair, F, F + t);
+      dith.push({ kind: 'dith', x: +x.toFixed(3), key: 'd:' + pi + ':' + t.toFixed(2), pi, t: +t.toFixed(2) });
+    }
+  });
+  return [...pure, ...dith].filter((c) => c.x > 0.02).sort((a, b) => a.x - b.x);
+}
+function catchFor(bL) {
+  const pure = pureCandidates().filter((c) => c.bL === bL);
+  let best = pure[0];
+  for (const c of pure) if (Math.abs(c.x - 2.5) < Math.abs(best.x - 2.5)) best = c;
+  return { kind: 'pure', x: best.x, key: 'catch', hex: best.hex, bh: best.bh };
+}
+
+const S = { levelIdx: 0, block: null, cur: null, results: [], started: null };
+
+function show(id) { ['s-intro', 's-test', 's-res'].forEach((x) => $(x).classList.toggle('hidden', x !== id)); }
+function setProg(p) { $('prog').style.width = (Math.max(0, Math.min(1, p)) * 100).toFixed(0) + '%'; }
+function wrap(node) { const d = document.createElement('div'); d.className = 'panel'; d.appendChild(node); return d; }
+
+function startLevel() {
+  const bL = LEVELS[S.levelIdx];
+  S.block = QCore.makeBlock(levelCandidates(bL), catchFor(bL), rnd);
+  S.bL = bL;
+  show('s-test');
+  nextTrial();
+}
+
+function nextTrial() {
+  const stim = S.block.next();
+  if (!stim) return finishLevel();
+  S.cur = stim;
+  const panels = $('panels');
+  panels.innerHTML = '';
+  const base = oklchToHex(S.bL);
+  let seamNode, plainNode;
+  if (stim.kind === 'pure' || stim.kind === 'catch') {
+    const seam = document.createElement('div');
+    seam.innerHTML = `<div style="height:50%;background:${stim.bh}"></div><div style="height:50%;background:${stim.hex}"></div>`;
+    const plain = document.createElement('div');
+    plain.innerHTML = `<div style="height:50%;background:${stim.bh}"></div><div style="height:50%;background:${stim.bh}"></div>`;
+    seamNode = seam; plainNode = plain;
+  } else if (stim.kind === 'dith') {
+    const pair = DITH_PAIRS[stim.pi];
+    seamNode = ditherPanel(pair, F, F + stim.t);
+    plainNode = ditherPanel(pair, F, F);
+  } else { // null: two identical plain panels
+    const a = document.createElement('div');
+    a.innerHTML = `<div style="height:50%;background:${base}"></div><div style="height:50%;background:${base}"></div>`;
+    const b = document.createElement('div');
+    b.innerHTML = a.innerHTML;
+    seamNode = a; plainNode = b;
+  }
+  const seamP = wrap(seamNode), plainP = wrap(plainNode);
+  const [left, right] = stim.seamLeft ? [seamP, plainP] : [plainP, seamP];
+  panels.appendChild(left); panels.appendChild(right);
+  const n = S.block.trials.length + 1;
+  $('counter').textContent = `سطح ${S.levelIdx + 1} از ${LEVELS.length} · کوشش ${n}`;
+  setProg((S.levelIdx + Math.min(1, S.block.trials.length / 40)) / LEVELS.length);
+}
+
+function answer(choseLeft) {
+  if (!S.cur) return;
+  S.block.answer(choseLeft);
+  S.cur = null;
+  nextTrial();
+}
+
+function finishLevel() {
+  const r = QCore.blockResult(S.block);
+  S.results.push({ L: S.bL, ...r });
+  S.levelIdx++;
+  if (S.levelIdx < LEVELS.length) startLevel();
+  else finishAll();
+}
+
+function finishAll() {
+  setProg(1);
+  const allValid = S.results.every((r) => r.valid);
+  const qValid = S.results.filter((r) => r.valid).map((r) => r.qBg);
+  const qAll = Math.max(...S.results.map((r) => r.qBg));
+  const overall = { valid: allValid, qBg: allValid ? +qAll.toFixed(3) : null, qBgIfValid: +qAll.toFixed(3), validLevels: qValid.length };
+  const out = {
+    schema: 'ui99-battery-v2', at: new Date().toISOString(),
+    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    screen: { w: screen.width, h: screen.height, dpr: devicePixelRatio },
+    protocol: 'PROTOCOL-PERCEPTION-V1 §5 (k=2)',
+    levels: S.results, overall,
+  };
+  const ok = (v) => v ? '<span class="ok">معتبر</span>' : '<span class="bad">نامعتبر</span>';
+  $('res-body').innerHTML = S.results.map((r) => `
+    <div class="card"><b>سطح L=${r.L}</b> ${ok(r.valid)}<br>
+      آستانه (۷۵٪): <b>${r.x75} q</b> · بازه (۱۰–۹۰٪): ${r.lo} … ${r.hi} · q_bg = ${r.qBg}<br>
+      کوشش‌های تطبیقی: ${r.adaptive} · کل: ${r.trials} · کنترل: ${r.catchAcc} · دو زنجیره: ${r.replicateA} / ${r.replicateB}
+      ${r.reasons.length ? '<br><span class="bad">' + r.reasons.join(' · ') + '</span>' : ''}
+    </div>`).join('') +
+    `<div class="card"><b>جمع</b> ${ok(overall.valid)}<br>
+      ${overall.valid ? `q_bg پیشنهادی (بزرگ‌ترین سطح): <b>${overall.qBg}</b>` : 'هیچ عدد پیشنهادی گزارش نمی‌شود: یک یا چند سطح نامعتبر است و باید دوباره اجرا شود.'}</div>`;
+  $('res-json').value = JSON.stringify(out);
+  try { localStorage.setItem('ui99-battery-v2-last', JSON.stringify(out)); } catch (e) { /* storage blocked: the JSON box still has it */ }
+  show('s-res');
+}
+
+$('btn-start').onclick = () => { S.levelIdx = 0; S.results = []; S.started = Date.now(); startLevel(); };
+$('btn-left').onclick = () => answer(true);
+$('btn-right').onclick = () => answer(false);
+$('btn-restart').onclick = () => { show('s-intro'); };
+$('btn-copy').onclick = () => { $('res-json').select(); navigator.clipboard?.writeText($('res-json').value); };
+document.addEventListener('keydown', (e) => {
+  if (!S.cur) return;
+  if (e.key === 'ArrowLeft') answer(true);
+  if (e.key === 'ArrowRight') answer(false);
+});
+show('s-intro');
+
+</script>
+</body></html>
