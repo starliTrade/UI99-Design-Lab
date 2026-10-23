@@ -393,6 +393,10 @@ export function mistCssVars(role: SurfaceRole, options: MistOptions = {}): Recor
     // and the `fill` option scales it, because a window's frame is fainter than
     // a mass's edge.
     '--liminal-mist-seam': `color-mix(in oklab, ${resolveBorder({ role, kind: 'separator' })} ${Math.round((options.fill ?? 1) * 100)}%, transparent)`,
+    // NO FRAME, A HALO (reader, mist page): a float is held by light, not by a line.
+    // The seam is removed from the stylesheet; in its place a faint halo of the same
+    // ladder-light the surface catches, at the mist's own radius and alpha.
+    '--liminal-mist-halo': `0 0 ${mistHaloRadius(role).toFixed(0)}px rgba(${r}, ${g}, ${b}, ${mistHaloAlpha(role).toFixed(4)})`,
     // Opt-in diffusion only.
     '--liminal-mist-blur': `${m.blur}px`,
   };

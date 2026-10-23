@@ -232,8 +232,8 @@ describe('mist — every published value is a real CSS value', () => {
   );
 
   it('publishes a complete set for every floating role', () => {
-    // 12 per role: the 11 readouts, plus the one shadow variable the stylesheet uses (2.4).
-    expect(all.length).toBe(ROLES.length * 12);
+    // 13 per role: the 11 readouts, the shadow the stylesheet uses (2.4), and the halo (no frame).
+    expect(all.length).toBe(ROLES.length * 13);
   });
 
   it('parses as a CSS value', () => {

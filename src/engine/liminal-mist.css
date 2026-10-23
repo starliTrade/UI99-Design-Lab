@@ -38,9 +38,10 @@
 
   /* The height: a dark shadow below, and one hairline of light on the top edge.
    * No symmetric glow — nothing radiates outward. */
-  box-shadow: var(--liminal-mist-float-shadow), var(--liminal-mist-inner-light);
+  box-shadow: var(--liminal-mist-float-shadow), var(--liminal-mist-inner-light), var(--liminal-mist-halo);
 
-  border: 1px solid var(--liminal-mist-seam);
+  /* NO FRAME: the reader sees light, not a line. The seam variable stays for tests and the contract. */
+  border: 0;
 }
 
 /* OPT-IN: diffuse the backdrop. Worth it only over busy or colourful content —
