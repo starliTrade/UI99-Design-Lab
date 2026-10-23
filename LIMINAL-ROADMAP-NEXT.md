@@ -386,7 +386,7 @@
 ## ۸. چک‌لیست فوری — این هفته چه کنیم
 
 - [ ] فاز ۰.۲: `q` روی ۲ مانیتور دیگر اندازه بگیر (همین `threshold-test-precise.html` را باز کن)
-- [ ] فاز ۰.۴: `transition:all` را حذف کن — ۵ دقیقه کار, یک باگ compositing کمتر
+- [x] فاز ۰.۴: `transition:all` حذف شد (src تمیز بود؛ archive `design-lab/03-master-engine-lab.html` و `breakpoints-test.html` اصلاح شدند) — ۲۰۲۶-۱۰-۲۳
 - [ ] فاز ۱.۳: `verify-hierarchy.mjs` را در CI بیار — الان فقط `verify-component-standard` هست
 - [ ] فاز ۳.۰: `Data Table` را شروع کن — چون بدون آن هیچ Blocks داشبوردی کامل نیست
 - [ ] فاز ۴.۱: نام npm را رزرو کن — `liminal@0.17.22` و `liminal-ui@0.17.0` گرفته شده‌اند، `ui99` آزاد است، `@liminal/core` و `@ui99/*` آزادند — همین امروز `ui99` یا اسکوپ `@liminal` را بگیر
