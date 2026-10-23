@@ -1,5 +1,5 @@
 // ui99-battery-v2 · UI. Uses QCore (logic) and the stimulus helpers. Single file, no network.
-const LEVELS = [0.128, 0.1565, 0.1943];   // canvas #060709 and the two levels above it
+const LEVELS = [0.1565, 0.1943];   // canvas #060709 is NOT tested: its steps are below the 8-bit display floor (protocol §11)
 const F = DITH_F_BASE;
 const $ = (id) => document.getElementById(id);
 const rnd = Math.random;
