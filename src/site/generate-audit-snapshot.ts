@@ -120,12 +120,13 @@ export function buildAuditSnapshotHtml(): string {
 
   // نشست‌های آستانه‌سنجی — زنده از فایلِ اندازه‌گیریِ خودِ خواننده
   type Session = { at: string; q: number; r?: number; falseAlarms?: number; trials?: unknown[] };
-  let sessions: Session[] = [];
-  try {
-    sessions = JSON.parse(readFileSync(resolve(process.cwd(), '.threshold-sessions.json'), 'utf8')) as Session[];
-  } catch {
-    sessions = [];
-  }
+  const sessions: Session[] = (() => {
+    try {
+      return JSON.parse(readFileSync(resolve(process.cwd(), '.threshold-sessions.json'), 'utf8')) as Session[];
+    } catch {
+      return [];
+    }
+  })();
   const trialsTotal = sessions.reduce((a, s) => a + (Array.isArray(s.trials) ? s.trials.length : 0), 0);
 
   // دادهٔ هر لایه
