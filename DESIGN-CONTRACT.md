@@ -314,13 +314,13 @@ $L(n) = 0.128 + n \times 0.009475 \quad | \quad C = 0.0069 \quad | \quad H = 258
 
 <!-- gen:shadows -->
 - **Emenu:**
-  `0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991)`
+  `0 8.0px 28px rgba(1, 2, 3, 0.0991), 0 2px 8.0px rgba(1, 2, 3, 0.0991)`
 - **Epopover:**
-  `0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991)`
+  `0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991)`
 - **Emodal:**
-  `0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991)`
+  `0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991)`
 - **Etoast:**
-  `0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991)`
+  `0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991)`
 <!-- /gen:shadows -->
 
 

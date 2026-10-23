@@ -61,10 +61,10 @@
   --liminal-rim-3-bottom: #0c0e10;
 
   /* ── 3. SHADOW ───────────────────────────────────────────────── */
-  --liminal-shadow-menu: 0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991);
-  --liminal-shadow-popover: 0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991);
-  --liminal-shadow-modal: 0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991);
-  --liminal-shadow-toast: 0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-menu: 0 8.0px 28px rgba(1, 2, 3, 0.0991), 0 2px 8.0px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-popover: 0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-modal: 0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-toast: 0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991);
 
   /* ── 4. SURFACE TINT (fills — never for type) ────────────────── */
   --liminal-tint-faint: rgba(255, 255, 255, 0.01);
@@ -358,10 +358,10 @@
   --liminal-rim-3-bottom: #0c0e10;
 
   /* ── 3. SHADOW ───────────────────────────────────────────────── */
-  --liminal-shadow-menu: 0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991);
-  --liminal-shadow-popover: 0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991);
-  --liminal-shadow-modal: 0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991);
-  --liminal-shadow-toast: 0 14.0px 52px rgba(1, 2, 3, 0.0991), 0 2px 14.0px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-menu: 0 8.0px 28px rgba(1, 2, 3, 0.0991), 0 2px 8.0px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-popover: 0 9.5px 34px rgba(1, 2, 3, 0.0991), 0 2px 9.5px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-modal: 0 11.0px 40px rgba(1, 2, 3, 0.0991), 0 2px 11.0px rgba(1, 2, 3, 0.0991);
+  --liminal-shadow-toast: 0 12.5px 46px rgba(1, 2, 3, 0.0991), 0 2px 12.5px rgba(1, 2, 3, 0.0991);
 
   /* ── 4. SURFACE TINT (fills — never for type) ────────────────── */
   --liminal-tint-faint: rgba(255, 255, 255, 0.01);

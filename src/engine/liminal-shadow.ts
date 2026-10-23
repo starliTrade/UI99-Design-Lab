@@ -104,13 +104,19 @@ export function shadowModel(height: number, hostRgb: readonly number[]) {
   // Two layers, each carrying half the peak, so they overlap TO it.
   const each = 1 - Math.sqrt(1 - peak);
   return {
-    near: 2 + height * 1.5,
-    far: 4 + height * 6,
+    // ONE STEP CLOSER (reader, mist page): the reach is measured from one step below
+    // the surface's height, so every float's shadow is one step tighter than the raw
+    // height would give. Alpha is still solved for one quantum — only the spread moves.
+    near: 2 + (height - SHADOW_REACH_STEPS) * 1.5,
+    far: 4 + (height - SHADOW_REACH_STEPS) * 6,
     nearAlpha: each,
     farAlpha: each,
     peak,
   };
 }
+
+/** How many ladder steps the shadow's reach is pulled in from the surface's height. */
+export const SHADOW_REACH_STEPS = 1;
 
 /** A floating surface's shadow, as a CSS value. */
 export function floatShadow(height: number, hostRgb: readonly number[]): string {

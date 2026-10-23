@@ -1,7 +1,7 @@
 // POLICY §5 — the shadow peak is exactly one quantum below its host, on every
 // ladder level; the two layers recombine to that peak; radius is linear in height.
 import { describe, it, expect } from 'vitest';
-import { shadowPeakAlpha, shadowModel, floatShadow } from '../liminal-shadow';
+import { SHADOW_REACH_STEPS, shadowPeakAlpha, shadowModel, floatShadow } from '../liminal-shadow';
 import { LADDER } from '../liminal-ladder';
 
 const Q = 0.0083;
@@ -37,12 +37,12 @@ describe('POLICY §5 — shadow peak = one quantum, on every level', () => {
     });
   });
 
-  it('the radius is linear in height with the policy constants', () => {
+  it('the radius is linear in height, one step pulled in (SHADOW_REACH_STEPS)', () => {
     const host = rgb(LADDER[2]);
     for (const h of [5, 6, 7, 8]) {
       const m = shadowModel(h, host);
-      expect(m.near).toBeCloseTo(2 + h * 1.5, 9);
-      expect(m.far).toBeCloseTo(4 + h * 6, 9);
+      expect(m.near).toBeCloseTo(2 + (h - SHADOW_REACH_STEPS) * 1.5, 9);
+      expect(m.far).toBeCloseTo(4 + (h - SHADOW_REACH_STEPS) * 6, 9);
     }
   });
 
