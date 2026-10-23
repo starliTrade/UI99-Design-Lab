@@ -19,25 +19,28 @@ h1{font-size:18px}.card{background:#0e1013;border:1px solid #1d2026;border-radiu
 .panel>div{width:150px;height:150px}.bar{height:6px;background:#1d2026;border-radius:3px;margin:8px 0}#prog{height:6px;background:#5b7fb8;width:0;border-radius:3px}
 .ok{color:#7fd39a}.bad{color:#e88a8a}textarea{width:100%;height:90px;direction:ltr;font-size:11px;background:#0e1013;color:#9aa3b2;border:1px solid #1d2026;border-radius:8px}
 .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#field{width:100%;height:56vh;min-height:280px;background:#060709}
+.hidden{display:none!important}
 </style></head>
 <body>
 <h1>اندازه‌گیری q — آزمون هوشمند</h1>
 <div id="bar" class="bar"><div id="prog"></div></div>
 
 <div id="s-intro" class="card">
-  <p>یکی از دو پنل یک خط افقی کم‌رنگ وسطش دارد. نگاه کن و بگو کدام پنل خط دارد: چپ یا راست.</p>
-  <p class="muted">جواب درست یا غلط نداره؛ اگر فرقی نمی‌بینی، حدس بزن. هر کوشش یک انتخاب است؛ بازخورد نمی‌گیری.</p>
+  
+  <p>هر کوشش دو بازه دارد. در یکی از آن‌ها یک درز افقی کم‌رنگ وسط صفحه هست؛ در دیگری نیست. بگو کدام بازه درز داشت: بازهٔ ۱ یا ۲.</p><p class="muted">جواب درست یا غلط نداره؛ اگر فرقی نمی‌بینی، حدس بزن. بازخورد نمی‌گیری.</p>
   <ul class="muted"><li>روشنایی گوشی را معمولی بگذار؛ حالت شب و کنتراست بالا را خاموش کن.</li>
   <li>گوشی را ۳۰ تا ۶۰ سانتی‌متر از چشم نگه دار و سرت را ثابت کن.</li>
-  <li>سه سطح پشت سر هم اجرا می‌شود؛ هر سطح حدود ۳ تا ۴ دقیقه طول می‌کشد.</li></ul>
+  <li>سه سطح پشت سر هم اجرا می‌شود؛ هر سطح حدود ۳ تا ۴ دقیقه طول می‌کشد.</li><li>در هر کوشش، هر بازه حدود ۰.۷ ثانیه نمایش داده می‌شود. فقط بعد از اتمام دو بازه می‌توانی جواب بدهی.</li></ul>
   <div class="row"><button id="btn-start">شروع</button></div>
 </div>
 
-<div id="s-test" class="card hidden">
-  <div id="counter" class="muted"></div>
-  <div id="panels"></div>
-  <div class="row"><button id="btn-left">◀ چپ</button><button id="btn-right">راست ▶</button></div>
-  <p class="muted">با کلیدهای ← و → هم می‌شود جواب داد.</p>
+<div id="s-test" class="hidden">
+  <div id="counter" class="muted" style="padding:8px 14px"></div>
+  <div id="field"></div>
+  <div id="prompt" class="muted" style="text-align:center;padding:8px">…</div>
+  <div class="row" style="padding:8px 14px 14px"><button id="btn-left" disabled>◀ بازهٔ ۱</button><button id="btn-right" disabled>بازهٔ ۲ ▶</button></div>
+  <p class="muted" style="padding:0 14px">با کلیدهای ← (بازهٔ ۱) و → (بازهٔ ۲) هم می‌شود جواب داد.</p>
 </div>
 
 <div id="s-res" class="card hidden">

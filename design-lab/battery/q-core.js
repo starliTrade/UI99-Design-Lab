@@ -82,6 +82,8 @@
       staircase: stAll,
       stA, stB,
       minX: candidates[0].x, maxX: candidates[candidates.length - 1].x,
+      // the largest gap between neighbouring stimulus levels: the resolution of the method here
+      stepMax: candidates.reduce((m, c, i) => (i ? Math.max(m, c.x - candidates[i - 1].x) : m), 0),
     };
   }
 
@@ -101,6 +103,7 @@
 
     const reasons = [];
     if (adaptive.length < MIN_ADAPTIVE) reasons.push(`کوشش تطبیقی کم (${adaptive.length} < ${MIN_ADAPTIVE})`);
+    if (block.stepMax > 0.5) reasons.push(`قدرت تفکیک محرک‌ها کم است (گام ${block.stepMax.toFixed(2)}q > 0.5q؛ کوانتیزیشن ۸بیتی در این سطح)`);
     if (ratio > VALID_RATIO) reasons.push(`بازهٔ آستانه پهن (${ratio.toFixed(2)} > ${VALID_RATIO})`);
     if (rep > REPLICATE_RATIO) reasons.push(`دو زنجیرهٔ مستقل همخوان نیستند (${rep.toFixed(2)} > ${REPLICATE_RATIO})`);
     if (catches.length < 2 || catchOk / catches.length < 0.75) reasons.push(`کنترل ساده کم است (${catchOk}/${catches.length})`);
