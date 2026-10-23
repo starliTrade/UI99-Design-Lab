@@ -16,20 +16,26 @@
  *
  *   node scripts/verify-hierarchy.mjs [url]
  */
+import { readFileSync } from 'node:fs';
 const puppeteer = await import(process.env.PUPPETEER_CORE ?? 'puppeteer-core')
   .then((m) => m.default)
   .catch(async () => (await import('/root/workspace/tools/cdp/node_modules/puppeteer-core/lib/puppeteer/puppeteer-core.js')).default);
 
-const URL = process.argv[2] ?? 'http://localhost:3000/';
+// RATCHET (like verify-component-standard): the number of skipped levels may fall, never rise.
+// A gate at zero would fail on day one — the docs app skips levels today — and a red gate gets turned off.
+const RATCHET = process.argv.includes('--ratchet');
+const positional = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const TARGET = positional[0] ?? 'http://localhost:3000/';
+const BASELINE = JSON.parse(readFileSync(new URL('./verify-hierarchy.baseline.json', import.meta.url), 'utf8'));
 
 const browser = await puppeteer.launch({
-  executablePath: '/usr/bin/google-chrome-stable',
+  executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome-stable',
   headless: 'new',
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
 });
 const page = await browser.newPage();
 await page.setViewport({ width: 1440, height: 1100 });
-await page.goto(URL, { waitUntil: 'load', timeout: 60000 });
+await page.goto(TARGET, { waitUntil: 'load', timeout: 60000 });
 await new Promise((r) => setTimeout(r, 2000));
 
 const report = await page.evaluate(() => {
@@ -107,4 +113,9 @@ console.log(`sits BELOW its host (gap < -0.5): ${below.length}`);
 for (const s of below.slice(0, 5)) console.log(`   S${s.host} → S${s.own}  (${s.gap.toFixed(2)})  <${s.tag} class="${s.cls}">`);
 
 await browser.close();
+if (RATCHET) {
+  const ok = skipped.length <= BASELINE.skipped;
+  console.log(`ratchet: skipped ${skipped.length} · baseline ${BASELINE.skipped} · ${ok ? 'ok' : 'REGRESSED'}`);
+  process.exit(ok ? 0 : 1);
+}
 process.exit(skipped.length === 0 ? 0 : 1);
