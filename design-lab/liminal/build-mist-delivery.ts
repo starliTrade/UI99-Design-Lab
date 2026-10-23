@@ -60,7 +60,7 @@ const html = `<!doctype html>
 <style>
 :root { ${ladderVars.join(' ')} }
 html, body { margin: 0; background: var(--liminal-s0); color: #e9ecf2; font-family: system-ui, sans-serif; }
-main { padding: 28px; max-width: 980px; margin: auto; }
+main { box-sizing: border-box; width: 100%; max-width: 980px; padding: 28px; margin: 0 auto; overflow-x: auto; }
 h1 { font-size: 20px; margin: 0 0 8px; }
 p { color: #9aa3b2; font-size: 14px; line-height: 1.8; max-width: 70ch; }
 .lay { padding: 14px 14px 10px; border-radius: 12px; margin-top: 10px; }
