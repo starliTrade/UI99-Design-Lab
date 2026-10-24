@@ -205,9 +205,9 @@ export interface ShadowSpec {
 export const SHADOW_NEAR_B: ShadowSpec = { offsetY: 2, blur: 8, alpha: 0.45 } as const;
 
 /** The CSS box-shadow for a floating level. Non-floating levels have none. */
-export function shadowCss(level: number, allowCard = false): string {
-  if (!FLOATING_LEVELS_B.includes(level) && !(allowCard && level >= 1 && level <= 3)) {
-    throw new RangeError(`level ${level} is not floating and has no shadow (cards allow it on S1..S3 only with allowCard)`);
+export function shadowCss(level: number): string {
+  if (!Number.isInteger(level) || level < 1 || level > LADDER_B_TOP) {
+    throw new RangeError(`level ${level} has no shadow (the canvas S0 is not a layer; shadows are 1..${LADDER_B_TOP})`);
   }
   const s = SHADOW_NEAR_B;
   return `0 ${s.offsetY}px ${s.blur}px rgba(0,0,0,${s.alpha})`;
@@ -292,39 +292,63 @@ export function focusCss(level: number): string {
 }
 
 /**
- * CARD VARIANTS (rule of 2026-10-24, from the owner).
+ * CHILD STYLES (rule of 2026-10-24, from the owner).
  *
- * A card that sits on a parent takes ONE of four variants, chosen by its
- * sensitivity and content (the choice rule is decided later):
+ * Every surface or component may place a child one level above it (parent + 1).
+ * Each child takes one of four styles, chosen by its sensitivity and content:
  *   - simple:   no border, no rim, no shadow
- *   - bordered: half-step border (BORDER_HALF_B)
- *   - shadowed: near shadow (SHADOW_NEAR_B), allowed on S1..S3 too
- *   - rimmed:   half-step rim (RIM_HALF_B)
- * Border and rim may both be on one card (approved).
+ *   - bordered: half-step border of its level
+ *   - shadowed: near shadow
+ *   - rimmed:   half-step rim of its level
+ * Border and rim may combine on one child (approved). Simple stands alone.
  *
- * Exception: the shadow on a card (S1..S3) is an approved exception to the
- * floating-only rule of §3.7. Floating layers (S4..S6) always have a shadow.
+ * No level is forbidden for a style. Floating levels (S4..S6) also take the
+ * four styles (owner's answer on 2026-10-24, which replaces the earlier
+ * "floating has no border" rule).
+ *
+ * Open: the ceiling. S5 and S6 have no half-step rim table yet, so a rimmed
+ * child at S5 or S6 is refused until the ceiling is decided.
  */
-export type CardVariant = 'simple' | 'bordered' | 'shadowed' | 'rimmed';
+export type ChildStyle = 'simple' | 'bordered' | 'shadowed' | 'rimmed';
 
-export interface CardEdge {
+export interface ChildEdge {
+  readonly level: number;
   readonly border: string | null;
   readonly rim: RimHalf | null;
   readonly shadow: string | null;
 }
 
-/** Edge treatment of a card at `level` with the given variant(s). */
-export function cardEdge(level: number, variants: readonly CardVariant[]): CardEdge {
-  if (!Number.isInteger(level) || level < 1 || level > LADDER_B_TOP - 3) {
-    throw new RangeError(`level ${level} is not a card level (1..${LADDER_B_TOP - 3})`);
+/** The border of a child at `level` (the half step between this level and the next). */
+export function childBorderHex(level: number): string {
+  if (!Number.isInteger(level) || level < 1 || level > LADDER_B_TOP - 1) {
+    throw new RangeError(`level ${level} has no border (needs a level above, 1..${LADDER_B_TOP - 1})`);
   }
-  const has = (v: CardVariant): boolean => variants.includes(v);
-  if (has('simple') && variants.length > 1) {
-    throw new RangeError('simple cannot be combined with another variant');
+  return level <= 3 ? BORDER_HALF_B[level] : computeBorderHalfHex(level);
+}
+
+/**
+ * Edge treatment of a child placed at `parent + 1`.
+ * `parent` is the level of the surface it sits on (0 = canvas, so the child is S1).
+ */
+export function childEdge(parent: number, styles: readonly ChildStyle[]): ChildEdge {
+  if (!Number.isInteger(parent) || parent < 0 || parent >= LADDER_B_TOP) {
+    throw new RangeError(`parent level ${parent} cannot hold a child (0..${LADDER_B_TOP - 1})`);
+  }
+  if (styles.length === 0) {
+    throw new RangeError('a child needs one style (simple, bordered, shadowed or rimmed)');
+  }
+  if (styles.includes('simple') && styles.length > 1) {
+    throw new RangeError('simple stands alone and cannot be combined');
+  }
+  const level = parent + 1;
+  const has = (v: ChildStyle): boolean => styles.includes(v);
+  if (has('rimmed') && (level === 5 || level === 6)) {
+    throw new RangeError(`level ${level} rim is pending the ceiling decision`);
   }
   return {
-    border: has('bordered') ? borderHalfHex(level) : null,
+    level,
+    border: has('bordered') ? childBorderHex(level) : null,
     rim: has('rimmed') ? rimHalfHex(level) : null,
-    shadow: has('shadowed') ? shadowCss(level, true) : null,
+    shadow: has('shadowed') ? shadowCss(level) : null,
   };
 }

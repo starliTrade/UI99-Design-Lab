@@ -18,7 +18,8 @@ import {
   disabledTextCss,
   focusSpec,
   focusCss,
-  cardEdge,
+  childEdge,
+  childBorderHex,
   FOCUS_GAP_PX,
   FOCUS_RING_PX,
   computeRimHalf,
@@ -153,12 +154,11 @@ describe('LADDER B — the shadow is NEAR (chosen by eye 2026-10-24)', () => {
     }
   });
 
-  it('non-floating levels get no shadow, except a card variant on S1..S3', () => {
-    for (const level of [0, 1, 2, 3]) {
-      expect(() => shadowCss(level)).toThrow(/not floating/);
+  it('the canvas (S0) has no shadow; every child level 1..6 has one', () => {
+    expect(() => shadowCss(0)).toThrow(/no shadow/);
+    for (let level = 1; level <= 6; level++) {
+      expect(shadowCss(level)).toBe('0 2px 8px rgba(0,0,0,0.45)');
     }
-    expect(shadowCss(2, true)).toBe('0 2px 8px rgba(0,0,0,0.45)');
-    expect(() => shadowCss(0, true)).toThrow(/not floating/);
   });
 });
 
@@ -221,29 +221,50 @@ describe('LADDER B — focus: 1px gap, lighter ring (chosen by eye 2026-10-24)',
   });
 });
 
-describe('LADDER B — card variants (rule of 2026-10-24)', () => {
+describe('LADDER B — child styles (rule of 2026-10-24)', () => {
   it('simple has no border, no rim, no shadow', () => {
-    expect(cardEdge(1, ['simple'])).toEqual({ border: null, rim: null, shadow: null });
+    expect(childEdge(0, ['simple'])).toEqual({ level: 1, border: null, rim: null, shadow: null });
   });
 
-  it('bordered uses the level border; rimmed uses the level rim; shadowed the near shadow', () => {
-    expect(cardEdge(2, ['bordered']).border).toBe(borderHalfHex(2));
-    expect(cardEdge(2, ['rimmed']).rim).toEqual(rimHalfHex(2));
-    expect(cardEdge(2, ['shadowed']).shadow).toBe('0 2px 8px rgba(0,0,0,0.45)');
+  it('a child sits one level above its parent', () => {
+    expect(childEdge(0, ['simple']).level).toBe(1);
+    expect(childEdge(2, ['simple']).level).toBe(3);
+    expect(childEdge(4, ['simple']).level).toBe(5);
   });
 
-  it('border and rim may combine on one card', () => {
-    const e = cardEdge(3, ['bordered', 'rimmed']);
+  it('bordered uses the child level border; rimmed the rim; shadowed the near shadow', () => {
+    expect(childEdge(1, ['bordered']).border).toBe(borderHalfHex(2));
+    expect(childEdge(1, ['rimmed']).rim).toEqual(rimHalfHex(2));
+    expect(childEdge(1, ['shadowed']).shadow).toBe('0 2px 8px rgba(0,0,0,0.45)');
+  });
+
+  it('border and rim may combine on one child', () => {
+    const e = childEdge(2, ['bordered', 'rimmed']);
     expect(e.border).toBe(borderHalfHex(3));
     expect(e.rim).toEqual(rimHalfHex(3));
   });
 
-  it('simple cannot combine with another variant', () => {
-    expect(() => cardEdge(1, ['simple', 'bordered'])).toThrow(/cannot be combined/);
+  it('floating children (S4..S6) can take a border too', () => {
+    expect(childBorderHex(4)).toMatch(/^#[0-9A-F]{6}$/i);
+    expect(childEdge(3, ['bordered']).border).toBe(childBorderHex(4));
+    expect(childEdge(4, ['bordered']).border).toBe(childBorderHex(5));
   });
 
-  it('a card level is 1..3 only (canvas and floating are not cards)', () => {
-    expect(() => cardEdge(0, ['simple'])).toThrow(/not a card level/);
-    expect(() => cardEdge(4, ['simple'])).toThrow(/not a card level/);
+  it('simple stands alone', () => {
+    expect(() => childEdge(0, ['simple', 'bordered'])).toThrow(/stands alone/);
+  });
+
+  it('a child needs at least one style', () => {
+    expect(() => childEdge(0, [])).toThrow(/needs one style/);
+  });
+
+  it('the rim at S5 and S6 is refused until the ceiling is decided', () => {
+    expect(() => childEdge(4, ['rimmed'])).toThrow(/pending the ceiling/);
+    expect(() => childEdge(5, ['rimmed'])).toThrow(/pending the ceiling/);
+  });
+
+  it('the top level has no child (S6 has nothing above it)', () => {
+    expect(() => childEdge(6, ['simple'])).toThrow(/cannot hold a child/);
+    expect(() => childBorderHex(6)).toThrow(/no border/);
   });
 });
