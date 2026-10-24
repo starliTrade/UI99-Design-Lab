@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · آزمون سقف ریم برای S5 و S6</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.7; padding: 20px 14px 80px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 26px 0 6px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .note { margin-top: 12px; padding: 12px 14px; color: rgba(255,255,255,0.62); font-size: 13px; background: #0b0d0f; border-radius: 10px; }
+  .host { border-radius: 14px; padding: 14px; margin-top: 10px; background: #060709; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+  .cell { border-radius: 14px; padding: 14px; min-height: 96px; box-shadow: 0 1px 4px rgba(0,0,0,0.25); }
+  .clab { font-size: 12px; color: rgba(255,255,255,0.7); }
+  .hex { font-family: "JetBrains Mono", monospace; font-size: 10px; color: rgba(255,255,255,0.45); word-break: break-all; }
+  .s4 { background: #131313; }
+  .s5 { background: #151515; }
+  .s6 { background: #171717; }
+  .r4 { box-shadow: 0 1px 4px rgba(0,0,0,0.25), inset 0 1px 0 #141414, inset 1px 0 0 #141414, inset -1px 0 0 #141414, inset 0 -1px 0 #131313; }
+  .r5h { box-shadow: 0 1px 4px rgba(0,0,0,0.25), inset 0 1px 0 #161616, inset 1px 0 0 #161616, inset -1px 0 0 #161616, inset 0 -1px 0 #151515; }
+  .r5c { box-shadow: 0 1px 4px rgba(0,0,0,0.25), inset 0 1px 0 #171717, inset 1px 0 0 #161616, inset -1px 0 0 #161616, inset 0 -1px 0 #151515; }
+  .r6h { box-shadow: 0 1px 4px rgba(0,0,0,0.25), inset 0 1px 0 #181818, inset 1px 0 0 #181818, inset -1px 0 0 #181818, inset 0 -1px 0 #171717; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th, td { padding: 6px 4px; text-align: right; }
+  th { color: rgba(255,255,255,0.5); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>آزمون سقف ریم برای S5 و S6</h1>
+<div class="muted">ریم نیم‌پله روی S4 تأیید است. S5 و S6 ریم ندارند. این صفحه سه راه را نشان می‌دهد.</div>
+
+<div class="note">
+  <b>پیش از شروع:</b> اتاق کم‌نور، روشنایی معمول، بدون فیلتر. جواب اول را بده.
+  <br>مرجع: S4 با ریم نیم‌پله (تأیید شده). بقیه را با آن مقایسه کنید.
+</div>
+
+<h2>۱. کاندیدها</h2>
+<div class="host"><div class="grid">
+  <div class="cell s4 r4"><div class="clab">مرجع S4 · ریم نیم‌پله (تأیید)</div><div class="hex">بالا #141414 · کنار #141414 · پایین #131313</div></div>
+  <div class="cell s5 r5h"><div class="clab">S5 · ریم نیم‌پله (همان قاعده)</div><div class="hex">بالا #161616 · کنار #161616 · پایین #151515</div></div>
+  <div class="cell s5 r5c"><div class="clab">S5 · ریم محدود به سقف (بالا = S6)</div><div class="hex">بالا #171717 · کنار #161616 · پایین #151515</div></div>
+  <div class="cell s6 r6h"><div class="clab">S6 · ریم نیم‌پله (بیرون از سقف)</div><div class="hex">بالا #181818 · کنار #181818 · پایین #171717</div></div>
+</div></div>
+
+<h2>۲. مقادیر</h2>
+<table>
+  <tr><th>گزینه</th><th>مقدار</th><th>نکته</th></tr>
+  <tr><td>S5 نیم‌پله</td><td>#161616 / #161616 / #151515</td><td>همه در نردبان</td></tr>
+  <tr><td>S5 محدود</td><td>#171717 / #161616 / #151515</td><td>بالا = S6 (آخرین پلهٔ نردبان)</td></tr>
+  <tr><td>S6 نیم‌پله</td><td>#181818 / #181818 / #171717</td><td>بالا بیرون از نردبان (#181818 بالاتر از S6)</td></tr>
+  <tr><td>S6</td><td>بدون ریم</td><td>وضعیت فعلی</td></tr>
+</table>
+
+<h2>۳. انتخاب شما</h2>
+<div class="note">کدام راه را قبول دارید: S5 نیم‌پله، S5 محدود به سقف، S6 نیم‌پله، یا بدون ریم برای S5 و S6؟</div>
+
+</div>
+</body>
+</html>
