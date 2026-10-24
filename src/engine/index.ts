@@ -32,6 +32,7 @@ export * from './liminal-css-vars';
 export * from './liminal-direction';
 export * from './liminal-jalali';
 export * from './liminal-ladder';
+export * from './liminal-ladder-b';
 export * from './liminal-mist';
 export * from './liminal-shadow';
 export * from './liminal-persian';
