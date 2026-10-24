@@ -180,3 +180,35 @@ export function computeRimHalf(level: number): RimHalf {
   };
   return { top: at(k), side: at((2 * k) / 3), bottom: at(k / 3) };
 }
+
+/**
+ * SHADOW — NEAR (chosen by eye, 2026-10-24).
+ *
+ * Only floating layers (S4, S5, S6) carry a shadow. A shadow says "this layer
+ * is above the one below", and nothing else: it never draws a line.
+ *
+ * The chosen shadow is the NEAR candidate: the smallest offset and spread that is
+ * still seen as "floating", and the one closest to the perceptual boundary. The
+ * eye reported the differences between candidates as small, which is why the
+ * smallest one that still reads as floating was taken.
+ *
+ *   offset = 2px  ·  spread = 8px  ·  black at alpha 0.45
+ *
+ * The candidates were: none, near (2/8/0.45), medium (4/16/0.55), far (8/32/0.65).
+ */
+export interface ShadowSpec {
+  readonly offsetY: number;
+  readonly blur: number;
+  readonly alpha: number;
+}
+
+export const SHADOW_NEAR_B: ShadowSpec = { offsetY: 2, blur: 8, alpha: 0.45 } as const;
+
+/** The CSS box-shadow for a floating level. Non-floating levels have none. */
+export function shadowCss(level: number): string {
+  if (!FLOATING_LEVELS_B.includes(level)) {
+    throw new RangeError(`level ${level} is not floating and has no shadow`);
+  }
+  const s = SHADOW_NEAR_B;
+  return `0 ${s.offsetY}px ${s.blur}px rgba(0,0,0,${s.alpha})`;
+}

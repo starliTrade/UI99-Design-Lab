@@ -13,6 +13,8 @@ import {
   RIM_HALF_B,
   rimHalfHex,
   computeRimHalf,
+  SHADOW_NEAR_B,
+  shadowCss,
 } from '../liminal-ladder-b';
 
 /** Approved on 2026-10-24. Changing any of these is a new decision, not a refactor. */
@@ -127,5 +129,24 @@ describe('LADDER B — the rim is half a step (eye-approved 2026-10-24)', () => 
     expect(() => rimHalfHex(0)).toThrow(RangeError);
     expect(() => rimHalfHex(5)).toThrow(RangeError);
     expect(() => rimHalfHex(6)).toThrow(RangeError);
+  });
+});
+
+
+describe('LADDER B — the shadow is NEAR (chosen by eye 2026-10-24)', () => {
+  it('the approved shadow is the near candidate', () => {
+    expect(SHADOW_NEAR_B).toEqual({ offsetY: 2, blur: 8, alpha: 0.45 });
+  });
+
+  it('floating levels get the shadow, as a CSS box-shadow', () => {
+    for (const level of FLOATING_LEVELS_B) {
+      expect(shadowCss(level)).toBe('0 2px 8px rgba(0,0,0,0.45)');
+    }
+  });
+
+  it('non-floating levels get no shadow', () => {
+    for (const level of [0, 1, 2, 3]) {
+      expect(() => shadowCss(level)).toThrow(/not floating/);
+    }
   });
 });
