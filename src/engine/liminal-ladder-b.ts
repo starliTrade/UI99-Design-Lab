@@ -85,7 +85,10 @@ export function ladderHex(level: number): string {
 }
 
 /**
- * BORDER — HALF A STEP (approved by eye, 2026-10-24).
+ * BORDER — HALF A STEP, ONLY ON NON-FLOATING LEVELS (approved by eye, 2026-10-24).
+ *
+ * Floating layers (S4 sub-overlay, S5 popover, S6 modal) have NO border. They are
+ * separated from the layer below by their shadow, not by a line.
  *
  * A border sits BETWEEN two levels. It is the lightness halfway between the
  * level it belongs to and the level above it, so it reads as a line, not as a
@@ -98,16 +101,20 @@ export function ladderHex(level: number): string {
 export const BORDER_HALF_B: readonly string[] = [
   '#090909', // S0 → between S0 and S1
   '#0D0D0D', // S1 → between S1 and S2
-  '#101010', // S2
-  '#121212', // S3
-  '#141414', // S4
-  '#161616', // S5 → between S5 and S6
+  '#101010', // S2 → between S2 and S3
+  '#121212', // S3 → between S3 and S4
 ] as const;
 
-/** The half-step border colour for a level. The top has no border above it. */
+/** Levels that float above the layer below: they never carry a border. */
+export const FLOATING_LEVELS_B: readonly number[] = [4, 5, 6] as const;
+
+/** The half-step border colour for a level. Floating levels have none. */
 export function borderHalfHex(level: number): string {
-  if (!Number.isInteger(level) || level < 0 || level >= LADDER_B_TOP) {
-    throw new RangeError(`level ${level} has no half-step border (0..${LADDER_B_TOP - 1})`);
+  if (!Number.isInteger(level) || level < 0 || level > LADDER_B_TOP) {
+    throw new RangeError(`level ${level} is outside the ladder (0..${LADDER_B_TOP})`);
+  }
+  if (FLOATING_LEVELS_B.includes(level)) {
+    throw new RangeError(`level ${level} is floating and has no border (shadow only)`);
   }
   return BORDER_HALF_B[level];
 }

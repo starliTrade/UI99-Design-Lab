@@ -7,6 +7,7 @@ import {
   stepLStar,
   ladderHex,
   BORDER_HALF_B,
+  FLOATING_LEVELS_B,
   borderHalfHex,
   computeBorderHalfHex,
   RIM_HALF_B,
@@ -81,22 +82,25 @@ describe('LADDER B — the eye-test record is internally consistent', () => {
 
 
 describe('LADDER B — the border is half a step (eye-approved 2026-10-24)', () => {
-  it('the table matches the computed half-step for every level that has one', () => {
-    for (let level = 0; level < LADDER_B_TOP; level++) {
+  it('the table matches the computed half-step for every non-floating level', () => {
+    for (let level = 0; level <= 3; level++) {
       expect(BORDER_HALF_B[level]).toBe(computeBorderHalfHex(level));
     }
   });
 
   it('every border is neutral and sits between its level and the next', () => {
-    for (let level = 0; level < LADDER_B_TOP; level++) {
+    for (let level = 0; level <= 3; level++) {
       const b = lightnessStar(BORDER_HALF_B[level]);
       expect(b).toBeGreaterThan(lightnessStar(LADDER_B[level].hex));
       expect(b).toBeLessThan(lightnessStar(LADDER_B[level + 1].hex));
     }
   });
 
-  it('the top level has no border above it', () => {
-    expect(() => borderHalfHex(LADDER_B_TOP)).toThrow(RangeError);
+  it('floating levels (S4, S5, S6) have no border — they are separated by shadow only', () => {
+    expect(FLOATING_LEVELS_B).toEqual([4, 5, 6]);
+    for (const level of FLOATING_LEVELS_B) {
+      expect(() => borderHalfHex(level)).toThrow(/floating/);
+    }
     expect(() => borderHalfHex(-1)).toThrow(RangeError);
   });
 });
