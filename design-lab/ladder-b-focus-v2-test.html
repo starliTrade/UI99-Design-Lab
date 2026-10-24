@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · فوکوس بدون بوردر رنگی روی نردبان B</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.75; padding: 20px 14px 80px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 28px 0 4px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .note { margin-top: 12px; padding: 12px 14px; color: rgba(255,255,255,0.62); font-size: 13px; background: #0b0d0f; border-radius: 10px; }
+  .host { border-radius: 14px; padding: 18px 12px; margin-top: 8px; background: #0E0E0E; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .opt { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .lab { font-size: 12px; color: rgba(255,255,255,0.6); }
+  .hex { font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.45); text-align: center; white-space: pre; }
+  .btn { font: inherit; font-size: 14px; padding: 10px 18px; border-radius: 10px; border: none; color: rgba(255,255,255,0.92); min-width: 120px; }
+  .btn.ref { background: #111111; }
+  .btn.hov { background: #121212; }
+  .btn.f1 { background: #131313; }
+  .btn.f2 { background: #131313; box-shadow: inset 0 1px 0 #141414, inset 1px 0 0 #141414, inset -1px 0 0 #141414, inset 0 -1px 0 #131313; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th, td { padding: 6px 4px; text-align: right; }
+  th { color: rgba(255,255,255,0.5); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>آزمون فوکوس بدون بوردر رنگی</h1>
+<div class="muted">هیچ حلقهٔ رنگی نیست. فوکوس فقط با سطح نردبان و ریم ساخته می‌شود. دکمه‌ها روی S2 و پایه‌شان S3.</div>
+
+<div class="note">
+  <b>پیش از شروع:</b> اتاق کم‌نور، روشنایی معمول، بدون فیلتر. جواب اول را بده.
+  <br>این صفحه حالت‌ها را ثابت نشان می‌دهد، نه فوکوس زنده.
+</div>
+
+<h2>۱. مرجع و کاندیدها</h2>
+<div class="muted">مرجع: سطح پایه S3. هاور (تأییدشده) کنار آن است تا فاصلهٔ فوکوس با هاور دیده شود.</div>
+<div class="host">
+  <div class="row">
+    <div class="opt"><button class="btn ref" data-kind="ref">مرجع</button><div class="lab">S3</div><div class="hex">#111111</div></div>
+    <div class="opt"><button class="btn hov" data-kind="hov">هاور</button><div class="lab">هاور (تأیید)</div><div class="hex">#121212</div></div>
+  </div>
+  <div class="row" style="margin-top:18px">
+    <div class="opt"><button class="btn f1" data-kind="f1">فوکوس F1</button><div class="lab">یک پله بالاتر</div><div class="hex">#131313</div></div>
+    <div class="opt"><button class="btn f2" data-kind="f2">فوکوس F2</button><div class="lab">یک پله + ریم نیم‌پله</div><div class="hex">#131313 + ریم #141414 / #141414 / #131313</div></div>
+  </div>
+</div>
+
+<h2>۲. فرق با اکتیو و هاور</h2>
+<div class="muted">F1 به هاور نزدیک است (فقط نیم پله فرق دارد). F2 ریم دارد، پس شبیه اکتیو می‌شود. این فاصله‌ها را با چشم بسنجید.</div>
+<table>
+  <tr><th>حالت</th><th>سطح</th><th>ریم</th></tr>
+  <tr><td>هاور (تأیید)</td><td>#121212</td><td>ندارد</td></tr>
+  <tr><td>اکتیو (تأیید)</td><td>#111111</td><td>#121212 / #121212 / #111111</td></tr>
+  <tr><td>فوکوس F1</td><td>#131313</td><td>ندارد</td></tr>
+  <tr><td>فوکوس F2</td><td>#131313</td><td>#141414 / #141414 / #131313</td></tr>
+</table>
+
+<h2>۳. انتخاب شما</h2>
+<div class="muted">کدام فوکوس قابل‌قبول است؟ F1، F2، هیچ‌کدام، یا نیاز به کاندید دیگر.</div>
+<div class="note" id="sum">هنوز انتخاب نشده.</div>
+
+</div>
+</body>
+</html>
