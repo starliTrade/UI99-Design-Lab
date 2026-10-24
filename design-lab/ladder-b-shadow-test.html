@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · آزمون چشمی سایه روی نردبان B</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.75; padding: 20px 14px 80px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 28px 0 8px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .note { margin-top: 12px; padding: 12px 14px; border-right: 2px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.62); font-size: 13px; }
+  .grid { display: grid; grid-template-columns: 64px repeat(4, 1fr); gap: 8px; margin-top: 12px; align-items: stretch; }
+  .head { font-size: 12px; color: rgba(255,255,255,0.55); text-align: center; align-self: end; }
+  .lvl { font-family: "JetBrains Mono", monospace; font-size: 12px; color: rgba(255,255,255,0.5); align-self: center; }
+  .cell { border-radius: 12px; padding: 14px 8px; min-height: 120px; display: flex; align-items: center; justify-content: center; }
+  .card { border-radius: 10px; padding: 10px 8px; width: 100%; min-height: 86px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(255,255,255,0.04); }
+  .card .t { font-size: 12px; color: rgba(255,255,255,0.75); }
+  .card .c { align-self: flex-start; padding: 5px 9px; border-radius: 7px; font-size: 11px; color: rgba(255,255,255,0.85); }
+  .btn { font: inherit; font-size: 14px; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.16); background: #131518; color: rgba(255,255,255,0.9); cursor: pointer; }
+  .btn.pick { border-color: #6EE0B4; color: #6EE0B4; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .hex { font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.45); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th, td { padding: 6px 4px; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: right; }
+  th { color: rgba(255,255,255,0.5); font-weight: 500; }
+  textarea { width: 100%; min-height: 70px; margin-top: 8px; background: #0b0d0f; color: rgba(255,255,255,0.88); border: 1px solid rgba(255,255,255,0.14); border-radius: 10px; padding: 10px; font: inherit; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>آزمون چشمی سایه روی نردبان B</h1>
+<div class="muted">سایه فقط برای <b>سطوح شناور</b> است، یعنی سطحی که روی سطح دیگری بلند شده (منو، پاپ‌اور، مودال). هر کارت روی میزبان پایین‌ترش نشسته و سایه‌اش روی همان میزبان می‌افتد. بگو کدام ستون <b>شناور بودن را نشان می‌دهد ولی زیاد نیست</b>.</div>
+
+<div class="note">
+  <b>پیش از شروع:</b> همان شرایط آزمون‌های قبل: اتاق کم‌نور، روشنایی معمول، بدون فیلتر، تمام‌صفحه. جواب اول را بده.
+  <br>این آزمون فقط سایه را می‌سنجد؛ مرز و ریم در کارت‌ها نیستند.
+</div>
+
+<h2>۱. مقایسه</h2>
+<div class="grid" id="grid"></div>
+
+<h2>۲. کدام سایه؟</h2>
+<div class="muted">یک گزینه را انتخاب کن. «بدون سایه» یعنی سطح شناور هم تخت بماند.</div>
+<div class="row" id="choices"></div>
+<div class="muted" id="choiceInfo" style="margin-top:6px">انتخاب: —</div>
+
+<h2>۳. یادداشت</h2>
+<textarea id="note" placeholder="کجا شناوری دیده شد، کجا سایه زیادی بود، و نمایشگرت چیست."></textarea>
+<div class="row"><button class="btn" id="download">دانلود نتیجه (JSON)</button></div>
+
+<h2>۴. مقادیر (بعد از آزمون)</h2>
+<table id="values"></table>
+
+</div>
+
+<script>
+// Ladder B (approved). Canvas S0 + six levels.
+const P = ['#060709', '#0B0B0B', '#0E0E0E', '#111111', '#131313', '#151515', '#171717'];
+const NAMES = ['بوم', 'surface', 'elevated', 'overlay', 'sub-overlay', 'popover', 'modal'];
+
+// Shadow candidates. Each is a real CSS box-shadow: offset (px), blur (px), alpha of black.
+// They are CANDIDATES for the eye, not derived values. The approved one gets a formula later.
+const VARIANTS = [
+  { id: 'none',   label: 'بدون سایه', y: 0, blur: 0,  a: 0 },
+  { id: 'near',   label: 'نزدیک',     y: 2, blur: 8,  a: 0.45 },
+  { id: 'medium', label: 'متوسط',     y: 4, blur: 16, a: 0.55 },
+  { id: 'far',    label: 'دور',       y: 8, blur: 32, a: 0.65 },
+];
+const shadowOf = (v) => v.a === 0 ? 'none' : `0 ${v.y}px ${v.blur}px rgba(0,0,0,${v.a})`;
+
+// Floating levels. Each card sits on the level BELOW it (its host), per the adjacency rule.
+const LEVELS = [4, 5, 6];
+
+// ---- grid: rows = floating levels S4..S6 (card on that level, sitting on host S(n-1)), cols = shadows ----
+const grid = document.getElementById('grid');
+grid.appendChild(Object.assign(document.createElement('div'), { className: 'head' }));
+VARIANTS.forEach(v => grid.appendChild(Object.assign(document.createElement('div'), { className: 'head', textContent: v.label })));
+LEVELS.forEach(n => {
+  const lab = document.createElement('div');
+  lab.className = 'lvl';
+  lab.textContent = `S${n}`;
+  grid.appendChild(lab);
+  VARIANTS.forEach(v => {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.style.background = P[n - 1];           // the host surface the shadow falls on
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.background = P[n];
+    card.style.boxShadow = shadowOf(v);
+    card.innerHTML = `<div class="t">${NAMES[n]}</div><span class="c" style="background:${P[n + 1]}">دکمه</span>`;
+    cell.appendChild(card);
+    grid.appendChild(cell);
+  });
+});
+
+// ---- choices ----
+const pickAns = { choice: null };
+const choicesBox = document.getElementById('choices');
+[...VARIANTS.map(v => [v.id, v.label]), ['weak', 'سایه ضعیف‌تر از همه']].forEach(([id, label]) => {
+  const b = document.createElement('button');
+  b.className = 'btn';
+  b.textContent = label;
+  b.onclick = () => {
+    pickAns.choice = id;
+    choicesBox.querySelectorAll('.btn').forEach(x => x.classList.toggle('pick', x === b));
+    document.getElementById('choiceInfo').textContent = 'انتخاب: ' + label;
+  };
+  choicesBox.appendChild(b);
+});
+
+// ---- values (after the test) ----
+let html = '<tr><th>شناور</th><th>میزبان</th><th>سایه</th><th>فاصله (px)</th><th>پخش (px)</th><th>تیرگی</th></tr>';
+LEVELS.forEach(n => VARIANTS.filter(v => v.a > 0).forEach(v => {
+  html += `<tr><td>S${n}</td><td>S${n-1}</td><td>${v.label}</td><td>${v.y}</td><td>${v.blur}</td><td>${v.a}</td></tr>`;
+}));
+html += '<tr><td colspan="6" class="muted" style="text-align:right">این مقادیر کاندید هستند؛ بعد از تأیید، فرمول از روی شکل تأییدشده ساخته می‌شود.</td></tr>';
+document.getElementById('values').innerHTML = html;
+
+// ---- export ----
+document.getElementById('download').onclick = () => {
+  const data = {
+    test: 'ladder-b-shadow-test',
+    created: new Date().toISOString(),
+    ladder: P,
+    levels: LEVELS,
+    variants: VARIANTS.map(v => ({ id: v.id, label: v.label, offsetY: v.y, blur: v.blur, alpha: v.a })),
+    choice: pickAns.choice,
+    note: document.getElementById('note').value,
+    screen: { width: screen.width, height: screen.height, dpr: devicePixelRatio },
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ladder-b-shadow-test.json';
+  a.click();
+};
+</script>
+</body>
+</html>
