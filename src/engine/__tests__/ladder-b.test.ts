@@ -25,6 +25,7 @@ import {
   HALO_B,
   HALO_TARGETS,
   haloFor,
+  MEASUREMENT_B,
   childBorderHex,
   FOCUS_GAP_PX,
   FOCUS_RING_PX,
@@ -341,5 +342,16 @@ describe('LADDER B — halo targets (any element may take a halo; none by defaul
 
   it('a target outside the list is refused', () => {
     expect(() => haloFor('canvas' as never, 'soft')).toThrow(/not a halo target/);
+  });
+});
+
+describe('LADDER B — recorded measurement (approved: eye + system + formula)', () => {
+  it('the two sessions are recorded as they were measured', () => {
+    expect(MEASUREMENT_B.pairs['S5-S6']).toEqual([10, 3]);
+    expect(MEASUREMENT_B.pairs['S0-S1']).toEqual([12, 12]);
+  });
+
+  it('the decision says S4..S6 are separated by border, rim or shadow', () => {
+    expect(MEASUREMENT_B.decision).toMatch(/border, rim or shadow/);
   });
 });

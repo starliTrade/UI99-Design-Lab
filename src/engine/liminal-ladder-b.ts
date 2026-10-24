@@ -453,3 +453,26 @@ export function haloFor(target: HaloTarget, name: HaloName | null): string | nul
   }
   return name === null ? null : haloCss(name);
 }
+
+/**
+ * MEASUREMENT — recorded results of the three-alternative forced-choice test
+ * (design-lab/ladder-b-measure-test.html). Chance is 1/3.
+ *
+ * Session 1 and session 2 are both one observer on one device; they are kept as
+ * recorded. The decision (owner, 2026-10-24) is that steps S4..S6 are separated
+ * by border, rim or shadow, not by colour difference. The ladder values do not change.
+ *
+ * Status: "eye + system + formula" approved. No further repetition is planned.
+ */
+export const MEASUREMENT_B = {
+  chance: 1 / 3,
+  pairs: {
+    'S0-S1': [12, 12],
+    'S1-S2': [12, 12],
+    'S2-S3': [12, 12],
+    'S3-S4': [11, 9],
+    'S4-S5': [10, 6],
+    'S5-S6': [10, 3],
+  },
+  decision: 'S4..S6 are separated by border, rim or shadow (not by colour)',
+} as const;
