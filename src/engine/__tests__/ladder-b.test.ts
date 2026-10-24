@@ -145,19 +145,19 @@ describe('LADDER B — the rim is half a step (eye-approved 2026-10-24)', () => 
 
 describe('LADDER B — the shadow is NEAR (chosen by eye 2026-10-24)', () => {
   it('the approved shadow is the near candidate', () => {
-    expect(SHADOW_NEAR_B).toEqual({ offsetY: 2, blur: 8, alpha: 0.45 });
+    expect(SHADOW_NEAR_B).toEqual({ offsetY: 1, blur: 4, alpha: 0.25 });
   });
 
   it('floating levels get the shadow, as a CSS box-shadow', () => {
     for (const level of FLOATING_LEVELS_B) {
-      expect(shadowCss(level)).toBe('0 2px 8px rgba(0,0,0,0.45)');
+      expect(shadowCss(level)).toBe('0 1px 4px rgba(0,0,0,0.25)');
     }
   });
 
   it('the canvas (S0) has no shadow; every child level 1..6 has one', () => {
     expect(() => shadowCss(0)).toThrow(/no shadow/);
     for (let level = 1; level <= 6; level++) {
-      expect(shadowCss(level)).toBe('0 2px 8px rgba(0,0,0,0.45)');
+      expect(shadowCss(level)).toBe('0 1px 4px rgba(0,0,0,0.25)');
     }
   });
 });
@@ -235,7 +235,7 @@ describe('LADDER B — child styles (rule of 2026-10-24)', () => {
   it('bordered uses the child level border; rimmed the rim; shadowed the near shadow', () => {
     expect(childEdge(1, ['bordered']).border).toBe(borderHalfHex(2));
     expect(childEdge(1, ['rimmed']).rim).toEqual(rimHalfHex(2));
-    expect(childEdge(1, ['shadowed']).shadow).toBe('0 2px 8px rgba(0,0,0,0.45)');
+    expect(childEdge(1, ['shadowed']).shadow).toBe('0 1px 4px rgba(0,0,0,0.25)');
   });
 
   it('border and rim may combine on one child', () => {

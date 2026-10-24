@@ -192,9 +192,11 @@ export function computeRimHalf(level: number): RimHalf {
  * eye reported the differences between candidates as small, which is why the
  * smallest one that still reads as floating was taken.
  *
- *   offset = 2px  ·  spread = 8px  ·  black at alpha 0.45
+ *   offset = 1px  ·  spread = 4px  ·  black at alpha 0.25  (candidate A, 2026-10-24)
  *
- * The candidates were: none, near (2/8/0.45), medium (4/16/0.55), far (8/32/0.65).
+ * Earlier near (2/8/0.45) was judged too black and loud on children and was replaced.
+ * The soft candidates were A (1/4/0.25), B (2/8/0.20), C (4/16/0.25), D (1/2/0.30).
+ * A was chosen: the least darkness that still separates a layer from the one below.
  */
 export interface ShadowSpec {
   readonly offsetY: number;
@@ -202,7 +204,7 @@ export interface ShadowSpec {
   readonly alpha: number;
 }
 
-export const SHADOW_NEAR_B: ShadowSpec = { offsetY: 2, blur: 8, alpha: 0.45 } as const;
+export const SHADOW_NEAR_B: ShadowSpec = { offsetY: 1, blur: 4, alpha: 0.25 } as const;
 
 /** The CSS box-shadow for a floating level. Non-floating levels have none. */
 export function shadowCss(level: number): string {
