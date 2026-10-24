@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · آزمون چشمی فوکوس، اکتیو و غیرفعال روی نردبان B</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.75; padding: 20px 14px 80px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 28px 0 4px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .note { margin-top: 12px; padding: 12px 14px; color: rgba(255,255,255,0.62); font-size: 13px; background: #0b0d0f; border-radius: 10px; }
+  .host { border-radius: 14px; padding: 16px 12px; margin-top: 8px; background: #0E0E0E; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .opt { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .opt .lab { font-size: 12px; color: rgba(255,255,255,0.6); }
+  .btn { font: inherit; font-size: 14px; padding: 10px 18px; border-radius: 10px; border: none; color: rgba(255,255,255,0.92); min-width: 120px; background: #111111; }
+  .btn.dis { color: rgba(255,255,255,0.35); background: #131313; }
+  .pick { font: inherit; font-size: 13px; padding: 8px 12px; border-radius: 9px; border: none; background: #131518; color: rgba(255,255,255,0.9); cursor: pointer; }
+  .pick.on { background: #1c1f24; color: #6EE0B4; }
+  .btnrow { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; justify-content: center; }
+  .hex { font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.45); }
+  .sum { margin-top: 6px; color: rgba(255,255,255,0.55); font-size: 13px; }
+  textarea { width: 100%; min-height: 70px; margin-top: 8px; background: #0b0d0f; color: rgba(255,255,255,0.88); border: none; border-radius: 10px; padding: 10px; font: inherit; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th, td { padding: 6px 4px; text-align: right; }
+  th { color: rgba(255,255,255,0.5); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>آزمون چشمی فوکوس، اکتیو و غیرفعال</h1>
+<div class="muted">سه حالت بازنویسی‌شده، هر کدام با کاندیدهای کنار هم. دکمه‌ها روی سطح کار S2 هستند و پایه‌شان S3.</div>
+
+<div class="note">
+  <b>پیش از شروع:</b> اتاق کم‌نور، روشنایی معمول، بدون فیلتر. جواب اول را بده.
+  <br>هاور از قبل تأیید شده (نیم پله بالا). اینجا فقط فوکوس، اکتیو و غیرفعال هستند.
+</div>
+
+<h2>۱. فوکوس — دو حلقه با فاصله</h2>
+<div class="muted">دو حلقهٔ باریک با یک فاصلهٔ رنگ سطح بین‌شان. کدام؟</div>
+<div class="host"><div class="row" id="focusRow"></div></div>
+<div class="btnrow">
+  <button class="pick" data-state="focus" data-id="d1">دو حلقهٔ هم‌رنگ، فاصلهٔ ۱px</button>
+  <button class="pick" data-state="focus" data-id="d2">دو حلقهٔ هم‌رنگ، فاصلهٔ ۲px</button>
+  <button class="pick" data-state="focus" data-id="d3">حلقهٔ دوم کم‌رنگ‌تر، فاصلهٔ ۱px</button>
+</div>
+
+<h2>۲. اکتیو — ریم نیم‌پله</h2>
+<div class="muted">دکمه فشرده‌شده با ریم نیم‌پله (روشن در بالا، کم‌تر در پایین). کدام؟</div>
+<div class="host"><div class="row" id="activeRow"></div></div>
+<div class="btnrow">
+  <button class="pick" data-state="active" data-id="rim">ریم نیم‌پله</button>
+  <button class="pick" data-state="active" data-id="sink">فرورفتن نیم‌پله (قبلی)</button>
+</div>
+
+<h2>۳. غیرفعال — نیم پله پایین، متن کم‌رنگ</h2>
+<div class="muted">همان کاندید پیشنهادی تو. برای تأیید.</div>
+<div class="host"><div class="row" id="disabledRow"></div></div>
+<div class="btnrow"><button class="pick" data-state="disabled" data-id="half">تأیید</button></div>
+
+<h2>۴. انتخاب‌های من</h2>
+<div class="sum" id="summary">هنوز انتخابی نشده.</div>
+<textarea id="note" placeholder="هر حالت را چه دیدی؟ کدام زیادی بود، کدام گم بود؟"></textarea>
+<div class="btnrow"><button class="pick" id="download">دانلود نتیجه (JSON)</button></div>
+
+<h2>۵. مقادیر (بعد از آزمون)</h2>
+<table id="values"></table>
+
+</div>
+
+<script>
+// Ladder B (approved). Button fill S3 on work surface S2.
+const P = ['#060709', '#0B0B0B', '#0E0E0E', '#111111', '#131313', '#151515', '#171717'];
+const FILL = P[3], HOST = P[2];
+
+// ---- colour maths ----
+function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+function inv(v) { return v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055; }
+function Y(h) { const r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), b = parseInt(h.slice(5,7),16); return 0.2126*lin(r) + 0.7152*lin(g) + 0.0722*lin(b); }
+function Lstar(h) { const y = Y(h); return y > 0.008856 ? 116*Math.cbrt(y) - 16 : 903.3*y; }
+function fromL(l) {
+  const y = l > 8 ? Math.pow((l + 16) / 116, 3) : l / 903.3;
+  const v = Math.round(Math.max(0, Math.min(1, inv(y))) * 255);
+  const x = v.toString(16).padStart(2, '0').toUpperCase();
+  return '#' + x + x + x;
+}
+function offsetFrom(level, steps) {
+  const base = Lstar(P[level]), step = Lstar(P[level + 1]) - base;
+  return fromL(base + steps * step);
+}
+
+// ---- focus: two rings with a gap of the host colour ----
+const RING = 'rgba(255,255,255,0.75)';
+const RING_SOFT = 'rgba(255,255,255,0.35)';
+const FOCUS = {
+  d1: `0 0 0 1px ${RING}, 0 0 0 2px ${HOST}, 0 0 0 3px ${RING}`,
+  d2: `0 0 0 1px ${RING}, 0 0 0 3px ${HOST}, 0 0 0 4px ${RING}`,
+  d3: `0 0 0 1px ${RING}, 0 0 0 2px ${HOST}, 0 0 0 3px ${RING_SOFT}`,
+};
+
+// ---- active: half-step rim (same shape as the approved rim: top 0.5, sides 1/3, bottom 1/6) ----
+const RIM = {
+  top: offsetFrom(3, 0.5),
+  side: offsetFrom(3, 0.5 * 2 / 3),
+  bottom: offsetFrom(3, 0.5 / 3),
+};
+const ACTIVE = {
+  rim: `inset 0 1px 0 ${RIM.top}, inset 1px 0 0 ${RIM.side}, inset -1px 0 0 ${RIM.side}, inset 0 -1px 0 ${RIM.bottom}`,
+  sink: 'none',
+};
+const SINK_FILL = offsetFrom(3, -0.5);
+
+// ---- rows ----
+function btn(label, { fill = FILL, shadow = 'none', dis = false, bg = null } = {}, hexLabel = fill) {
+  const wrap = document.createElement('div');
+  wrap.className = 'opt';
+  const b = document.createElement('button');
+  b.className = 'btn' + (dis ? ' dis' : '');
+  b.style.background = bg ?? fill;
+  b.style.boxShadow = shadow;
+  b.textContent = label;
+  const h = document.createElement('div');
+  h.className = 'hex';
+  h.textContent = hexLabel;
+  wrap.appendChild(b); wrap.appendChild(h);
+  return wrap;
+}
+const focusRow = document.getElementById('focusRow');
+focusRow.appendChild(btn('د۱', { shadow: FOCUS.d1 }, 'd1'));
+focusRow.appendChild(btn('د۲', { shadow: FOCUS.d2 }, 'd2'));
+focusRow.appendChild(btn('د۳', { shadow: FOCUS.d3 }, 'd3'));
+
+const activeRow = document.getElementById('activeRow');
+activeRow.appendChild(btn('ریم', { shadow: ACTIVE.rim, bg: FILL }, 'rim'));
+activeRow.appendChild(btn('فرورفته', { fill: SINK_FILL }, 'sink'));
+
+const disabledRow = document.getElementById('disabledRow');
+disabledRow.appendChild(btn('غیرفعال', { fill: offsetFrom(3, -0.5), dis: true }, 'half'));
+
+// ---- picks ----
+const picks = { focus: null, active: null, disabled: null };
+document.querySelectorAll('.pick[data-state]').forEach(b => b.onclick = () => {
+  const s = b.dataset.state;
+  picks[s] = b.dataset.id;
+  document.querySelectorAll(`.pick[data-state="${s}"]`).forEach(x => x.classList.toggle('on', x === b));
+  document.getElementById('summary').textContent =
+    `فوکوس: ${picks.focus ?? '—'}  ·  اکتیو: ${picks.active ?? '—'}  ·  غیرفعال: ${picks.disabled ?? '—'}`;
+});
+
+// ---- values ----
+let html = '<tr><th>حالت</th><th>کاندید</th><th>مقدار</th></tr>';
+Object.entries(FOCUS).forEach(([k, v]) => html += `<tr><td>فوکوس</td><td>${k}</td><td class="hex">${v}</td></tr>`);
+html += `<tr><td>اکتیو</td><td>ریم</td><td class="hex">بالا ${RIM.top} · کنار ${RIM.side} · پایین ${RIM.bottom}</td></tr>`;
+html += `<tr><td>اکتیو</td><td>فرورفته</td><td class="hex">${SINK_FILL}</td></tr>`;
+html += `<tr><td>غیرفعال</td><td>نیم پله پایین</td><td class="hex">${offsetFrom(3, -0.5)}</td></tr>`;
+document.getElementById('values').innerHTML = html;
+
+// ---- export ----
+document.getElementById('download').onclick = () => {
+  const data = {
+    test: 'ladder-b-focus-active-test',
+    created: new Date().toISOString(),
+    ladder: P,
+    candidates: { focus: FOCUS, active: { rim: RIM, sinkFill: SINK_FILL }, disabled: { fill: offsetFrom(3, -0.5) } },
+    picks,
+    note: document.getElementById('note').value,
+    screen: { width: screen.width, height: screen.height, dpr: devicePixelRatio },
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ladder-b-focus-active-test.json';
+  a.click();
+};
+</script>
+</body>
+</html>
