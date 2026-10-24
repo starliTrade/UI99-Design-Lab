@@ -6,6 +6,9 @@ import {
   lightnessStar,
   stepLStar,
   ladderHex,
+  BORDER_HALF_B,
+  borderHalfHex,
+  computeBorderHalfHex,
 } from '../liminal-ladder-b';
 
 /** Approved on 2026-10-24. Changing any of these is a new decision, not a refactor. */
@@ -70,5 +73,27 @@ describe('LADDER B — the eye-test record is internally consistent', () => {
   it('is marked as ONE observer on ONE device — not a validated measurement', () => {
     expect(t.observers).toBe(1);
     expect(t.device).toContain('phone');
+  });
+});
+
+
+describe('LADDER B — the border is half a step (eye-approved 2026-10-24)', () => {
+  it('the table matches the computed half-step for every level that has one', () => {
+    for (let level = 0; level < LADDER_B_TOP; level++) {
+      expect(BORDER_HALF_B[level]).toBe(computeBorderHalfHex(level));
+    }
+  });
+
+  it('every border is neutral and sits between its level and the next', () => {
+    for (let level = 0; level < LADDER_B_TOP; level++) {
+      const b = lightnessStar(BORDER_HALF_B[level]);
+      expect(b).toBeGreaterThan(lightnessStar(LADDER_B[level].hex));
+      expect(b).toBeLessThan(lightnessStar(LADDER_B[level + 1].hex));
+    }
+  });
+
+  it('the top level has no border above it', () => {
+    expect(() => borderHalfHex(LADDER_B_TOP)).toThrow(RangeError);
+    expect(() => borderHalfHex(-1)).toThrow(RangeError);
   });
 });

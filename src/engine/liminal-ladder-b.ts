@@ -83,3 +83,43 @@ export function ladderHex(level: number): string {
   }
   return LADDER_B[level].hex;
 }
+
+/**
+ * BORDER — HALF A STEP (approved by eye, 2026-10-24).
+ *
+ * A border sits BETWEEN two levels. It is the lightness halfway between the
+ * level it belongs to and the level above it, so it reads as a line, not as a
+ * surface. Chosen over one full step (too loud on a 1-L* ladder) and over no
+ * border (the card then has no edge at all). The eye chose it as the point of
+ * perception that is most visible yet most refined.
+ *
+ * Defined for levels 0..LADDER_B_TOP−1: the top level has no level above it.
+ */
+export const BORDER_HALF_B: readonly string[] = [
+  '#090909', // S0 → between S0 and S1
+  '#0D0D0D', // S1 → between S1 and S2
+  '#101010', // S2
+  '#121212', // S3
+  '#141414', // S4
+  '#161616', // S5 → between S5 and S6
+] as const;
+
+/** The half-step border colour for a level. The top has no border above it. */
+export function borderHalfHex(level: number): string {
+  if (!Number.isInteger(level) || level < 0 || level >= LADDER_B_TOP) {
+    throw new RangeError(`level ${level} has no half-step border (0..${LADDER_B_TOP - 1})`);
+  }
+  return BORDER_HALF_B[level];
+}
+
+/** Computes the half-step border from the ladder (no table). Used to check the table. */
+export function computeBorderHalfHex(level: number): string {
+  const a = lightnessStar(LADDER_B[level].hex);
+  const b = lightnessStar(LADDER_B[level + 1].hex);
+  const L = (a + b) / 2;
+  const y = L > 8 ? Math.pow((L + 16) / 116, 3) : L / 903.3;
+  const encoded = y <= 0.0031308 ? 12.92 * y : 1.055 * Math.pow(y, 1 / 2.4) - 0.055;
+  const v = Math.round(Math.max(0, Math.min(1, encoded)) * 255);
+  const x = v.toString(16).padStart(2, '0').toUpperCase();
+  return `#${x}${x}${x}`;
+}
