@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نردبان B — آزمون حالت‌های سیستم</title>
+<style>
+  :root {
+    --s0:#060709; --s1:#0B0B0B; --s2:#0E0E0E; --s3:#111111;
+    --s4:#131313; --s5:#151515; --s6:#171717;
+    --ring:#131313;
+    --shadow-a: 0 1px 4px rgba(0,0,0,0.25);
+    --halo-h1: 0 0 6px 1px rgba(255,255,255,0.03);
+    --halo-h2: 0 0 12px 2px rgba(255,255,255,0.03);
+    --halo-h4: 0 0 16px 4px rgba(255,255,255,0.02);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px; background: var(--s0); color: #EDEDED;
+    font-family: system-ui, "Vazirmatn", sans-serif; font-size: 16px; line-height: 1.6;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 16px; margin: 24px 0 8px; color: #BDBDBD; }
+  p.note { color: #9A9A9A; font-size: 14px; margin: 0 0 12px; }
+  .status { background: var(--s2); padding: 12px 16px; border-radius: 8px; font-size: 14px; }
+  .status b { color: #fff; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .panel { background: var(--s1); padding: 16px; border-radius: 10px; margin-top: 12px; }
+  .panel-title { font-size: 13px; color: #8A8A8A; margin-bottom: 10px; }
+
+  .btn {
+    font: inherit; color: #EDEDED; background: var(--s3);
+    border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer;
+    transition: background-color 200ms ease;
+  }
+  .btn:hover { background: var(--s4); }
+  .btn:disabled { color: rgba(255,255,255,0.35); background: var(--s2); cursor: default; }
+  .btn:focus { outline: none; box-shadow: 0 0 0 1px var(--s2), 0 0 0 2px var(--ring); }
+
+  .card { background: var(--s3); border-radius: 10px; padding: 14px; width: 220px; }
+  .card.bordered { border: 1px solid var(--s4); }
+  .float { background: var(--s4); border-radius: 10px; padding: 14px; width: 220px; box-shadow: var(--shadow-a); }
+  .halo-soft { box-shadow: var(--halo-h1); }
+  .halo-med { box-shadow: var(--halo-h2); }
+  .halo-wide { box-shadow: var(--halo-h4); }
+
+  /* ---- Forced colors: real rules (active only when the OS asks for it) ---- */
+  @media (forced-colors: active) {
+    body, .panel, .card, .float, .btn, .status { background: Canvas; color: CanvasText; }
+    .card, .float, .panel, .status { border: 1px solid CanvasText; }
+    .btn { border: 1px solid ButtonText; }
+    .btn:focus { outline: 2px solid Highlight; outline-offset: 2px; box-shadow: none; }
+    .btn:disabled { color: GrayText; border-color: GrayText; }
+    .card.bordered { border-color: CanvasText; }
+    .float, .halo-soft, .halo-med, .halo-wide { box-shadow: none; }
+  }
+
+  /* ---- Reduced motion: real rule ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .btn { transition: none; }
+  }
+
+  /* ---- Simulation of forced colors (always visible, for comparison) ---- */
+  .sim { background: #000 !important; color: #fff !important; }
+  .sim .card, .sim .float, .sim .panel, .sim .status { background: #000 !important; color: #fff !important; border: 1px solid #fff !important; box-shadow: none !important; }
+  .sim .btn { background: #000 !important; color: #fff !important; border: 1px solid #fff !important; }
+  .sim .btn:focus { outline: 2px solid #ffff00 !important; outline-offset: 2px !important; box-shadow: none !important; }
+  .sim .btn:disabled { color: #767676 !important; border-color: #767676 !important; }
+</style>
+</head>
+<body>
+
+<h1>آزمون حالت‌های سیستم (forced colors، کاهش حرکت)</h1>
+<p class="note">این صفحه سه بخش دارد. هر بخش یک پرسش مشخص دارد. لطفاً جواب هر بخش را جدا بدهید.</p>
+
+<div class="status" id="status">در حال خواندن وضعیت سیستم…</div>
+
+<h2>بخش ۱: حالت عادی (نردبان B)</h2>
+<p class="note">بالا نرمال است. فوکوس با فاصلهٔ ۱px و حلقهٔ S4 نشان داده می‌شود. هاله فقط برای مقایسه است.</p>
+<div class="panel">
+  <div class="panel-title">کارت S3، شناور S4 با سایهٔ A، سه هاله، دکمه با فوکوس، دکمهٔ غیرفعال</div>
+  <div class="row">
+    <div class="card bordered">کارت S3 با مرز</div>
+    <div class="float">شناور S4 با سایه A</div>
+    <div class="float halo-soft">هاله نرم H1</div>
+    <div class="float halo-med">هاله متوسط H2</div>
+    <div class="float halo-wide">هاله پهن H4</div>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <button class="btn" id="focusDemo">دکمهٔ فوکوس‌شده (کلیک کنید و Tab بزنید)</button>
+    <button class="btn" disabled>دکمهٔ غیرفعال</button>
+  </div>
+</div>
+
+<h2>بخش ۲: شبیه‌سازی forced colors (همیشه نمایش داده می‌شود)</h2>
+<p class="note">این بخش تقریب است: پس‌زمینه سیاه، متن سفید، مرز سفید، فوکوس زرد ۲px، بدون سایه و هاله.</p>
+<div class="panel sim">
+  <div class="panel-title">همان عناصر، با قواعد forced colors</div>
+  <div class="row">
+    <div class="card bordered">کارت با مرز سفید</div>
+    <div class="float">شناور با مرز سفید</div>
+    <div class="float halo-soft">هاله حذف‌شده</div>
+    <div class="float halo-wide">هاله حذف‌شده</div>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <button class="btn sim-focus">دکمهٔ فوکوس زرد (Tab بزنید)</button>
+    <button class="btn" disabled>دکمهٔ غیرفعال</button>
+  </div>
+</div>
+
+<h2>بخش ۳: کاهش حرکت</h2>
+<p class="note">اگر سیستم «کاهش حرکت» را روشن کرده باشد، تغییر رنگ دکمه فوری است. در غیر این صورت ۲۰۰ میلی‌ثانیه طول می‌کشد.</p>
+<div class="panel">
+  <div class="row">
+    <button class="btn" id="motionDemo">روی من هاور کنید</button>
+    <span id="motionText" class="note"></span>
+  </div>
+</div>
+
+<script>
+(function () {
+  var fc = window.matchMedia('(forced-colors: active)');
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var pc = window.matchMedia('(prefers-contrast: more)');
+  function row() {
+    var s = document.getElementById('status');
+    s.innerHTML =
+      'forced-colors: <b>' + (fc.matches ? 'فعال' : 'غیرفعال') + '</b> — ' +
+      'کاهش حرکت: <b>' + (rm.matches ? 'روشن' : 'خاموش') + '</b> — ' +
+      'کنتراست بالا: <b>' + (pc.matches ? 'روشن' : 'خاموش') + '</b>';
+    document.getElementById('motionText').textContent =
+      rm.matches ? 'کاهش حرکت روشن است: تغییر فوری است.' : 'کاهش حرکت خاموش است: ۲۰۰ms انیمیشن.';
+  }
+  [fc, rm, pc].forEach(function (m) {
+    if (m.addEventListener) m.addEventListener('change', row);
+  });
+  row();
+})();
+</script>
+</body>
+</html>
