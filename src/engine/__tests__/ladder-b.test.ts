@@ -16,6 +16,10 @@ import {
   activeRim,
   disabledHex,
   disabledTextCss,
+  focusSpec,
+  focusCss,
+  FOCUS_GAP_PX,
+  FOCUS_RING_PX,
   computeRimHalf,
   SHADOW_NEAR_B,
   shadowCss,
@@ -185,5 +189,31 @@ describe('LADDER B — states: hover, active, disabled (eye-approved 2026-10-24)
 
   it('disabled has no level below S0', () => {
     expect(() => disabledHex(0)).toThrow(/no step below/);
+  });
+});
+
+describe('LADDER B — focus: 1px gap, lighter ring (chosen by eye 2026-10-24)', () => {
+  it('the approved focus is a 1px gap and a 1px ring', () => {
+    expect(FOCUS_GAP_PX).toBe(1);
+    expect(FOCUS_RING_PX).toBe(1);
+  });
+
+  it('on S3 the gap is S2 and the ring is S4 (lighter, one step)', () => {
+    expect(focusSpec(3)).toEqual({ gapHex: '#0E0E0E', ringHex: '#131313', gapPx: 1, ringPx: 1 });
+  });
+
+  it('the CSS is a 1px gap then a 2px-wide ring, both from the ladder', () => {
+    expect(focusCss(3)).toBe('0 0 0 1px #0E0E0E, 0 0 0 2px #131313');
+  });
+
+  it('the ring is always lighter than the control', () => {
+    for (let level = 1; level < LADDER_B_TOP; level++) {
+      expect(lightnessStar(focusSpec(level).ringHex)).toBeGreaterThan(lightnessStar(ladderHex(level)));
+    }
+  });
+
+  it('levels without a step above or below have no focus ring', () => {
+    expect(() => focusSpec(0)).toThrow(/no focus ring/);
+    expect(() => focusSpec(LADDER_B_TOP)).toThrow(/no focus ring/);
   });
 });

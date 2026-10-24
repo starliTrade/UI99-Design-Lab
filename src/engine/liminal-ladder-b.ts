@@ -245,3 +245,48 @@ export const DISABLED_TEXT_ALPHA = 0.35;
 export function disabledTextCss(): string {
   return `rgba(255,255,255,${DISABLED_TEXT_ALPHA})`;
 }
+
+/**
+ * FOCUS — 1px gap, lighter ring (chosen by eye, 2026-10-24).
+ *
+ * The focus ring is made of ladder steps only, never a free colour:
+ *   - gap:  1px, filled with the step BELOW the control (the host it sits on).
+ *   - ring: 1px, the step ABOVE the control (lighter).
+ *
+ * Why lighter, not darker: on this dark ladder a darker ring (S1) is almost
+ * black and nearly disappears on the host (S2). The lighter ring (S4) is seen as
+ * a clear edge. The chosen candidate is the 1px gap with the lighter ring.
+ *
+ * Why 1px and not 0.05px: 0.05px is not drawn on a screen. 1px is the smallest
+ * real gap and the one the eye approved.
+ *
+ * The rejected candidates were: 2px gap (both shades) and the darker ring at 1px.
+ */
+export const FOCUS_GAP_PX = 1;
+export const FOCUS_RING_PX = 1;
+
+export interface FocusSpec {
+  readonly gapHex: string;
+  readonly ringHex: string;
+  readonly gapPx: number;
+  readonly ringPx: number;
+}
+
+/** The focus ring for a control at `level`. The ring is one step lighter than the control. */
+export function focusSpec(level: number): FocusSpec {
+  if (!Number.isInteger(level) || level < 1 || level >= LADDER_B_TOP) {
+    throw new RangeError(`level ${level} has no focus ring (needs a step below and above, 1..${LADDER_B_TOP - 1})`);
+  }
+  return {
+    gapHex: ladderHex(level - 1),
+    ringHex: ladderHex(level + 1),
+    gapPx: FOCUS_GAP_PX,
+    ringPx: FOCUS_RING_PX,
+  };
+}
+
+/** The CSS box-shadow for focus: gap in the host step, then the lighter ring. */
+export function focusCss(level: number): string {
+  const f = focusSpec(level);
+  return `0 0 0 ${f.gapPx}px ${f.gapHex}, 0 0 0 ${f.gapPx + f.ringPx}px ${f.ringHex}`;
+}
