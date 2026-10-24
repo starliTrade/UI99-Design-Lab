@@ -10,15 +10,16 @@
   .wrap { max-width: 720px; margin: 0 auto; }
   h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
   h2 { font-size: 16px; font-weight: 600; margin: 28px 0 8px; }
+  h3 { font-size: 14px; font-weight: 600; margin: 18px 0 4px; color: rgba(255,255,255,0.7); }
   .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
-  .note { margin-top: 12px; padding: 12px 14px; color: rgba(255,255,255,0.62); font-size: 13px; }
-  .grid { display: grid; grid-template-columns: 64px repeat(4, 1fr); gap: 8px; margin-top: 12px; align-items: stretch; }
-  .head { font-size: 12px; color: rgba(255,255,255,0.55); text-align: center; align-self: end; }
-  .lvl { font-family: "JetBrains Mono", monospace; font-size: 12px; color: rgba(255,255,255,0.5); align-self: center; }
-  .cell { border: none; border-radius: 12px; padding: 14px 8px; min-height: 120px; display: flex; align-items: center; justify-content: center; }
-  .card { border-radius: 10px; padding: 10px 8px; width: 100%; min-height: 86px; display: flex; flex-direction: column; justify-content: space-between; border: none; }
-  .card .t { font-size: 12px; color: rgba(255,255,255,0.75); }
-  .card .c { align-self: flex-start; padding: 5px 9px; border-radius: 7px; font-size: 11px; color: rgba(255,255,255,0.85); }
+  .note { margin-top: 12px; padding: 12px 14px; color: rgba(255,255,255,0.62); font-size: 13px; background: #0b0d0f; border-radius: 10px; }
+  .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .head { font-size: 12px; color: rgba(255,255,255,0.55); text-align: center; }
+  .cell { border-radius: 12px; padding: 12px 6px; min-height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; min-width: 0; }
+  .lvl { font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.45); }
+  .card { border: none; border-radius: 10px; padding: 8px; width: 100%; min-height: 72px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+  .card .t { font-size: 11px; color: rgba(255,255,255,0.75); overflow-wrap: anywhere; }
+  .card .c { align-self: flex-start; padding: 4px 8px; border-radius: 7px; font-size: 10px; color: rgba(255,255,255,0.85); }
   .btn { font: inherit; font-size: 14px; padding: 10px 14px; border-radius: 10px; border: none; background: #131518; color: rgba(255,255,255,0.9); cursor: pointer; }
   .btn.pick { background: #1c1f24; color: #6EE0B4; }
   .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
@@ -33,26 +34,31 @@
 <div class="wrap">
 
 <h1>آزمون چشمی سایه روی نردبان B</h1>
-<div class="muted">سایه فقط برای <b>سطوح شناور</b> است، یعنی سطحی که روی سطح دیگری بلند شده (منو، پاپ‌اور، مودال). هر کارت روی میزبان پایین‌ترش نشسته و سایه‌اش روی همان میزبان می‌افتد. بگو کدام ستون <b>شناور بودن را نشان می‌دهد ولی زیاد نیست</b>.</div>
+<div class="muted">سایه فقط برای <b>سطوح شناور</b> است: منو (S5)، پاپ‌اور (S4)، مودال (S6). هیچ حاشیه‌ای در این صفحه نیست.</div>
 
 <div class="note">
-  <b>پیش از شروع:</b> همان شرایط آزمون‌های قبل: اتاق کم‌نور، روشنایی معمول، بدون فیلتر، تمام‌صفحه. جواب اول را بده.
-  <br>این آزمون فقط سایه را می‌سنجد؛ مرز و ریم در کارت‌ها نیستند.
+  <b>دو ردیف، دو سؤال:</b>
+  <br>• <b>ردیف اول</b> — کارت با رنگ خودش (یک پله بالاتر از میزبان). لبهٔ روشن این ردیف از اختلاف رنگ می‌آید، نه از حاشیه.
+  <br>• <b>ردیف دوم</b> — <b>فقط سایه.</b> کارت همان رنگ میزبانش را دارد، پس تنها چیزی که شناوری را نشان می‌دهد سایه است. این ردیف را بیشتر ببین.
+  <br>پیش از شروع: اتاق کم‌نور، روشنایی معمول، بدون فیلتر. جواب اول را بده.
 </div>
 
-<h2>۱. مقایسه</h2>
-<div class="grid" id="grid"></div>
+<h2>۱. با رنگ خودش</h2>
+<div class="grid" id="gridColor"></div>
 
-<h2>۲. کدام سایه؟</h2>
-<div class="muted">یک گزینه را انتخاب کن. «بدون سایه» یعنی سطح شناور هم تخت بماند.</div>
+<h2>۲. فقط سایه (بدون اختلاف رنگ)</h2>
+<div class="grid" id="gridShadowOnly"></div>
+
+<h2>۳. کدام سایه؟</h2>
+<div class="muted">یک گزینه را انتخاب کن. «بدون سایه» یعنی شناوری فقط با رنگ دیده شود یا اصلاً دیده نشود.</div>
 <div class="row" id="choices"></div>
 <div class="muted" id="choiceInfo" style="margin-top:6px">انتخاب: —</div>
 
-<h2>۳. یادداشت</h2>
-<textarea id="note" placeholder="کجا شناوری دیده شد، کجا سایه زیادی بود، و نمایشگرت چیست."></textarea>
+<h2>۴. یادداشت</h2>
+<textarea id="note" placeholder="در ردیف دوم سایه را دیدی یا نه، کجا زیادی بود، و نمایشگرت چیست."></textarea>
 <div class="row"><button class="btn" id="download">دانلود نتیجه (JSON)</button></div>
 
-<h2>۴. مقادیر (بعد از آزمون)</h2>
+<h2>۵. مقادیر (بعد از آزمون)</h2>
 <table id="values"></table>
 
 </div>
@@ -62,8 +68,8 @@
 const P = ['#060709', '#0B0B0B', '#0E0E0E', '#111111', '#131313', '#151515', '#171717'];
 const NAMES = ['بوم', 'surface', 'elevated', 'overlay', 'sub-overlay', 'popover', 'modal'];
 
-// Shadow candidates. Each is a real CSS box-shadow: offset (px), blur (px), alpha of black.
-// They are CANDIDATES for the eye, not derived values. The approved one gets a formula later.
+// Shadow candidates: real CSS box-shadow (offset px, blur px, alpha of black).
+// Candidates for the eye, not derived values.
 const VARIANTS = [
   { id: 'none',   label: 'بدون سایه', y: 0, blur: 0,  a: 0 },
   { id: 'near',   label: 'نزدیک',     y: 2, blur: 8,  a: 0.45 },
@@ -72,31 +78,28 @@ const VARIANTS = [
 ];
 const shadowOf = (v) => v.a === 0 ? 'none' : `0 ${v.y}px ${v.blur}px rgba(0,0,0,${v.a})`;
 
-// Floating levels. Each card sits on the level BELOW it (its host), per the adjacency rule.
+// Floating levels. Each card sits on the level BELOW it (its host).
 const LEVELS = [4, 5, 6];
 
-// ---- grid: rows = floating levels S4..S6 (card on that level, sitting on host S(n-1)), cols = shadows ----
-const grid = document.getElementById('grid');
-grid.appendChild(Object.assign(document.createElement('div'), { className: 'head' }));
-VARIANTS.forEach(v => grid.appendChild(Object.assign(document.createElement('div'), { className: 'head', textContent: v.label })));
-LEVELS.forEach(n => {
-  const lab = document.createElement('div');
-  lab.className = 'lvl';
-  lab.textContent = `S${n}`;
-  grid.appendChild(lab);
-  VARIANTS.forEach(v => {
+function buildGrid(id, sameAsHost) {
+  const grid = document.getElementById(id);
+  VARIANTS.forEach(v => grid.appendChild(Object.assign(document.createElement('div'), { className: 'head', textContent: v.label })));
+  LEVELS.forEach(n => VARIANTS.forEach(v => {
     const cell = document.createElement('div');
     cell.className = 'cell';
-    cell.style.background = P[n - 1];           // the host surface the shadow falls on
+    cell.style.background = P[n - 1];          // host surface
     const card = document.createElement('div');
     card.className = 'card';
-    card.style.background = P[n];
+    card.style.background = sameAsHost ? P[n - 1] : P[n];
     card.style.boxShadow = shadowOf(v);
-    card.innerHTML = `<div class="t">${NAMES[n]}</div><span class="c" style="background:${P[n + 1]}">دکمه</span>`;
+    const label = sameAsHost ? `S${n}` : `S${n} · ${NAMES[n]}`;
+    card.innerHTML = `<div class="t">${label}</div><span class="c" style="background:${sameAsHost ? P[n - 1] : P[n + 1]}">دکمه</span>`;
     cell.appendChild(card);
     grid.appendChild(cell);
-  });
-});
+  }));
+}
+buildGrid('gridColor', false);
+buildGrid('gridShadowOnly', true);
 
 // ---- choices ----
 const pickAns = { choice: null };
@@ -114,11 +117,11 @@ const choicesBox = document.getElementById('choices');
 });
 
 // ---- values (after the test) ----
-let html = '<tr><th>شناور</th><th>میزبان</th><th>سایه</th><th>فاصله (px)</th><th>پخش (px)</th><th>تیرگی</th></tr>';
+let html = '<tr><th>شناور</th><th>میزبان</th><th>سایه</th><th>فاصله</th><th>پخش</th><th>تیرگی</th></tr>';
 LEVELS.forEach(n => VARIANTS.filter(v => v.a > 0).forEach(v => {
-  html += `<tr><td>S${n}</td><td>S${n-1}</td><td>${v.label}</td><td>${v.y}</td><td>${v.blur}</td><td>${v.a}</td></tr>`;
+  html += `<tr><td>S${n}</td><td>S${n-1}</td><td>${v.label}</td><td>${v.y}px</td><td>${v.blur}px</td><td>${v.a}</td></tr>`;
 }));
-html += '<tr><td colspan="6" class="muted" style="text-align:right">این مقادیر کاندید هستند؛ بعد از تأیید، فرمول از روی شکل تأییدشده ساخته می‌شود.</td></tr>';
+html += '<tr><td colspan="6" class="muted" style="text-align:right">کاندیداها هستند، نه مشتق از فرمول. بعد از تأیید، فرمول از روی شکل تأییدشده ساخته می‌شود.</td></tr>';
 document.getElementById('values').innerHTML = html;
 
 // ---- export ----
@@ -128,6 +131,7 @@ document.getElementById('download').onclick = () => {
     created: new Date().toISOString(),
     ladder: P,
     levels: LEVELS,
+    rows: ['with-own-colour', 'shadow-only'],
     variants: VARIANTS.map(v => ({ id: v.id, label: v.label, offsetY: v.y, blur: v.blur, alpha: v.a })),
     choice: pickAns.choice,
     note: document.getElementById('note').value,
