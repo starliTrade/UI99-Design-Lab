@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · اندازه‌گیری تشخیص هر پله روی نردبان B</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.7; padding: 16px 14px 60px; }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 6px; }
+  .muted { color: rgba(255,255,255,0.55); font-size: 13px; }
+  .box { margin-top: 12px; padding: 12px 14px; background: #0b0d0f; border-radius: 10px; font-size: 13px; color: rgba(255,255,255,0.7); }
+  label { display: block; margin-top: 8px; font-size: 13px; color: rgba(255,255,255,0.7); }
+  input, select { font: inherit; font-size: 14px; width: 100%; margin-top: 4px; padding: 8px; border-radius: 8px; border: none; background: #111318; color: #fff; }
+  .btn { font: inherit; font-size: 15px; padding: 12px 16px; border-radius: 10px; border: none; color: #fff; background: #131518; margin-top: 12px; width: 100%; }
+  .btn:disabled { opacity: 0.4; }
+  .stage { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tile { aspect-ratio: 1 / 1; border-radius: 12px; border: none; cursor: pointer; }
+  .none { margin-top: 10px; width: 100%; }
+  .prog { margin-top: 10px; font-size: 13px; color: rgba(255,255,255,0.6); }
+  .hidden { display: none; }
+  .res { font-family: "JetBrains Mono", monospace; font-size: 12px; white-space: pre; color: rgba(255,255,255,0.75); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>اندازه‌گیری: آیا هر پله دیده می‌شود؟</h1>
+<div class="muted">سه مربع می‌بینید. دو تا یک رنگ‌اند و یکی متفاوت. مربع متفاوت را انتخاب کنید. گاهی هر سه یکی هستند؛ آن‌جا «هیچ‌کدام» را بزنید.</div>
+
+<div class="box">
+  <b>پیش از شروع:</b> روشنایی نمایشگر را ثابت کنید، و کنار پنجره نباشید. این آزمون ۸۰ کوشش دارد و حدود ۴ دقیقه طول می‌کشد. جواب اول را بدهید و حدس نزنید؛ اگر نمی‌بینید، «هیچ‌کدام» را بزنید.
+</div>
+
+<div id="setup">
+  <label>نام یا کد ناظر (کوتاه)
+    <input id="obs" value="N1" maxlength="20" />
+  </label>
+  <label>دستگاه
+    <select id="dev">
+      <option>گوشی</option><option>مانیتور</option><option>لپ‌تاپ</option><option>تبلت</option>
+    </select>
+  </label>
+  <label>روشنایی نمایشگر
+    <select id="bright">
+      <option>کم</option><option selected>متوسط</option><option>زیاد</option>
+    </select>
+  </label>
+  <label>نور اتاق
+    <select id="room">
+      <option>تاریک</option><option selected>معمولی</option><option>روشن</option>
+    </select>
+  </label>
+  <button class="btn" id="start">شروع</button>
+</div>
+
+<div id="run" class="hidden">
+  <div class="prog" id="prog"></div>
+  <div class="stage">
+    <button class="tile" data-i="0"></button>
+    <button class="tile" data-i="1"></button>
+    <button class="tile" data-i="2"></button>
+  </div>
+  <button class="btn none" id="none">هیچ‌کدام (همه یکی‌اند)</button>
+</div>
+
+<div id="done" class="hidden">
+  <div class="box">پایان. فایل نتایج را دانلود کنید و برای تحلیل بفرستید.</div>
+  <button class="btn" id="dl">دانلود نتایج (JSON)</button>
+  <div class="box res" id="summary"></div>
+</div>
+
+</div>
+<script>
+/* Ladder B levels (neutral greys), S1..S6, and S0 as the bluish canvas. */
+const LEVELS = ['#060709','#0B0B0B','#0E0E0E','#111111','#131313','#151515','#171717'];
+const PAIRS = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]];
+const TRIALS_PER_PAIR = 12;   // real trials per pair
+const CATCH_TOTAL = 8;        // all-identical trials
+let trials = [];
+let queue = [];
+let cur = null;
+let startedAt = 0;
+
+function buildQueue() {
+  const q = [];
+  for (const p of PAIRS) for (let i = 0; i < TRIALS_PER_PAIR; i++) q.push({ kind: 'pair', pair: p });
+  for (let i = 0; i < CATCH_TOTAL; i++) q.push({ kind: 'catch', pair: null });
+  // Fisher-Yates shuffle
+  for (let i = q.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [q[i], q[j]] = [q[j], q[i]]; }
+  return q;
+}
+
+function next() {
+  if (queue.length === 0) return finish();
+  cur = queue.shift();
+  let colors, oddIndex = -1, a, b;
+  if (cur.kind === 'pair') {
+    [a, b] = cur.pair;
+    const baseIsLower = Math.random() < 0.5;
+    const base = LEVELS[baseIsLower ? a : b];
+    const odd = LEVELS[baseIsLower ? b : a];
+    oddIndex = Math.floor(Math.random() * 3);
+    colors = [0, 1, 2].map(i => (i === oddIndex ? odd : base));
+    cur.base = baseIsLower ? a : b;
+    cur.odd = baseIsLower ? b : a;
+  } else {
+    const lv = Math.floor(Math.random() * 6) + 1;
+    colors = [LEVELS[lv], LEVELS[lv], LEVELS[lv]];
+    cur.base = lv; cur.odd = null;
+  }
+  cur.colors = colors;
+  cur.oddIndex = oddIndex;
+  document.querySelectorAll('.tile').forEach((t, i) => { t.style.background = colors[i]; });
+  document.getElementById('prog').textContent = `کوشش ${trials.length + 1} از ${trials.length + queue.length + 1}`;
+  startedAt = performance.now();
+}
+
+function answer(choice) {
+  const rt = Math.round(performance.now() - startedAt);
+  const isCatch = cur.kind === 'catch';
+  const correct = isCatch ? choice === 'none' : choice === cur.oddIndex;
+  trials.push({
+    kind: cur.kind,
+    pair: cur.pair,
+    base: cur.base,
+    odd: cur.odd,
+    oddIndex: cur.oddIndex,
+    choice,
+    correct,
+    rtMs: rt,
+  });
+  next();
+}
+
+document.querySelectorAll('.tile').forEach(t => t.addEventListener('click', () => answer(Number(t.dataset.i))));
+document.getElementById('none').addEventListener('click', () => answer('none'));
+
+document.getElementById('start').addEventListener('click', () => {
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('run').classList.remove('hidden');
+  queue = buildQueue();
+  next();
+});
+
+function finish() {
+  document.getElementById('run').classList.add('hidden');
+  document.getElementById('done').classList.remove('hidden');
+  const per = {};
+  for (const t of trials) {
+    if (t.kind !== 'pair') continue;
+    const k = `S${t.pair[0]}-S${t.pair[1]}`;
+    per[k] = per[k] || { n: 0, correct: 0 };
+    per[k].n++; if (t.correct) per[k].correct++;
+  }
+  const catches = trials.filter(t => t.kind === 'catch');
+  const catchOk = catches.filter(t => t.correct).length;
+  let text = 'پله\tدرست/کل\tدرصد\n';
+  for (const k of Object.keys(per)) {
+    const p = per[k];
+    text += `${k}\t${p.correct}/${p.n}\t${Math.round(100 * p.correct / p.n)}%\n`;
+  }
+  text += `کنترل (همه یکی)\t${catchOk}/${catches.length}\t${Math.round(100 * catchOk / catches.length)}%`;
+  document.getElementById('summary').textContent = text;
+}
+
+document.getElementById('dl').addEventListener('click', () => {
+  const data = {
+    protocol: 'ladder-b-measure-v1',
+    date: new Date().toISOString(),
+    observer: document.getElementById('obs').value,
+    device: document.getElementById('dev').value,
+    brightness: document.getElementById('bright').value,
+    room: document.getElementById('room').value,
+    screen: { w: screen.width, h: screen.height, dpr: devicePixelRatio },
+    levels: LEVELS,
+    trials,
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ladder-b-measure-${data.observer}-${Date.now()}.json`;
+  a.click();
+});
+</script>
+</body>
+</html>
