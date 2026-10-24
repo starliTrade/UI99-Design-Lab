@@ -11,22 +11,22 @@
   h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
   h2 { font-size: 16px; font-weight: 600; margin: 28px 0 8px; }
   .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
-  .note { margin-top: 12px; padding: 12px 14px; border-right: 2px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.62); font-size: 13px; }
+  .note { margin-top: 12px; padding: 12px 14px; color: rgba(255,255,255,0.62); font-size: 13px; }
   .grid { display: grid; grid-template-columns: 64px repeat(4, 1fr); gap: 8px; margin-top: 12px; align-items: stretch; }
   .head { font-size: 12px; color: rgba(255,255,255,0.55); text-align: center; align-self: end; }
   .lvl { font-family: "JetBrains Mono", monospace; font-size: 12px; color: rgba(255,255,255,0.5); align-self: center; }
-  .cell { border-radius: 12px; padding: 14px 8px; min-height: 120px; display: flex; align-items: center; justify-content: center; }
-  .card { border-radius: 10px; padding: 10px 8px; width: 100%; min-height: 86px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(255,255,255,0.04); }
+  .cell { border: none; border-radius: 12px; padding: 14px 8px; min-height: 120px; display: flex; align-items: center; justify-content: center; }
+  .card { border-radius: 10px; padding: 10px 8px; width: 100%; min-height: 86px; display: flex; flex-direction: column; justify-content: space-between; border: none; }
   .card .t { font-size: 12px; color: rgba(255,255,255,0.75); }
   .card .c { align-self: flex-start; padding: 5px 9px; border-radius: 7px; font-size: 11px; color: rgba(255,255,255,0.85); }
-  .btn { font: inherit; font-size: 14px; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.16); background: #131518; color: rgba(255,255,255,0.9); cursor: pointer; }
-  .btn.pick { border-color: #6EE0B4; color: #6EE0B4; }
+  .btn { font: inherit; font-size: 14px; padding: 10px 14px; border-radius: 10px; border: none; background: #131518; color: rgba(255,255,255,0.9); cursor: pointer; }
+  .btn.pick { background: #1c1f24; color: #6EE0B4; }
   .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
   .hex { font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.45); }
   table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
-  th, td { padding: 6px 4px; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: right; }
+  th, td { padding: 6px 4px; text-align: right; }
   th { color: rgba(255,255,255,0.5); font-weight: 500; }
-  textarea { width: 100%; min-height: 70px; margin-top: 8px; background: #0b0d0f; color: rgba(255,255,255,0.88); border: 1px solid rgba(255,255,255,0.14); border-radius: 10px; padding: 10px; font: inherit; font-size: 14px; }
+  textarea { width: 100%; min-height: 70px; margin-top: 8px; background: #0b0d0f; color: rgba(255,255,255,0.88); border: none; border-radius: 10px; padding: 10px; font: inherit; font-size: 14px; }
 </style>
 </head>
 <body>
