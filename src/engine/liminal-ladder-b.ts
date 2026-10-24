@@ -205,9 +205,9 @@ export interface ShadowSpec {
 export const SHADOW_NEAR_B: ShadowSpec = { offsetY: 2, blur: 8, alpha: 0.45 } as const;
 
 /** The CSS box-shadow for a floating level. Non-floating levels have none. */
-export function shadowCss(level: number): string {
-  if (!FLOATING_LEVELS_B.includes(level)) {
-    throw new RangeError(`level ${level} is not floating and has no shadow`);
+export function shadowCss(level: number, allowCard = false): string {
+  if (!FLOATING_LEVELS_B.includes(level) && !(allowCard && level >= 1 && level <= 3)) {
+    throw new RangeError(`level ${level} is not floating and has no shadow (cards allow it on S1..S3 only with allowCard)`);
   }
   const s = SHADOW_NEAR_B;
   return `0 ${s.offsetY}px ${s.blur}px rgba(0,0,0,${s.alpha})`;
@@ -289,4 +289,42 @@ export function focusSpec(level: number): FocusSpec {
 export function focusCss(level: number): string {
   const f = focusSpec(level);
   return `0 0 0 ${f.gapPx}px ${f.gapHex}, 0 0 0 ${f.gapPx + f.ringPx}px ${f.ringHex}`;
+}
+
+/**
+ * CARD VARIANTS (rule of 2026-10-24, from the owner).
+ *
+ * A card that sits on a parent takes ONE of four variants, chosen by its
+ * sensitivity and content (the choice rule is decided later):
+ *   - simple:   no border, no rim, no shadow
+ *   - bordered: half-step border (BORDER_HALF_B)
+ *   - shadowed: near shadow (SHADOW_NEAR_B), allowed on S1..S3 too
+ *   - rimmed:   half-step rim (RIM_HALF_B)
+ * Border and rim may both be on one card (approved).
+ *
+ * Exception: the shadow on a card (S1..S3) is an approved exception to the
+ * floating-only rule of §3.7. Floating layers (S4..S6) always have a shadow.
+ */
+export type CardVariant = 'simple' | 'bordered' | 'shadowed' | 'rimmed';
+
+export interface CardEdge {
+  readonly border: string | null;
+  readonly rim: RimHalf | null;
+  readonly shadow: string | null;
+}
+
+/** Edge treatment of a card at `level` with the given variant(s). */
+export function cardEdge(level: number, variants: readonly CardVariant[]): CardEdge {
+  if (!Number.isInteger(level) || level < 1 || level > LADDER_B_TOP - 3) {
+    throw new RangeError(`level ${level} is not a card level (1..${LADDER_B_TOP - 3})`);
+  }
+  const has = (v: CardVariant): boolean => variants.includes(v);
+  if (has('simple') && variants.length > 1) {
+    throw new RangeError('simple cannot be combined with another variant');
+  }
+  return {
+    border: has('bordered') ? borderHalfHex(level) : null,
+    rim: has('rimmed') ? rimHalfHex(level) : null,
+    shadow: has('shadowed') ? shadowCss(level, true) : null,
+  };
 }

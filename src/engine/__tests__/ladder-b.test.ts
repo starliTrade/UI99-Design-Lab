@@ -18,6 +18,7 @@ import {
   disabledTextCss,
   focusSpec,
   focusCss,
+  cardEdge,
   FOCUS_GAP_PX,
   FOCUS_RING_PX,
   computeRimHalf,
@@ -152,10 +153,12 @@ describe('LADDER B — the shadow is NEAR (chosen by eye 2026-10-24)', () => {
     }
   });
 
-  it('non-floating levels get no shadow', () => {
+  it('non-floating levels get no shadow, except a card variant on S1..S3', () => {
     for (const level of [0, 1, 2, 3]) {
       expect(() => shadowCss(level)).toThrow(/not floating/);
     }
+    expect(shadowCss(2, true)).toBe('0 2px 8px rgba(0,0,0,0.45)');
+    expect(() => shadowCss(0, true)).toThrow(/not floating/);
   });
 });
 
@@ -215,5 +218,32 @@ describe('LADDER B — focus: 1px gap, lighter ring (chosen by eye 2026-10-24)',
   it('levels without a step above or below have no focus ring', () => {
     expect(() => focusSpec(0)).toThrow(/no focus ring/);
     expect(() => focusSpec(LADDER_B_TOP)).toThrow(/no focus ring/);
+  });
+});
+
+describe('LADDER B — card variants (rule of 2026-10-24)', () => {
+  it('simple has no border, no rim, no shadow', () => {
+    expect(cardEdge(1, ['simple'])).toEqual({ border: null, rim: null, shadow: null });
+  });
+
+  it('bordered uses the level border; rimmed uses the level rim; shadowed the near shadow', () => {
+    expect(cardEdge(2, ['bordered']).border).toBe(borderHalfHex(2));
+    expect(cardEdge(2, ['rimmed']).rim).toEqual(rimHalfHex(2));
+    expect(cardEdge(2, ['shadowed']).shadow).toBe('0 2px 8px rgba(0,0,0,0.45)');
+  });
+
+  it('border and rim may combine on one card', () => {
+    const e = cardEdge(3, ['bordered', 'rimmed']);
+    expect(e.border).toBe(borderHalfHex(3));
+    expect(e.rim).toEqual(rimHalfHex(3));
+  });
+
+  it('simple cannot combine with another variant', () => {
+    expect(() => cardEdge(1, ['simple', 'bordered'])).toThrow(/cannot be combined/);
+  });
+
+  it('a card level is 1..3 only (canvas and floating are not cards)', () => {
+    expect(() => cardEdge(0, ['simple'])).toThrow(/not a card level/);
+    expect(() => cardEdge(4, ['simple'])).toThrow(/not a card level/);
   });
 });
