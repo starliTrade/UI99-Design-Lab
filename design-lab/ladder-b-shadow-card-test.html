@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · آزمون شدو روی کارت‌ها و لایه‌های شناور</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.7; padding: 20px 14px 80px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 26px 0 6px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .note { margin-top: 12px; padding: 12px 14px; color: rgba(255,255,255,0.62); font-size: 13px; background: #0b0d0f; border-radius: 10px; }
+  .pair { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+  .cell { flex: 1 1 150px; min-width: 150px; }
+  .lab { font-size: 12px; color: rgba(255,255,255,0.55); margin-bottom: 6px; }
+  .hex { font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.45); }
+  .card { border-radius: 14px; padding: 14px; height: 100%; }
+  .s1 { background: #0B0B0B; }
+  .s2 { background: #0E0E0E; }
+  .s3 { background: #111111; }
+  .s4 { background: #131313; }
+  .near { box-shadow: 0 2px 8px rgba(0,0,0,0.45); }
+  .card h3 { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+  .card p { margin: 0; color: rgba(255,255,255,0.6); font-size: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th, td { padding: 6px 4px; text-align: right; }
+  th { color: rgba(255,255,255,0.5); font-weight: 500; }
+  .canvas { background: #060709; border-radius: 14px; padding: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>آزمون شدو روی کارت‌ها و شناورها</h1>
+<div class="muted">سایهٔ نزدیک <span class="hex">0 2px 8px rgba(0,0,0,0.45)</span>. کارت S1 تا S3 با یا بدون سایه، و S4 شناور برای مقایسه.</div>
+
+<div class="note">
+  <b>پیش از شروع:</b> اتاق کم‌نور، روشنایی معمول، بدون فیلتر. جواب اول را بده.
+  <br>هر جفت را مقایسه کنید: بدون سایه (سمت راست) و با سایه (سمت چپ).
+</div>
+
+<h2>۱. کارت‌ها روی بوم</h2>
+<div class="canvas">
+  <div class="pair">
+    <div class="cell"><div class="lab">S1 · شدو دار</div><div class="card s1 near"><h3>کارت S1</h3><p>سایهٔ نزدیک</p></div></div>
+    <div class="cell"><div class="lab">S1 · ساده</div><div class="card s1"><h3>کارت S1</h3><p>بدون سایه</p></div></div>
+  </div>
+</div>
+
+<h2>۲. کارت S2 (روی S1)</h2>
+<div class="canvas">
+  <div class="pair">
+    <div class="cell"><div class="lab">S2 · شدو دار</div><div class="card s2 near"><h3>کارت S2</h3><p>سایهٔ نزدیک</p></div></div>
+    <div class="cell"><div class="lab">S2 · ساده</div><div class="card s2"><h3>کارت S2</h3><p>بدون سایه</p></div></div>
+  </div>
+</div>
+
+<h2>۳. کارت S3 (روی S2)</h2>
+<div class="canvas">
+  <div class="pair">
+    <div class="cell"><div class="lab">S3 · شدو دار</div><div class="card s3 near"><h3>کارت S3</h3><p>سایهٔ نزدیک</p></div></div>
+    <div class="cell"><div class="lab">S3 · ساده</div><div class="card s3"><h3>کارت S3</h3><p>بدون سایه</p></div></div>
+  </div>
+</div>
+
+<h2>۴. مرجع: شناور S4 (با سایه)</h2>
+<div class="canvas">
+  <div class="pair">
+    <div class="cell"><div class="lab">S4 · شناور با سایه</div><div class="card s4 near"><h3>لایهٔ S4</h3><p>شناور، سایه جداکننده</p></div></div>
+  </div>
+</div>
+
+<h2>۵. مقادیر</h2>
+<table>
+  <tr><th>مورد</th><th>مقدار</th></tr>
+  <tr><td>سایهٔ نزدیک</td><td>0 2px 8px rgba(0,0,0,0.45)</td></tr>
+  <tr><td>کارت S1 / S2 / S3</td><td>#0B0B0B / #0E0E0E / #111111</td></tr>
+</table>
+
+<h2>۶. انتخاب شما</h2>
+<div class="note">کدام کارت‌ها سایه را لازم دارند؟ S1، S2، S3، یا هیچ‌کدام؟</div>
+
+</div>
+</body>
+</html>
