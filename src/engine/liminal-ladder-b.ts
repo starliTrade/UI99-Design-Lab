@@ -424,3 +424,32 @@ export function haloCss(name: HaloName): string {
   const h = HALO_B[name];
   return `0 0 ${h.blur}px ${h.spread}px rgba(255,255,255,${h.alpha})`;
 }
+
+/**
+ * HALO TARGETS — where a halo CAN be used (owner, 2026-10-24).
+ *
+ * A halo is a complete system piece. It is rarely used in practice, but every
+ * element type must be able to take one, so the component layer can offer it
+ * without a new rule. Any target may take any approved halo. No target has a
+ * default halo: the default is none.
+ */
+export const HALO_TARGETS = [
+  'surface',
+  'card',
+  'button',
+  'input',
+  'floating',
+  'focus',
+  'chip',
+  'tab',
+] as const;
+
+export type HaloTarget = (typeof HALO_TARGETS)[number];
+
+/** The halo that a target uses, or null (no halo, the default). */
+export function haloFor(target: HaloTarget, name: HaloName | null): string | null {
+  if (!(HALO_TARGETS as readonly string[]).includes(target)) {
+    throw new RangeError(`target "${target}" is not a halo target`);
+  }
+  return name === null ? null : haloCss(name);
+}

@@ -23,6 +23,8 @@ import {
   lightCss,
   haloCss,
   HALO_B,
+  HALO_TARGETS,
+  haloFor,
   childBorderHex,
   FOCUS_GAP_PX,
   FOCUS_RING_PX,
@@ -319,5 +321,25 @@ describe('LADDER B — halo, its own feature (owner, 2026-10-24)', () => {
 
   it('an unapproved halo name is refused', () => {
     expect(() => haloCss('h3' as never)).toThrow(/not approved/);
+  });
+});
+
+describe('LADDER B — halo targets (any element may take a halo; none by default)', () => {
+  it('every element type in the list can take any approved halo', () => {
+    for (const target of HALO_TARGETS) {
+      expect(haloFor(target, 'soft')).toBe(haloCss('soft'));
+      expect(haloFor(target, 'medium')).toBe(haloCss('medium'));
+      expect(haloFor(target, 'wide')).toBe(haloCss('wide'));
+    }
+  });
+
+  it('the default is no halo', () => {
+    for (const target of HALO_TARGETS) {
+      expect(haloFor(target, null)).toBeNull();
+    }
+  });
+
+  it('a target outside the list is refused', () => {
+    expect(() => haloFor('canvas' as never, 'soft')).toThrow(/not a halo target/);
   });
 });
