@@ -19,6 +19,8 @@ import {
   focusSpec,
   focusCss,
   childEdge,
+  lightSpec,
+  lightCss,
   childBorderHex,
   FOCUS_GAP_PX,
   FOCUS_RING_PX,
@@ -270,5 +272,28 @@ describe('LADDER B — child styles (rule of 2026-10-24)', () => {
   it('the top level has no child (S6 has nothing above it)', () => {
     expect(() => childEdge(6, ['simple'])).toThrow(/cannot hold a child/);
     expect(() => childBorderHex(6)).toThrow(/no border/);
+  });
+});
+
+describe('LADDER B — light on floating surfaces (owner rule, 2026-10-24)', () => {
+  it('S4 and S5 have a half-step light on the top, S6 is flat', () => {
+    expect(lightSpec(4)).toEqual({ topHex: '#141414', bottomHex: '#131313' });
+    expect(lightSpec(5)).toEqual({ topHex: '#161616', bottomHex: '#151515' });
+    expect(lightSpec(6)).toBeNull();
+  });
+
+  it('the light top is always one half step above the surface, inside the ladder', () => {
+    expect(lightSpec(4)!.topHex).toBe(childBorderHex(4));
+    expect(lightSpec(5)!.topHex).toBe(childBorderHex(5));
+  });
+
+  it('S6 has a flat background (no gradient)', () => {
+    expect(lightCss(6)).toBe('#171717');
+    expect(lightCss(4)).toBe('linear-gradient(180deg, #141414 0%, #131313 100%)');
+  });
+
+  it('light is only for floating levels', () => {
+    expect(() => lightSpec(3)).toThrow(/not a floating level/);
+    expect(() => lightSpec(0)).toThrow(/not a floating level/);
   });
 });

@@ -356,3 +356,35 @@ export function childEdge(parent: number, styles: readonly ChildStyle[]): ChildE
     shadow: has('shadowed') ? shadowCss(level) : null,
   };
 }
+
+/**
+ * LIGHT — floating surfaces (decided 2026-10-24, owner's rule).
+ *
+ * The top of a floating surface is lighter than its bottom:
+ *   - S4: top = half a step up (the S4..S5 midpoint), bottom = S4.
+ *   - S5: top = half a step up (the S5..S6 midpoint), bottom = S5.
+ *   - S6: flat. There is no level above S6 in the ladder, so no light is defined.
+ *
+ * Every light colour comes from the ladder (no colour leaves it).
+ */
+export interface LightSpec {
+  readonly topHex: string;
+  readonly bottomHex: string;
+}
+
+export function lightSpec(level: number): LightSpec | null {
+  if (level === 4 || level === 5) {
+    return { topHex: childBorderHex(level), bottomHex: ladderHex(level) };
+  }
+  if (level === 6) {
+    return null;
+  }
+  throw new RangeError(`level ${level} is not a floating level (light is for S4..S6)`);
+}
+
+/** The CSS background for a floating surface. S6 is flat (null light). */
+export function lightCss(level: number): string {
+  const spec = lightSpec(level);
+  if (spec === null) return ladderHex(level);
+  return `linear-gradient(180deg, ${spec.topHex} 0%, ${spec.bottomHex} 100%)`;
+}
