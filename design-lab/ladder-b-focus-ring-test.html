@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · فوکوس با حلقهٔ نردبان و فاصلهٔ کم</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.75; padding: 20px 14px 80px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 28px 0 4px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .note { margin-top: 12px; padding: 12px 14px; color: rgba(255,255,255,0.62); font-size: 13px; background: #0b0d0f; border-radius: 10px; }
+  .host { border-radius: 14px; padding: 22px 12px; margin-top: 8px; background: #0E0E0E; }
+  .row { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
+  .opt { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .hex { font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.45); text-align: center; white-space: pre; }
+  .btn { font: inherit; font-size: 14px; padding: 10px 18px; border-radius: 10px; border: none; color: rgba(255,255,255,0.92); min-width: 120px; background: #111111; }
+  /* host is S2 (#0E0E0E); the gap shows the host; the ring is a ladder step */
+  .g1r4 { box-shadow: 0 0 0 1px #0E0E0E, 0 0 0 2px #131313; }
+  .g1r1 { box-shadow: 0 0 0 1px #0E0E0E, 0 0 0 2px #0B0B0B; }
+  .g2r4 { box-shadow: 0 0 0 2px #0E0E0E, 0 0 0 3px #131313; }
+  .g2r1 { box-shadow: 0 0 0 2px #0E0E0E, 0 0 0 3px #0B0B0B; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th, td { padding: 6px 4px; text-align: right; }
+  th { color: rgba(255,255,255,0.5); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>فوکوس: حلقهٔ نردبان با فاصلهٔ کم</h1>
+<div class="muted">حلقه رنگ یک پلهٔ نردبان است، نه رنگ دلخواه. فاصلهٔ بین دکمه و حلقه با سطح میزبان (S2) پر می‌شود.</div>
+
+<div class="note">
+  <b>پیش از شروع:</b> اتاق کم‌نور، روشنایی معمول، بدون فیلتر. جواب اول را بده.
+  <br>این صفحه حالت‌ها را ثابت نشان می‌دهد، نه فوکوس زنده.
+</div>
+
+<h2>۱. چهار کاندید</h2>
+<div class="host">
+  <div class="row">
+    <div class="opt"><button class="btn g1r4">فاصلهٔ ۱px، حلقهٔ روشن‌تر</button><div class="hex">حلقه S4 #131313 · فاصله S2</div></div>
+    <div class="opt"><button class="btn g1r1">فاصلهٔ ۱px، حلقهٔ تیره‌تر</button><div class="hex">حلقه S1 #0B0B0B · فاصله S2</div></div>
+  </div>
+  <div class="row" style="margin-top:24px">
+    <div class="opt"><button class="btn g2r4">فاصلهٔ ۲px، حلقهٔ روشن‌تر</button><div class="hex">حلقه S4 #131313 · فاصله S2</div></div>
+    <div class="opt"><button class="btn g2r1">فاصلهٔ ۲px، حلقهٔ تیره‌تر</button><div class="hex">حلقه S1 #0B0B0B · فاصله S2</div></div>
+  </div>
+</div>
+
+<h2>۲. نکته‌ها</h2>
+<table>
+  <tr><th>مورد</th><th>توضیح</th></tr>
+  <tr><td>۰.۰۵</td><td>۰.۰۵px روی نمایشگر دیده نمی‌شود؛ کوچک‌ترین فاصلهٔ واقعی ۱px است.</td></tr>
+  <tr><td>روشن‌تر</td><td>حلقهٔ S4 روی میزبان S2 دیده می‌شود، شبیه یک لبهٔ روشن.</td></tr>
+  <tr><td>تیره‌تر</td><td>حلقهٔ S1 تقریباً سیاه است و روی میزبان S2 کم‌رنگ دیده می‌شود.</td></tr>
+</table>
+
+<h2>۳. انتخاب شما</h2>
+<div class="note" id="sum">هنوز انتخاب نشده.</div>
+
+</div>
+</body>
+</html>
