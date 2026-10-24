@@ -123,3 +123,53 @@ export function computeBorderHalfHex(level: number): string {
   const x = v.toString(16).padStart(2, '0').toUpperCase();
   return `#${x}${x}${x}`;
 }
+
+/**
+ * RIM — HALF A STEP (approved by eye, 2026-10-24).
+ *
+ * Light on the edge of a surface: brightest on the top, middle at the sides,
+ * least at the bottom. The shape is fixed; only the strength is chosen:
+ *   top = k, sides = 2k/3, bottom = k/3   (k in local L*-steps)
+ * Half a step means k = 0.5, so the top is half a step, the sides a third, the
+ * bottom a sixth. Chosen over no rim and over one or one-and-a-half steps.
+ *
+ * Defined for S1..S4 only. S5 and S6 cannot take a full rim without leaving the
+ * ladder; that is the ceiling question, decided separately.
+ */
+export interface RimHalf {
+  readonly top: string;
+  readonly side: string;
+  readonly bottom: string;
+}
+
+export const RIM_HALF_B: Readonly<Record<number, RimHalf>> = {
+  1: { top: '#0D0D0D', side: '#0C0C0C', bottom: '#0C0C0C' },
+  2: { top: '#101010', side: '#0F0F0F', bottom: '#0F0F0F' },
+  3: { top: '#121212', side: '#121212', bottom: '#111111' },
+  4: { top: '#141414', side: '#141414', bottom: '#131313' },
+} as const;
+
+/** The half-step rim for a level. Only S1..S4 have one. */
+export function rimHalfHex(level: number): RimHalf {
+  const r = RIM_HALF_B[level];
+  if (r === undefined) {
+    throw new RangeError(`level ${level} has no half-step rim (1..4)`);
+  }
+  return r;
+}
+
+/** Computes the half-step rim from the ladder (no table). Used to check the table. */
+export function computeRimHalf(level: number): RimHalf {
+  const base = lightnessStar(LADDER_B[level].hex);
+  const step = lightnessStar(LADDER_B[level + 1].hex) - base;
+  const k = 0.5;
+  const at = (offset: number): string => {
+    const L = base + offset * step;
+    const y = L > 8 ? Math.pow((L + 16) / 116, 3) : L / 903.3;
+    const encoded = y <= 0.0031308 ? 12.92 * y : 1.055 * Math.pow(y, 1 / 2.4) - 0.055;
+    const v = Math.round(Math.max(0, Math.min(1, encoded)) * 255);
+    const x = v.toString(16).padStart(2, '0').toUpperCase();
+    return `#${x}${x}${x}`;
+  };
+  return { top: at(k), side: at((2 * k) / 3), bottom: at(k / 3) };
+}

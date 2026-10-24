@@ -9,6 +9,9 @@ import {
   BORDER_HALF_B,
   borderHalfHex,
   computeBorderHalfHex,
+  RIM_HALF_B,
+  rimHalfHex,
+  computeRimHalf,
 } from '../liminal-ladder-b';
 
 /** Approved on 2026-10-24. Changing any of these is a new decision, not a refactor. */
@@ -95,5 +98,30 @@ describe('LADDER B — the border is half a step (eye-approved 2026-10-24)', () 
   it('the top level has no border above it', () => {
     expect(() => borderHalfHex(LADDER_B_TOP)).toThrow(RangeError);
     expect(() => borderHalfHex(-1)).toThrow(RangeError);
+  });
+});
+
+
+describe('LADDER B — the rim is half a step (eye-approved 2026-10-24)', () => {
+  it('the table matches the computed rim for S1..S4', () => {
+    for (const level of [1, 2, 3, 4]) {
+      expect(RIM_HALF_B[level]).toEqual(computeRimHalf(level));
+    }
+  });
+
+  it('the shape is top > sides > bottom, and every rim is lighter than its surface', () => {
+    for (const level of [1, 2, 3, 4]) {
+      const r = RIM_HALF_B[level];
+      const base = lightnessStar(LADDER_B[level].hex);
+      expect(lightnessStar(r.top)).toBeGreaterThanOrEqual(lightnessStar(r.side));
+      expect(lightnessStar(r.side)).toBeGreaterThanOrEqual(lightnessStar(r.bottom));
+      expect(lightnessStar(r.bottom)).toBeGreaterThanOrEqual(base);
+    }
+  });
+
+  it('there is no rim on the canvas, on S5 or on S6 (ceiling and canvas rules)', () => {
+    expect(() => rimHalfHex(0)).toThrow(RangeError);
+    expect(() => rimHalfHex(5)).toThrow(RangeError);
+    expect(() => rimHalfHex(6)).toThrow(RangeError);
   });
 });
