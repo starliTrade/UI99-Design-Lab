@@ -1,12 +1,6 @@
 name: CI
 
-# Every branch, not just main.
-#
-# The filter used to be `branches: [main]` plus `pull_request`. Phase 2 was
-# built on a branch that was pushed directly and never opened as a PR, so
-# twenty-one commits — including a token that shipped as an rgba() with eleven
-# arguments — went through no CI at all. A branch filter that only covers main
-# verifies the work after it has already landed.
+# Every branch. The repo now holds only the ladder policy, its engine and its tests.
 on:
   push:
   pull_request:
@@ -17,7 +11,7 @@ concurrency:
 
 jobs:
   verify:
-    name: typecheck · lint · test · build
+    name: typecheck · lint · test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,37 +31,5 @@ jobs:
       - name: Lint
         run: bun run lint
 
-      - name: Test (design contract + components)
+      - name: Test (ladder policy and engine)
         run: bun run test
-
-      - name: Component standard (ratchet)
-        # COMPONENT-CONTRACT.md states ten things a component must have. Measured
-        # today: 55 components, 0 complete. A gate demanding 55/55 would fail
-        # everything and get turned off, so this is a RATCHET: the number may
-        # improve and may not walk backwards.
-        run: bun scripts/verify-component-standard.mjs --ratchet
-
-      - name: Build (the docs app)
-        run: bun run build
-
-      - name: Hierarchy probe (ratchet)
-        # Roadmap 1.3. Serves the built docs app and counts surfaces that skip a level
-        # above their host. RATCHET: the count may fall (scripts/verify-hierarchy.baseline.json),
-        # never rise. Today it is 53 — a gate at zero would fail on day one.
-        run: |
-          npx --yes vite preview --host 127.0.0.1 --port 3000 --strictPort &
-          for i in $(seq 1 60); do curl -sf http://127.0.0.1:3000/ >/dev/null && break; sleep 1; done
-          npm install --no-save --no-audit --no-fund --legacy-peer-deps puppeteer-core@23
-          CHROME_PATH=/usr/bin/google-chrome-stable node scripts/verify-hierarchy.mjs --ratchet http://127.0.0.1:3000/
-
-      - name: Build (the library)
-        # A different build from the app: `src/index.ts` as a library, React
-        # external, types emitted by tsc. It can succeed while shipping
-        # something nobody can use, which is what the next step checks.
-        run: bun run build:lib
-
-      - name: Package coherence
-        # Every path the manifest promises must exist, React must not be
-        # bundled, the stylesheet must be reachable, and the sizes are printed
-        # because this project had no bundle measurement at all until now.
-        run: bun run verify:package
