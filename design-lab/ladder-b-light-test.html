@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · آزمون نور سطح برای لایه‌های شناور</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.7; padding: 20px 14px 80px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 26px 0 6px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .note { margin-top: 12px; padding: 12px 14px; color: rgba(255,255,255,0.62); font-size: 13px; background: #0b0d0f; border-radius: 10px; }
+  .host { border-radius: 14px; padding: 14px; margin-top: 10px; background: #060709; }
+  .row { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-bottom: 10px; }
+  .cell { border-radius: 14px; padding: 12px; min-height: 88px; box-shadow: 0 1px 4px rgba(0,0,0,0.25); }
+  .clab { font-size: 12px; color: rgba(255,255,255,0.7); }
+  .hex { font-family: "JetBrains Mono", monospace; font-size: 10px; color: rgba(255,255,255,0.45); word-break: break-all; }
+  .flat4 { background: #131313; }
+  .flat5 { background: #151515; }
+  .flat6 { background: #171717; }
+  .h4 { background: linear-gradient(180deg, #141414 0%, #131313 100%); }
+  .f4 { background: linear-gradient(180deg, #151515 0%, #131313 100%); }
+  .h5 { background: linear-gradient(180deg, #161616 0%, #151515 100%); }
+  .f5 { background: linear-gradient(180deg, #171717 0%, #151515 100%); }
+  .h6 { background: linear-gradient(180deg, #171717 0%, #171717 100%); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th, td { padding: 6px 4px; text-align: right; }
+  th { color: rgba(255,255,255,0.5); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>آزمون نور سطح برای لایه‌های شناور</h1>
+<div class="muted">سطح بالای لایه کمی روشن‌تر از پایین است. سه حالت برای هر لایه: تخت، نیم‌پله، یک پله.</div>
+
+<div class="note">
+  <b>پیش از شروع:</b> اتاق کم‌نور، روشنایی معمول، بدون فیلتر. جواب اول را بده.
+  <br>ردیف‌ها: S4، S5، S6. ستون‌ها: تخت، نور نیم‌پله، نور یک پله.
+</div>
+
+<h2>۱. S4 (شناور)</h2>
+<div class="host">
+  <div class="row">
+    <div class="cell flat4"><div class="clab">تخت</div><div class="hex">#131313</div></div>
+    <div class="cell h4"><div class="clab">نور نیم‌پله</div><div class="hex">بالا #141414 · پایین #131313</div></div>
+    <div class="cell f4"><div class="clab">نور یک پله</div><div class="hex">بالا #151515 · پایین #131313</div></div>
+  </div>
+</div>
+
+<h2>۲. S5 (شناور)</h2>
+<div class="host">
+  <div class="row">
+    <div class="cell flat5"><div class="clab">تخت</div><div class="hex">#151515</div></div>
+    <div class="cell h5"><div class="clab">نور نیم‌پله</div><div class="hex">بالا #161616 · پایین #151515</div></div>
+    <div class="cell f5"><div class="clab">نور یک پله</div><div class="hex">بالا #171717 · پایین #151515</div></div>
+  </div>
+</div>
+
+<h2>۳. S6 (شناور، سقف)</h2>
+<div class="host">
+  <div class="row">
+    <div class="cell flat6"><div class="clab">تخت</div><div class="hex">#171717</div></div>
+    <div class="cell h6"><div class="clab">نور نیم‌پله</div><div class="hex">بالا #171717 · پایین #171717</div></div>
+    <div class="cell h6"><div class="clab">نور یک پله</div><div class="hex">بالاتر از S6 نیست؛ ممنوع</div></div>
+  </div>
+</div>
+
+<h2>۴. یادداشت</h2>
+<table>
+  <tr><th>مورد</th><th>توضیح</th></tr>
+  <tr><td>S6</td><td>نور یک پله بیرون از نردبان است. نور نیم‌پله روی S6 بی‌اثر است؛ پس S6 تخت می‌ماند.</td></tr>
+  <tr><td>S4 و S5</td><td>نور روی گرادیان بین دو پلهٔ نردبان است؛ هیچ رنگی بیرون نردبان نیست.</td></tr>
+</table>
+
+<h2>۵. انتخاب شما</h2>
+<div class="note">کدام حالت برای S4 و S5 بهتر است: تخت، نیم‌پله یا یک پله؟ و S6 تخت بماند؟</div>
+
+</div>
+</body>
+</html>
