@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · آزمون چشمی ریم روی نردبان B</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.75; padding: 20px 14px 80px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 28px 0 8px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .note { margin-top: 12px; padding: 12px 14px; border-right: 2px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.62); font-size: 13px; }
+  .grid { display: grid; grid-template-columns: 64px repeat(4, 1fr); gap: 8px; margin-top: 12px; align-items: stretch; }
+  .head { font-size: 12px; color: rgba(255,255,255,0.55); text-align: center; align-self: end; }
+  .lvl { font-family: "JetBrains Mono", monospace; font-size: 12px; color: rgba(255,255,255,0.5); align-self: center; }
+  .cell { background: #060709; border-radius: 12px; padding: 8px; }
+  .card { border-radius: 10px; padding: 10px 8px; min-height: 96px; display: flex; flex-direction: column; justify-content: space-between; }
+  .card .t { font-size: 12px; color: rgba(255,255,255,0.75); }
+  .card .c { align-self: flex-start; padding: 5px 9px; border-radius: 7px; font-size: 11px; color: rgba(255,255,255,0.85); }
+  .btn { font: inherit; font-size: 14px; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.16); background: #131518; color: rgba(255,255,255,0.9); cursor: pointer; }
+  .btn.pick { border-color: #6EE0B4; color: #6EE0B4; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .hex { font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.45); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  th, td { padding: 6px 4px; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: right; }
+  th { color: rgba(255,255,255,0.5); font-weight: 500; }
+  textarea { width: 100%; min-height: 70px; margin-top: 8px; background: #0b0d0f; color: rgba(255,255,255,0.88); border: 1px solid rgba(255,255,255,0.14); border-radius: 10px; padding: 10px; font: inherit; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>آزمون چشمی ریم روی نردبان B</h1>
+<div class="muted">ریم نور روی لبهٔ یک سطح است: <b>لبهٔ بالا روشن‌ترین</b>، کنارها میانه، و لبهٔ پایین کم‌ترین. در هر ستون شدت متفاوت است. بگو کدام ستون <b>نور را می‌بینی ولی زیاد نیست</b>.</div>
+
+<div class="note">
+  <b>پیش از شروع:</b> همان شرایط آزمون‌های قبل: اتاق کم‌نور، روشنایی معمول، بدون فیلتر، تمام‌صفحه. جواب اول را بده.
+  <br>این آزمون فقط ریم را می‌سنجد؛ خط مرز نیم‌پله در کارت‌ها نیست.
+</div>
+
+<h2>۱. مقایسه</h2>
+<div class="grid" id="grid"></div>
+
+<h2>۲. کدام ریم؟</h2>
+<div class="muted">یک گزینه را انتخاب کن. «بدون ریم» یعنی اصلاً نور روی لبه لازم نیست.</div>
+<div class="row" id="choices"></div>
+<div class="muted" id="choiceInfo" style="margin-top:6px">انتخاب: —</div>
+
+<h2>۳. یادداشت</h2>
+<textarea id="note" placeholder="کجا نور دیده شد، کجا زیادی بود، و نمایشگرت چیست."></textarea>
+<div class="row"><button class="btn" id="download">دانلود نتیجه (JSON)</button></div>
+
+<h2>۴. مقادیر (بعد از آزمون)</h2>
+<table id="values"></table>
+
+</div>
+
+<script>
+// Ladder B (approved). Canvas S0 + six levels.
+const P = ['#060709', '#0B0B0B', '#0E0E0E', '#111111', '#131313', '#151515', '#171717'];
+const NAMES = ['بوم', 'surface', 'elevated', 'overlay', 'sub-overlay', 'popover', 'modal'];
+
+// ---- colour maths (same as the engine module) ----
+function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+function inv(v) { return v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055; }
+function Y(h) { const r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), b = parseInt(h.slice(5,7),16); return 0.2126*lin(r) + 0.7152*lin(g) + 0.0722*lin(b); }
+function Lstar(h) { const y = Y(h); return y > 0.008856 ? 116*Math.cbrt(y) - 16 : 903.3*y; }
+function fromL(l) {
+  const y = l > 8 ? Math.pow((l + 16) / 116, 3) : l / 903.3;
+  const v = Math.round(Math.max(0, Math.min(1, inv(y))) * 255);
+  const x = v.toString(16).padStart(2, '0').toUpperCase();
+  return '#' + x + x + x;
+}
+
+// The rim of level n: the light sits ABOVE the surface, by an offset measured in
+// the local step (L(n+1) − L(n)). Top = k, sides = 2k/3, bottom = k/3 — the v1 shape
+// (1.5 / 1 / 0.5) at its full strength k = 1.5.
+function rimAt(n, offsetInSteps) {
+  const step = Lstar(P[n + 1]) - Lstar(P[n]);
+  return fromL(Lstar(P[n]) + offsetInSteps * step);
+}
+const VARIANTS = [
+  { id: 'none', label: 'بدون ریم', k: 0 },
+  { id: 'half', label: 'نیم پله',  k: 0.5 },
+  { id: 'one',  label: 'یک پله',   k: 1.0 },
+  { id: 'onehalf', label: 'یک و نیم پله', k: 1.5 },
+];
+const rimOf = (v, n) => v.k === 0
+  ? { top: P[n], side: P[n], bottom: P[n] }
+  : { top: rimAt(n, v.k), side: rimAt(n, v.k * 2 / 3), bottom: rimAt(n, v.k / 3) };
+
+// ---- grid: rows = levels S1..S4 (the top levels cannot take the full rim yet), cols = variants ----
+const LEVELS = [1, 2, 3, 4];
+const grid = document.getElementById('grid');
+grid.appendChild(Object.assign(document.createElement('div'), { className: 'head' }));
+VARIANTS.forEach(v => grid.appendChild(Object.assign(document.createElement('div'), { className: 'head', textContent: v.label })));
+LEVELS.forEach(n => {
+  const lab = document.createElement('div');
+  lab.className = 'lvl';
+  lab.textContent = `S${n}`;
+  grid.appendChild(lab);
+  VARIANTS.forEach(v => {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.style.background = P[n - 1];
+    const r = rimOf(v, n);
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.background = P[n];
+    card.style.borderTop = `2px solid ${r.top}`;
+    card.style.borderBottom = `1px solid ${r.bottom}`;
+    card.style.borderLeft = `1px solid ${r.side}`;
+    card.style.borderRight = `1px solid ${r.side}`;
+    card.innerHTML = `<div class="t">${NAMES[n]}</div><span class="c" style="background:${P[n + 1]}">دکمه</span>`;
+    cell.appendChild(card);
+    grid.appendChild(cell);
+  });
+});
+
+// ---- choices ----
+const pickAns = { choice: null };
+const choicesBox = document.getElementById('choices');
+[...VARIANTS.map(v => [v.id, v.label]), ['weak', 'ریم ضعیف‌تر از همه']].forEach(([id, label]) => {
+  const b = document.createElement('button');
+  b.className = 'btn';
+  b.textContent = label;
+  b.onclick = () => {
+    pickAns.choice = id;
+    choicesBox.querySelectorAll('.btn').forEach(x => x.classList.toggle('pick', x === b));
+    document.getElementById('choiceInfo').textContent = 'انتخاب: ' + label;
+  };
+  choicesBox.appendChild(b);
+});
+
+// ---- values (after the test) ----
+let html = '<tr><th>پله</th><th>بالا</th><th>کنار</th><th>پایین</th><th>شدت</th></tr>';
+VARIANTS.filter(v => v.k > 0).forEach(v => {
+  LEVELS.forEach(n => {
+    const r = rimOf(v, n);
+    html += `<tr><td>S${n} · ${v.label}</td><td class="hex">${r.top}</td><td class="hex">${r.side}</td><td class="hex">${r.bottom}</td><td>${v.k} پله</td></tr>`;
+  });
+});
+html += '<tr><td colspan="5" class="muted" style="text-align:right">S5 و S6 در این آزمون نیستند: ریم کامل روی آن‌ها از سقف نردبان بیرون می‌زند. این مسئلهٔ سقف جداگانه تصمیم گرفته می‌شود.</td></tr>';
+document.getElementById('values').innerHTML = html;
+
+// ---- export ----
+document.getElementById('download').onclick = () => {
+  const data = {
+    test: 'ladder-b-rim-test',
+    created: new Date().toISOString(),
+    ladder: P,
+    shape: 'top = k, side = 2k/3, bottom = k/3 (in local L* steps)',
+    variants: VARIANTS.map(v => ({ id: v.id, label: v.label, k: v.k, rim: LEVELS.map(n => ({ level: n, ...rimOf(v, n) })) })),
+    choice: pickAns.choice,
+    note: document.getElementById('note').value,
+    screen: { width: screen.width, height: screen.height, dpr: devicePixelRatio },
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ladder-b-rim-test.json';
+  a.click();
+};
+</script>
+</body>
+</html>
