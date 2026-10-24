@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LIMINAL · آزمون چشمی نردبان بازطراحی‌شده</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #060709; color: rgba(255,255,255,0.88); font-family: Inter, system-ui, sans-serif; font-size: 15px; line-height: 1.75; padding: 20px 16px 80px; }
+  .wrap { max-width: 680px; margin: 0 auto; }
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 6px; }
+  h2 { font-size: 16px; font-weight: 600; margin: 28px 0 8px; }
+  .muted { color: rgba(255,255,255,0.50); font-size: 13px; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; }
+  .note { margin-top: 12px; padding: 12px 14px; border-right: 2px solid rgba(255,255,255,0.14); color: rgba(255,255,255,0.62); font-size: 13px; }
+  .btn { font: inherit; font-size: 14px; padding: 10px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.16); background: #131518; color: rgba(255,255,255,0.9); cursor: pointer; }
+  .btn:hover { background: #15171a; }
+  .btn.primary { border-color: rgba(255,255,255,0.3); }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+
+  /* ---- ladder strip ---- */
+  .strip { display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 10px; }
+  .step { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 10px; }
+  .step .name { font-size: 14px; }
+  .step .hex { font-family: "JetBrains Mono", monospace; font-size: 12px; color: rgba(255,255,255,0.55); }
+  .key { font-family: "JetBrains Mono", monospace; font-size: 12px; color: rgba(255,255,255,0.45); display: none; }
+  .show-key .key { display: inline; }
+
+  /* ---- pair trial ---- */
+  .stage { position: relative; margin-top: 14px; height: 220px; border-radius: 12px; overflow: hidden; display: flex; }
+  .half { flex: 1; height: 100%; }
+  .progress { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-top: 14px; overflow: hidden; }
+  .progress > div { height: 100%; width: 0%; background: rgba(255,255,255,0.45); transition: width .2s; }
+  .answers { display: flex; gap: 10px; margin-top: 14px; }
+  .answers .btn { flex: 1; padding: 14px; font-size: 15px; }
+  .trialinfo { margin-top: 10px; color: rgba(255,255,255,0.45); font-size: 12px; }
+
+  /* ---- in-context cards ---- */
+  .card { border-radius: 14px; padding: 14px; margin-top: 10px; }
+  .card .title { font-size: 14px; font-weight: 600; }
+  .card .body { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .card .ctl { display: inline-block; margin-top: 10px; padding: 8px 14px; border-radius: 9px; font-size: 13px; color: rgba(255,255,255,0.86); }
+  .card .tag { float: left; font-family: "JetBrains Mono", monospace; font-size: 11px; color: rgba(255,255,255,0.45); }
+
+  textarea { width: 100%; min-height: 80px; margin-top: 8px; background: #0b0d0f; color: rgba(255,255,255,0.88); border: 1px solid rgba(255,255,255,0.14); border-radius: 10px; padding: 10px; font: inherit; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+  th, td { padding: 8px 6px; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: right; }
+  th { color: rgba(255,255,255,0.5); font-weight: 500; }
+  .warn { color: #E8C36E; } .ok { color: #6EE0B4; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>آزمون چشمی نردبان بازطراحی‌شده</h1>
+  <div class="muted">هدف: ببینیم هر پله از پلهٔ قبلی‌اش جدا دیده می‌شود یا نه، و کدام پله‌ها در کاربرد واقعی گم می‌شوند. این یک <b>آزمون چشمی</b> است، نه اندازه‌گیری معتبر؛ جوابِ تو داده می‌شود و یک ناظر و یک نمایشگر را نشان می‌دهد.</div>
+
+  <div class="note">
+    <b>پیش از شروع:</b> اتاق را کم‌نور کن، روشنایی نمایشگر را روی حالت معمول بگذار، و حالت شب/رنگ گرم یا هر فیلتر رنگی را خاموش کن. تمام‌صفحه بهتر است. هر جفت را چند ثانیه نگاه کن و جواب اول را بده.
+  </div>
+
+  <h2>۱. نردبان</h2>
+  <div class="muted">هشت پله، از بوم تا S7. ترتیب و رنگ را ببین، بعد به آزمون برو.</div>
+  <div class="strip" id="strip"></div>
+  <div class="row">
+    <button class="btn" id="toggleKey">نمایش اعداد L* و ΔL* (بعد از آزمون)</button>
+  </div>
+  <div class="muted" style="margin-top:6px">اعداد L* و ΔL* را فقط بعد از آزمون ببین، تا روی جواب‌ها اثر نگذارد.</div>
+
+  <h2>۲. آزمون جفت‌ها</h2>
+  <div class="muted">در هر نوبت دو نیمه را ببین. اگر <b>فرق می‌بینی</b> بزن، اگر <b>یکی‌اند</b> بزن. دو نیمه گاهی یکی‌اند؛ آن‌ها را هم با همان جدیت جواب بده.</div>
+
+  <div class="row">
+    <button class="btn primary" id="start">شروع آزمون</button>
+    <button class="btn" id="reset">شروع دوباره</button>
+  </div>
+
+  <div id="trialArea" style="display:none">
+    <div class="stage" id="stage">
+      <div class="half" id="left"></div>
+      <div class="half" id="right"></div>
+    </div>
+    <div class="answers">
+      <button class="btn" id="ansDiff">فرق می‌بینم</button>
+      <button class="btn" id="ansSame">یکی‌اند</button>
+    </div>
+    <div class="progress"><div id="bar"></div></div>
+    <div class="trialinfo" id="info"></div>
+  </div>
+
+  <div id="results" style="display:none">
+    <h2>نتیجه</h2>
+    <div id="resultBody"></div>
+    <div class="row">
+      <button class="btn primary" id="download">دانلود نتیجه (JSON)</button>
+    </div>
+  </div>
+
+  <h2>۳. در کاربرد واقعی</h2>
+  <div class="muted">هر کارت روی پلهٔ خودش نشسته. دکمهٔ داخلش رنگ پلهٔ بالاتر را دارد (قاعدهٔ کنترل). ببین کدام لایه‌ها را به‌سختی از هم تشخیص می‌دهی.</div>
+  <div id="cards"></div>
+
+  <h2>۴. یادداشت آزاد</h2>
+  <textarea id="note" placeholder="هر چه دیدی بنویس: کدام پله گم شد، کدام واضح بود، کجا جهش دیدی، و نمایشگرت چیست."></textarea>
+
+</div>
+
+<script>
+// ---------- the ladder under test (only data; everything else is computed) ----------
+const LADDER = [
+  { id: 'S0', name: 'بوم',         hex: '#060709' },
+  { id: 'S1', name: 'surface',     hex: '#0B0B0B' },
+  { id: 'S2', name: 'elevated',    hex: '#0F0F0F' },
+  { id: 'S3', name: 'overlay',     hex: '#131313' },
+  { id: 'S4', name: 'sub-overlay', hex: '#171717' },
+  { id: 'S5', name: 'popover',     hex: '#1B1B1B' },
+  { id: 'S6', name: 'sub-popover', hex: '#1F1F1F' },
+  { id: 'S7', name: 'modal',       hex: '#232323' },
+];
+
+// ---------- colour maths (sRGB -> relative luminance -> CIE L*) ----------
+function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+function Y(hex) {
+  const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+}
+function Lstar(hex) { const y = Y(hex); return y > 0.008856 ? 116 * Math.cbrt(y) - 16 : 903.3 * y; }
+
+// ---------- strip ----------
+const strip = document.getElementById('strip');
+LADDER.forEach((s, i) => {
+  const L = Lstar(s.hex);
+  const d = i === 0 ? '—' : (L - Lstar(LADDER[i - 1].hex)).toFixed(2);
+  const el = document.createElement('div');
+  el.className = 'step';
+  el.style.background = s.hex;
+  el.style.border = '1px solid rgba(255,255,255,0.06)';
+  el.innerHTML = `<span class="name">${s.id} · ${s.name}</span>
+    <span><span class="hex">${s.hex}</span>
+    <span class="key"> · L* ${L.toFixed(2)} · ΔL* ${d}</span></span>`;
+  strip.appendChild(el);
+});
+document.getElementById('toggleKey').onclick = () => document.body.classList.toggle('show-key');
+
+// ---------- pair trials ----------
+// Adjacent pairs (each 3x) + identical "catch" pairs (4x, random levels).
+// Sides are randomised. Responses are stored, not judged live.
+function buildTrials() {
+  const trials = [];
+  for (let i = 0; i < LADDER.length - 1; i++) {
+    for (let k = 0; k < 3; k++) trials.push({ kind: 'adjacent', a: i, b: i + 1 });
+  }
+  const catchLevels = [...Array(LADDER.length).keys()].sort(() => Math.random() - 0.5).slice(0, 4);
+  catchLevels.forEach(i => trials.push({ kind: 'catch', a: i, b: i }));
+  for (let i = trials.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [trials[i], trials[j]] = [trials[j], trials[i]]; }
+  trials.forEach(t => { t.swap = Math.random() < 0.5; });
+  return trials;
+}
+
+let trials = [], idx = 0, responses = [], startedAt = 0, trialStart = 0;
+const $ = id => document.getElementById(id);
+
+function showTrial() {
+  const t = trials[idx];
+  const leftIdx = t.swap ? t.b : t.a, rightIdx = t.swap ? t.a : t.b;
+  $('left').style.background = LADDER[leftIdx].hex;
+  $('right').style.background = LADDER[rightIdx].hex;
+  $('info').textContent = `نوبت ${idx + 1} از ${trials.length}`;
+  $('bar').style.width = (idx / trials.length * 100) + '%';
+  trialStart = performance.now();
+}
+
+function answer(diff) {
+  const t = trials[idx];
+  responses.push({
+    kind: t.kind,
+    pair: t.kind === 'adjacent' ? `${LADDER[t.a].id}-${LADDER[t.b].id}` : `${LADDER[t.a].id}=${LADDER[t.a].id}`,
+    a: LADDER[t.a].id, b: LADDER[t.b].id,
+    said_different: diff,
+    rt_ms: Math.round(performance.now() - trialStart),
+  });
+  idx++;
+  if (idx < trials.length) showTrial(); else finish();
+}
+
+$('ansDiff').onclick = () => answer(true);
+$('ansSame').onclick = () => answer(false);
+
+$('start').onclick = () => {
+  trials = buildTrials(); idx = 0; responses = []; startedAt = Date.now();
+  $('trialArea').style.display = 'block';
+  $('results').style.display = 'none';
+  showTrial();
+};
+$('reset').onclick = () => { $('trialArea').style.display = 'none'; $('results').style.display = 'none'; idx = 0; responses = []; };
+
+function finish() {
+  $('bar').style.width = '100%';
+  $('info').textContent = 'تمام شد.';
+  $('trialArea').style.display = 'none';
+
+  // per adjacent pair: how often "different" was said
+  const adj = {};
+  responses.filter(r => r.kind === 'adjacent').forEach(r => {
+    adj[r.pair] = adj[r.pair] || { n: 0, diff: 0 };
+    adj[r.pair].n++; if (r.said_different) adj[r.pair].diff++;
+  });
+  const catchR = responses.filter(r => r.kind === 'catch');
+  const falseAlarm = catchR.filter(r => r.said_different).length;
+  const reliable = falseAlarm <= 1;
+
+  let rows = '';
+  for (let i = 0; i < LADDER.length - 1; i++) {
+    const key = `${LADDER[i].id}-${LADDER[i + 1].id}`;
+    const a = adj[key] || { n: 0, diff: 0 };
+    const L = (Lstar(LADDER[i + 1].hex) - Lstar(LADDER[i].hex)).toFixed(2);
+    const cls = a.diff === a.n ? 'ok' : (a.diff === 0 ? 'warn' : '');
+    rows += `<tr><td>${key}</td><td>${a.diff} / ${a.n}</td><td class="${cls}">${a.diff === a.n ? 'همیشه دیده شد' : a.diff === 0 ? 'هیچ‌وقت دیده نشد' : 'گاهی'}</td><td class="mono">ΔL* ${L}</td></tr>`;
+  }
+  $('resultBody').innerHTML = `
+    <table>
+      <tr><th>جفت</th><th>«فرق دارد» گفتی</th><th>نتیجه</th><th>(بعد از آزمون)</th></tr>
+      ${rows}
+    </table>
+    <div class="note">
+      <b>کنترل ناهمگونی:</b> از ${catchR.length} جفت «یکی‌اند»، ${falseAlarm} بار گفتی «فرق دارد».
+      ${reliable
+        ? '<span class="ok">پاسخ‌ها قابل اتکا به نظر می‌رسند.</span>'
+        : '<span class="warn">تعداد خطای کنترل زیاد است؛ این آزمون را در شرایط آرام‌تر دوباره انجام بده.</span>'}
+      <br>این یک نتیجهٔ چشمی است و جایگزین اندازه‌گیری معتبر نیست.
+    </div>`;
+  $('results').style.display = 'block';
+  window.__lastResult = buildExport();
+}
+
+function buildExport() {
+  return {
+    test: 'ladder-rebuild-eye-test',
+    created: new Date().toISOString(),
+    durationSec: Math.round((Date.now() - startedAt) / 1000),
+    ladder: LADDER.map(s => ({ ...s, Lstar: +Lstar(s.hex).toFixed(3) })),
+    screen: { width: screen.width, height: screen.height, colorDepth: screen.colorDepth, dpr: devicePixelRatio },
+    responses,
+    note: $('note').value,
+  };
+}
+
+$('download').onclick = () => {
+  const data = buildExport();
+  data.note = $('note').value;
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ladder-rebuild-eye-test.json';
+  a.click();
+};
+
+// ---------- in-context cards ----------
+// Each card sits on its own level; its control uses the NEXT level's colour.
+// Border is one step to the next level (policy §4).
+const cards = $('cards');
+const contexts = [
+  { id: 'S1', text: 'نوار بالا، ناوبری' },
+  { id: 'S2', text: 'سطح کار، فرم یا محتوای اصلی' },
+  { id: 'S3', text: 'پنل کناری، جزئیات' },
+  { id: 'S4', text: 'کنترل داخل پنل' },
+  { id: 'S5', text: 'منو، فهرست کشویی' },
+  { id: 'S6', text: 'پاپ‌اور، راهنمای کوچک' },
+  { id: 'S7', text: 'مودال، تأیید عملیات' },
+];
+contexts.forEach((c) => {
+  const i = LADDER.findIndex(s => s.id === c.id);
+  const bg = LADDER[i].hex;
+  const next = LADDER[i + 1] ? LADDER[i + 1].hex : bg;
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.style.background = bg;
+  el.style.border = `1px solid ${next}`;
+  el.innerHTML = `<span class="tag">${c.id} · ${LADDER[i].name}</span>
+    <div class="title">${c.text}</div>
+    <div class="body">این کارت روی ${c.id} نشسته. مرزش یک پله بالاتر است.</div>
+    <span class="ctl" style="background:${next}">دکمه</span>`;
+  cards.appendChild(el);
+});
+</script>
+</body>
+</html>
