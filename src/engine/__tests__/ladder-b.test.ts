@@ -21,6 +21,8 @@ import {
   childEdge,
   lightSpec,
   lightCss,
+  haloCss,
+  HALO_B,
   childBorderHex,
   FOCUS_GAP_PX,
   FOCUS_RING_PX,
@@ -295,5 +297,27 @@ describe('LADDER B — light on floating surfaces (owner rule, 2026-10-24)', () 
   it('light is only for floating levels', () => {
     expect(() => lightSpec(3)).toThrow(/not a floating level/);
     expect(() => lightSpec(0)).toThrow(/not a floating level/);
+  });
+});
+
+describe('LADDER B — halo, its own feature (owner, 2026-10-24)', () => {
+  it('the approved halos are H1 (soft), H2 (medium), H4 (wide)', () => {
+    expect(HALO_B.soft).toEqual({ blur: 6, spread: 1, alpha: 0.03 });
+    expect(HALO_B.medium).toEqual({ blur: 12, spread: 2, alpha: 0.03 });
+    expect(HALO_B.wide).toEqual({ blur: 16, spread: 4, alpha: 0.02 });
+  });
+
+  it('H3 was not approved and is not defined', () => {
+    expect(Object.keys(HALO_B)).toHaveLength(3);
+  });
+
+  it('each halo is a white, low-alpha glow with no offset', () => {
+    expect(haloCss('soft')).toBe('0 0 6px 1px rgba(255,255,255,0.03)');
+    expect(haloCss('medium')).toBe('0 0 12px 2px rgba(255,255,255,0.03)');
+    expect(haloCss('wide')).toBe('0 0 16px 4px rgba(255,255,255,0.02)');
+  });
+
+  it('an unapproved halo name is refused', () => {
+    expect(() => haloCss('h3' as never)).toThrow(/not approved/);
   });
 });

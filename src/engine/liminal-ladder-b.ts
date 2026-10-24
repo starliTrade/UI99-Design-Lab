@@ -388,3 +388,39 @@ export function lightCss(level: number): string {
   if (spec === null) return ladderHex(level);
   return `linear-gradient(180deg, ${spec.topHex} 0%, ${spec.bottomHex} 100%)`;
 }
+
+/**
+ * HALO — its own feature, separate from the rim (owner, 2026-10-24).
+ *
+ * A halo is a soft, light glow around an edge. It is NOT a rim and NOT one of
+ * the four child styles. Its colour is white at a low alpha, never a free colour.
+ * Three halos were approved by eye (H1, H2, H4). H3 was not approved.
+ *
+ *   soft:   0 0 6px 1px   rgba(255,255,255,0.03)   (H1)
+ *   medium: 0 0 12px 2px  rgba(255,255,255,0.03)   (H2)
+ *   wide:   0 0 16px 4px  rgba(255,255,255,0.02)   (H4)
+ *
+ * Which halo goes with which role is not decided yet.
+ */
+export interface HaloSpec {
+  readonly blur: number;
+  readonly spread: number;
+  readonly alpha: number;
+}
+
+export const HALO_B = {
+  soft: { blur: 6, spread: 1, alpha: 0.03 },
+  medium: { blur: 12, spread: 2, alpha: 0.03 },
+  wide: { blur: 16, spread: 4, alpha: 0.02 },
+} as const satisfies Record<string, HaloSpec>;
+
+export type HaloName = keyof typeof HALO_B;
+
+/** The CSS box-shadow of a halo. Only approved names are accepted. */
+export function haloCss(name: HaloName): string {
+  if (!Object.prototype.hasOwnProperty.call(HALO_B, name)) {
+    throw new RangeError(`halo "${name}" is not approved (soft, medium, wide)`);
+  }
+  const h = HALO_B[name];
+  return `0 0 ${h.blur}px ${h.spread}px rgba(255,255,255,${h.alpha})`;
+}
