@@ -135,10 +135,14 @@ describe('LADDER B — the rim is half a step (eye-approved 2026-10-24)', () => 
     }
   });
 
-  it('there is no rim on the canvas, on S5 or on S6 (ceiling and canvas rules)', () => {
+  it('there is no rim on the canvas (S0) or on S6 (ceiling rule); S5 is clipped to the ladder', () => {
     expect(() => rimHalfHex(0)).toThrow(RangeError);
-    expect(() => rimHalfHex(5)).toThrow(RangeError);
     expect(() => rimHalfHex(6)).toThrow(RangeError);
+    expect(rimHalfHex(5)).toEqual({ top: '#171717', side: '#161616', bottom: '#151515' });
+  });
+
+  it('the S5 rim uses only ladder steps (its top is the S6 surface)', () => {
+    expect(rimHalfHex(5).top).toBe(ladderHex(6));
   });
 });
 
@@ -258,9 +262,9 @@ describe('LADDER B — child styles (rule of 2026-10-24)', () => {
     expect(() => childEdge(0, [])).toThrow(/needs one style/);
   });
 
-  it('the rim at S5 and S6 is refused until the ceiling is decided', () => {
-    expect(() => childEdge(4, ['rimmed'])).toThrow(/pending the ceiling/);
-    expect(() => childEdge(5, ['rimmed'])).toThrow(/pending the ceiling/);
+  it('a rimmed child at S5 is clipped; at S6 it is refused (ceiling)', () => {
+    expect(childEdge(4, ['rimmed']).rim).toEqual(rimHalfHex(5));
+    expect(() => childEdge(5, ['rimmed'])).toThrow(/no rim/);
   });
 
   it('the top level has no child (S6 has nothing above it)', () => {

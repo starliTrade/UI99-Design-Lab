@@ -154,9 +154,11 @@ export const RIM_HALF_B: Readonly<Record<number, RimHalf>> = {
   2: { top: '#101010', side: '#0F0F0F', bottom: '#0F0F0F' },
   3: { top: '#121212', side: '#121212', bottom: '#111111' },
   4: { top: '#141414', side: '#141414', bottom: '#131313' },
+  // S5 is clipped to the ladder: its top is S6 itself (the last step), so no colour leaves the ladder.
+  5: { top: '#171717', side: '#161616', bottom: '#151515' },
 } as const;
 
-/** The half-step rim for a level. Only S1..S4 have one. */
+/** The rim for a level. S1..S4 are half-step; S5 is clipped to the ladder top; S0 and S6 have none. */
 export function rimHalfHex(level: number): RimHalf {
   const r = RIM_HALF_B[level];
   if (r === undefined) {
@@ -308,8 +310,8 @@ export function focusCss(level: number): string {
  * four styles (owner's answer on 2026-10-24, which replaces the earlier
  * "floating has no border" rule).
  *
- * Open: the ceiling. S5 and S6 have no half-step rim table yet, so a rimmed
- * child at S5 or S6 is refused until the ceiling is decided.
+ * Ceiling (decided 2026-10-24): S5 has a rim clipped to the ladder (top = S6).
+ * S6 has no rim, because its half step would sit above the ladder top.
  */
 export type ChildStyle = 'simple' | 'bordered' | 'shadowed' | 'rimmed';
 
@@ -344,8 +346,8 @@ export function childEdge(parent: number, styles: readonly ChildStyle[]): ChildE
   }
   const level = parent + 1;
   const has = (v: ChildStyle): boolean => styles.includes(v);
-  if (has('rimmed') && (level === 5 || level === 6)) {
-    throw new RangeError(`level ${level} rim is pending the ceiling decision`);
+  if (has('rimmed') && level === 6) {
+    throw new RangeError('level 6 has no rim: its half step would sit above the ladder top (ceiling rule)');
   }
   return {
     level,
