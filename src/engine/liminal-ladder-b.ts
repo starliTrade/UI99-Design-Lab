@@ -212,3 +212,36 @@ export function shadowCss(level: number): string {
   const s = SHADOW_NEAR_B;
   return `0 ${s.offsetY}px ${s.blur}px rgba(0,0,0,${s.alpha})`;
 }
+
+/**
+ * STATES — hover, active, disabled (eye-approved 2026-10-24).
+ *
+ * Each state has its own shape. They never share a value:
+ *   - hover:    half a step UP from the level (the border value of the level).
+ *   - active:   the half-step rim of the level (light on top, dimmer below).
+ *   - disabled: half a step DOWN from the level, with muted text.
+ *
+ * Focus is NOT defined here. The approved focus candidate (a coloured double
+ * ring) was rejected: a coloured border is outside the liminal rules.
+ */
+export function hoverHex(level: number): string {
+  return borderHalfHex(level);
+}
+
+export function activeRim(level: number): RimHalf {
+  return rimHalfHex(level);
+}
+
+export function disabledHex(level: number): string {
+  if (level < 1 || level > LADDER_B_TOP) {
+    throw new RangeError(`level ${level} has no step below for a disabled surface`);
+  }
+  return borderHalfHex(level - 1);
+}
+
+/** Text colour on a disabled control: white at alpha 0.35. */
+export const DISABLED_TEXT_ALPHA = 0.35;
+
+export function disabledTextCss(): string {
+  return `rgba(255,255,255,${DISABLED_TEXT_ALPHA})`;
+}

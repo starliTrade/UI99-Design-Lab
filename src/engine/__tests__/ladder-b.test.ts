@@ -12,6 +12,10 @@ import {
   computeBorderHalfHex,
   RIM_HALF_B,
   rimHalfHex,
+  hoverHex,
+  activeRim,
+  disabledHex,
+  disabledTextCss,
   computeRimHalf,
   SHADOW_NEAR_B,
   shadowCss,
@@ -148,5 +152,38 @@ describe('LADDER B — the shadow is NEAR (chosen by eye 2026-10-24)', () => {
     for (const level of [0, 1, 2, 3]) {
       expect(() => shadowCss(level)).toThrow(/not floating/);
     }
+  });
+});
+
+describe('LADDER B — states: hover, active, disabled (eye-approved 2026-10-24)', () => {
+  it('hover is half a step up: S3 gives #121212', () => {
+    expect(hoverHex(3)).toBe('#121212');
+  });
+
+  it('active is the half-step rim of the level', () => {
+    expect(activeRim(3)).toEqual(rimHalfHex(3));
+    expect(activeRim(3)).toEqual({ top: '#121212', side: '#121212', bottom: '#111111' });
+  });
+
+  it('disabled is half a step down: S3 gives #101010, below S3', () => {
+    expect(disabledHex(3)).toBe('#101010');
+    expect(disabledHex(3)).not.toBe(hoverHex(3));
+    expect(disabledHex(3)).not.toBe(activeRim(3).top);
+  });
+
+  it('disabled text is white at alpha 0.35', () => {
+    expect(disabledTextCss()).toBe('rgba(255,255,255,0.35)');
+  });
+
+  it('disabled differs from hover and from the active rim top on the same level', () => {
+    // Hover and the active rim top both sit at #121212 on S3 (known, approved as shown).
+    // The active state is told apart by its rim shape, not by a different value.
+    expect(hoverHex(3)).toBe(activeRim(3).top);
+    expect(disabledHex(3)).not.toBe(hoverHex(3));
+    expect(disabledHex(3)).not.toBe(activeRim(3).top);
+  });
+
+  it('disabled has no level below S0', () => {
+    expect(() => disabledHex(0)).toThrow(/no step below/);
   });
 });

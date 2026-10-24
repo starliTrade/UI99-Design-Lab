@@ -82,3 +82,12 @@
 - **انتخاب خواننده:** نزدیک (فاصله ۲px، پخش ۸px، تیرگی ۰.۴۵).
 - فقط S4، S5، S6 سایه دارند؛ سایه هیچ خطی نمی‌کشد.
 - موتور: `SHADOW_NEAR_B` و `shadowCss(level)` در `src/engine/liminal-ladder-b.ts`.
+
+## ۱۰. حالت‌ها (تأیید چشمی ۲۰۲۶-۱۰-۲۴)
+
+- آزمون: `design-lab/ladder-b-states-test.html` و `design-lab/ladder-b-focus-active-test.html`.
+- **هاور:** نیم پله بالا (`#121212` روی S3).
+- **اکتیو:** ریم نیم‌پله (انتخاب خواننده).
+- **غیرفعال:** نیم پله پایین (`#101010` روی S3)، متن `rgba(255,255,255,0.35)` (انتخاب خواننده).
+- **فوکوس:** رد شد. حلقهٔ رنگی (حتی دوتایی) خارج از قوانین لیمینال است؛ باید طراحی جدید شود.
+- موتور: `src/engine/liminal-ladder-b.ts` (`hoverHex`، `activeRim`، `disabledHex`، `disabledTextCss`).
