@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نردبان B — صفحهٔ کامل بازبینی (موبایل‌فرست)</title>
+<style>
+  :root{--s0:#060709;--s1:#0B0B0B;--s2:#0E0E0E;--s3:#111111;--s4:#131313;--s5:#151515;--s6:#171717;}
+  *{box-sizing:border-box}
+  body{margin:0;padding:14px;background:var(--s0);color:#EDEDED;font-family:system-ui,sans-serif;font-size:16px;line-height:1.7}
+  h1{font-size:21px;margin:6px 0}
+  h2{font-size:18px;margin:26px 0 6px;color:#fff;border-top:1px solid var(--s2);padding-top:14px}
+  .note{background:var(--s2);border-radius:10px;padding:10px 12px;color:#CFCFCF;font-size:14px}
+  .card{background:var(--s1);border-radius:12px;padding:10px;margin:10px 0;display:flex;gap:10px;align-items:center}
+  .sw{width:64px;height:64px;border-radius:10px;flex:0 0 64px;border:1px solid #1d1d1d}
+  .meta{font-size:13px;color:#BDBDBD;word-break:break-all}
+  code{font-size:12px;color:#E0E0E0;background:#000;padding:1px 4px;border-radius:4px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tile{border-radius:10px;padding:12px;font-size:14px;color:#EDEDED;min-height:56px;display:flex;flex-direction:column;justify-content:center}
+  .tile small{color:#9A9A9A}
+  .tile.na{background:var(--s1);color:#777}
+  .parent{background:var(--s1);border-radius:12px;padding:10px;margin:10px 0}
+  .ptitle{font-size:13px;color:#9A9A9A;margin-bottom:8px}
+  table{width:100%;border-collapse:collapse;font-size:14px;background:var(--s1);border-radius:10px;overflow:hidden}
+  td,th{padding:8px;border-bottom:1px solid var(--s2);text-align:right}
+  .box{background:var(--s1);border-radius:12px;padding:12px;margin:10px 0}
+  .stack{display:grid;gap:10px}
+  .btn{display:block;width:100%;background:var(--s3);color:#EDEDED;border:0;border-radius:10px;padding:14px;font:inherit;font-size:16px;transition:background-color 200ms ease}
+  .btn.pressed{background:var(--s4)}
+  .sim{background:#000;color:#fff}
+  .sim .box,.sim .btn,.sim .tile{background:#000!important;color:#fff!important;border:1px solid #fff!important;box-shadow:none!important}
+  @media (forced-colors:active){
+    body,.box,.tile,.btn,.card,.parent{background:Canvas!important;color:CanvasText!important}
+    .btn,.tile,.box{border:1px solid CanvasText!important}
+    .btn:focus{outline:2px solid Highlight!important;outline-offset:2px}
+    .box,.tile,.btn,.card{box-shadow:none!important}
+  }
+  @media (prefers-reduced-motion:reduce){ .btn{transition:none!important} }
+  .sbox{font-size:14px;color:#BDBDBD}
+  .checklist label{display:block;padding:6px 0;font-size:15px}
+</style>
+</head>
+<body>
+
+<h1>نردبان B — بازبینی یکجا</h1>
+<p class="note">این صفحه همهٔ قواعد تأییدشدهٔ سیاست و موتور را یکجا نشان می‌دهد. مقادیر از <code>src/engine/liminal-ladder-b.ts</code> تولید شده‌اند. هر بخش عنوان و شماره دارد و در انتها فهرست کنترل برای تأیید شما آمده است.</p>
+
+<h2>۱. پله‌ها (S0 تا S6)</h2>
+
+  <div class="card">
+    <div class="sw" style="background:#060709"></div>
+    <div class="meta">
+      <div><b>S0</b> · canvas · <code>#060709</code> · L* 1.90</div>
+      <div>مرز نیم‌پله (لبهٔ خودش): <code>#090909</code></div>
+      <div>ریم نیم‌پله: <i>ندارد</i></div>
+      <div>نور: <i>ندارد (تخت یا خارج از S4..S6)</i></div>
+      <div>فرزند با مرز: <code>#0D0D0D</code></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sw" style="background:#0B0B0B"></div>
+    <div class="meta">
+      <div><b>S1</b> · surface · <code>#0B0B0B</code> · L* 3.02</div>
+      <div>مرز نیم‌پله (لبهٔ خودش): <code>#0D0D0D</code></div>
+      <div>ریم نیم‌پله: بالا <code>#0D0D0D</code> · کنار <code>#0C0C0C</code> · پایین <code>#0C0C0C</code></div>
+      <div>نور: <i>ندارد (تخت یا خارج از S4..S6)</i></div>
+      <div>فرزند با مرز: <code>#101010</code></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sw" style="background:#0E0E0E"></div>
+    <div class="meta">
+      <div><b>S2</b> · elevated · <code>#0E0E0E</code> · L* 3.97</div>
+      <div>مرز نیم‌پله (لبهٔ خودش): <code>#101010</code></div>
+      <div>ریم نیم‌پله: بالا <code>#101010</code> · کنار <code>#0F0F0F</code> · پایین <code>#0F0F0F</code></div>
+      <div>نور: <i>ندارد (تخت یا خارج از S4..S6)</i></div>
+      <div>فرزند با مرز: <code>#121212</code></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sw" style="background:#111111"></div>
+    <div class="meta">
+      <div><b>S3</b> · overlay · <code>#111111</code> · L* 5.06</div>
+      <div>مرز نیم‌پله (لبهٔ خودش): <code>#121212</code></div>
+      <div>ریم نیم‌پله: بالا <code>#121212</code> · کنار <code>#121212</code> · پایین <code>#111111</code></div>
+      <div>نور: <i>ندارد (تخت یا خارج از S4..S6)</i></div>
+      <div>فرزند با مرز: <code>#141414</code></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sw" style="background:#131313"></div>
+    <div class="meta">
+      <div><b>S4</b> · sub-overlay · <code>#131313</code> · L* 5.88</div>
+      <div>مرز نیم‌پله (لبهٔ خودش): <i>ندارد (شناور)</i></div>
+      <div>ریم نیم‌پله: بالا <code>#141414</code> · کنار <code>#141414</code> · پایین <code>#131313</code></div>
+      <div>نور: بالا <code>#141414</code> · پایین <code>#131313</code></div>
+      <div>فرزند با مرز: <code>#161616</code></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sw" style="background:#151515"></div>
+    <div class="meta">
+      <div><b>S5</b> · popover · <code>#151515</code> · L* 6.77</div>
+      <div>مرز نیم‌پله (لبهٔ خودش): <i>ندارد (شناور)</i></div>
+      <div>ریم نیم‌پله: بالا <code>#171717</code> · کنار <code>#161616</code> · پایین <code>#151515</code></div>
+      <div>نور: بالا <code>#161616</code> · پایین <code>#151515</code></div>
+      <div>فرزند با مرز: <i>ندارد</i></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sw" style="background:#171717"></div>
+    <div class="meta">
+      <div><b>S6</b> · modal · <code>#171717</code> · L* 7.74</div>
+      <div>مرز نیم‌پله (لبهٔ خودش): <i>ندارد (شناور)</i></div>
+      <div>ریم نیم‌پله: <i>ندارد</i></div>
+      <div>نور: <i>ندارد (تخت یا خارج از S4..S6)</i></div>
+      <div>فرزند با مرز: <i>ندارد</i></div>
+    </div>
+  </div>
+
+<h2>۲. سبک فرزندها (هر والد)</h2>
+<p class="note">هر ردیف یک والد است. هر کاشی سبک یک فرزند با مرز، ریم یا شدو را نشان می‌دهد. «مجاز نیست» یعنی موتور آن را رد می‌کند (مثلاً ریم روی S6).</p>
+<div class="parent"><div class="ptitle">والد S0 ← فرزند S1</div><div class="grid"><div class="tile" style="background:#0B0B0B">ساده<br><small>S1</small></div><div class="tile" style="background:#0B0B0B;border:1px solid #0D0D0D">مرزدار<br><small>S1</small></div><div class="tile" style="background:#0B0B0B;box-shadow:0 1px 4px rgba(0,0,0,0.25)">شدو<br><small>S1</small></div><div class="tile" style="background:#0B0B0B;box-shadow: inset 0 1px 0 #0D0D0D, inset 1px 0 0 #0C0C0C, inset -1px 0 0 #0C0C0C, inset 0 -1px 0 #0C0C0C">ریم<br><small>S1</small></div><div class="tile" style="background:#0B0B0B;border:1px solid #0D0D0D;box-shadow:0 1px 4px rgba(0,0,0,0.25)">مرز+شدو<br><small>S1</small></div></div></div><div class="parent"><div class="ptitle">والد S1 ← فرزند S2</div><div class="grid"><div class="tile" style="background:#0E0E0E">ساده<br><small>S2</small></div><div class="tile" style="background:#0E0E0E;border:1px solid #101010">مرزدار<br><small>S2</small></div><div class="tile" style="background:#0E0E0E;box-shadow:0 1px 4px rgba(0,0,0,0.25)">شدو<br><small>S2</small></div><div class="tile" style="background:#0E0E0E;box-shadow: inset 0 1px 0 #101010, inset 1px 0 0 #0F0F0F, inset -1px 0 0 #0F0F0F, inset 0 -1px 0 #0F0F0F">ریم<br><small>S2</small></div><div class="tile" style="background:#0E0E0E;border:1px solid #101010;box-shadow:0 1px 4px rgba(0,0,0,0.25)">مرز+شدو<br><small>S2</small></div></div></div><div class="parent"><div class="ptitle">والد S2 ← فرزند S3</div><div class="grid"><div class="tile" style="background:#111111">ساده<br><small>S3</small></div><div class="tile" style="background:#111111;border:1px solid #121212">مرزدار<br><small>S3</small></div><div class="tile" style="background:#111111;box-shadow:0 1px 4px rgba(0,0,0,0.25)">شدو<br><small>S3</small></div><div class="tile" style="background:#111111;box-shadow: inset 0 1px 0 #121212, inset 1px 0 0 #121212, inset -1px 0 0 #121212, inset 0 -1px 0 #111111">ریم<br><small>S3</small></div><div class="tile" style="background:#111111;border:1px solid #121212;box-shadow:0 1px 4px rgba(0,0,0,0.25)">مرز+شدو<br><small>S3</small></div></div></div><div class="parent"><div class="ptitle">والد S3 ← فرزند S4</div><div class="grid"><div class="tile" style="background:#131313">ساده<br><small>S4</small></div><div class="tile" style="background:#131313;border:1px solid #141414">مرزدار<br><small>S4</small></div><div class="tile" style="background:#131313;box-shadow:0 1px 4px rgba(0,0,0,0.25)">شدو<br><small>S4</small></div><div class="tile" style="background:#131313;box-shadow: inset 0 1px 0 #141414, inset 1px 0 0 #141414, inset -1px 0 0 #141414, inset 0 -1px 0 #131313">ریم<br><small>S4</small></div><div class="tile" style="background:#131313;border:1px solid #141414;box-shadow:0 1px 4px rgba(0,0,0,0.25)">مرز+شدو<br><small>S4</small></div></div></div><div class="parent"><div class="ptitle">والد S4 ← فرزند S5</div><div class="grid"><div class="tile" style="background:#151515">ساده<br><small>S5</small></div><div class="tile" style="background:#151515;border:1px solid #161616">مرزدار<br><small>S5</small></div><div class="tile" style="background:#151515;box-shadow:0 1px 4px rgba(0,0,0,0.25)">شدو<br><small>S5</small></div><div class="tile" style="background:#151515;box-shadow: inset 0 1px 0 #171717, inset 1px 0 0 #161616, inset -1px 0 0 #161616, inset 0 -1px 0 #151515">ریم<br><small>S5</small></div><div class="tile" style="background:#151515;border:1px solid #161616;box-shadow:0 1px 4px rgba(0,0,0,0.25)">مرز+شدو<br><small>S5</small></div></div></div><div class="parent"><div class="ptitle">والد S5 ← فرزند S6</div><div class="grid"><div class="tile" style="background:#171717">ساده<br><small>S6</small></div><div class="tile na">مرزدار<br><i>مجاز نیست</i></div><div class="tile" style="background:#171717;box-shadow:0 1px 4px rgba(0,0,0,0.25)">شدو<br><small>S6</small></div><div class="tile na">ریم<br><i>مجاز نیست</i></div><div class="tile na">مرز+شدو<br><i>مجاز نیست</i></div></div></div>
+
+<h2>۳. شناورها (S4 تا S6)</h2>
+<p class="note">شناورها سایهٔ A دارند. نور بالا روشن‌تر از پایین است. S6 تخت است.</p>
+<div class="grid"><div class="tile" style="background:linear-gradient(#141414, #131313);box-shadow:0 1px 4px rgba(0,0,0,0.25)">S4<br><small>سایه A · نور بالا</small></div><div class="tile" style="background:linear-gradient(#161616, #151515);box-shadow:0 1px 4px rgba(0,0,0,0.25)">S5<br><small>سایه A · نور بالا</small></div><div class="tile" style="background:linear-gradient(#171717, #171717);box-shadow:0 1px 4px rgba(0,0,0,0.25)">S6<br><small>سایه A · تخت</small></div></div>
+
+<h2>۴. حالت‌ها</h2>
+<h3>هاور (دسکتاپ)</h3>
+<div class="grid"><div class="tile" style="background:#060709">S0 ← هاور <code>#090909</code></div><div class="tile" style="background:#0B0B0B">S1 ← هاور <code>#0D0D0D</code></div><div class="tile" style="background:#0E0E0E">S2 ← هاور <code>#101010</code></div><div class="tile" style="background:#111111">S3 ← هاور <code>#121212</code></div></div>
+<h3>فشار / اکتیو (گوشی و دسکتاپ)</h3>
+<div class="grid"><div class="tile" style="background:#0B0B0B;box-shadow: inset 0 1px 0 #0D0D0D, inset 1px 0 0 #0C0C0C, inset -1px 0 0 #0C0C0C, inset 0 -1px 0 #0C0C0C">S1 فشار (ریم)</div><div class="tile" style="background:#0E0E0E;box-shadow: inset 0 1px 0 #101010, inset 1px 0 0 #0F0F0F, inset -1px 0 0 #0F0F0F, inset 0 -1px 0 #0F0F0F">S2 فشار (ریم)</div><div class="tile" style="background:#111111;box-shadow: inset 0 1px 0 #121212, inset 1px 0 0 #121212, inset -1px 0 0 #121212, inset 0 -1px 0 #111111">S3 فشار (ریم)</div><div class="tile" style="background:#131313;box-shadow: inset 0 1px 0 #141414, inset 1px 0 0 #141414, inset -1px 0 0 #141414, inset 0 -1px 0 #131313">S4 فشار (ریم)</div><div class="tile" style="background:#151515;box-shadow: inset 0 1px 0 #171717, inset 1px 0 0 #161616, inset -1px 0 0 #161616, inset 0 -1px 0 #151515">S5 فشار (ریم)</div></div>
+<h3>غیرفعال</h3>
+<div class="grid"><div class="tile" style="background:#090909;color:rgba(255,255,255,0.35)">S1 غیرفعال <code>#090909</code></div><div class="tile" style="background:#0D0D0D;color:rgba(255,255,255,0.35)">S2 غیرفعال <code>#0D0D0D</code></div><div class="tile" style="background:#101010;color:rgba(255,255,255,0.35)">S3 غیرفعال <code>#101010</code></div><div class="tile" style="background:#121212;color:rgba(255,255,255,0.35)">S4 غیرفعال <code>#121212</code></div></div>
+<h3>فوکوس</h3>
+<div class="grid"><div class="tile" style="background:#060709;box-shadow:0 0 0 1px #060709, 0 0 0 2px #0E0E0E">فوکوس روی S1<br><small>فاصله <code>#060709</code> · حلقه <code>#0E0E0E</code></small></div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 0 1px #0B0B0B, 0 0 0 2px #111111">فوکوس روی S2<br><small>فاصله <code>#0B0B0B</code> · حلقه <code>#111111</code></small></div><div class="tile" style="background:#0E0E0E;box-shadow:0 0 0 1px #0E0E0E, 0 0 0 2px #131313">فوکوس روی S3<br><small>فاصله <code>#0E0E0E</code> · حلقه <code>#131313</code></small></div><div class="tile" style="background:#111111;box-shadow:0 0 0 1px #111111, 0 0 0 2px #151515">فوکوس روی S4<br><small>فاصله <code>#111111</code> · حلقه <code>#151515</code></small></div><div class="tile" style="background:#131313;box-shadow:0 0 0 1px #131313, 0 0 0 2px #171717">فوکوس روی S5<br><small>فاصله <code>#131313</code> · حلقه <code>#171717</code></small></div></div>
+
+<h2>۵. هاله (سیستم جدا)</h2>
+<p class="note">سه هاله تأیید شده‌اند. H3 رد شد. پیش‌فرض همه‌جا «بدون هاله» است.</p>
+<div class="box sbox"><div><b>soft</b>: <code>0 0 6px 1px rgba(255,255,255,0.03)</code></div><div><b>medium</b>: <code>0 0 12px 2px rgba(255,255,255,0.03)</code></div><div><b>wide</b>: <code>0 0 16px 4px rgba(255,255,255,0.02)</code></div></div>
+<div class="parent"><div class="ptitle">هدف: surface</div><div class="grid"><div class="tile" style="background:#0B0B0B;box-shadow:none">بدون</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 6px 1px rgba(255,255,255,0.03)">H1 نرم</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 12px 2px rgba(255,255,255,0.03)">H2 متوسط</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 16px 4px rgba(255,255,255,0.02)">H4 پهن</div></div></div><div class="parent"><div class="ptitle">هدف: card</div><div class="grid"><div class="tile" style="background:#0B0B0B;box-shadow:none">بدون</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 6px 1px rgba(255,255,255,0.03)">H1 نرم</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 12px 2px rgba(255,255,255,0.03)">H2 متوسط</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 16px 4px rgba(255,255,255,0.02)">H4 پهن</div></div></div><div class="parent"><div class="ptitle">هدف: button</div><div class="grid"><div class="tile" style="background:#0B0B0B;box-shadow:none">بدون</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 6px 1px rgba(255,255,255,0.03)">H1 نرم</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 12px 2px rgba(255,255,255,0.03)">H2 متوسط</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 16px 4px rgba(255,255,255,0.02)">H4 پهن</div></div></div><div class="parent"><div class="ptitle">هدف: input</div><div class="grid"><div class="tile" style="background:#0B0B0B;box-shadow:none">بدون</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 6px 1px rgba(255,255,255,0.03)">H1 نرم</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 12px 2px rgba(255,255,255,0.03)">H2 متوسط</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 16px 4px rgba(255,255,255,0.02)">H4 پهن</div></div></div><div class="parent"><div class="ptitle">هدف: floating</div><div class="grid"><div class="tile" style="background:#0B0B0B;box-shadow:none">بدون</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 6px 1px rgba(255,255,255,0.03)">H1 نرم</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 12px 2px rgba(255,255,255,0.03)">H2 متوسط</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 16px 4px rgba(255,255,255,0.02)">H4 پهن</div></div></div><div class="parent"><div class="ptitle">هدف: focus</div><div class="grid"><div class="tile" style="background:#0B0B0B;box-shadow:none">بدون</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 6px 1px rgba(255,255,255,0.03)">H1 نرم</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 12px 2px rgba(255,255,255,0.03)">H2 متوسط</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 16px 4px rgba(255,255,255,0.02)">H4 پهن</div></div></div><div class="parent"><div class="ptitle">هدف: chip</div><div class="grid"><div class="tile" style="background:#0B0B0B;box-shadow:none">بدون</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 6px 1px rgba(255,255,255,0.03)">H1 نرم</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 12px 2px rgba(255,255,255,0.03)">H2 متوسط</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 16px 4px rgba(255,255,255,0.02)">H4 پهن</div></div></div><div class="parent"><div class="ptitle">هدف: tab</div><div class="grid"><div class="tile" style="background:#0B0B0B;box-shadow:none">بدون</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 6px 1px rgba(255,255,255,0.03)">H1 نرم</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 12px 2px rgba(255,255,255,0.03)">H2 متوسط</div><div class="tile" style="background:#0B0B0B;box-shadow:0 0 16px 4px rgba(255,255,255,0.02)">H4 پهن</div></div></div>
+
+<h2>۶. overlay (منو، دیالوگ، تولتیپ)</h2>
+<p class="note">سایهٔ A به‌همراه مرز یا ریم. تأیید شد.</p>
+<div class="grid">
+  <div class="tile" style="background:#131313;box-shadow:0 1px 4px rgba(0,0,0,0.25);border:1px solid #141414">منو با سایه A و مرز</div>
+  <div class="tile" style="background:#131313;box-shadow:0 1px 4px rgba(0,0,0,0.25)">تولتیپ با سایه A</div></div>
+
+<h2>۷. حالت‌های سیستم</h2>
+<div class="box sbox">
+  <div><b>forced colors:</b> رنگ‌ها از سیستم، نردبان خاموش، فوکوس با Highlight ۲px، سایه و هاله حذف.</div>
+  <div><b>کاهش حرکت:</b> بدون انیمیشن.</div>
+  <div><b>لمس:</b> فشار با ریم اکتیو؛ هاور فقط دسکتاپ.</div>
+</div>
+<div class="sim box stack">
+  <div class="tile">نمونهٔ forced colors (شبیه‌سازی)</div>
+  <button class="btn">دکمه</button>
+</div>
+
+<h2>۸. نتیجهٔ آزمون تشخیص پله‌ها</h2>
+<p class="note">آزمون ۳AFC، شانس ۳۳٪. دو نشست یک ناظر و یک دستگاه. تأیید چشمی، سیستمی و فرمولی. تکرار لازم نیست.</p>
+<table>
+  <tr><th>جفت</th><th>نشست ۱</th><th>نشست ۲</th></tr>
+  
+  <tr><td>S0-S1</td><td>12/12 (100٪)</td><td>12/12 (100٪)</td></tr>
+  <tr><td>S1-S2</td><td>12/12 (100٪)</td><td>12/12 (100٪)</td></tr>
+  <tr><td>S2-S3</td><td>12/12 (100٪)</td><td>12/12 (100٪)</td></tr>
+  <tr><td>S3-S4</td><td>11/12 (92٪)</td><td>9/12 (75٪)</td></tr>
+  <tr><td>S4-S5</td><td>10/12 (83٪)</td><td>6/12 (50٪)</td></tr>
+  <tr><td>S5-S6</td><td>10/12 (83٪)</td><td>3/12 (25٪)</td></tr>
+</table>
+<p class="note">تصمیم: S4 تا S6 با رنگ به‌تنهایی دیده نمی‌شوند؛ با بوردر، ریم یا شدو جدا می‌شوند. نردبان بدون تغییر است.</p>
+
+<h2>فهرست کنترل شما</h2>
+<div class="box checklist">
+  <label>☐ پله‌ها از هم جدا دیده می‌شوند</label>
+  <label>☐ سبک فرزندها واضح است</label>
+  <label>☐ شناورها و نور بالا درست دیده می‌شوند</label>
+  <label>☐ هاور و فشار روی گوشی واضح است</label>
+  <label>☐ فوکوس دیده می‌شود</label>
+  <label>☐ هاله‌ها قابل تشخیص‌اند و زیاده‌روی نیستند</label>
+  <label>☐ overlay از زمینه جدا است</label>
+  <label>☐ forced colors قابل فهم است</label>
+</div>
+
+</body>
+</html>
