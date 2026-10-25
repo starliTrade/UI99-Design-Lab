@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>آزمون سایه برای overlay — نردبان B</title>
+<style>
+  :root {
+    --s0:#060709; --s1:#0B0B0B; --s2:#0E0E0E; --s3:#111111;
+    --s4:#131313; --s5:#151515; --s6:#171717;
+    --edge-s4:#141414;      /* half step S4..S5 (border or rim top) */
+    --rim-bottom-s4:#131313;
+    --shadow-a: 0 1px 4px rgba(0,0,0,0.25);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 16px; background: var(--s0); color: #EDEDED;
+    font-family: system-ui, sans-serif; font-size: 18px; line-height: 1.8;
+  }
+  h1 { font-size: 22px; margin: 8px 0; }
+  h2 { font-size: 19px; margin: 26px 0 4px; color: #fff; }
+  .ask { background: var(--s2); border-radius: 10px; padding: 12px 14px; margin: 8px 0; font-size: 16px; color: #D0D0D0; }
+  .screen { background: var(--s2); border-radius: 12px; padding: 16px; margin-top: 10px; }
+  .label { font-size: 14px; color: #8F8F8F; margin-bottom: 8px; }
+
+  /* Menu: floating S4, shadow A, half-step border */
+  .menu {
+    background: var(--s4); border-radius: 10px; padding: 12px;
+    box-shadow: var(--shadow-a); border: 1px solid var(--edge-s4);
+  }
+  .menu div { padding: 10px; border-radius: 6px; }
+  .menu .sel { background: var(--s5); }
+
+  /* Dialog: floating S4, shadow A, rim half-step on top edge */
+  .dialog {
+    background: var(--s4); border-radius: 12px; padding: 16px;
+    box-shadow: var(--shadow-a);
+    border-top: 1px solid var(--edge-s4);
+    border-bottom: 1px solid var(--rim-bottom-s4);
+  }
+  .dialog .actions { display: flex; gap: 8px; margin-top: 12px; }
+  .btn { flex: 1; background: var(--s3); border: 0; border-radius: 8px; color: #EDEDED; font: inherit; padding: 10px; }
+
+  /* Tooltip: floating S4, shadow A only */
+  .tip {
+    display: inline-block; background: var(--s4); border-radius: 8px;
+    padding: 8px 12px; font-size: 16px; box-shadow: var(--shadow-a);
+  }
+
+  /* Reference: same content with NO shadow, to see what the shadow adds */
+  .ref { background: var(--s4); border-radius: 10px; padding: 12px; }
+  .ref div { padding: 10px; border-radius: 6px; }
+  .ref .sel { background: var(--s5); }
+</style>
+</head>
+<body>
+
+<h1>آزمون سایه برای overlay</h1>
+<p class="ask">این صفحه سه عنصر شناور را نشان می‌دهد، هر کدام روی یک زمینهٔ جدا. زیر هر عنصر یک نسخهٔ مرجع بدون سایه هست. سؤال‌ها در هر بخش را جدا جواب بدهید.</p>
+
+<h2>۱. منو</h2>
+<p class="ask">سؤال: آیا منو از زمینه جدا دیده می‌شود؟ آیا بالای آن کمی روشن‌تر است؟</p>
+<div class="screen">
+  <div class="label">منو با سایه A و مرز نیم‌پله</div>
+  <div class="menu">
+    <div>گزینهٔ اول</div>
+    <div class="sel">گزینهٔ انتخاب‌شده</div>
+    <div>گزینهٔ سوم</div>
+  </div>
+</div>
+<div class="screen">
+  <div class="label">مرجع: همان منو بدون سایه</div>
+  <div class="ref">
+    <div>گزینهٔ اول</div>
+    <div class="sel">گزینهٔ انتخاب‌شده</div>
+    <div>گزینهٔ سوم</div>
+  </div>
+</div>
+
+<h2>۲. دیالوگ</h2>
+<p class="ask">سؤال: آیا دیالوگ از زمینه جدا است؟ آیا لبهٔ بالایی و پایینی به یک اندازه دیده می‌شوند؟</p>
+<div class="screen">
+  <div class="label">دیالوگ با سایه A و ریم نیم‌پله</div>
+  <div class="dialog">
+    <div>آیا مطمئن هستید؟</div>
+    <div class="actions">
+      <button class="btn">انصراف</button>
+      <button class="btn">تأیید</button>
+    </div>
+  </div>
+</div>
+
+<h2>۳. تولتیپ</h2>
+<p class="ask">سؤال: آیا تولتیپ کوچک هم از زمینه جدا دیده می‌شود؟</p>
+<div class="screen">
+  <div class="label">تولتیپ با سایه A</div>
+  <span class="tip">این یک راهنماست</span>
+</div>
+
+<h2>پاسخ شما</h2>
+<p class="ask">برای هر سه بخش بگویید: جدا دیده می‌شود یا نه، و اگر نه، کدام بخش کم است.</p>
+
+</body>
+</html>
