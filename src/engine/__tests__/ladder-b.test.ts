@@ -355,3 +355,25 @@ describe('LADDER B — recorded measurement (approved: eye + system + formula)',
     expect(MEASUREMENT_B.decision).toMatch(/border, rim or shadow/);
   });
 });
+
+describe('LADDER B — states on floating levels (owner, 2026-10-24)', () => {
+  it('hover on S4 and S5 is the half step up', () => {
+    expect(hoverHex(4)).toBe('#141414');
+    expect(hoverHex(5)).toBe('#161616');
+  });
+
+  it('S6 (ceiling) has no hover colour: shadow-only, value pending', () => {
+    expect(() => hoverHex(6)).toThrow(/ceiling/);
+  });
+
+  it('disabled on S4, S5, S6 is half a step down', () => {
+    expect(disabledHex(4)).toBe('#121212');
+    expect(disabledHex(5)).toBe('#141414');
+    expect(disabledHex(6)).toBe('#161616');
+  });
+
+  it('disabled on S4 to S6 differs from hover on the same level', () => {
+    expect(disabledHex(4)).not.toBe(hoverHex(4));
+    expect(disabledHex(5)).not.toBe(hoverHex(5));
+  });
+});

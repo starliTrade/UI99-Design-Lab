@@ -228,7 +228,18 @@ export function shadowCss(level: number): string {
  * Focus is NOT defined here. The approved focus candidate (a coloured double
  * ring) was rejected: a coloured border is outside the liminal rules.
  */
+/**
+ * Hover colour. Levels 0..3: the half step up (the border colour).
+ * Floating levels 4..5: the half step up as well (owner, 2026-10-24).
+ * S6 (ceiling): no level above it, so hover is shadow-only (value pending, see policy 10).
+ */
 export function hoverHex(level: number): string {
+  if (level === LADDER_B_TOP) {
+    throw new RangeError(`level ${level} is the ceiling: hover is shadow-only, no colour`);
+  }
+  if (FLOATING_LEVELS_B.includes(level)) {
+    return computeBorderHalfHex(level);
+  }
   return borderHalfHex(level);
 }
 
@@ -236,9 +247,17 @@ export function activeRim(level: number): RimHalf {
   return rimHalfHex(level);
 }
 
+/**
+ * Disabled colour: half a step DOWN from the level.
+ * Levels 1..3: the border colour of the level below.
+ * Floating levels 4..6 (owner, 2026-10-24): the midpoint between the level and the one below.
+ */
 export function disabledHex(level: number): string {
   if (level < 1 || level > LADDER_B_TOP) {
     throw new RangeError(`level ${level} has no step below for a disabled surface`);
+  }
+  if (level >= 4) {
+    return computeBorderHalfHex(level - 1);
   }
   return borderHalfHex(level - 1);
 }
