@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نردبان B — حالت S6 (سقف)</title>
+<style>
+  :root { --s6:#171717; --s5:#151515; --s0:#060709; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:14px; background:var(--s0); color:#EDEDED; font-family:system-ui,sans-serif; font-size:16px; line-height:1.7; }
+  h1 { font-size:20px; margin:6px 0; }
+  .note { background:#0E0E0E; border-radius:10px; padding:10px 12px; color:#CFCFCF; font-size:14px; }
+  .sec { margin-top:20px; }
+  .sec h2 { font-size:17px; margin:0 0 6px; color:#fff; }
+  .surface { background:var(--s6); border-radius:12px; padding:14px; }
+  .lbl { font-size:13px; color:#9A9A9A; margin-bottom:8px; }
+  .btn {
+    display:block; width:100%; background:var(--s6); color:#EDEDED; border:0;
+    border-radius:10px; padding:14px; font:inherit; text-align:center;
+    transition: box-shadow 200ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Candidates for the pressed / hover state on S6 (shadow only) */
+  .c1.pressed { box-shadow: 0 2px 8px rgba(0,0,0,0.45); }
+  .c2.pressed { box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+  .c3.pressed { box-shadow: 0 1px 4px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.6); }
+  .c4.pressed { box-shadow: inset 0 2px 6px rgba(0,0,0,0.55); }
+  .btn:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--s5); }
+  .stack { display:grid; gap:10px; }
+  @media (forced-colors: active) {
+    .btn, .surface { background: Canvas; color: CanvasText; border: 1px solid CanvasText; }
+    .btn.pressed { border: 2px solid Highlight; }
+  }
+</style>
+</head>
+<body>
+<h1>حالت فشار روی S6 (سقف)</h1>
+<p class="note">روی S6 نیم‌پلهٔ بالاتر وجود ندارد. فقط سایه می‌تواند حالت را نشان دهد. روی هر دکمه ضربه بزنید و نگه دارید تا حالت فشار دیده شود. دکمهٔ آخر فوکوس را نشان می‌دهد (Tab یا فشار طولانی روی فوکوس).</p>
+
+<div class="sec">
+  <h2>الف) مرجع: بدون تغییر</h2>
+  <div class="surface stack">
+    <div class="lbl">عادی</div>
+    <button class="btn">دکمهٔ مرجع</button>
+  </div>
+</div>
+
+<div class="sec">
+  <h2>ب) کاندیدها برای فشار</h2>
+  <div class="surface stack">
+    <div class="lbl">کاندید ۱: سایهٔ متوسط <code>0 2px 8px 0.45</code></div>
+    <button class="btn c1 pressed">فشار: کاندید ۱ (ضربه و نگه دارید)</button>
+    <button class="btn c1">عادی: کاندید ۱ (ضربه و نگه دارید)</button>
+
+    <div class="lbl">کاندید ۲: سایهٔ بلند <code>0 4px 12px 0.5</code></div>
+    <button class="btn c2">فشار: کاندید ۲ (ضربه و نگه دارید)</button>
+
+    <div class="lbl">کاندید ۳: سایهٔ کم با حلقهٔ سیاه ۱px</div>
+    <button class="btn c3">فشار: کاندید ۳ (ضربه و نگه دارید)</button>
+
+    <div class="lbl">کاندید ۴: سایهٔ داخلی</div>
+    <button class="btn c4">فشار: کاندید ۴ (ضربه و نگه دارید)</button>
+  </div>
+</div>
+
+<div class="sec">
+  <h2>پ) فوکوس روی S6 (کاندید)</h2>
+  <div class="surface stack">
+    <div class="lbl">فوکوس با حلقهٔ S5 و فاصلهٔ ۲px</div>
+    <button class="btn">برای فوکوس، Tab بزنید یا با صفحه‌کلید انتخاب کنید</button>
+  </div>
+</div>
+
+<script>
+  // Simulate press on candidate buttons: pressed class while pointer is down
+  document.querySelectorAll('.btn').forEach(function (b) {
+    if (b.classList.contains('pressed')) return;
+    b.addEventListener('pointerdown', function () { b.classList.add('pressed'); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (ev) {
+      b.addEventListener(ev, function () { b.classList.remove('pressed'); });
+    });
+  });
+</script>
+</body>
+</html>
