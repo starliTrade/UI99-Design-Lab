@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>آزمون نردبان v2.0 — مجاورت لایه‌ها</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:12px;background:#060709;color:#EDEDED;font-family:system-ui,sans-serif;font-size:15px;line-height:1.6}
+  h1{font-size:20px;margin:6px 0}
+  h2{font-size:17px;margin:24px 0 6px;color:#fff;border-top:1px solid #0E0E0E;padding-top:12px}
+  .note{background:#0B0B0B;border-radius:10px;padding:10px 12px;color:#CFCFCF;font-size:14px}
+  code{font-size:11px;background:#000;padding:1px 4px;border-radius:4px;color:#E0E0E0}
+  /* nested ladder */
+  .layer{border-radius:10px;padding:8px 8px 0;margin-top:6px}
+  .layer .layer{margin-bottom:6px}
+  .layer .layer:last-child{margin-bottom:0}
+  .ltag{font-size:12px;color:#BDBDBD;margin-bottom:4px;word-break:break-all}
+  /* component rows */
+  .parentrow{border-radius:12px;padding:10px;margin:10px 0}
+  .ptitle{font-size:12px;color:#BDBDBD;margin-bottom:8px}
+  .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .cell{display:flex;flex-direction:column;gap:4px}
+  .clbl{font-size:11px;color:#9A9A9A}
+  .cbox{border-radius:10px;padding:14px 8px;font-size:12px;text-align:center;color:#EDEDED;min-height:56px;display:flex;align-items:center;justify-content:center}
+  .rimwrap{position:relative;border-radius:10px;padding:14px 8px;font-size:12px;text-align:center;color:#EDEDED;min-height:56px;display:flex;align-items:center;justify-content:center}
+  .rimline{position:absolute;top:0;left:12.5%;right:12.5%;height:1px;background:linear-gradient(to right,transparent 0%,rgba(255,255,255,0.08) 15%,rgba(255,255,255,0.16) 50%,rgba(255,255,255,0.08) 85%,transparent 100%);pointer-events:none}
+  .host{border-radius:12px;padding:10px;margin:10px 0}
+  .btnlike{min-height:48px;margin-top:6px;font-size:14px}
+  .hgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .htile{border-radius:10px;padding:12px;font-size:13px;text-align:center;color:#EDEDED;min-height:52px;display:flex;align-items:center;justify-content:center}
+  .check label{display:block;padding:6px 0}
+</style></head><body>
+<h1>آزمون نردبان v2.0</h1>
+<p class="note">این صفحه از موتور <code>liminal-ladder-v2.ts</code> تولید شده است. قانون مجاورت: هر لایه فقط روی لایهٔ بلافاصلهٔ پایین خودش می‌نشیند. کامپوننت‌ها همیشه پلهٔ والد + ۱ هستند و دقیقاً یک سبک دارند. هر سبک به‌اندازهٔ ۰.۵ JND درک می‌شود.</p>
+
+<h2>۱. نردبان تودرتو (۹ لایه)</h2>
+<p class="note">هر لایه داخل لایهٔ پایین‌تر است. S0 بوم است و S8 عمیق‌ترین لایه.</p>
+<div class="layer" style="background:#060709">
+    <div class="ltag">S0 · canvas · <code>#060709</code> · dY/JND —</div>
+    <div class="layer" style="background:#0B0B0B">
+    <div class="ltag">S1 · surface · <code>#0B0B0B</code> · dY/JND 1.084</div>
+    <div class="layer" style="background:#0F0F0F">
+    <div class="ltag">S2 · elevated · <code>#0F0F0F</code> · dY/JND 0.989</div>
+    <div class="layer" style="background:#131313">
+    <div class="ltag">S3 · overlay · <code>#131313</code> · dY/JND 1.004</div>
+    <div class="layer" style="background:#171717">
+    <div class="ltag">S4 · sub-overlay · <code>#171717</code> · dY/JND 1.019</div>
+    <div class="layer" style="background:#1B1B1B">
+    <div class="ltag">S5 · popover · <code>#1B1B1B</code> · dY/JND 1.034</div>
+    <div class="layer" style="background:#1F1F1F">
+    <div class="ltag">S6 · sub-popover · <code>#1F1F1F</code> · dY/JND 1.048</div>
+    <div class="layer" style="background:#232323">
+    <div class="ltag">S7 · modal · <code>#232323</code> · dY/JND 1.061</div>
+    <div class="layer" style="background:#272727">
+    <div class="ltag">S8 · extension · <code>#272727</code> · dY/JND 1.074</div>
+    
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+<h2>۲. کامپوننت‌ها روی هر والد</h2>
+<p class="note">برای هر والد از S0 تا S7، فرزند با چهار سبک نشان داده شده است. ریم V2 یک خط بالایی ۷۵٪ عرض است.</p>
+<div class="parentrow" style="background:#060709">
+    <div class="ptitle">والد S0 (<code>#060709</code>) ← فرزند S1</div>
+    <div class="cgrid"><div class="cell"><div class="clbl">ساده</div><div class="cbox" style="background:#0B0B0B">S1 · ساده</div></div><div class="cell"><div class="clbl">مرز M2</div><div class="cbox" style="background:#0B0B0B;border:1px solid rgba(11, 11, 11, 0.5)">S1 · مرز M2</div></div><div class="cell"><div class="clbl">سایه M3</div><div class="cbox" style="background:#0B0B0B;box-shadow:0 2px 4.8px rgba(0, 0, 0, 0.273)">S1 · سایه M3</div></div><div class="cell"><div class="clbl">ریم V2</div><div class="rimwrap" style="background:#0B0B0B;box-shadow:0 2px 4px rgba(0, 0, 0, 0.15), 0 0 12px 2px rgba(255, 255, 255, 0.020)">
+    <span class="rimline"></span>
+  </div></div></div>
+  </div><div class="parentrow" style="background:#0B0B0B">
+    <div class="ptitle">والد S1 (<code>#0B0B0B</code>) ← فرزند S2</div>
+    <div class="cgrid"><div class="cell"><div class="clbl">ساده</div><div class="cbox" style="background:#0F0F0F">S2 · ساده</div></div><div class="cell"><div class="clbl">مرز M2</div><div class="cbox" style="background:#0F0F0F;border:1px solid rgba(15, 15, 15, 0.5)">S2 · مرز M2</div></div><div class="cell"><div class="clbl">سایه M3</div><div class="cbox" style="background:#0F0F0F;box-shadow:0 2px 5.3px rgba(0, 0, 0, 0.216)">S2 · سایه M3</div></div><div class="cell"><div class="clbl">ریم V2</div><div class="rimwrap" style="background:#0F0F0F;box-shadow:0 2px 4px rgba(0, 0, 0, 0.15), 0 0 12px 2px rgba(255, 255, 255, 0.020)">
+    <span class="rimline"></span>
+  </div></div></div>
+  </div><div class="parentrow" style="background:#0F0F0F">
+    <div class="ptitle">والد S2 (<code>#0F0F0F</code>) ← فرزند S3</div>
+    <div class="cgrid"><div class="cell"><div class="clbl">ساده</div><div class="cbox" style="background:#131313">S3 · ساده</div></div><div class="cell"><div class="clbl">مرز M2</div><div class="cbox" style="background:#131313;border:1px solid rgba(19, 19, 19, 0.5)">S3 · مرز M2</div></div><div class="cell"><div class="clbl">سایه M3</div><div class="cbox" style="background:#131313;box-shadow:0 2px 5.9px rgba(0, 0, 0, 0.181)">S3 · سایه M3</div></div><div class="cell"><div class="clbl">ریم V2</div><div class="rimwrap" style="background:#131313;box-shadow:0 2px 4px rgba(0, 0, 0, 0.15), 0 0 12px 2px rgba(255, 255, 255, 0.020)">
+    <span class="rimline"></span>
+  </div></div></div>
+  </div><div class="parentrow" style="background:#131313">
+    <div class="ptitle">والد S3 (<code>#131313</code>) ← فرزند S4</div>
+    <div class="cgrid"><div class="cell"><div class="clbl">ساده</div><div class="cbox" style="background:#171717">S4 · ساده</div></div><div class="cell"><div class="clbl">مرز M2</div><div class="cbox" style="background:#171717;border:1px solid rgba(23, 23, 23, 0.5)">S4 · مرز M2</div></div><div class="cell"><div class="clbl">سایه M3</div><div class="cbox" style="background:#171717;box-shadow:0 2px 6.6px rgba(0, 0, 0, 0.155)">S4 · سایه M3</div></div><div class="cell"><div class="clbl">ریم V2</div><div class="rimwrap" style="background:#171717;box-shadow:0 2px 4px rgba(0, 0, 0, 0.15), 0 0 12px 2px rgba(255, 255, 255, 0.020)">
+    <span class="rimline"></span>
+  </div></div></div>
+  </div><div class="parentrow" style="background:#171717">
+    <div class="ptitle">والد S4 (<code>#171717</code>) ← فرزند S5</div>
+    <div class="cgrid"><div class="cell"><div class="clbl">ساده</div><div class="cbox" style="background:#1B1B1B">S5 · ساده</div></div><div class="cell"><div class="clbl">مرز M2</div><div class="cbox" style="background:#1B1B1B;border:1px solid rgba(27, 27, 27, 0.5)">S5 · مرز M2</div></div><div class="cell"><div class="clbl">سایه M3</div><div class="cbox" style="background:#1B1B1B;box-shadow:0 2px 7.4px rgba(0, 0, 0, 0.135)">S5 · سایه M3</div></div><div class="cell"><div class="clbl">ریم V2</div><div class="rimwrap" style="background:#1B1B1B;box-shadow:0 2px 4px rgba(0, 0, 0, 0.15), 0 0 12px 2px rgba(255, 255, 255, 0.020)">
+    <span class="rimline"></span>
+  </div></div></div>
+  </div><div class="parentrow" style="background:#1B1B1B">
+    <div class="ptitle">والد S5 (<code>#1B1B1B</code>) ← فرزند S6</div>
+    <div class="cgrid"><div class="cell"><div class="clbl">ساده</div><div class="cbox" style="background:#1F1F1F">S6 · ساده</div></div><div class="cell"><div class="clbl">مرز M2</div><div class="cbox" style="background:#1F1F1F;border:1px solid rgba(31, 31, 31, 0.5)">S6 · مرز M2</div></div><div class="cell"><div class="clbl">سایه M3</div><div class="cbox" style="background:#1F1F1F;box-shadow:0 2px 8.4px rgba(0, 0, 0, 0.119)">S6 · سایه M3</div></div><div class="cell"><div class="clbl">ریم V2</div><div class="rimwrap" style="background:#1F1F1F;box-shadow:0 2px 4px rgba(0, 0, 0, 0.15), 0 0 12px 2px rgba(255, 255, 255, 0.020)">
+    <span class="rimline"></span>
+  </div></div></div>
+  </div><div class="parentrow" style="background:#1F1F1F">
+    <div class="ptitle">والد S6 (<code>#1F1F1F</code>) ← فرزند S7</div>
+    <div class="cgrid"><div class="cell"><div class="clbl">ساده</div><div class="cbox" style="background:#232323">S7 · ساده</div></div><div class="cell"><div class="clbl">مرز M2</div><div class="cbox" style="background:#232323;border:1px solid rgba(35, 35, 35, 0.5)">S7 · مرز M2</div></div><div class="cell"><div class="clbl">سایه M3</div><div class="cbox" style="background:#232323;box-shadow:0 2px 9.5px rgba(0, 0, 0, 0.107)">S7 · سایه M3</div></div><div class="cell"><div class="clbl">ریم V2</div><div class="rimwrap" style="background:#232323;box-shadow:0 2px 4px rgba(0, 0, 0, 0.15), 0 0 12px 2px rgba(255, 255, 255, 0.020)">
+    <span class="rimline"></span>
+  </div></div></div>
+  </div><div class="parentrow" style="background:#232323">
+    <div class="ptitle">والد S7 (<code>#232323</code>) ← فرزند S8</div>
+    <div class="cgrid"><div class="cell"><div class="clbl">ساده</div><div class="cbox" style="background:#272727">S8 · ساده</div></div><div class="cell"><div class="clbl">مرز M2</div><div class="cbox" style="background:#272727;border:1px solid rgba(39, 39, 39, 0.5)">S8 · مرز M2</div></div><div class="cell"><div class="clbl">سایه M3</div><div class="cbox" style="background:#272727;box-shadow:0 2px 10.7px rgba(0, 0, 0, 0.096)">S8 · سایه M3</div></div><div class="cell"><div class="clbl">ریم V2</div><div class="rimwrap" style="background:#272727;box-shadow:0 2px 4px rgba(0, 0, 0, 0.15), 0 0 12px 2px rgba(255, 255, 255, 0.020)">
+    <span class="rimline"></span>
+  </div></div></div>
+  </div>
+
+<h2>۳. فوکوس (کاندید: ریم)</h2>
+<p class="note">فوکوس در مرجع v2 ریم است و بوردر نیست. این هنوز تأیید نشده است.</p>
+<div class="host" style="background:#0F0F0F">
+    <div class="ptitle">فوکوس کاندید: ریم روی دکمه (میزبان S2)</div>
+    <div class="rimwrap btnlike" style="background:#131313;box-shadow:0 2px 4px rgba(0, 0, 0, 0.15), 0 0 12px 2px rgba(255, 255, 255, 0.020)"><span class="rimline"></span>دکمهٔ فوکوس‌شده</div>
+  </div>
+
+<h2>۴. هاله (سیستم جدا، روی v2)</h2>
+<p class="note">هاله‌ها مستقل از نردبان هستند. مقادیر هنوز روی نردبان v2 آزمون نشده‌اند.</p>
+<div class="host" style="background:#0B0B0B"><div class="ptitle">هاله روی S1 (<code>#0B0B0B</code>)</div><div class="hgrid"><div class="htile" style="background:#0B0B0B;box-shadow:none">بدون</div><div class="htile" style="background:#0B0B0B;box-shadow:0 0 6px 1px rgba(255, 255, 255, 0.03)">H1 نرم</div><div class="htile" style="background:#0B0B0B;box-shadow:0 0 12px 2px rgba(255, 255, 255, 0.03)">H2 متوسط</div><div class="htile" style="background:#0B0B0B;box-shadow:0 0 16px 4px rgba(255, 255, 255, 0.02)">H4 پهن</div></div></div><div class="host" style="background:#171717"><div class="ptitle">هاله روی S4 (<code>#171717</code>)</div><div class="hgrid"><div class="htile" style="background:#171717;box-shadow:none">بدون</div><div class="htile" style="background:#171717;box-shadow:0 0 6px 1px rgba(255, 255, 255, 0.03)">H1 نرم</div><div class="htile" style="background:#171717;box-shadow:0 0 12px 2px rgba(255, 255, 255, 0.03)">H2 متوسط</div><div class="htile" style="background:#171717;box-shadow:0 0 16px 4px rgba(255, 255, 255, 0.02)">H4 پهن</div></div></div>
+
+<h2>فهرست کنترل شما</h2>
+<div class="note check">
+<label>☐ لایه‌ها تودرتو و جدا از هم دیده می‌شوند</label>
+<label>☐ مرز M2 در هر والد واضح است</label>
+<label>☐ سایه M3 از S0 تا S7 قابل دیدن است</label>
+<label>☐ ریم V2 روی هر والد واضح است</label>
+<label>☐ فوکوس با ریم کافی است</label>
+<label>☐ هاله‌ها قابل تشخیص‌اند و زیاده‌روی نیستند</label>
+</div>
+</body></html>
